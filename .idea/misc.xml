@@ -3,10 +3,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/engineering_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/literacy_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/mathematics_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/mysticism_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/name_background.xml" value="0.287" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/nav_header.xml" value="0.2585" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/philosophy_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/price_background.xml" value="0.287" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/rules.xml" value="0.303" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/theocracy_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/wonders_of_the_world_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/written_record_background.xml" value="0.287" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_about.xml" value="0.34375" />
-        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_advances.xml" value="0.29438405797101447" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_advances.xml" value="0.3333333333333333" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_advances_list.xml" value="0.575" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_home.xml" value="0.2484375" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_item.xml" value="0.2484375" />

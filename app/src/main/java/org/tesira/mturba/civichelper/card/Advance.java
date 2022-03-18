@@ -101,13 +101,13 @@ public class Advance {
 
     public int getColor(){
         int rgb = 0;
-        if (groups.size() >= 1) {
+        if (groups.size() == 1) {
             Log.v("Color", groups.get(0).getName());
             rgb = MainActivity.colorStringToColor(groups.get(0).getName());
             return rgb;
         } else {
             // hier noch Mischen der zwei Farben
-            return R.color.civic;
+            return rgb;
         }
     }
 

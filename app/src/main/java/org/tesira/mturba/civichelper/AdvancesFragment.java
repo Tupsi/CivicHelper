@@ -3,24 +3,16 @@ package org.tesira.mturba.civichelper;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.tesira.mturba.civichelper.card.Advance;
-import org.tesira.mturba.civichelper.placeholder.PlaceholderContent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -88,7 +80,7 @@ public class AdvancesFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 //            recyclerView.setAdapter(new MyAdvancesRecyclerViewAdapterBackup(PlaceholderContent.ITEMS));
-            recyclerView.setAdapter(new MyAdvancesRecyclerViewAdapter(advances));
+            recyclerView.setAdapter(new MyAdvancesRecyclerViewAdapter(advances, context));
 
         }
         return view;
