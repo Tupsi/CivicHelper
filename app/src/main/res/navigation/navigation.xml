@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="org.tesira.mturba.civichelper.HomeFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_advancesFragment"
+            app:destination="@id/advancesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/advancesFragment"
+        android:name="org.tesira.mturba.civichelper.AdvancesFragment"
+        android:label="@string/advances_name"
+        tools:layout="@layout/fragment_advances_list" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="org.tesira.mturba.civichelper.AboutFragment"
+        android:label="@string/about"
+        tools:layout="@layout/fragment_about" />
+</navigation>

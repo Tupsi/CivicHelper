@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/advancesFragment"
+        android:icon="@android:drawable/ic_dialog_dialer"
+        android:title="@string/advances_name" />
+    <item
+        android:id="@+id/aboutFragment"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="@string/about" />
+</menu>

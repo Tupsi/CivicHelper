@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8"?>
+<records>
+    <advance>
+        <name>Mysticism</name>
+        <family>1</family>
+        <vp>1</vp>
+        <group>BLUE</group>
+        <group>YELLOW</group>
+        <price>50</price>
+        <credit group="BLUE">5</credit>
+        <credit group="YELLOW">5</credit>
+        <effect name="Superstition">-1</effect>
+    </advance>
+    <advance>
+        <name>Monument</name>
+        <family>1</family>
+        <vp>3</vp>
+        <group>ORANGE</group>
+        <price>180</price>
+        <credit group="ORANGE">10</credit>
+        <credit group="YELLOW">10</credit>
+        <effect name="Credits">20</effect>
+    </advance>
+    <advance>
+        <name>Wonder of the World</name>
+        <family>1</family>
+        <vp>6</vp>
+        <group>BLUE</group>
+        <group>ORANGE</group>
+        <price>290</price>
+        <credit group="BLUE">20</credit>
+        <credit group="ORANGE">20</credit>
+        <effect name="Corruption">5</effect>
+    </advance>
+    <advance>
+        <name>Sculpture</name>
+        <family>2</family>
+        <vp>1</vp>
+        <group>BLUE</group>
+        <price>50</price>
+        <credit group="BLUE">10</credit>
+        <credit group="RED">5</credit>
+        <effect name="Tyranny">-5</effect>
+    </advance>
+    <advance>
+        <name>Architecture</name>
+        <family>2</family>
+        <vp>3</vp>
+        <group>BLUE</group>
+        <price>140</price>
+        <credit group="BLUE">10</credit>
+        <credit group="GREEN">5</credit>
+    </advance>
+    <advance>
+        <name>Mining</name>
+        <family>2</family>
+        <vp>6</vp>
+        <group>ORANGE</group>
+        <price>230</price>
+        <credit group="ORANGE">20</credit>
+        <credit group="GREEN">5</credit>
+        <effect name="Slave Revolt">5</effect>
+    </advance>
+    <advance>
+        <name>Cloth Making</name>
+        <family>3</family>
+        <vp>1</vp>
+        <group>ORANGE</group>
+        <price>50</price>
+        <credit group="ORANGE">10</credit>
+        <credit group="BLUE">5</credit>
+    </advance>
+    <advance>
+        <name>Naval Warfare</name>
+        <family>3</family>
+        <vp>3</vp>
+        <group>RED</group>
+        <price>160</price>
+        <credit group="RED">10</credit>
+        <credit group="ORANGE">5</credit>
+        <effect name="Piracy">-1</effect>
+        <effect name="Civil Disorder">-1</effect>
+    </advance>
+    <advance>
+        <name>Diaspora</name>
+        <family>3</family>
+        <vp>6</vp>
+        <group>YELLOW</group>
+        <price>270</price>
+        <credit group="YELLOW">20</credit>
+        <credit group="BLUE">5</credit>
+    </advance>
+    <advance>
+        <name>Urbanism</name>
+        <family>4</family>
+        <vp>1</vp>
+        <group>RED</group>
+        <price>50</price>
+        <credit group="RED">10</credit>
+        <credit group="GREEN">5</credit>
+    </advance>
+    <advance>
+        <name>Diplomacy</name>
+        <family>4</family>
+        <vp>3</vp>
+        <group>BLUE</group>
+        <price>160</price>
+        <credit group="BLUE">10</credit>
+        <credit group="RED">5</credit>
+        <effect name="Treachery">1</effect>
+    </advance>
+        <advance>
+        <name>Provincial Empire</name>
+        <family>4</family>
+        <vp>6</vp>
+        <group>RED</group>
+        <price>260</price>
+        <credit group="RED">20</credit>
+        <credit group="YELLOW">5</credit>
+        <effect name="Barbarian Hordes">5</effect>
+        <effect name="Tyranny">5</effect>
+    </advance>
+    <advance>
+        <name>Monarchy</name>
+        <family>5</family>
+        <vp>1</vp>
+        <group>RED</group>
+        <price>60</price>
+        <credit group="RED">10</credit>
+        <credit group="YELLOW">5</credit>
+        <effect name="Barbarian Hordes">-5</effect>
+        <effect name="Tyranny">5</effect>
+    </advance>
+    <advance>
+        <name>Law</name>
+        <family>5</family>
+        <vp>3</vp>
+        <group>RED</group>
+        <price>150</price>
+        <credit group="RED">10</credit>
+        <credit group="YELLOW">5</credit>
+        <effect name="Tyranny">-5</effect>
+        <effect name="Civil Disorder">-1</effect>
+        <effect name="Corruption">-5</effect>
+    </advance>
+    <advance>
+        <name>Cultural Ascendancy</name>
+        <family>5</family>
+        <vp>6</vp>
+        <group>BLUE</group>
+        <price>280</price>
+        <credit group="BLUE">20</credit>
+        <credit group="YELLOW">5</credit>
+    </advance>
+    <advance>
+        <name>Written Record</name>
+        <family>6</family>
+        <vp>1</vp>
+        <group>RED</group>
+        <group>GREEN</group>
+        <price>60</price>
+        <credit group="RED">5</credit>
+        <credit group="GREEN">5</credit>
+        <effect name="Credits">10</effect>
+    </advance>
+    <advance>
+        <name>Cartography</name>
+        <family>6</family>
+        <vp>3</vp>
+        <group>GREEN</group>
+        <price>160</price>
+        <credit group="GREEN">10</credit>
+        <credit group="BLUE">5</credit>
+        <effect name="Piracy">-1</effect>
+    </advance>
+    <advance>
+        <name>Library</name>
+        <family>6</family>
+        <vp>6</vp>
+        <group>GREEN</group>
+        <price>220</price>
+        <credit group="GREEN">20</credit>
+        <credit group="BLUE">5</credit>
+        <effect name="CreditsOnce">40</effect>
+        <effect name="Regression">-1</effect>
+    </advance>
+    <advance>
+        <name>Pottery</name>
+        <family>7</family>
+        <vp>1</vp>
+        <group>ORANGE</group>
+        <price>60</price>
+        <credit group="ORANGE">10</credit>
+        <credit group="BLUE">5</credit>
+        <effect name="Famine">-5</effect>
+    </advance>
+    <advance>
+        <name>Agriculture</name>
+        <family>7</family>
+        <vp>3</vp>
+        <group>ORANGE</group>
+        <price>120</price>
+        <credit group="ORANGE">10</credit>
+        <credit group="GREEN">5</credit>
+        <effect name="Famine (Prim)">5</effect>
+    </advance>
+    <advance>
+        <name>Democracy</name>
+        <family>7</family>
+        <vp>6</vp>
+        <group>RED</group>
+        <price>220</price>
+        <credit group="RED">20</credit>
+        <credit group="BLUE">5</credit>
+        <effect name="Civil War">-10</effect>
+        <effect name="Civil Disorder">-1</effect>
+    </advance>
+     <advance>
+        <name>Masonry</name>
+        <family>8</family>
+        <vp>1</vp>
+        <group>ORANGE</group>
+        <price>60</price>
+        <credit group="ORANGE">10</credit>
+        <credit group="GREEN">5</credit>
+        <effect name="Cyclone">-1</effect>
+    </advance>
+     <advance>
+        <name>Engineering</name>
+        <family>8</family>
+        <vp>3</vp>
+        <group>ORANGE</group>
+        <group>GREEN</group>
+        <price>160</price>
+        <credit group="ORANGE">10</credit>
+        <credit group="GREEN">10</credit>
+        <effect name="Earthquake (City reduced)">1</effect>
+        <effect name="Flood">-5</effect>
+    </advance>
+     <advance>
+        <name>Roadbuilding</name>
+        <family>8</family>
+        <vp>6</vp>
+        <group>ORANGE</group>
+        <price>220</price>
+        <credit group="ORANGE">20</credit>
+        <credit group="GREEN">5</credit>
+        <effect name="Epidemic">5</effect>
+    </advance>
+     <advance>
+        <name>Mythology</name>
+        <family>9</family>
+        <vp>1</vp>
+        <group>YELLOW</group>
+        <price>60</price>
+        <credit group="YELLOW">10</credit>
+        <credit group="BLUE">5</credit>
+        <effect name="Slave Revolt">-1</effect>
+    </advance>
+     <advance>
+        <name>Literacy</name>
+        <family>9</family>
+        <vp>3</vp>
+        <group>BLUE</group>
+        <group>RED</group>
+        <price>110</price>
+        <credit group="BLUE">10</credit>
+        <credit group="RED">10</credit>
+        <credit group="ORANGE">5</credit>
+        <credit group="YELLOW">5</credit>
+        <credit group="GREEN">5</credit>
+    </advance>
+     <advance>
+        <name>Mathematics</name>
+        <family>9</family>
+        <vp>6</vp>
+        <group>BLUE</group>
+        <group>GREEN</group>
+        <price>250</price>
+        <credit group="BLUE">20</credit>
+        <credit group="GREEN">20</credit>
+        <credit group="ORANGE">10</credit>
+        <credit group="RED">10</credit>
+        <credit group="YELLOW">10</credit>
+    </advance>
+     <advance>
+        <name>Empiricism</name>
+        <family>10</family>
+        <vp>1</vp>
+        <group>GREEN</group>
+        <price>60</price>
+        <credit group="GREEN">10</credit>
+        <credit group="BLUE">5</credit>
+        <credit group="RED">5</credit>
+        <credit group="ORANGE">5</credit>
+        <credit group="YELLOW">5</credit>
+    </advance>
+     <advance>
+        <name>Medicine</name>
+        <family>10</family>
+        <vp>3</vp>
+        <group>GREEN</group>
+        <price>140</price>
+        <credit group="GREEN">10</credit>
+        <credit group="ORANGE">5</credit>
+        <effect name="Epidemic">-5</effect>
+    </advance>
+     <advance>
+        <name>Anatomy</name>
+        <family>10</family>
+        <vp>6</vp>
+        <group>GREEN</group>
+        <price>270</price>
+        <credit group="GREEN">20</credit>
+        <credit group="ORANGE">5</credit>
+        <effect name="FreeScience">100</effect>
+        <effect name="Epidemic (Sec)">-5</effect>
+    </advance>
+     <advance>
+        <name>Deism</name>
+        <family>11</family>
+        <vp>1</vp>
+        <group>YELLOW</group>
+        <price>70</price>
+        <credit group="YELLOW">10</credit>
+        <credit group="ORANGE">5</credit>
+        <effect name="Superstition">-1</effect>
+    </advance>
+     <advance>
+        <name>Fundamentalism</name>
+        <family>11</family>
+        <vp>3</vp>
+        <group>YELLOW</group>
+        <price>150</price>
+        <credit group="YELLOW">10</credit>
+        <credit group="BLUE">5</credit>
+        <effect name="Regression">1</effect>
+    </advance>
+     <advance>
+        <name>Monotheism</name>
+        <family>11</family>
+        <vp>6</vp>
+        <group>YELLOW</group>
+        <price>240</price>
+        <credit group="YELLOW">20</credit>
+        <credit group="RED">5</credit>
+        <effect name="Iconoclasm and Heresy">1</effect>
+    </advance>
+     <advance>
+        <name>Theocracy</name>
+        <family>12</family>
+        <vp>1</vp>
+        <group>RED</group>
+        <group>YELLOW</group>
+        <price>80</price>
+        <credit group="RED">5</credit>
+        <credit group="YELLOW">5</credit>
+        <effect name="Iconoclasm and Heresy (2 cards)">-1</effect>
+    </advance>
+     <advance>
+        <name>Universal Doctrine</name>
+        <family>12</family>
+        <vp>3</vp>
+        <group>YELLOW</group>
+        <price>160</price>
+        <credit group="YELLOW">10</credit>
+        <credit group="RED">5</credit>
+        <effect name="Superstition">1</effect>
+    </advance>
+     <advance>
+        <name>Theology</name>
+        <family>12</family>
+        <vp>6</vp>
+        <group>YELLOW</group>
+        <price>250</price>
+        <credit group="YELLOW">20</credit>
+        <credit group="GREEN">5</credit>
+        <effect name="Iconoclasm and Heresy">-3</effect>
+    </advance>
+     <advance>
+        <name>Drama and Poetry</name>
+        <family>13</family>
+        <vp>1</vp>
+        <group>BLUE</group>
+        <price>80</price>
+        <credit group="BLUE">10</credit>
+        <credit group="YELLOW">5</credit>
+        <effect name="Civil War">-5</effect>
+        <effect name="Civil Disorder">-1</effect>
+    </advance>
+     <advance>
+        <name>Rhetoric</name>
+        <family>13</family>
+        <vp>3</vp>
+        <group>BLUE</group>
+        <price>130</price>
+        <credit group="BLUE">10</credit>
+        <credit group="RED">5</credit>
+        <effect name="Buy 3s for 9">1</effect>
+    </advance>
+     <advance>
+        <name>Politics</name>
+        <family>13</family>
+        <vp>6</vp>
+        <group>BLUE</group>
+        <price>230</price>
+        <credit group="BLUE">20</credit>
+        <credit group="YELLOW">5</credit>
+        <effect name="Barbarian Hordes">5</effect>
+    </advance>
+     <advance>
+        <name>Music</name>
+        <family>14</family>
+        <vp>1</vp>
+        <group>BLUE</group>
+        <price>80</price>
+        <credit group="BLUE">10</credit>
+        <credit group="YELLOW">5</credit>
+        <effect name="Civil War">-5</effect>
+        <effect name="Civil Disorder">-1</effect>
+    </advance>
+     <advance>
+        <name>Enlightenment</name>
+        <family>14</family>
+        <vp>3</vp>
+        <group>YELLOW</group>
+        <price>160</price>
+        <credit group="YELLOW">10</credit>
+        <credit group="ORANGE">5</credit>
+        <effect name="Superstition">-1</effect>
+        <effect name="Slave Revolt">-1</effect>
+        <effect name="Epidemic (Prim)">-5</effect>
+        <effect name="Regression (destroy 2 cities)">1</effect>
+    </advance>
+     <advance>
+        <name>Philosophy</name>
+        <family>14</family>
+        <vp>6</vp>
+        <group>YELLOW</group>
+        <group>GREEN</group>
+        <price>220</price>
+        <credit group="YELLOW">20</credit>
+        <credit group="GREEN">20</credit>
+        <effect name="Civil War">5</effect>
+        <effect name="Iconoclasm and Heresy">-2</effect>
+    </advance>
+     <advance>
+        <name>Astronavigation</name>
+        <family>15</family>
+        <vp>1</vp>
+        <group>GREEN</group>
+        <price>80</price>
+        <credit group="GREEN">10</credit>
+        <credit group="YELLOW">5</credit>
+    </advance>
+     <advance>
+        <name>Calendar</name>
+        <family>15</family>
+        <vp>3</vp>
+        <group>GREEN</group>
+        <price>180</price>
+        <credit group="GREEN">10</credit>
+        <credit group="RED">5</credit>
+        <effect name="Famine">-5</effect>
+        <effect name="Cyclone">-2</effect>
+    </advance>
+     <advance>
+        <name>Public Works</name>
+        <family>15</family>
+        <vp>6</vp>
+        <group>RED</group>
+        <price>230</price>
+        <credit group="RED">20</credit>
+        <credit group="ORANGE">5</credit>
+    </advance>
+     <advance>
+        <name>Coinage</name>
+        <family>16</family>
+        <vp>1</vp>
+        <group>GREEN</group>
+        <price>90</price>
+        <credit group="GREEN">10</credit>
+        <credit group="YELLOW">5</credit>
+        <effect name="Corruption">-5</effect>
+    </advance>
+     <advance>
+        <name>Trade Routes</name>
+        <family>16</family>
+        <vp>3</vp>
+        <group>YELLOW</group>
+        <price>180</price>
+        <credit group="ORANGE">10</credit>
+        <credit group="YELLOW">5</credit>
+    </advance>
+     <advance>
+        <name>Trade Empire</name>
+        <family>16</family>
+        <vp>6</vp>
+        <group>ORANGE</group>
+        <price>260</price>
+        <credit group="ORANGE">20</credit>
+        <credit group="RED">5</credit>
+        <effect name="Cyclone">1</effect>
+        <effect name="Epidemic (Prim)">5</effect>
+    </advance>
+     <advance>
+        <name>Metalworking</name>
+        <family>17</family>
+        <vp>1</vp>
+        <group>ORANGE</group>
+        <price>90</price>
+        <credit group="ORANGE">10</credit>
+        <credit group="RED">5</credit>
+    </advance>
+     <advance>
+        <name>Military</name>
+        <family>17</family>
+        <vp>3</vp>
+        <group>RED</group>
+        <price>170</price>
+        <credit group="RED">10</credit>
+        <credit group="ORANGE">5</credit>
+        <effect name="Civil War">5</effect>
+    </advance>
+     <advance>
+        <name>Advanced Military</name>
+        <family>17</family>
+        <vp>6</vp>
+        <group>RED</group>
+        <price>240</price>
+        <credit group="RED">20</credit>
+        <credit group="GREEN">5</credit>
+        <effect name="Civil Disorder">1</effect>
+    </advance>
+<!--
+     <advance>
+        <name>Name</name>
+        <family></family>
+        <vp>1</vp>
+        <vp>3</vp>
+        <vp>6</vp>
+        <group>BLUE</group>
+        <group>GREEN</group>
+        <group>ORANGE</group>
+        <group>RED</group>
+        <group>YELLOW</group>
+        <price></price>
+        <credit group="BLUE">1</credit>
+        <credit group="GREEN">1</credit>
+        <credit group="ORANGE">1</credit>
+        <credit group="RED">1</credit>
+        <credit group="YELLOW">1</credit>
+    </advance>
+-->
+</records>

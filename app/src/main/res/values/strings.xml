@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Civic Helper</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="advances_name">Advances</string>
+    <string name="about">About</string>
+    <string name="about_text">about text</string>
+</resources>
