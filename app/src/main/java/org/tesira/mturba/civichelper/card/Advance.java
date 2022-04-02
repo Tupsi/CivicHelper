@@ -1,6 +1,10 @@
 package org.tesira.mturba.civichelper.card;
 
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import org.tesira.mturba.civichelper.MainActivity;
 import org.tesira.mturba.civichelper.R;
@@ -111,6 +115,7 @@ public class Advance {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return name;

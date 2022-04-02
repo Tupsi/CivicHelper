@@ -3,14 +3,19 @@ package org.tesira.mturba.civichelper;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.tesira.mturba.civichelper.card.Advance;
 import org.w3c.dom.Document;
@@ -21,6 +26,7 @@ import org.w3c.dom.NodeList;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -67,7 +73,7 @@ public class AdvancesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_advances_list, container, false);
-        advances = new ArrayList<Advance>();
+        advances = new ArrayList<>();
         importAdvances(advances, FILENAME);
 
         // Set the adapter
@@ -88,7 +94,7 @@ public class AdvancesFragment extends Fragment {
 
     private void importAdvances(List<Advance> advances, String filename) {
         try {
-            InputStream is = getActivity().getAssets().open(filename);
+            InputStream is = requireActivity().getAssets().open(filename);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(is);

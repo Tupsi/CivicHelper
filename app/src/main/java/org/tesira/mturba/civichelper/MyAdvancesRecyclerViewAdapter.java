@@ -1,15 +1,21 @@
 package org.tesira.mturba.civichelper;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.tesira.mturba.civichelper.card.Advance;
 import org.tesira.mturba.civichelper.placeholder.PlaceholderContent.PlaceholderItem;
@@ -33,12 +39,13 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         this.context = context;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ViewHolder(FragmentAdvancesBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
-
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
@@ -51,38 +58,38 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         if (backgroundColor == 0) {
             // card with two colors
             Drawable drawable;
+            Resources res = context.getResources();
             switch (holder.mItem.getName()) {
                 case "Engineering":
-                    drawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.engineering_background, null);
-//                    drawable = context.getResources().getDrawable(R.drawable.engineering_background,null);
+                    drawable = ResourcesCompat.getDrawable(res, R.drawable.engineering_background, null);
                     holder.mNameView.setBackground(drawable);
                     break;
                 case "Mathematics":
-                    drawable = context.getResources().getDrawable(R.drawable.mathematics_background,null);
+                    drawable = ResourcesCompat.getDrawable(res, R.drawable.mathematics_background,null);
                     holder.mNameView.setBackground(drawable);
                     break;
                 case "Mysticism":
-                    drawable = context.getResources().getDrawable(R.drawable.mysticism_background,null);
+                    drawable = ResourcesCompat.getDrawable(res, R.drawable.mysticism_background,null);
                     holder.mNameView.setBackground(drawable);
                     break;
                 case "Written Record":
-                    drawable = context.getResources().getDrawable(R.drawable.written_record_background,null);
+                    drawable = ResourcesCompat.getDrawable(res, R.drawable.written_record_background,null);
                     holder.mNameView.setBackground(drawable);
                     break;
                 case "Theocracy":
-                    drawable = context.getResources().getDrawable(R.drawable.theocracy_background,null);
+                    drawable = ResourcesCompat.getDrawable(res, R.drawable.theocracy_background,null);
                     holder.mNameView.setBackground(drawable);
                     break;
                 case "Literacy":
-                    drawable = context.getResources().getDrawable(R.drawable.literacy_background,null);
+                    drawable = ResourcesCompat.getDrawable(res, R.drawable.literacy_background,null);
                     holder.mNameView.setBackground(drawable);
                     break;
                 case "Wonder of the World":
-                    drawable = context.getResources().getDrawable(R.drawable.wonders_of_the_world_background,null);
+                    drawable = ResourcesCompat.getDrawable(res, R.drawable.wonders_of_the_world_background,null);
                     holder.mNameView.setBackground(drawable);
                     break;
                 case "Philosophy":
-                    drawable = context.getResources().getDrawable(R.drawable.philosophy_background,null);
+                    drawable = ResourcesCompat.getDrawable(res, R.drawable.philosophy_background,null);
                     holder.mNameView.setBackground(drawable);
                     break;
             }
@@ -93,6 +100,12 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         holder.mPriceView.setText(Integer.toString(mValues.get(position).getPrice()));
 //        holder.mPriceView.setBackgroundResource(backgroundColor);
 //        holder.mConstraintView.setBackgroundResource(backgroundColor);
+        holder.mCardView.setOnClickListener(v -> {
+            // clicked on single card in list
+            Toast.makeText(v.getContext(), holder.mNameView.getText().toString() + " clicked!",Toast.LENGTH_LONG).show();
+            Log.v("INFO","card clicked");
+            Log.v("INFO", holder.mNameView.getText().toString());
+        });
     }
 
     @Override
@@ -103,18 +116,21 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         // hier eventuell anpassen was angezeigt werden soll aus dem Advance Objekt!
-
+//        public View mView;
+        public View mCardView;
 //        public final TextView mIdView;
 //        public final TextView mContentView;
         public final TextView mNameView;
         public final TextView mPriceView;
         public final Group mGroupView;
-        public final ConstraintLayout mConstraintView;
+//        public final ConstraintLayout mConstraintView;
 
         public Advance mItem;
 
         public ViewHolder(FragmentAdvancesBinding binding) {
             super(binding.getRoot());
+            // needed for OnClickListener
+//            mView = binding.getRoot();
             // das sind die R.id aus fragements_advances textviews
             // hier muessen mehr dazu falls mehr dateils angezeigt werden soll
 //            mIdView = binding.itemNumber;
@@ -122,9 +138,11 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
             mNameView = binding.name;
             mPriceView = binding.price;
             mGroupView = binding.group;
-            mConstraintView = binding.card;
+            mCardView = binding.card;
+//            mConstraintView = binding.card;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return mNameView.getText().toString();
