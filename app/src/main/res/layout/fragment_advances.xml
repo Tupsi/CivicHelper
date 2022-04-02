@@ -15,6 +15,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/card"
         android:layout_width="wrap_content"
+        android:background="@drawable/cardbackground"
         android:layout_height="wrap_content">
 
         <TextView
@@ -22,6 +23,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"
+            android:foregroundGravity="center"
+            android:gravity="center"
             android:textAppearance="?attr/textAppearanceListItem"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -35,8 +38,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"
             android:layout_marginEnd="16dp"
-            android:textAppearance="?attr/textAppearanceListItem"
             android:background="@drawable/price_background"
+            android:foregroundGravity="center"
+            android:gravity="center"
+            android:textAppearance="?attr/textAppearanceListItem"
             app:layout_constraintEnd_toEndOf="@+id/name"
             app:layout_constraintEnd_toStartOf="@+id/name"
             app:layout_constraintHorizontal_bias="0.5"

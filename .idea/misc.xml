@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/cardbackground.xml" value="0.2885" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/engineering_background.xml" value="0.287" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/literacy_background.xml" value="0.287" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/mathematics_background.xml" value="0.287" />
