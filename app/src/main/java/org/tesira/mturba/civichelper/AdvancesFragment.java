@@ -5,16 +5,23 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
 import org.tesira.mturba.civichelper.card.Advance;
@@ -38,6 +45,8 @@ public class AdvancesFragment extends Fragment {
 
     public static final String FILENAME = "advances.xml";
     public List<Advance> advances;
+    private MyAdvancesRecyclerViewAdapter adapter;
+
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
@@ -86,9 +95,12 @@ public class AdvancesFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 //            recyclerView.setAdapter(new MyAdvancesRecyclerViewAdapterBackup(PlaceholderContent.ITEMS));
-            recyclerView.setAdapter(new MyAdvancesRecyclerViewAdapter(advances, context));
-
+            adapter = new MyAdvancesRecyclerViewAdapter(advances, context);
+//            recyclerView.setAdapter(new MyAdvancesRecyclerViewAdapter(advances, context));
+            recyclerView.setAdapter(adapter);
         }
+        setHasOptionsMenu(true);
+
         return view;
     }
 
@@ -150,6 +162,40 @@ public class AdvancesFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+/*
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.options_menu, menu);
+    }
+*/
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.options_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("newText1",query);
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("newText",newText);
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
     }
 
 }

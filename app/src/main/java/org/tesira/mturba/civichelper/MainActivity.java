@@ -9,6 +9,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.graphics.Color;
 import android.os.Bundle;
+
 import org.tesira.mturba.civichelper.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {

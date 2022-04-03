@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,22 +23,26 @@ import org.tesira.mturba.civichelper.card.Advance;
 import org.tesira.mturba.civichelper.placeholder.PlaceholderContent.PlaceholderItem;
 import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvancesRecyclerViewAdapter.ViewHolder> {
+public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvancesRecyclerViewAdapter.ViewHolder> implements Filterable {
 
     // Hier PlaceholderItem mit Advance ersetzen !!!
 
     private final List<Advance> mValues;
+    private final List<Advance> FullList;
+
     private Context context;
 
     public MyAdvancesRecyclerViewAdapter(List<Advance> items, Context context) {
         mValues = items;
         this.context = context;
+        FullList = new ArrayList<>(items);
     }
 
     @NonNull
@@ -112,6 +118,37 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
     public int getItemCount() {
         return mValues.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return Searched_Filter;
+    }
+
+    private Filter Searched_Filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Advance> filteredList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(FullList);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (Advance item : FullList) {
+                    if (item.toString().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mValues.clear();
+            mValues.addAll((ArrayList) results.values);
+            notifyDataSetChanged();
+        }
+    };
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
