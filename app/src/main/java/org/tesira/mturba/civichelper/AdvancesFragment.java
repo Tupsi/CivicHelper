@@ -1,5 +1,6 @@
 package org.tesira.mturba.civichelper;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +28,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.tesira.mturba.civichelper.card.Advance;
@@ -34,6 +39,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,11 +54,18 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 public class AdvancesFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    public static final String FILENAME = "advances.xml";
+    private static final String ADVANCES_LIST = "advancesList";
+    private static final String MONEY = "money";
+    private static final String MONEY_LEFT = "moneyLeft";
+    private static final String FILENAME = "advances.xml";
     public List<Advance> advances;
     private MyAdvancesRecyclerViewAdapter adapter;
     private SharedPreferences prefs;
     private String sortingOrder;
+    protected RecyclerView mRecyclerView;
+    protected EditText mEditText;
+    protected TextView mTextView;
+
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -91,10 +104,23 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_advances_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_advances_list, container, false);
+        mEditText = rootView.findViewById(R.id.money);
+        mTextView = rootView.findViewById(R.id.moneyleft);
         advances = new ArrayList<>();
-        importAdvances(advances, FILENAME);
 
+        if (savedInstanceState != null) {
+            Log.v("save", "rebuild saved state");
+            // Restore saved layout manager type.
+            advances = (ArrayList) savedInstanceState.getSerializable(ADVANCES_LIST);
+            int money = savedInstanceState.getInt(MONEY);
+            mEditText.setText(money);
+            money = savedInstanceState.getInt(MONEY_LEFT);
+            mTextView.setText(money);
+        } else {
+            loadVars();
+            importAdvances(advances, FILENAME);
+        }
         // sorting the cards
         switch (sortingOrder) {
             case "price" :
@@ -109,22 +135,17 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         }
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-//            recyclerView.setAdapter(new MyAdvancesRecyclerViewAdapterBackup(PlaceholderContent.ITEMS));
-            adapter = new MyAdvancesRecyclerViewAdapter(advances, context);
-//            recyclerView.setAdapter(new MyAdvancesRecyclerViewAdapter(advances, context));
-            recyclerView.setAdapter(adapter);
+        Context context = rootView.getContext();
+        mRecyclerView = rootView.findViewById(R.id.list);
+        if (mColumnCount <= 1) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
+        adapter = new MyAdvancesRecyclerViewAdapter(advances, context);
+        mRecyclerView.setAdapter(adapter);
         setHasOptionsMenu(true);
-
-        return view;
+        return rootView;
     }
 
     private void importAdvances(List<Advance> advances, String filename) {
@@ -187,14 +208,6 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         }
     }
 
-/*
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.options_menu, menu);
-    }
-*/
-
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.options_menu, menu);
@@ -204,12 +217,10 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d("newText1",query);
                 return false;
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("newText",newText);
                 adapter.getFilter().filter(newText);
                 return false;
             }
@@ -232,6 +243,60 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 break;
         }
         Log.v("PREF", "onSharedPrefChanged: "+sortingOrder);
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.v("save", "saving states");
+        // save stuff
+        savedInstanceState.putSerializable(ADVANCES_LIST, (Serializable) advances);
+        int money = Integer.parseInt(mEditText.getText().toString());
+        savedInstanceState.putInt(MONEY, money);
+        int moneyleft = Integer.parseInt(mTextView.getText().toString());
+        savedInstanceState.putInt(MONEY_LEFT, moneyleft);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onStart() {
+        super.onStart();
+        Log.v("DEMO","---> onStart() <--- ");
+    }
+
+    public void onResume() {
+        super.onResume();
+        Log.v("DEMO","---> onResume() <--- ");
+    }
+
+    public void onPause() {
+        super.onPause();
+        saveVars();
+        Log.v("DEMO","---> onPause() <--- ");
+    }
+
+    public void onStop() {
+        super.onStop();
+        Log.v("DEMO","---> onStop() <--- ");
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        Log.v("DEMO","---> onDestroy() <--- ");
+    }
+
+    public void saveVars() {
+        SharedPreferences.Editor editor = prefs.edit();
+        if (!TextUtils.isEmpty(mEditText.getText())) {
+            int money = Integer.parseInt(mEditText.getText().toString());
+            editor.putInt(MONEY, money);
+            money = Integer.parseInt(mTextView.getText().toString());
+            editor.putInt(MONEY_LEFT, money);
+            editor.apply();
+        }
+    }
+    @SuppressLint("SetTextI18n")
+    public void loadVars() {
+        int money = prefs.getInt(MONEY,0);
+        mEditText.setText(""+money);
+        mTextView.setText(""+prefs.getInt(MONEY_LEFT,money));
     }
 
 }
