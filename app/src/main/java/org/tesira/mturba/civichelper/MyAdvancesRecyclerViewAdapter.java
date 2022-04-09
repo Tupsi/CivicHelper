@@ -32,11 +32,8 @@ import java.util.List;
  */
 public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvancesRecyclerViewAdapter.ViewHolder> implements Filterable {
 
-    // Hier PlaceholderItem mit Advance ersetzen !!!
-
     private final List<Advance> mValues;
     private final List<Advance> FullList;
-
     private Context context;
 
     public MyAdvancesRecyclerViewAdapter(List<Advance> items, Context context) {
@@ -63,42 +60,8 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         int backgroundColor = holder.mItem.getColor();
         if (backgroundColor == 0) {
             // card with two colors
-            Drawable drawable;
             Resources res = context.getResources();
-            switch (holder.mItem.getName()) {
-                case "Engineering":
-                    drawable = ResourcesCompat.getDrawable(res, R.drawable.engineering_background, null);
-                    holder.mNameView.setBackground(drawable);
-                    break;
-                case "Mathematics":
-                    drawable = ResourcesCompat.getDrawable(res, R.drawable.mathematics_background,null);
-                    holder.mNameView.setBackground(drawable);
-                    break;
-                case "Mysticism":
-                    drawable = ResourcesCompat.getDrawable(res, R.drawable.mysticism_background,null);
-                    holder.mNameView.setBackground(drawable);
-                    break;
-                case "Written Record":
-                    drawable = ResourcesCompat.getDrawable(res, R.drawable.written_record_background,null);
-                    holder.mNameView.setBackground(drawable);
-                    break;
-                case "Theocracy":
-                    drawable = ResourcesCompat.getDrawable(res, R.drawable.theocracy_background,null);
-                    holder.mNameView.setBackground(drawable);
-                    break;
-                case "Literacy":
-                    drawable = ResourcesCompat.getDrawable(res, R.drawable.literacy_background,null);
-                    holder.mNameView.setBackground(drawable);
-                    break;
-                case "Wonder of the World":
-                    drawable = ResourcesCompat.getDrawable(res, R.drawable.wonders_of_the_world_background,null);
-                    holder.mNameView.setBackground(drawable);
-                    break;
-                case "Philosophy":
-                    drawable = ResourcesCompat.getDrawable(res, R.drawable.philosophy_background,null);
-                    holder.mNameView.setBackground(drawable);
-                    break;
-            }
+            mixedBackground(holder, res);
         } else {
             holder.mNameView.setBackgroundResource(backgroundColor);
         }
@@ -112,6 +75,37 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
             Log.v("INFO","card clicked");
             Log.v("INFO", holder.mNameView.getText().toString());
         });
+    }
+
+    private void mixedBackground(ViewHolder holder, Resources res) {
+        Drawable drawable = null;
+        switch (holder.mItem.getName()) {
+            case "Engineering":
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.engineering_background, null);
+                break;
+            case "Mathematics":
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.mathematics_background,null);
+                break;
+            case "Mysticism":
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.mysticism_background,null);
+                break;
+            case "Written Record":
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.written_record_background,null);
+                break;
+            case "Theocracy":
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.theocracy_background,null);
+                break;
+            case "Literacy":
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.literacy_background,null);
+                break;
+            case "Wonder of the World":
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.wonders_of_the_world_background,null);
+                break;
+            case "Philosophy":
+                drawable = ResourcesCompat.getDrawable(res, R.drawable.philosophy_background,null);
+                break;
+        }
+        holder.mNameView.setBackground(drawable);
     }
 
     @Override
@@ -142,6 +136,7 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
             results.values = filteredList;
             return results;
         }
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             mValues.clear();

@@ -1,6 +1,7 @@
 package org.tesira.mturba.civichelper;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +35,8 @@ import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,11 +46,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 /**
  * A fragment representing a list of Items.
  */
-public class AdvancesFragment extends Fragment {
+public class AdvancesFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String FILENAME = "advances.xml";
     public List<Advance> advances;
     private MyAdvancesRecyclerViewAdapter adapter;
+    private SharedPreferences prefs;
+    private String sortingOrder;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -72,7 +79,10 @@ public class AdvancesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        sortingOrder = prefs.getString("sort", "name");
+        Log.v("PREF", "onCreate: "+sortingOrder);
+        prefs.registerOnSharedPreferenceChangeListener(this);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -84,6 +94,19 @@ public class AdvancesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_advances_list, container, false);
         advances = new ArrayList<>();
         importAdvances(advances, FILENAME);
+
+        // sorting the cards
+        switch (sortingOrder) {
+            case "price" :
+//                Collections.sort(advances);
+                advances.sort(Comparator.comparing(Advance::getPrice).thenComparing(Advance::getName));
+                break;
+            case "name" :
+            default :
+//                Collections.sort(advances, (lhs, rhs) -> lhs.getName().compareTo(rhs.getName()));
+                advances.sort(Comparator.comparing(Advance::getName));
+                break;
+        }
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -196,6 +219,19 @@ public class AdvancesFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+        switch (key){
+            case "sort" :
+                sortingOrder = sharedPreferences.getString("sort", "name");
+            case "name" :
+            default:
+                break;
+        }
+        Log.v("PREF", "onSharedPrefChanged: "+sortingOrder);
     }
 
 }

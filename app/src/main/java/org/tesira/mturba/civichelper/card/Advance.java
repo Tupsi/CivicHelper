@@ -1,10 +1,12 @@
 package org.tesira.mturba.civichelper.card;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 import org.tesira.mturba.civichelper.MainActivity;
 import org.tesira.mturba.civichelper.R;
@@ -107,7 +109,7 @@ public class Advance {
         int rgb = 0;
         if (groups.size() == 1) {
             Log.v("Color", groups.get(0).getName());
-            rgb = MainActivity.colorStringToColor(groups.get(0).getName());
+            rgb = Advance.colorStringToColor(groups.get(0).getName());
             return rgb;
         } else {
             // hier noch Mischen der zwei Farben
@@ -119,5 +121,22 @@ public class Advance {
     @Override
     public String toString() {
         return name;
+    }
+
+    public static int colorStringToColor(String colorString) {
+        switch (colorString) {
+            case "Crafts":
+                return R.color.crafts;
+            case "Religion":
+                return R.color.religion;
+            case "Civic":
+                return R.color.civic;
+            case "Science":
+                return R.color.science;
+            case "Arts":
+                return R.color.arts;
+            default:
+                return R.color.purple_700;
+        }
     }
 }

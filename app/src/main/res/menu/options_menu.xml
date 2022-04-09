@@ -5,10 +5,13 @@
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_black_24dp"
-        android:title="@string/search"
+        android:title="@string/item_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
     <item
+        android:id="@+id/settingsFragment"
+        android:title="@string/item_preferences" />
+    <item
         android:id="@+id/aboutFragment"
-        android:title="@string/about" />
+        android:title="@string/item_about" />
 </menu>

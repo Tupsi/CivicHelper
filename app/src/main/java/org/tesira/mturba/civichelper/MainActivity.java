@@ -14,8 +14,8 @@ import org.tesira.mturba.civichelper.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
-    private @NonNull ActivityMainBinding binding;
-    private @NonNull DrawerLayout drawerLayout;
+    private ActivityMainBinding binding;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,20 +33,20 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.myNavHostFragment);
         return NavigationUI.navigateUp(navController, drawerLayout);
     }
-    public static int colorStringToColor(String colorString) {
-        switch (colorString) {
-            case "Crafts":
-                return R.color.crafts;
-            case "Religion":
-                return R.color.religion;
-            case "Civic":
-                return R.color.civic;
-            case "Science":
-                return R.color.science;
-            case "Arts":
-                return R.color.arts;
-            default:
-                return R.color.purple_700;
-        }
-    }
+//    public static int colorStringToColor(String colorString) {
+//        switch (colorString) {
+//            case "Crafts":
+//                return R.color.crafts;
+//            case "Religion":
+//                return R.color.religion;
+//            case "Civic":
+//                return R.color.civic;
+//            case "Science":
+//                return R.color.science;
+//            case "Arts":
+//                return R.color.arts;
+//            default:
+//                return R.color.purple_700;
+//        }
+//    }
 }

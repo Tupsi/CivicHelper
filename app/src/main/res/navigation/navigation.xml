@@ -13,15 +13,22 @@
         <action
             android:id="@+id/action_homeFragment_to_advancesFragment"
             app:destination="@id/advancesFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/advancesFragment"
         android:name="org.tesira.mturba.civichelper.AdvancesFragment"
-        android:label="@string/advances_name"
+        android:label="@string/item_advances"
         tools:layout="@layout/fragment_advances_list" />
     <fragment
         android:id="@+id/aboutFragment"
         android:name="org.tesira.mturba.civichelper.AboutFragment"
-        android:label="@string/about"
+        android:label="@string/item_about"
         tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="org.tesira.mturba.civichelper.SettingsFragment"
+        android:label="@string/item_preferences" />
 </navigation>

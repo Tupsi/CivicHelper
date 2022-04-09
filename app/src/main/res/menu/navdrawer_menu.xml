@@ -5,9 +5,14 @@
     <item
         android:id="@+id/advancesFragment"
         android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="@string/advances_name" />
+        android:title="@string/item_advances" />
+    <item
+        android:id="@+id/settingsFragment"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/item_preferences"
+        />
     <item
         android:id="@+id/aboutFragment"
         android:icon="@android:drawable/ic_dialog_info"
-        android:title="@string/about" />
+        android:title="@string/item_about" />
 </menu>
