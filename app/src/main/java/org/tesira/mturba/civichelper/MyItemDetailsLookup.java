@@ -1,0 +1,31 @@
+package org.tesira.mturba.civichelper;
+
+import android.view.MotionEvent;
+import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.selection.ItemDetailsLookup;
+import androidx.recyclerview.widget.RecyclerView;
+
+public class MyItemDetailsLookup extends ItemDetailsLookup<Long> {
+
+    private final RecyclerView mRecylerView;
+
+    public MyItemDetailsLookup(RecyclerView mRecylerView) {
+        this.mRecylerView = mRecylerView;
+    }
+
+    @Nullable
+    @Override
+    public ItemDetails<Long> getItemDetails(@NonNull MotionEvent e) {
+        View view = mRecylerView.findChildViewUnder(e.getX(), e.getY());
+        if (view != null) {
+            RecyclerView.ViewHolder viewHolder = mRecylerView.getChildViewHolder(view);
+            if (viewHolder instanceof MyAdvancesRecyclerViewAdapter.ViewHolder) {
+                return ((MyAdvancesRecyclerViewAdapter.ViewHolder) viewHolder).getItemDetails();
+            }
+        }
+        return null;
+    }
+}

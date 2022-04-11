@@ -14,6 +14,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.selection.SelectionPredicates;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StableIdKeyProvider;
+import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,6 +69,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     protected RecyclerView mRecyclerView;
     protected EditText mEditText;
     protected TextView mTextView;
+    private SelectionTracker<Long> tracker;
 
 
     // TODO: Customize parameter argument names
@@ -144,6 +149,16 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         }
         adapter = new MyAdvancesRecyclerViewAdapter(advances, context);
         mRecyclerView.setAdapter(adapter);
+
+        tracker = new SelectionTracker.Builder<Long>(
+                "my-selection-id",
+                mRecyclerView,
+                new StableIdKeyProvider(mRecyclerView),
+                new MyItemDetailsLookup(mRecyclerView),
+                StorageStrategy.createLongStorage())
+                .withSelectionPredicate(SelectionPredicates.createSelectAnything()).build();
+        adapter.setSelectionTracker(tracker);
+
         setHasOptionsMenu(true);
         return rootView;
     }

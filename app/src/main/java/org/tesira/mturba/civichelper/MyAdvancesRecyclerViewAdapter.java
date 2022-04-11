@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.selection.ItemDetailsLookup;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StableIdKeyProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -35,11 +38,23 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
     private final List<Advance> mValues;
     private final List<Advance> FullList;
     private Context context;
+    private SelectionTracker<Long> tracker;
 
     public MyAdvancesRecyclerViewAdapter(List<Advance> items, Context context) {
         mValues = items;
         this.context = context;
         FullList = new ArrayList<>(items);
+        // funktioniert nicht
+        setHasStableIds(true);
+    }
+
+    public void setSelectionTracker(SelectionTracker<Long> tracker) {
+        this.tracker = tracker;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return Integer.toUnsignedLong(position);
     }
 
     @NonNull
@@ -51,7 +66,9 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
+        Advance item = mValues.get(position);
+        holder.mItem = item;
+//        holder.mItem = mValues.get(position);
 //        holder.mIdView.setText(Integer.toString(mValues.get(position).getPrice()));
 //        holder.mIdView.setText(mValues.get(position).id);
 //        holder.mContentView.setText(mValues.get(position).content);
@@ -66,18 +83,24 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
             holder.mNameView.setBackgroundResource(backgroundColor);
         }
 
+        holder.mCardView.setActivated(tracker.isSelected(Integer.toUnsignedLong(position)));
+
         holder.mPriceView.setText(Integer.toString(mValues.get(position).getPrice()));
-//        holder.mPriceView.setBackgroundResource(backgroundColor);
-//        holder.mConstraintView.setBackgroundResource(backgroundColor);
         holder.mCardView.setOnClickListener(v -> {
             // clicked on single card in list
             Toast.makeText(v.getContext(), holder.mNameView.getText().toString() + " clicked!",Toast.LENGTH_LONG).show();
             Log.v("INFO","card clicked");
             Log.v("INFO", holder.mNameView.getText().toString());
+            Log.v("INFO", "LayoutPosition: "+holder.getLayoutPosition());
+            Log.v("INFO", "AbsolutAdapter: "+holder.getAbsoluteAdapterPosition());
+            Log.v("INFO", "AbsolutAdapter: "+holder.getAbsoluteAdapterPosition());
+            Log.v("INFO", "       Adapter: "+holder.getAdapterPosition());
+            Log.v("INFO", "Position      : "+position);
+            Log.v("INFO", "getID   :" + getItemId(position));
         });
     }
 
-    private void mixedBackground(ViewHolder holder, Resources res) {
+    private void mixedBackground(@NonNull ViewHolder holder, Resources res) {
         Drawable drawable = null;
         switch (holder.mItem.getName()) {
             case "Engineering":
@@ -172,13 +195,23 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
             mGroupView = binding.group;
             mCardView = binding.card;
 //            mConstraintView = binding.card;
+
         }
+
+//        public final void bind(Advance item, boolean isActive){
+//            mCardView.setActivated();
+//        }
 
         @NonNull
         @Override
         public String toString() {
             return mNameView.getText().toString();
 //            return super.toString() + " '" + mNameView.getText() + "'";
+        }
+
+        public ItemDetailsLookup.ItemDetails<Long> getItemDetails() {
+            Log.v ("INFO", "ItemDetails :" + getAdapterPosition());
+            return new MyItemDetails(getAdapterPosition(), getItemId());
         }
     }
 }

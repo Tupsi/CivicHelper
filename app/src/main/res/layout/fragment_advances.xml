@@ -15,7 +15,7 @@
         android:id="@+id/card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/cardbackground">
+        android:background="@drawable/item_background">
 
         <TextView
             android:id="@+id/name"
