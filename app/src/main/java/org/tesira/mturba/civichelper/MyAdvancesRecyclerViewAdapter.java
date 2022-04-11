@@ -44,7 +44,6 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         mValues = items;
         this.context = context;
         FullList = new ArrayList<>(items);
-        // funktioniert nicht
         setHasStableIds(true);
     }
 

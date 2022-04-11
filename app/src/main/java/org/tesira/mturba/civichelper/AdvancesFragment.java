@@ -6,13 +6,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.selection.SelectionPredicates;
 import androidx.recyclerview.selection.SelectionTracker;
@@ -23,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,7 +30,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.tesira.mturba.civichelper.card.Advance;
 import org.w3c.dom.Document;
@@ -45,10 +40,9 @@ import org.w3c.dom.NodeList;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -62,13 +56,14 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private static final String MONEY = "money";
     private static final String MONEY_LEFT = "moneyLeft";
     private static final String FILENAME = "advances.xml";
+    // arraylist of all civilization cards
     public List<Advance> advances;
     private MyAdvancesRecyclerViewAdapter adapter;
     private SharedPreferences prefs;
     private String sortingOrder;
     protected RecyclerView mRecyclerView;
-    protected EditText mEditText;
-    protected TextView mTextView;
+    protected EditText mTreasureInput;
+    protected TextView mBuyPrice;
     private SelectionTracker<Long> tracker;
 
 
@@ -110,8 +105,8 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_advances_list, container, false);
-        mEditText = rootView.findViewById(R.id.money);
-        mTextView = rootView.findViewById(R.id.moneyleft);
+        mTreasureInput = rootView.findViewById(R.id.money);
+        mBuyPrice = rootView.findViewById(R.id.moneyleft);
         advances = new ArrayList<>();
 
         if (savedInstanceState != null) {
@@ -119,9 +114,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             // Restore saved layout manager type.
             advances = (ArrayList) savedInstanceState.getSerializable(ADVANCES_LIST);
             int money = savedInstanceState.getInt(MONEY);
-            mEditText.setText(money);
+            mTreasureInput.setText(money);
             money = savedInstanceState.getInt(MONEY_LEFT);
-            mTextView.setText(money);
+            mBuyPrice.setText(money);
         } else {
             loadVars();
             importAdvances(advances, FILENAME);
@@ -159,6 +154,48 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 .withSelectionPredicate(SelectionPredicates.createSelectAnything()).build();
         adapter.setSelectionTracker(tracker);
 
+        tracker.addObserver(new SelectionTracker.SelectionObserver<Long>() {
+            @Override
+            public void onItemStateChanged(@NonNull Long key, boolean selected) {
+                super.onItemStateChanged(key, selected);
+                Log.v("INFO", "onItemStateChanged : " + key + " : " + selected);
+            }
+
+            @Override
+            public void onSelectionRefresh() {
+                super.onSelectionRefresh();
+            }
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onSelectionChanged() {
+                super.onSelectionChanged();
+                Iterator<Long> it = tracker.getSelection().iterator();
+                int total = 0;
+                int treasure = Integer.parseInt(mTreasureInput.getText().toString());
+                while (it.hasNext()) {
+                    Long id = it.next();
+                    int idx = Math.toIntExact(id);
+                    int currentPrice = advances.get(idx).getPrice();
+                    if (total+currentPrice <= treasure) {
+                        total += currentPrice;
+                        Log.v("INFO", "Selected :" + id);
+                        Log.v("INFO", advances.get(Math.toIntExact(id)).getName());
+                    }
+                    else {
+                        // this crashes
+                       tracker.deselect(id);
+                    }
+                }
+                Log.v("INFO", "Total price :" + total);
+                mBuyPrice.setText(""+total);
+            }
+
+            @Override
+            public void onSelectionRestored() {
+                super.onSelectionRestored();
+            }
+        });
         setHasOptionsMenu(true);
         return rootView;
     }
@@ -264,9 +301,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         Log.v("save", "saving states");
         // save stuff
         savedInstanceState.putSerializable(ADVANCES_LIST, (Serializable) advances);
-        int money = Integer.parseInt(mEditText.getText().toString());
+        int money = Integer.parseInt(mTreasureInput.getText().toString());
         savedInstanceState.putInt(MONEY, money);
-        int moneyleft = Integer.parseInt(mTextView.getText().toString());
+        int moneyleft = Integer.parseInt(mBuyPrice.getText().toString());
         savedInstanceState.putInt(MONEY_LEFT, moneyleft);
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -299,10 +336,10 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
 
     public void saveVars() {
         SharedPreferences.Editor editor = prefs.edit();
-        if (!TextUtils.isEmpty(mEditText.getText())) {
-            int money = Integer.parseInt(mEditText.getText().toString());
+        if (!TextUtils.isEmpty(mTreasureInput.getText())) {
+            int money = Integer.parseInt(mTreasureInput.getText().toString());
             editor.putInt(MONEY, money);
-            money = Integer.parseInt(mTextView.getText().toString());
+            money = Integer.parseInt(mBuyPrice.getText().toString());
             editor.putInt(MONEY_LEFT, money);
             editor.apply();
         }
@@ -310,8 +347,8 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     @SuppressLint("SetTextI18n")
     public void loadVars() {
         int money = prefs.getInt(MONEY,0);
-        mEditText.setText(""+money);
-        mTextView.setText(""+prefs.getInt(MONEY_LEFT,money));
+        mTreasureInput.setText(""+money);
+        mBuyPrice.setText(""+prefs.getInt(MONEY_LEFT,money));
     }
 
 }
