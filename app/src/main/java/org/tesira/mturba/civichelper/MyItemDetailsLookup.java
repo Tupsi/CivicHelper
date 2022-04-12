@@ -10,18 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MyItemDetailsLookup extends ItemDetailsLookup<Long> {
 
-    private final RecyclerView mRecylerView;
+    private final RecyclerView mRecyclerView;
 
-    public MyItemDetailsLookup(RecyclerView mRecylerView) {
-        this.mRecylerView = mRecylerView;
+    public MyItemDetailsLookup(RecyclerView mRecyclerView) {
+        this.mRecyclerView = mRecyclerView;
     }
 
     @Nullable
     @Override
     public ItemDetails<Long> getItemDetails(@NonNull MotionEvent e) {
-        View view = mRecylerView.findChildViewUnder(e.getX(), e.getY());
+        View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
         if (view != null) {
-            RecyclerView.ViewHolder viewHolder = mRecylerView.getChildViewHolder(view);
+            RecyclerView.ViewHolder viewHolder = mRecyclerView.getChildViewHolder(view);
             if (viewHolder instanceof MyAdvancesRecyclerViewAdapter.ViewHolder) {
                 return ((MyAdvancesRecyclerViewAdapter.ViewHolder) viewHolder).getItemDetails();
             }

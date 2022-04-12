@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.selection.SelectionPredicates;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StableIdKeyProvider;
 import androidx.recyclerview.selection.StorageStrategy;
@@ -53,7 +52,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class AdvancesFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String ADVANCES_LIST = "advancesList";
-    private static final String MONEY = "money";
+    private static final String TREASURE_BOX = "treasure";
     private static final String MONEY_LEFT = "moneyLeft";
     private static final String FILENAME = "advances.xml";
     // arraylist of all civilization cards
@@ -64,7 +63,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     protected RecyclerView mRecyclerView;
     protected EditText mTreasureInput;
     protected TextView mBuyPrice;
-    private SelectionTracker<Long> tracker;
+    private SelectionTracker tracker;
+    private int total;
+    private int treasure;
 
 
     // TODO: Customize parameter argument names
@@ -113,14 +114,15 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             Log.v("save", "rebuild saved state");
             // Restore saved layout manager type.
             advances = (ArrayList) savedInstanceState.getSerializable(ADVANCES_LIST);
-            int money = savedInstanceState.getInt(MONEY);
+            int money = savedInstanceState.getInt(TREASURE_BOX);
             mTreasureInput.setText(money);
-            money = savedInstanceState.getInt(MONEY_LEFT);
-            mBuyPrice.setText(money);
+//            money = savedInstanceState.getInt(MONEY_LEFT);
+//            mBuyPrice.setText(money);
         } else {
             loadVars();
             importAdvances(advances, FILENAME);
         }
+        setTotal(0);
         // sorting the cards
         switch (sortingOrder) {
             case "price" :
@@ -151,7 +153,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 new StableIdKeyProvider(mRecyclerView),
                 new MyItemDetailsLookup(mRecyclerView),
                 StorageStrategy.createLongStorage())
-                .withSelectionPredicate(SelectionPredicates.createSelectAnything()).build();
+               .withSelectionPredicate(new MySelectionPredicate<>(this, advances)).build();
         adapter.setSelectionTracker(tracker);
 
         tracker.addObserver(new SelectionTracker.SelectionObserver<Long>() {
@@ -166,29 +168,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 super.onSelectionRefresh();
             }
 
-            @SuppressLint("SetTextI18n")
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
-                Iterator<Long> it = tracker.getSelection().iterator();
-                int total = 0;
-                int treasure = Integer.parseInt(mTreasureInput.getText().toString());
-                while (it.hasNext()) {
-                    Long id = it.next();
-                    int idx = Math.toIntExact(id);
-                    int currentPrice = advances.get(idx).getPrice();
-                    if (total+currentPrice <= treasure) {
-                        total += currentPrice;
-                        Log.v("INFO", "Selected :" + id);
-                        Log.v("INFO", advances.get(Math.toIntExact(id)).getName());
-                    }
-                    else {
-                        // this crashes
-                       tracker.deselect(id);
-                    }
-                }
-                Log.v("INFO", "Total price :" + total);
-                mBuyPrice.setText(""+total);
             }
 
             @Override
@@ -198,6 +180,28 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         });
         setHasOptionsMenu(true);
         return rootView;
+    }
+
+    public int getTreasure() {
+        treasure = Integer.parseInt(mTreasureInput.getText().toString());
+        return treasure;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+        mBuyPrice.setText(""+total);
+    }
+
+    public int calculateTotal() {
+        total = 0;
+        Iterator<Long> it = tracker.getSelection().iterator();
+        while (it.hasNext()) {
+            Long id = it.next();
+            int idx = Math.toIntExact(id);
+            int currentPrice = advances.get(idx).getPrice();
+            total += currentPrice;
+        }
+        return total;
     }
 
     private void importAdvances(List<Advance> advances, String filename) {
@@ -302,7 +306,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         // save stuff
         savedInstanceState.putSerializable(ADVANCES_LIST, (Serializable) advances);
         int money = Integer.parseInt(mTreasureInput.getText().toString());
-        savedInstanceState.putInt(MONEY, money);
+        savedInstanceState.putInt(TREASURE_BOX, money);
         int moneyleft = Integer.parseInt(mBuyPrice.getText().toString());
         savedInstanceState.putInt(MONEY_LEFT, moneyleft);
         super.onSaveInstanceState(savedInstanceState);
@@ -338,17 +342,17 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         SharedPreferences.Editor editor = prefs.edit();
         if (!TextUtils.isEmpty(mTreasureInput.getText())) {
             int money = Integer.parseInt(mTreasureInput.getText().toString());
-            editor.putInt(MONEY, money);
-            money = Integer.parseInt(mBuyPrice.getText().toString());
-            editor.putInt(MONEY_LEFT, money);
+            editor.putInt(TREASURE_BOX, money);
+//            int money = Integer.parseInt(mBuyPrice.getText().toString());
+//            editor.putInt(MONEY_LEFT, money);
             editor.apply();
         }
     }
     @SuppressLint("SetTextI18n")
     public void loadVars() {
-        int money = prefs.getInt(MONEY,0);
+        int money = prefs.getInt(TREASURE_BOX,0);
         mTreasureInput.setText(""+money);
-        mBuyPrice.setText(""+prefs.getInt(MONEY_LEFT,money));
+//        mBuyPrice.setText(""+prefs.getInt(MONEY_LEFT,money));
     }
 
 }
