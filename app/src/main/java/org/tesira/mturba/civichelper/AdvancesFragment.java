@@ -71,7 +71,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
-    private int mColumnCount = 1;
+    private int mColumnCount = 2;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -114,15 +114,17 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             Log.v("save", "rebuild saved state");
             // Restore saved layout manager type.
             advances = (ArrayList) savedInstanceState.getSerializable(ADVANCES_LIST);
-            int money = savedInstanceState.getInt(TREASURE_BOX);
-            mTreasureInput.setText(money);
+            treasure = savedInstanceState.getInt(TREASURE_BOX);
+            mTreasureInput.setText(treasure);
 //            money = savedInstanceState.getInt(MONEY_LEFT);
 //            mBuyPrice.setText(money);
         } else {
+            Log.v("treasure", "loadvars");
             loadVars();
             importAdvances(advances, FILENAME);
         }
         setTotal(0);
+
         // sorting the cards
         switch (sortingOrder) {
             case "price" :
@@ -145,8 +147,8 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
         adapter = new MyAdvancesRecyclerViewAdapter(advances, context);
+        adapter.setRemainingTreasure(treasure);
         mRecyclerView.setAdapter(adapter);
-
         tracker = new SelectionTracker.Builder<Long>(
                 "my-selection-id",
                 mRecyclerView,
@@ -155,16 +157,17 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 StorageStrategy.createLongStorage())
                .withSelectionPredicate(new MySelectionPredicate<>(this, advances)).build();
         adapter.setSelectionTracker(tracker);
-
         tracker.addObserver(new SelectionTracker.SelectionObserver<Long>() {
             @Override
             public void onItemStateChanged(@NonNull Long key, boolean selected) {
                 super.onItemStateChanged(key, selected);
-//                Log.v("INFO", "onItemStateChanged : " + key + " : " + selected);
+                Log.v("TRACKER", "onItemStateChanged : " + key + " : " + selected);
                 // item got deselected, need to redo total selected
                 if (!selected) {
                     setTotal(calculateTotal());
                 }
+                int rest = treasure - total;
+                adapter.setRemainingTreasure(rest);
             }
 
             @Override
@@ -175,6 +178,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
+                Log.v("TRACKER", "onSelectionChanged fired");
             }
 
             @Override
@@ -188,6 +192,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
 
     public int getTreasure() {
         treasure = Integer.parseInt(mTreasureInput.getText().toString());
+        Log.v("treasure", "getTreasure :" + treasure);
         return treasure;
     }
 
@@ -347,16 +352,13 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         if (!TextUtils.isEmpty(mTreasureInput.getText())) {
             int money = Integer.parseInt(mTreasureInput.getText().toString());
             editor.putInt(TREASURE_BOX, money);
-//            int money = Integer.parseInt(mBuyPrice.getText().toString());
-//            editor.putInt(MONEY_LEFT, money);
             editor.apply();
         }
     }
     @SuppressLint("SetTextI18n")
     public void loadVars() {
-        int money = prefs.getInt(TREASURE_BOX,0);
-        mTreasureInput.setText(""+money);
-//        mBuyPrice.setText(""+prefs.getInt(MONEY_LEFT,money));
+        treasure = prefs.getInt(TREASURE_BOX,0);
+        mTreasureInput.setText(""+treasure);
     }
 
 }

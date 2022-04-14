@@ -1,12 +1,9 @@
 package org.tesira.mturba.civichelper;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.Group;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.selection.SelectionTracker;
-import androidx.recyclerview.selection.StableIdKeyProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -37,14 +34,20 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
 
     private final List<Advance> mValues;
     private final List<Advance> FullList;
-    private Context context;
+    private final Context context;
     private SelectionTracker<Long> tracker;
+    private int remainingTreasure;
 
     public MyAdvancesRecyclerViewAdapter(List<Advance> items, Context context) {
         mValues = items;
         this.context = context;
         FullList = new ArrayList<>(items);
         setHasStableIds(true);
+    }
+
+    public void setRemainingTreasure(int rest) {
+        Log.v("VIEWHOLDER", "settings remaining treasure to : " + rest);
+        this.remainingTreasure = rest;
     }
 
     public void setSelectionTracker(SelectionTracker<Long> tracker) {
@@ -67,11 +70,6 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Advance item = mValues.get(position);
         holder.mItem = item;
-//        holder.mItem = mValues.get(position);
-//        holder.mIdView.setText(Integer.toString(mValues.get(position).getPrice()));
-//        holder.mIdView.setText(mValues.get(position).id);
-//        holder.mContentView.setText(mValues.get(position).content);
-//        holder.mContentView.setText(mValues.get(position).getName());
         holder.mNameView.setText(mValues.get(position).getName());
         int backgroundColor = holder.mItem.getColor();
         if (backgroundColor == 0) {
@@ -81,22 +79,24 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         } else {
             holder.mNameView.setBackgroundResource(backgroundColor);
         }
-
-        holder.mCardView.setActivated(tracker.isSelected(Integer.toUnsignedLong(position)));
-
+        boolean isActivated = tracker.isSelected(Integer.toUnsignedLong(position));
+        holder.mCardView.setActivated(isActivated);
         holder.mPriceView.setText(Integer.toString(mValues.get(position).getPrice()));
         holder.mCardView.setOnClickListener(v -> {
             // clicked on single card in list
             Toast.makeText(v.getContext(), holder.mNameView.getText().toString() + " clicked!",Toast.LENGTH_LONG).show();
-            Log.v("INFO","card clicked");
-            Log.v("INFO", holder.mNameView.getText().toString());
-            Log.v("INFO", "LayoutPosition: "+holder.getLayoutPosition());
-            Log.v("INFO", "AbsolutAdapter: "+holder.getAbsoluteAdapterPosition());
-            Log.v("INFO", "AbsolutAdapter: "+holder.getAbsoluteAdapterPosition());
-            Log.v("INFO", "       Adapter: "+holder.getAdapterPosition());
-            Log.v("INFO", "Position      : "+position);
-            Log.v("INFO", "getID   :" + getItemId(position));
         });
+        int price = mValues.get(position).getPrice();
+        Log.v("VIEWHOLDER", "" + price + " : " + remainingTreasure);
+        if (!isActivated && remainingTreasure < price) {
+            holder.mCardView.setBackgroundResource(R.color.dark_grey);
+            holder.mCardView.setAlpha(0.5F);
+//            holder.mPriceView.setBackgroundResource(R.drawable.price_background_expensive);
+        } else {
+            holder.mCardView.setBackgroundResource(R.drawable.item_background);
+            holder.mCardView.setAlpha(1F);
+//            holder.mPriceView.setBackgroundResource(R.drawable.price_background);
+        }
     }
 
     private void mixedBackground(@NonNull ViewHolder holder, Resources res) {
@@ -171,6 +171,7 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
 
         // hier eventuell anpassen was angezeigt werden soll aus dem Advance Objekt!
 //        public View mView;
+        // Constraint Layout whole row
         public View mCardView;
 //        public final TextView mIdView;
 //        public final TextView mContentView;
@@ -185,13 +186,13 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
             super(binding.getRoot());
             // needed for OnClickListener
 //            mView = binding.getRoot();
-            // das sind die R.id aus fragements_advances textviews
+            // das sind die R.id aus item_row.xml textviews
             // hier muessen mehr dazu falls mehr dateils angezeigt werden soll
             mNameView = binding.name;
             mPriceView = binding.price;
 //            mGroupView = binding.group;
             mCardView = binding.card;
-
+            Log.v("VIEWHOLDER", "inside viewholder");
         }
 
         @NonNull

@@ -13,6 +13,7 @@
     <color name="crafts">#ff5722</color>
     <color name="science">#64dd17</color>
     <color name="religion">#ffff00</color>
-    <color name="grey">#e0e0e0</color>
-
+    <color name="grey">#fafafa</color>
+    <color name="dark_grey">#88676767</color>
+    <color name="red">#6f0000</color>
 </resources>
