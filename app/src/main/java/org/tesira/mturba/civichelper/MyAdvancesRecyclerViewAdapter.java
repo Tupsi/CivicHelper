@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import org.tesira.mturba.civichelper.card.Advance;
 import org.tesira.mturba.civichelper.placeholder.PlaceholderContent.PlaceholderItem;
-import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
+import org.tesira.mturba.civichelper.databinding.ItemRowBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +59,7 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(FragmentAdvancesBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        return new ViewHolder(ItemRowBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @SuppressLint("SetTextI18n")
@@ -181,7 +181,7 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
 
         public Advance mItem;
 
-        public ViewHolder(FragmentAdvancesBinding binding) {
+        public ViewHolder(ItemRowBinding binding) {
             super(binding.getRoot());
             // needed for OnClickListener
 //            mView = binding.getRoot();

@@ -21,7 +21,7 @@
         android:id="@+id/advancesFragment"
         android:name="org.tesira.mturba.civichelper.AdvancesFragment"
         android:label="@string/item_advances"
-        tools:layout="@layout/fragment_advances_list" />
+        tools:layout="@layout/fragment_advances" />
     <fragment
         android:id="@+id/aboutFragment"
         android:name="org.tesira.mturba.civichelper.AboutFragment"

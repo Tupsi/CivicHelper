@@ -105,7 +105,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_advances_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_advances, container, false);
         mTreasureInput = rootView.findViewById(R.id.money);
         mBuyPrice = rootView.findViewById(R.id.moneyleft);
         advances = new ArrayList<>();
