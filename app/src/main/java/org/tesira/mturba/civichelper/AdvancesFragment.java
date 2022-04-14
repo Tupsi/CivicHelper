@@ -160,7 +160,11 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             @Override
             public void onItemStateChanged(@NonNull Long key, boolean selected) {
                 super.onItemStateChanged(key, selected);
-                Log.v("INFO", "onItemStateChanged : " + key + " : " + selected);
+//                Log.v("INFO", "onItemStateChanged : " + key + " : " + selected);
+                // item got deselected, need to redo total selected
+                if (!selected) {
+                    setTotal(calculateTotal());
+                }
             }
 
             @Override

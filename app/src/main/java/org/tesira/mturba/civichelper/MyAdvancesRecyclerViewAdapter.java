@@ -176,7 +176,7 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
 //        public final TextView mContentView;
         public final TextView mNameView;
         public final TextView mPriceView;
-        public final Group mGroupView;
+//        public final Group mGroupView;
 //        public final ConstraintLayout mConstraintView;
 
         public Advance mItem;
@@ -187,19 +187,12 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
 //            mView = binding.getRoot();
             // das sind die R.id aus fragements_advances textviews
             // hier muessen mehr dazu falls mehr dateils angezeigt werden soll
-//            mIdView = binding.itemNumber;
-//            mContentView = binding.content;
             mNameView = binding.name;
             mPriceView = binding.price;
-            mGroupView = binding.group;
+//            mGroupView = binding.group;
             mCardView = binding.card;
-//            mConstraintView = binding.card;
 
         }
-
-//        public final void bind(Advance item, boolean isActive){
-//            mCardView.setActivated();
-//        }
 
         @NonNull
         @Override
