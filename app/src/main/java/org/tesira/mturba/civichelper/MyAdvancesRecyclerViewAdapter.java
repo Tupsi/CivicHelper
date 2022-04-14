@@ -202,8 +202,10 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         }
 
         public ItemDetailsLookup.ItemDetails<Long> getItemDetails() {
-            Log.v ("INFO", "ItemDetails :" + getAdapterPosition());
-            return new MyItemDetails(getAdapterPosition(), getItemId());
+//            Log.v ("INFOI", "ItemDetails getAdapter        :" + getAdapterPosition());
+//            Log.v ("INFOI", "ItemDetails getBindingAdapter :" + getBindingAdapterPosition());
+//            Log.v ("INFOI", "ItemDetails getBindingAdapter :" + getAbsoluteAdapterPosition());
+            return new MyItemDetails(getBindingAdapterPosition(), getItemId());
         }
     }
 }
