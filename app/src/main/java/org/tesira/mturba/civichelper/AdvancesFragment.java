@@ -93,6 +93,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+//            tracker.onRestoreInstanceState(savedInstanceState);
+        }
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         sortingOrder = prefs.getString("sort", "name");
         Log.v("PREF", "onCreate: "+sortingOrder);
@@ -111,18 +114,16 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         advances = new ArrayList<>();
 
         if (savedInstanceState != null) {
-            Log.v("save", "rebuild saved state");
+            Log.v("save", "savedInstanceState YES/if");
             // Restore saved layout manager type.
-            advances = (ArrayList) savedInstanceState.getSerializable(ADVANCES_LIST);
-            treasure = savedInstanceState.getInt(TREASURE_BOX);
-            mTreasureInput.setText(treasure);
-//            money = savedInstanceState.getInt(MONEY_LEFT);
-//            mBuyPrice.setText(money);
+//            advances = (ArrayList) savedInstanceState.getSerializable(ADVANCES_LIST);
+//            treasure = savedInstanceState.getInt(TREASURE_BOX);
+//            mTreasureInput.setText(treasure);
         } else {
-            Log.v("treasure", "loadvars");
-            loadVars();
-            importAdvances(advances, FILENAME);
+            Log.v("save", "savedInstanceState NO/else");
         }
+        loadVars();
+        importAdvances(advances, FILENAME);
         setTotal(0);
 
         // sorting the cards
@@ -187,6 +188,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             }
         });
         setHasOptionsMenu(true);
+        if (savedInstanceState != null) {
+            tracker.onRestoreInstanceState(savedInstanceState);
+        }
         return rootView;
     }
 
@@ -312,13 +316,14 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         Log.v("save", "saving states");
+        super.onSaveInstanceState(savedInstanceState);
+        tracker.onSaveInstanceState(savedInstanceState);
         // save stuff
-        savedInstanceState.putSerializable(ADVANCES_LIST, (Serializable) advances);
+//        savedInstanceState.putSerializable(ADVANCES_LIST, (Serializable) advances);
         int money = Integer.parseInt(mTreasureInput.getText().toString());
         savedInstanceState.putInt(TREASURE_BOX, money);
         int moneyleft = Integer.parseInt(mBuyPrice.getText().toString());
         savedInstanceState.putInt(MONEY_LEFT, moneyleft);
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     public void onStart() {
