@@ -139,4 +139,17 @@ public class Advance {
                 return R.color.purple_700;
         }
     }
+
+    public int getIndexFromName(List<Advance> list, String name) {
+        int i = 0;
+        for (Advance adv: list) {
+            if (adv.getName().equals(name)) {
+                return i;
+            }
+            else {
+                i++;
+            }
+        }
+        return -1;
+    }
 }

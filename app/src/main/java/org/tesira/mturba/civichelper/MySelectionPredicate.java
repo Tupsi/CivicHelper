@@ -9,21 +9,23 @@ import org.tesira.mturba.civichelper.card.Advance;
 
 import java.util.List;
 
-public class MySelectionPredicate<Long> extends SelectionTracker.SelectionPredicate<Long> {
+public class MySelectionPredicate<String> extends SelectionTracker.SelectionPredicate<String> {
 
     private final List<Advance> myList;
     private AdvancesFragment fragment;
     private Integer treasure, total;
 
     public MySelectionPredicate(AdvancesFragment advancesFragment, List<Advance> myList) {
+        super();
         this.fragment = advancesFragment;
         this.myList = myList;
     }
 
     @Override
-    public boolean canSetStateForKey(@NonNull Long key, boolean nextState) {
+    public boolean canSetStateForKey(@NonNull String key, boolean nextState) {
         if (!nextState) return true;
-        int idx = Math.toIntExact((java.lang.Long) key);
+        int idx = myList.get(0).getIndexFromName(myList, (java.lang.String) key);
+//        int idx = Math.toIntExact((java.lang.Long) key);
         int current = myList.get(idx).getPrice();
         treasure = fragment.getTreasure();
         total = fragment.calculateTotal();

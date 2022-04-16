@@ -11,8 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
-import androidx.recyclerview.selection.StableIdKeyProvider;
 import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,7 +37,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -63,7 +62,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     protected RecyclerView mRecyclerView;
     protected EditText mTreasureInput;
     protected TextView mBuyPrice;
-    private SelectionTracker tracker;
+    private SelectionTracker<String> tracker;
     private int total;
     private int treasure;
 
@@ -93,9 +92,6 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-//            tracker.onRestoreInstanceState(savedInstanceState);
-        }
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         sortingOrder = prefs.getString("sort", "name");
         Log.v("PREF", "onCreate: "+sortingOrder);
@@ -150,17 +146,19 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         adapter = new MyAdvancesRecyclerViewAdapter(advances, context);
         adapter.setRemainingTreasure(treasure);
         mRecyclerView.setAdapter(adapter);
-        tracker = new SelectionTracker.Builder<Long>(
+        tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
                 mRecyclerView,
-                new StableIdKeyProvider(mRecyclerView),
+                new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, advances, adapter),
+//                new StableIdKeyProvider(mRecyclerView),
                 new MyItemDetailsLookup(mRecyclerView),
-                StorageStrategy.createLongStorage())
+                StorageStrategy.createStringStorage())
+//                StorageStrategy.createLongStorage())
                .withSelectionPredicate(new MySelectionPredicate<>(this, advances)).build();
         adapter.setSelectionTracker(tracker);
-        tracker.addObserver(new SelectionTracker.SelectionObserver<Long>() {
+        tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
             @Override
-            public void onItemStateChanged(@NonNull Long key, boolean selected) {
+            public void onItemStateChanged(@NonNull String key, boolean selected) {
                 super.onItemStateChanged(key, selected);
                 Log.v("TRACKER", "onItemStateChanged : " + key + " : " + selected);
                 // item got deselected, need to redo total selected
@@ -200,17 +198,17 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         return treasure;
     }
 
+    @SuppressLint("SetTextI18n")
     public void setTotal(int total) {
         this.total = total;
-        mBuyPrice.setText(""+total);
+        // showing not total on screen but remaining
+        mBuyPrice.setText(getString(R.string.remaining_treasure)+(treasure-total));
     }
 
     public int calculateTotal() {
         total = 0;
-        Iterator<Long> it = tracker.getSelection().iterator();
-        while (it.hasNext()) {
-            Long id = it.next();
-            int idx = Math.toIntExact(id);
+        for (String id : tracker.getSelection()) {
+            int idx = advances.get(0).getIndexFromName(advances, id);
             int currentPrice = advances.get(idx).getPrice();
             total += currentPrice;
         }
@@ -314,7 +312,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         Log.v("PREF", "onSharedPrefChanged: "+sortingOrder);
     }
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         Log.v("save", "saving states");
         super.onSaveInstanceState(savedInstanceState);
         tracker.onSaveInstanceState(savedInstanceState);

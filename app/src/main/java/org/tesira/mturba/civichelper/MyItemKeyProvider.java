@@ -10,12 +10,12 @@ import org.tesira.mturba.civichelper.card.Advance;
 
 import java.util.List;
 
-public class MyItemKeyProvider extends ItemKeyProvider<String> {
+public class MyItemKeyProvider<S> extends ItemKeyProvider<String> {
 
     private final List<Advance> itemList;
-    private final Adapter adapter;
+    private final MyAdvancesRecyclerViewAdapter adapter;
 
-    public MyItemKeyProvider(int scope, List<Advance> itemList, Adapter adapter) {
+    public MyItemKeyProvider(int scope, List<Advance> itemList, MyAdvancesRecyclerViewAdapter adapter) {
         super(scope);
         this.itemList = itemList;
         this.adapter = adapter;

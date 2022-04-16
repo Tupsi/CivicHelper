@@ -35,14 +35,14 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
     private final List<Advance> mValues;
     private final List<Advance> FullList;
     private final Context context;
-    private SelectionTracker<Long> tracker;
+    private SelectionTracker<String> tracker;
     private int remainingTreasure;
 
     public MyAdvancesRecyclerViewAdapter(List<Advance> items, Context context) {
         mValues = items;
         this.context = context;
         FullList = new ArrayList<>(items);
-        setHasStableIds(true);
+        setHasStableIds(false);
     }
 
     public void setRemainingTreasure(int rest) {
@@ -50,14 +50,14 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         this.remainingTreasure = rest;
     }
 
-    public void setSelectionTracker(SelectionTracker<Long> tracker) {
+    public void setSelectionTracker(SelectionTracker<String> tracker) {
         this.tracker = tracker;
     }
 
-    @Override
-    public long getItemId(int position) {
-        return Integer.toUnsignedLong(position);
-    }
+//    @Override
+//    public String getItemId(int position) {
+//        return mValues.get(position).getName();
+//    }
 
     @NonNull
     @Override
@@ -68,9 +68,9 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Advance item = mValues.get(position);
-        holder.mItem = item;
-        holder.mNameView.setText(mValues.get(position).getName());
+        holder.mItem = mValues.get(position);
+        String name = mValues.get(position).getName();
+        holder.mNameView.setText(name);
         int backgroundColor = holder.mItem.getColor();
         if (backgroundColor == 0) {
             // card with two colors
@@ -79,7 +79,8 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         } else {
             holder.mNameView.setBackgroundResource(backgroundColor);
         }
-        boolean isActivated = tracker.isSelected(Integer.toUnsignedLong(position));
+
+        boolean isActivated = tracker.isSelected(name);
         holder.mCardView.setActivated(isActivated);
         holder.mPriceView.setText(Integer.toString(mValues.get(position).getPrice()));
         holder.mCardView.setOnClickListener(v -> {
@@ -162,7 +163,8 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             mValues.clear();
-            mValues.addAll((ArrayList) results.values);
+            //noinspection unchecked
+            mValues.addAll((ArrayList<Advance>) results.values);
             notifyDataSetChanged();
         }
     };
@@ -202,11 +204,11 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
 //            return super.toString() + " '" + mNameView.getText() + "'";
         }
 
-        public ItemDetailsLookup.ItemDetails<Long> getItemDetails() {
+        public ItemDetailsLookup.ItemDetails<String> getItemDetails() {
 //            Log.v ("INFOI", "ItemDetails getAdapter        :" + getAdapterPosition());
 //            Log.v ("INFOI", "ItemDetails getBindingAdapter :" + getBindingAdapterPosition());
 //            Log.v ("INFOI", "ItemDetails getBindingAdapter :" + getAbsoluteAdapterPosition());
-            return new MyItemDetails(getBindingAdapterPosition(), getItemId());
+            return new MyItemDetails(getBindingAdapterPosition(), mItem.getName());
         }
     }
 }
