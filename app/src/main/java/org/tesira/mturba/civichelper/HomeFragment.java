@@ -27,7 +27,6 @@ import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {

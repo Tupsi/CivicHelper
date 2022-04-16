@@ -6,16 +6,17 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="3dp" >
+    android:layout_margin="3dp">
 
 
     <EditText
-        android:id="@+id/money"
+        android:id="@+id/treasure"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:ems="3"
         android:hint="@string/money"
         android:inputType="numberSigned"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toTopOf="@+id/list"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.051"
@@ -25,9 +26,10 @@
 
     <TextView
         android:id="@+id/moneyleft"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="000"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/list"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -39,9 +41,9 @@
         android:name="org.tesira.mturba.civichelper.AdvancesFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="5dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
@@ -51,6 +53,18 @@
         app:layout_constraintTop_toBottomOf="@+id/moneyleft"
         tools:context=".AdvancesFragment"
         tools:listitem="@layout/item_row" />
+
+    <Button
+        android:id="@+id/btnBuy"
+        android:layout_width="86dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="60dp"
+        android:text="Buy"
+        app:layout_constraintEnd_toStartOf="@+id/moneyleft"
+        app:layout_constraintStart_toEndOf="@+id/treasure"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

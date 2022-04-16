@@ -1,5 +1,7 @@
 package org.tesira.mturba.civichelper;
 
+import static java.lang.Integer.parseInt;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,7 +20,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +35,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.tesira.mturba.civichelper.card.Advance;
+import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,7 +44,6 @@ import org.w3c.dom.NodeList;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -65,29 +69,29 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private SelectionTracker<String> tracker;
     private int total;
     private int treasure;
+    private FragmentAdvancesBinding binding;
 
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
-    private int mColumnCount = 2;
+    private int mColumnCount = 1;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public AdvancesFragment() {
-    }
+//    /**
+//     * Mandatory empty constructor for the fragment manager to instantiate the
+//     * fragment (e.g. upon screen orientation changes).
+//     */
+//    public AdvancesFragment() {
+//    }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static AdvancesFragment newInstance(int columnCount) {
-        AdvancesFragment fragment = new AdvancesFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    @SuppressWarnings("unused")
+//    public static AdvancesFragment newInstance(int columnCount) {
+//        AdvancesFragment fragment = new AdvancesFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(ARG_COLUMN_COUNT, columnCount);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,7 +109,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_advances, container, false);
-        mTreasureInput = rootView.findViewById(R.id.money);
+        mTreasureInput = rootView.findViewById(R.id.treasure);
         mBuyPrice = rootView.findViewById(R.id.moneyleft);
         advances = new ArrayList<>();
 
@@ -189,15 +193,54 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         if (savedInstanceState != null) {
             tracker.onRestoreInstanceState(savedInstanceState);
         }
+
+        mTreasureInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.v("Watcher", "on");
+                updateRemaining();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.v("Watcher", "after");
+            }
+        });
+        mTreasureInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.v("Focus", "" + hasFocus);
+                if (!hasFocus) {
+                    if (treasure < total) {
+                        tracker.clearSelection();
+                    }
+                }
+            }
+        });
         return rootView;
     }
 
     public int getTreasure() {
-        treasure = Integer.parseInt(mTreasureInput.getText().toString());
+        String treasureInput = mTreasureInput.getText().toString();
+        if (treasureInput.isEmpty()) {
+            treasure = 0;
+        } else {
+            treasure = Integer.parseInt(treasureInput);
+        }
+
         Log.v("treasure", "getTreasure :" + treasure);
         return treasure;
     }
 
+    public void updateRemaining() {
+        getTreasure();
+        mBuyPrice.setText(getString(R.string.remaining_treasure)+(treasure-total));
+    }
     @SuppressLint("SetTextI18n")
     public void setTotal(int total) {
         this.total = total;
@@ -240,14 +283,14 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
 //                    advance.setName(element2.getElementsByTagName("name").item(0).getTextContent());
 //                    Log.v("TEST", "Family: " + element2.getElementsByTagName("family").item(0).getTextContent());
                     readElement = element2.getElementsByTagName("family").item(0).getTextContent();
-                    advance.setFamily(Integer.parseInt(readElement));
+                    advance.setFamily(parseInt(readElement));
 //                    advance.setFamily(Integer.parseInt(element2.getElementsByTagName("family").item(0).getTextContent()));
 //                    Log.v("TEST", "VP: " + element2.getElementsByTagName("vp").item(0).getTextContent());
                     readElement = element2.getElementsByTagName("vp").item(0).getTextContent();
-                    advance.setVp(Integer.parseInt(readElement));
+                    advance.setVp(parseInt(readElement));
 //                    advance.setVp(Integer.parseInt(element2.getElementsByTagName("vp").item(0).getTextContent()));
                     readElement = element2.getElementsByTagName("price").item(0).getTextContent();
-                    advance.setPrice(Integer.parseInt(readElement));
+                    advance.setPrice(parseInt(readElement));
 //                    advance.setPrice(Integer.parseInt(element2.getElementsByTagName("price").item(0).getTextContent()));
                     for (int x=0; x<element2.getElementsByTagName("group").getLength();x++) {
 //                        Log.v("TEST", "Group: " + element2.getElementsByTagName("group").item(x).getTextContent());
@@ -255,14 +298,14 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                     }
                     for (int x=0; x<element2.getElementsByTagName("credit").getLength(); x++) {
                         String color = element2.getElementsByTagName("credit").item(x).getAttributes().item(0).getTextContent();
-                        int discount = Integer.parseInt(element2.getElementsByTagName("credit").item(x).getTextContent());
+                        int discount = parseInt(element2.getElementsByTagName("credit").item(x).getTextContent());
 //                        Log.v("Credit","" + color + " : " + discount);
                         advance.addCredits(color, discount);
                     }
 //                    Log.v("Effect #", ""+element2.getElementsByTagName("effect").getLength());
                     for (int x=0; x<element2.getElementsByTagName("effect").getLength(); x++) {
                         String name = element2.getElementsByTagName("effect").item(x).getAttributes().item(0).getTextContent();
-                        int value = Integer.parseInt(element2.getElementsByTagName("effect").item(x).getTextContent());
+                        int value = parseInt(element2.getElementsByTagName("effect").item(x).getTextContent());
 //                        Log.v("Effect","" + name + " : " + value);
                         advance.addEffect(name, value);
                     }
@@ -318,10 +361,10 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         tracker.onSaveInstanceState(savedInstanceState);
         // save stuff
 //        savedInstanceState.putSerializable(ADVANCES_LIST, (Serializable) advances);
-        int money = Integer.parseInt(mTreasureInput.getText().toString());
+        int money = parseInt(mTreasureInput.getText().toString());
         savedInstanceState.putInt(TREASURE_BOX, money);
-        int moneyleft = Integer.parseInt(mBuyPrice.getText().toString());
-        savedInstanceState.putInt(MONEY_LEFT, moneyleft);
+//        int moneyleft = Integer.parseInt(mBuyPrice.getText().toString());
+//        savedInstanceState.putInt(MONEY_LEFT, moneyleft);
     }
 
     public void onStart() {
@@ -353,7 +396,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     public void saveVars() {
         SharedPreferences.Editor editor = prefs.edit();
         if (!TextUtils.isEmpty(mTreasureInput.getText())) {
-            int money = Integer.parseInt(mTreasureInput.getText().toString());
+            int money = parseInt(mTreasureInput.getText().toString());
             editor.putInt(TREASURE_BOX, money);
             editor.apply();
         }
