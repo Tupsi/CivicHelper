@@ -12,5 +12,6 @@
     <string name="item_about">About</string>
     <string name="item_advances">Advances</string>
     <string name="item_search">Search</string>
+    <string name="remaining_treasure">remaining :</string>
 
 </resources>
