@@ -24,8 +24,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
 
+import org.tesira.mturba.civichelper.card.CardColor;
 import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
+
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,6 +39,12 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private static final String PURCHASED = "purchasedAdvances";
+    private SharedPreferences prefs;
+    private int bonusRed;
+    private int bonusGreen;
+    private int bonusBlue;
+    private int bonusYellow;
+    private int bonusOrange;
 
     @Override
     public void onDestroy() {
@@ -46,34 +56,59 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container,false);
-        View view = binding.getRoot();
-        binding.startBtn.setOnClickListener(v -> {
-            onClickButton(v);
-            //            Log.v("Button", "HomeFragment Start Clicked!");
-//            Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_advancesFragment);
-        });
-        binding.resetBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickButton(v);
-            }
-        });
-        Log.v("HomeFragment", "onCreateView");
+        prefs = getContext().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE);
+//        View view = binding.getRoot();
+        binding.startBtn.setOnClickListener(v -> onClickButton(v));
+        binding.resetBtn.setOnClickListener(v -> onClickButton(v));
         setHasOptionsMenu(true);
-        return view;
+        loadBonus();
+        return binding.getRoot();
     }
 
     public void onClickButton(View v) {
-        Log.v("Button", ""+v.getId());
         switch (v.getId()) {
             case R.id.startBtn:
                 Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_advancesFragment);
                 break;
             case R.id.resetBtn:
-                SharedPreferences prefs = getContext().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE);
-                prefs.edit().clear().commit();
+                newGame();
                 break;
         }
+    }
+
+    public void newGame() {
+        prefs.edit().clear().commit();
+        loadBonus();
+    }
+
+    public void loadBonus() {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        bonusRed = prefs.getInt("bonusRed", 0);
+        bonusGreen = prefs.getInt("bonusGreen", 0);
+        bonusBlue = prefs.getInt("bonusBlue", 0);
+        bonusYellow = prefs.getInt("bonusYellow", 0);
+        bonusOrange = prefs.getInt("bonusOrange", 0);
+        binding.bonusBlue.setText(String.valueOf(bonusBlue));
+        binding.bonusBlue.setBackgroundResource(R.color.arts);
+        binding.bonusRed.setText(String.valueOf(bonusRed));
+        binding.bonusRed.setBackgroundResource(R.color.civic);
+        binding.bonusGreen.setText(String.valueOf(bonusGreen));
+        binding.bonusGreen.setBackgroundResource(R.color.science);
+        binding.bonusOrange.setText(String.valueOf(bonusOrange));
+        binding.bonusOrange.setBackgroundResource(R.color.crafts);
+        binding.bonusYellow.setText(String.valueOf(bonusYellow));
+        binding.bonusYellow.setBackgroundResource(R.color.religion);
+    }
+
+    public void saveBonus() {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("bonusRed", bonusRed);
+        editor.putInt("bonusGreen", bonusGreen);
+        editor.putInt("bonusBlue", bonusBlue);
+        editor.putInt("bonusYellow", bonusYellow);
+        editor.putInt("bonusOrange", bonusOrange);
+        editor.commit();
     }
 
     @Override
@@ -86,4 +121,11 @@ public class HomeFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
     }
+
+    public void onPause() {
+        super.onPause();
+        Log.v("DEMO","---> onPause() <--- ");
+        saveBonus();
+    }
+
 }

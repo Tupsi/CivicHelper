@@ -36,6 +36,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.tesira.mturba.civichelper.card.Advance;
+import org.tesira.mturba.civichelper.card.CardColor;
+import org.tesira.mturba.civichelper.card.Credit;
 import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
 import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
 import org.w3c.dom.Document;
@@ -79,6 +81,12 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private int treasure;
     private FragmentAdvancesBinding binding;
     private Set<String> purchasedAdvances;
+    private int bonusRed;
+    private int bonusGreen;
+    private int bonusBlue;
+    private int bonusYellow;
+    private int bonusOrange;
+
 
 
     // TODO: Customize parameter argument names
@@ -119,6 +127,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
              ) {
             Log.v("Button", "Setload :"+name);
         }
+        loadBonus();
     }
 
     @Override
@@ -256,9 +265,31 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         for (String name: tracker.getSelection()) {
             Log.v("Button", name);
             purchasedAdvances.add(name);
+            addBonus(name);
         }
-        for (String name: purchasedAdvances) {
-            Log.v("Button", "Set :" + name);
+    }
+
+    private void addBonus(String name) {
+        Advance adv = Advance.getAdvanceFromName(advances, name);
+        for (Credit credit: adv.getCredits()) {
+            Log.v("Credits", credit.getGroup().getName() + " : " + credit.getValue());
+            switch (credit.getGroup()) {
+                case BLUE :
+                    bonusBlue += credit.getValue();
+                    break;
+                case RED:
+                    bonusRed += credit.getValue();
+                    break;
+                case GREEN:
+                    bonusGreen += credit.getValue();
+                    break;
+                case ORANGE:
+                    bonusOrange += credit.getValue();
+                    break;
+                case YELLOW:
+                    bonusYellow += credit.getValue();
+                    break;
+            }
         }
     }
 
@@ -418,6 +449,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         super.onPause();
         Log.v("DEMO","---> onPause() <--- ");
         saveVars();
+        saveBonus();
     }
 
     public void onStop() {
@@ -450,4 +482,20 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         mTreasureInput.setText(""+treasure);
     }
 
+    public void loadBonus() {
+        bonusRed = savedCards.getInt("bonusRed", 0);
+        bonusGreen = savedCards.getInt("bonusGreen", 0);
+        bonusBlue = savedCards.getInt("bonusBlue", 0);
+        bonusYellow = savedCards.getInt("bonusYellow", 0);
+        bonusOrange = savedCards.getInt("bonusOrange", 0);
+    }
+    public void saveBonus() {
+        SharedPreferences.Editor editor = savedCards.edit();
+        editor.putInt("bonusRed", bonusRed);
+        editor.putInt("bonusGreen", bonusGreen);
+        editor.putInt("bonusBlue", bonusBlue);
+        editor.putInt("bonusYellow", bonusYellow);
+        editor.putInt("bonusOrange", bonusOrange);
+        editor.commit();
+    }
 }

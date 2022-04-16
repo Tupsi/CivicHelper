@@ -19,7 +19,6 @@ import java.util.List;
  * Class to represent a civilization advance.
  */
 public class Advance {
-//    public String id;
 
     // als Singleton ausbauen, wird nur einmal gebraucht
 
@@ -41,7 +40,6 @@ public class Advance {
         this.groups = new ArrayList<>();
         this.credits = new ArrayList<>();
         this.effects = new HashMap<>();
-//        this.id = "1";
     }
 
     public String getName() {
@@ -138,6 +136,18 @@ public class Advance {
             default:
                 return R.color.purple_700;
         }
+    }
+    public static Advance getAdvanceFromName(List<Advance> list, String name) {
+        int i = 0;
+        for (Advance adv: list) {
+            if (adv.getName().equals(name)) {
+                return adv;
+            }
+            else {
+                i++;
+            }
+        }
+        return null;
     }
 
     public int getIndexFromName(List<Advance> list, String name) {

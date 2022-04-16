@@ -8,6 +8,7 @@
     tools:context=".HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="0dp"
@@ -15,8 +16,10 @@
         android:text="@string/hello_blank_fragment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/startBtn"
@@ -36,10 +39,61 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="157dp"
         android:layout_marginEnd="160dp"
-        android:text="Reset Cards"
+        android:text="New Game"
         app:layout_constraintBottom_toTopOf="@+id/startBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/bonusGreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="20dp"
+        android:text="Green"
+        app:layout_constraintBottom_toTopOf="@+id/bonusBlue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/bonusRed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="Red"
+        app:layout_constraintBottom_toTopOf="@+id/bonusOrange"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bonusYellow" />
+
+    <TextView
+        android:id="@+id/bonusYellow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="Yellow"
+        app:layout_constraintBottom_toTopOf="@+id/bonusRed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bonusBlue" />
+
+    <TextView
+        android:id="@+id/bonusOrange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="Orange"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bonusRed" />
+
+    <TextView
+        android:id="@+id/bonusBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="Blue"
+        app:layout_constraintBottom_toTopOf="@+id/bonusYellow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bonusGreen" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
