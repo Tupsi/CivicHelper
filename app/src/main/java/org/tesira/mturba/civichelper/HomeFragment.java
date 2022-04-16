@@ -2,6 +2,8 @@ package org.tesira.mturba.civichelper;
 
 import static androidx.navigation.Navigation.findNavController;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -32,6 +34,7 @@ import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    private static final String PURCHASED = "purchasedAdvances";
 
     @Override
     public void onDestroy() {
@@ -45,12 +48,32 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container,false);
         View view = binding.getRoot();
         binding.startBtn.setOnClickListener(v -> {
-            Log.v("HomeFragment", "Clicked!");
-            Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_advancesFragment);
+            onClickButton(v);
+            //            Log.v("Button", "HomeFragment Start Clicked!");
+//            Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_advancesFragment);
+        });
+        binding.resetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickButton(v);
+            }
         });
         Log.v("HomeFragment", "onCreateView");
         setHasOptionsMenu(true);
         return view;
+    }
+
+    public void onClickButton(View v) {
+        Log.v("Button", ""+v.getId());
+        switch (v.getId()) {
+            case R.id.startBtn:
+                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_advancesFragment);
+                break;
+            case R.id.resetBtn:
+                SharedPreferences prefs = getContext().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE);
+                prefs.edit().clear().commit();
+                break;
+        }
     }
 
     @Override

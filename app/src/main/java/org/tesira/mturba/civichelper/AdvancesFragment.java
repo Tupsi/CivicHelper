@@ -31,11 +31,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import org.tesira.mturba.civichelper.card.Advance;
 import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
+import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,7 +46,12 @@ import org.w3c.dom.NodeList;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -58,10 +65,11 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private static final String TREASURE_BOX = "treasure";
     private static final String MONEY_LEFT = "moneyLeft";
     private static final String FILENAME = "advances.xml";
+    private static final String PURCHASED = "purchasedAdvances";
     // arraylist of all civilization cards
     public List<Advance> advances;
     private MyAdvancesRecyclerViewAdapter adapter;
-    private SharedPreferences prefs;
+    private SharedPreferences prefs, savedCards;
     private String sortingOrder;
     protected RecyclerView mRecyclerView;
     protected EditText mTreasureInput;
@@ -70,12 +78,13 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private int total;
     private int treasure;
     private FragmentAdvancesBinding binding;
+    private Set<String> purchasedAdvances;
 
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
-    private int mColumnCount = 1;
+    private int mColumnCount = 2;
 
 //    /**
 //     * Mandatory empty constructor for the fragment manager to instantiate the
@@ -103,22 +112,31 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+        savedCards = this.getActivity().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE );
+        purchasedAdvances = savedCards.getStringSet(PURCHASED, new HashSet<>());
+//        purchasedAdvances = prefs.getStringSet(PURCHASED, new HashSet<>());
+        for (String name: purchasedAdvances
+             ) {
+            Log.v("Button", "Setload :"+name);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_advances, container, false);
+        binding = FragmentAdvancesBinding.inflate(inflater, container,false);
+        View rootView = binding.getRoot();
+//        View rootView = inflater.inflate(R.layout.fragment_advances, container, false);
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mBuyPrice = rootView.findViewById(R.id.moneyleft);
         advances = new ArrayList<>();
+        binding.btnBuy.setOnClickListener(v -> {
+            buyAdvances();
+            Navigation.findNavController(v).popBackStack();
+        });
 
         if (savedInstanceState != null) {
             Log.v("save", "savedInstanceState YES/if");
-            // Restore saved layout manager type.
-//            advances = (ArrayList) savedInstanceState.getSerializable(ADVANCES_LIST);
-//            treasure = savedInstanceState.getInt(TREASURE_BOX);
-//            mTreasureInput.setText(treasure);
         } else {
             Log.v("save", "savedInstanceState NO/else");
         }
@@ -138,6 +156,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 advances.sort(Comparator.comparing(Advance::getName));
                 break;
         }
+        removePurchasedAdvances();
 
         // Set the adapter
         Context context = rootView.getContext();
@@ -223,6 +242,24 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             }
         });
         return rootView;
+    }
+
+    private void removePurchasedAdvances() {
+        for (String name: purchasedAdvances) {
+            Advance adv = advances.get(advances.get(0).getIndexFromName(advances, name));
+            advances.remove(adv);
+        }
+    }
+
+    private void buyAdvances() {
+        Log.v("Button", "Buy button pressed!");
+        for (String name: tracker.getSelection()) {
+            Log.v("Button", name);
+            purchasedAdvances.add(name);
+        }
+        for (String name: purchasedAdvances) {
+            Log.v("Button", "Set :" + name);
+        }
     }
 
     public int getTreasure() {
@@ -379,8 +416,8 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
 
     public void onPause() {
         super.onPause();
-        saveVars();
         Log.v("DEMO","---> onPause() <--- ");
+        saveVars();
     }
 
     public void onStop() {
@@ -395,11 +432,17 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
 
     public void saveVars() {
         SharedPreferences.Editor editor = prefs.edit();
-        if (!TextUtils.isEmpty(mTreasureInput.getText())) {
-            int money = parseInt(mTreasureInput.getText().toString());
-            editor.putInt(TREASURE_BOX, money);
-            editor.apply();
+        Log.v("Button", "saving...");
+        for (String name: purchasedAdvances
+             ) {
+            Log.v("Button", "inSave: " + name);
         }
+        editor.putInt(TREASURE_BOX, treasure);
+        editor.apply();
+        SharedPreferences.Editor editorCards = savedCards.edit();
+        editorCards.putInt("saved", purchasedAdvances.size());
+        editorCards.putStringSet(PURCHASED, purchasedAdvances);
+        editorCards.commit();
     }
     @SuppressLint("SetTextI18n")
     public void loadVars() {
