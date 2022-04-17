@@ -182,10 +182,8 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 "my-selection-id",
                 mRecyclerView,
                 new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, advances, adapter),
-//                new StableIdKeyProvider(mRecyclerView),
                 new MyItemDetailsLookup(mRecyclerView),
                 StorageStrategy.createStringStorage())
-//                StorageStrategy.createLongStorage())
                .withSelectionPredicate(new MySelectionPredicate<>(this, advances)).build();
         adapter.setSelectionTracker(tracker);
         tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
@@ -224,35 +222,27 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
 
         mTreasureInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.v("Watcher", "on");
                 updateRemaining();
             }
-
             @Override
-            public void afterTextChanged(Editable s) {
-                Log.v("Watcher", "after");
-            }
+            public void afterTextChanged(Editable s) {}
         });
-        mTreasureInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                Log.v("Focus", "" + hasFocus);
-                if (!hasFocus) {
-                    if (treasure < total) {
-                        tracker.clearSelection();
-                    }
+        mTreasureInput.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                if (treasure < total) {
+                    tracker.clearSelection();
                 }
             }
         });
         return rootView;
     }
 
+    /**
+     * Removes all already bought advances from the ArrayList.
+     */
     private void removePurchasedAdvances() {
         for (String name: purchasedAdvances) {
             Advance adv = advances.get(advances.get(0).getIndexFromName(advances, name));
@@ -293,6 +283,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         }
     }
 
+    /**
+     * @return Current Treasure from input field.
+     */
     public int getTreasure() {
         String treasureInput = mTreasureInput.getText().toString();
         if (treasureInput.isEmpty()) {
@@ -301,7 +294,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             treasure = Integer.parseInt(treasureInput);
         }
 
-        Log.v("treasure", "getTreasure :" + treasure);
+//        Log.v("treasure", "getTreasure :" + treasure);
         return treasure;
     }
 
@@ -316,6 +309,10 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         mBuyPrice.setText(getString(R.string.remaining_treasure)+(treasure-total));
     }
 
+    /**
+     * Calculates the sum of all currently selected advances during the buy process.
+     * @return Total price.
+     */
     public int calculateTotal() {
         total = 0;
         for (String id : tracker.getSelection()) {
@@ -326,6 +323,11 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         return total;
     }
 
+    /**
+     * Imports all civilization advances from file into an ArrayList to be used in the RecyclerView.
+     * @param advances The ArrayList in which to import the civilization advances to.
+     * @param filename The filename of the xml data of all civilization advances.
+     */
     private void importAdvances(List<Advance> advances, String filename) {
         try {
             InputStream is = requireActivity().getAssets().open(filename);
@@ -482,6 +484,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         mTreasureInput.setText(""+treasure);
     }
 
+    /**
+     * loads already bought bonuses from SharePreferences file
+     */
     public void loadBonus() {
         bonusRed = savedCards.getInt("bonusRed", 0);
         bonusGreen = savedCards.getInt("bonusGreen", 0);
@@ -489,6 +494,10 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         bonusYellow = savedCards.getInt("bonusYellow", 0);
         bonusOrange = savedCards.getInt("bonusOrange", 0);
     }
+
+    /**
+     * saves already bought bonuses to SharedPreferences file
+     */
     public void saveBonus() {
         SharedPreferences.Editor editor = savedCards.edit();
         editor.putInt("bonusRed", bonusRed);
