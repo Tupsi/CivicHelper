@@ -85,7 +85,8 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         holder.mPriceView.setText(Integer.toString(mValues.get(position).getPrice()));
         holder.mCardView.setOnClickListener(v -> {
             // clicked on single card in list
-            Toast.makeText(v.getContext(), holder.mNameView.getText().toString() + " clicked!",Toast.LENGTH_LONG).show();
+            tracker.select(name);
+            Toast.makeText(v.getContext(), holder.mNameView.getText().toString() + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_LONG).show();
         });
         int price = mValues.get(position).getPrice();
         Log.v("VIEWHOLDER", "" + price + " : " + remainingTreasure);

@@ -191,11 +191,13 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 }
                 int rest = treasure - total;
                 adapter.setRemainingTreasure(rest);
+                mRecyclerView.setAdapter(adapter);
             }
 
             @Override
             public void onSelectionRefresh() {
                 super.onSelectionRefresh();
+                Log.v("TRACKER", "onSelectionRefresh fired");
             }
 
             @Override
@@ -213,7 +215,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         if (savedInstanceState != null) {
             tracker.onRestoreInstanceState(savedInstanceState);
         }
-
+        selectZeroCostAdvances();
         mTreasureInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -232,6 +234,14 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             }
         });
         return rootView;
+    }
+
+    private void selectZeroCostAdvances() {
+        for (Advance adv: advances) {
+            if (adv.getPrice() == 0) {
+                tracker.select(adv.getName());
+            }
+        }
     }
 
     /**
