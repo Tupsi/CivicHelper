@@ -115,18 +115,12 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         super.onCreate(savedInstanceState);
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         sortingOrder = prefs.getString("sort", "name");
-        Log.v("PREF", "onCreate: "+sortingOrder);
         prefs.registerOnSharedPreferenceChangeListener(this);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
         savedCards = this.getActivity().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE );
         purchasedAdvances = savedCards.getStringSet(PURCHASED, new HashSet<>());
-//        purchasedAdvances = prefs.getStringSet(PURCHASED, new HashSet<>());
-        for (String name: purchasedAdvances
-             ) {
-            Log.v("Button", "Setload :"+name);
-        }
         loadBonus();
     }
 
@@ -315,8 +309,10 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
      */
     public int calculateTotal() {
         total = 0;
-        for (String id : tracker.getSelection()) {
-            int idx = advances.get(0).getIndexFromName(advances, id);
+        for (String name : tracker.getSelection()) {
+            int idx = advances.get(0).getIndexFromName(advances, name);
+            Advance adv = Advance.getAdvanceFromName(advances, name);
+
             int currentPrice = advances.get(idx).getPrice();
             total += currentPrice;
         }
@@ -334,52 +330,38 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(is);
-
             Element element = doc.getDocumentElement();
             element.normalize();
-//            String civic = (String)civilizationSpinner.getSelectedItem();
-//            Log.v("Civic", civic);
             NodeList nList = doc.getElementsByTagName("advance");
             for (int i=0; i<nList.getLength(); i++) {
-//                Log.v("Card", "-----------------------------------" + (i+1));
                 Node node = nList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Advance advance = new Advance();
                     String readElement;
                     Element element2 = (Element) node;
-//                    Log.v("TEST", "Name: " + element2.getElementsByTagName("name").item(0).getTextContent());
                     readElement = element2.getElementsByTagName("name").item(0).getTextContent();
                     advance.setName(readElement);
-//                    advance.setName(element2.getElementsByTagName("name").item(0).getTextContent());
-//                    Log.v("TEST", "Family: " + element2.getElementsByTagName("family").item(0).getTextContent());
                     readElement = element2.getElementsByTagName("family").item(0).getTextContent();
                     advance.setFamily(parseInt(readElement));
-//                    advance.setFamily(Integer.parseInt(element2.getElementsByTagName("family").item(0).getTextContent()));
-//                    Log.v("TEST", "VP: " + element2.getElementsByTagName("vp").item(0).getTextContent());
                     readElement = element2.getElementsByTagName("vp").item(0).getTextContent();
                     advance.setVp(parseInt(readElement));
-//                    advance.setVp(Integer.parseInt(element2.getElementsByTagName("vp").item(0).getTextContent()));
                     readElement = element2.getElementsByTagName("price").item(0).getTextContent();
                     advance.setPrice(parseInt(readElement));
-//                    advance.setPrice(Integer.parseInt(element2.getElementsByTagName("price").item(0).getTextContent()));
                     for (int x=0; x<element2.getElementsByTagName("group").getLength();x++) {
-//                        Log.v("TEST", "Group: " + element2.getElementsByTagName("group").item(x).getTextContent());
                         advance.addGroup(element2.getElementsByTagName("group").item(x).getTextContent());
                     }
                     for (int x=0; x<element2.getElementsByTagName("credit").getLength(); x++) {
                         String color = element2.getElementsByTagName("credit").item(x).getAttributes().item(0).getTextContent();
                         int discount = parseInt(element2.getElementsByTagName("credit").item(x).getTextContent());
-//                        Log.v("Credit","" + color + " : " + discount);
                         advance.addCredits(color, discount);
                     }
-//                    Log.v("Effect #", ""+element2.getElementsByTagName("effect").getLength());
                     for (int x=0; x<element2.getElementsByTagName("effect").getLength(); x++) {
                         String name = element2.getElementsByTagName("effect").item(x).getAttributes().item(0).getTextContent();
                         int value = parseInt(element2.getElementsByTagName("effect").item(x).getTextContent());
-//                        Log.v("Effect","" + name + " : " + value);
                         advance.addEffect(name, value);
                     }
-//                    Log.v("Card", "-----------------------------------" + (i+1));
+                    int current = calculateCurrentPrice(advance);
+                    advance.setPrice(current);
                     advances.add(advance);
                 }
             }
@@ -388,6 +370,48 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         }
     }
 
+    private int calculateCurrentPrice(Advance advance) {
+        int current = advance.getPrice();
+        if (advance.getGroups().size() == 1 ) {
+            current -= getReductionFromGroup(advance.getGroups().get(0));
+        } else {
+            int group1 = getReductionFromGroup(advance.getGroups().get(0));
+            int group2 = getReductionFromGroup(advance.getGroups().get(1));
+            if (group1 > group2) {
+                current -= group1;
+            } else {
+                current -= group2;
+            }
+        }
+        if (current < 0) {
+            current = 0;
+        }
+        return current;
+    }
+
+    private int getReductionFromGroup(CardColor cardColor) {
+        int bonus = 0;
+        switch (cardColor) {
+            case BLUE:
+                bonus = bonusBlue;
+                break;
+            case YELLOW:
+                bonus = bonusYellow;
+                break;
+            case ORANGE:
+                bonus = bonusOrange;
+                break;
+            case GREEN:
+                bonus = bonusGreen;
+                break;
+            case RED:
+                bonus = bonusRed;
+                break;
+        }
+        return bonus;
+    }
+
+   
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.options_menu, menu);

@@ -25,9 +25,9 @@ public class Advance {
     private String name;
     // advances are divided in three columns and 17 rows and give a bonus for buying the
     // next in line in the same row
-    private int family;             // give bonus to next family member in same row
-    private int vp;                 // victory points (1,3,6)
-    private List<CardColor> groups;         // a org.tesira.mturba.civichelper.card may belong to one or two groups (colors)
+    private int family;                 // give bonus to next family member in same row
+    private int vp;                     // victory points (1,3,6)
+    private List<CardColor> groups;     // an advance may belong to one or two groups (colors)
     private int price;
     private List<Credit> credits;       // price reduction for next buy in which groups
     // optional
@@ -68,6 +68,10 @@ public class Advance {
 
     public int getPrice() {
         return price;
+    }
+
+    public List<CardColor> getGroups() {
+        return groups;
     }
 
     public void setPrice(int price) {
