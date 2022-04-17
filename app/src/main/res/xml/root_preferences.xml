@@ -18,5 +18,16 @@
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
+    <PreferenceCategory app:title="@string/layout_header">
+
+        <ListPreference
+            app:defaultValue="1"
+            app:key="columns"
+            app:entries="@array/columns_entries"
+            app:entryValues="@array/columns_values"
+            app:useSimpleSummaryProvider="true"
+            app:title="@string/columns_title" />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

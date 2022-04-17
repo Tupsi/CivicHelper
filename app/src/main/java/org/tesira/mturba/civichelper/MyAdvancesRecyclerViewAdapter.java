@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
- * TODO: Replace the implementation with code for your data type.
+ * {@link RecyclerView.Adapter} that can display a {@link Advance}.
+ *
  */
 public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvancesRecyclerViewAdapter.ViewHolder> implements Filterable {
 
@@ -46,18 +46,12 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
     }
 
     public void setRemainingTreasure(int rest) {
-        Log.v("VIEWHOLDER", "settings remaining treasure to : " + rest);
         this.remainingTreasure = rest;
     }
 
     public void setSelectionTracker(SelectionTracker<String> tracker) {
         this.tracker = tracker;
     }
-
-//    @Override
-//    public String getItemId(int position) {
-//        return mValues.get(position).getName();
-//    }
 
     @NonNull
     @Override
@@ -86,18 +80,16 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         holder.mCardView.setOnClickListener(v -> {
             // clicked on single card in list
             tracker.select(name);
-            Toast.makeText(v.getContext(), holder.mNameView.getText().toString() + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_LONG).show();
+            Toast.makeText(v.getContext(), holder.mNameView.getText().toString()
+                    + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_LONG).show();
         });
         int price = mValues.get(position).getPrice();
-        Log.v("VIEWHOLDER", "" + price + " : " + remainingTreasure);
         if (!isActivated && remainingTreasure < price) {
             holder.mCardView.setBackgroundResource(R.color.dark_grey);
             holder.mCardView.setAlpha(0.5F);
-//            holder.mPriceView.setBackgroundResource(R.drawable.price_background_expensive);
         } else {
             holder.mCardView.setBackgroundResource(R.drawable.item_background);
             holder.mCardView.setAlpha(1F);
-//            holder.mPriceView.setBackgroundResource(R.drawable.price_background);
         }
     }
 
@@ -164,7 +156,6 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             mValues.clear();
-            //noinspection unchecked
             mValues.addAll((ArrayList<Advance>) results.values);
             notifyDataSetChanged();
         }
@@ -173,29 +164,20 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         // hier eventuell anpassen was angezeigt werden soll aus dem Advance Objekt!
-//        public View mView;
         // Constraint Layout whole row
         public View mCardView;
-//        public final TextView mIdView;
-//        public final TextView mContentView;
         public final TextView mNameView;
         public final TextView mPriceView;
-//        public final Group mGroupView;
-//        public final ConstraintLayout mConstraintView;
 
         public Advance mItem;
 
         public ViewHolder(ItemRowBinding binding) {
             super(binding.getRoot());
-            // needed for OnClickListener
-//            mView = binding.getRoot();
             // das sind die R.id aus item_row.xml textviews
             // hier muessen mehr dazu falls mehr dateils angezeigt werden soll
             mNameView = binding.name;
             mPriceView = binding.price;
-//            mGroupView = binding.group;
             mCardView = binding.card;
-            Log.v("VIEWHOLDER", "inside viewholder");
         }
 
         @NonNull

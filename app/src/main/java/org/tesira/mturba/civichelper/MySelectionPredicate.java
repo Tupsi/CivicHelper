@@ -25,7 +25,6 @@ public class MySelectionPredicate<String> extends SelectionTracker.SelectionPred
     public boolean canSetStateForKey(@NonNull String key, boolean nextState) {
         if (!nextState) return true;
         int idx = myList.get(0).getIndexFromName(myList, (java.lang.String) key);
-//        int idx = Math.toIntExact((java.lang.Long) key);
         int current = myList.get(idx).getPrice();
         treasure = fragment.getTreasure();
         total = fragment.calculateTotal();
@@ -38,7 +37,6 @@ public class MySelectionPredicate<String> extends SelectionTracker.SelectionPred
 
     @Override
     public boolean canSetStateAtPosition(int position, boolean nextState) {
-        Log.v("INFO", "Predicate canSetStatePosition : " + position + " : " + nextState);
         return true;
     }
 

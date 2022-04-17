@@ -1,13 +1,9 @@
 package org.tesira.mturba.civichelper;
 
-import android.widget.Adapter;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemKeyProvider;
-
 import org.tesira.mturba.civichelper.card.Advance;
-
 import java.util.List;
 
 public class MyItemKeyProvider<S> extends ItemKeyProvider<String> {
@@ -29,9 +25,6 @@ public class MyItemKeyProvider<S> extends ItemKeyProvider<String> {
 
     @Override
     public int getPosition(@NonNull String key) {
-//        Advance card = (Advance) itemList.stream().filter(advance -> key.equals(advance.toString()));
-//        return itemList.indexOf(card);
-
         int pos = 0;
         for (Advance adv : itemList) {
             if (key.equals(adv.getName())) {

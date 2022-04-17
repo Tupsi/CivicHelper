@@ -13,5 +13,10 @@
     <string name="item_advances">Advances</string>
     <string name="item_search">Search</string>
     <string name="remaining_treasure">remaining :</string>
+    <string name="layout_header">Layout of Purchase Screen</string>
+    <string name="layout_summary_off">One Advance per row.</string>
+    <string name="layout_summary_on">Grid view. Select the number of columns below.</string>
+    <string name="layout_title">Layout</string>
+    <string name="columns_title">Number of columns</string>
 
 </resources>

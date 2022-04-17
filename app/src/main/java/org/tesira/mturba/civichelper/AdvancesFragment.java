@@ -115,6 +115,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         super.onCreate(savedInstanceState);
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         sortingOrder = prefs.getString("sort", "name");
+        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
         prefs.registerOnSharedPreferenceChangeListener(this);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -184,7 +185,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             @Override
             public void onItemStateChanged(@NonNull String key, boolean selected) {
                 super.onItemStateChanged(key, selected);
-                Log.v("TRACKER", "onItemStateChanged : " + key + " : " + selected);
+//                Log.v("TRACKER", "onItemStateChanged : " + key + " : " + selected);
                 // item got deselected, need to redo total selected
                 if (!selected) {
                     setTotal(calculateTotal());
@@ -197,13 +198,13 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             @Override
             public void onSelectionRefresh() {
                 super.onSelectionRefresh();
-                Log.v("TRACKER", "onSelectionRefresh fired");
+//                Log.v("TRACKER", "onSelectionRefresh fired");
             }
 
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
-                Log.v("TRACKER", "onSelectionChanged fired");
+//                Log.v("TRACKER", "onSelectionChanged fired");
             }
 
             @Override
