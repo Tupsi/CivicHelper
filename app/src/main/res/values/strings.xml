@@ -1,22 +1,32 @@
 <resources>
     <string name="app_name">Civic Helper</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="about_text">about text</string>
     <string name="money">Treasure</string>
     <!-- Preference Titles -->
     <string name="pref_civilization">Civilization</string>
     <string name="pref_sorting">Sorting of civilization advances</string>
+    <string name="layout_header">Layout of Purchase Screen</string>
+    <string name="layout_title">Layout</string>
+    <string name="columns_title">Number of columns</string>
     <!-- Menu Names -->
     <string name="item_preferences">Preferences</string>
     <string name="item_about">About</string>
     <string name="item_advances">Advances</string>
     <string name="item_search">Search</string>
+
+    <!-- Buying Advances Fragment-->
     <string name="remaining_treasure">remaining :</string>
-    <string name="layout_header">Layout of Purchase Screen</string>
-    <string name="layout_summary_off">One Advance per row.</string>
-    <string name="layout_summary_on">Grid view. Select the number of columns below.</string>
-    <string name="layout_title">Layout</string>
-    <string name="columns_title">Number of columns</string>
+
+    <!-- Credits Dialog -->
+    <string name="dialog_extra_credits">Distribute your extra credits</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="creditsinput">Credits Input</string>
+    <string name="blue">Blue</string>
+    <string name="red">Red</string>
+    <string name="orange">Orange</string>
+    <string name="yellow">Yellow</string>
+    <string name="green">Green</string>
+    <string name="remaining_credits">Remaining Credits : </string>
 
 </resources>

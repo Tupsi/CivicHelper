@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.gridlayout.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textblue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/blue"
+        android:textSize="16sp"
+        app:layout_column="0"
+        app:layout_columnWeight="1"
+        app:layout_gravity="left|center_vertical"
+        app:layout_row="1" />
+
+    <TextView
+        android:id="@+id/textred"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/red"
+        android:textSize="16sp"
+        app:layout_column="0"
+        app:layout_gravity="left|center_vertical"
+        app:layout_row="2" />
+
+    <TextView
+        android:id="@+id/textorange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/orange"
+        android:textSize="16sp"
+        app:layout_column="0"
+        app:layout_gravity="left|center_vertical"
+        app:layout_row="3" />
+
+    <TextView
+        android:id="@+id/textyellow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/yellow"
+        android:textSize="16sp"
+        app:layout_column="0"
+        app:layout_gravity="left|center_vertical"
+        app:layout_row="4" />
+
+    <TextView
+        android:id="@+id/textgreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/green"
+        android:textSize="16sp"
+        app:layout_column="0"
+        app:layout_gravity="left|center_vertical"
+        app:layout_row="5" />
+
+    <Spinner
+        android:id="@+id/spinnerblue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:contentDescription="@string/creditsinput"
+        android:minHeight="48dp"
+        android:text="@string/blue"
+        app:layout_column="1"
+        app:layout_row="1"
+        tools:ignore="DuplicateSpeakableTextCheck" />
+
+    <Spinner
+        android:id="@+id/spinnerred"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:contentDescription="@string/creditsinput"
+        android:minHeight="48dp"
+        android:text="@string/red"
+        app:layout_column="1"
+        app:layout_row="2" />
+
+    <Spinner
+        android:id="@+id/spinnerorange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:contentDescription="@string/creditsinput"
+        android:minHeight="48dp"
+        android:text="@string/orange"
+        app:layout_column="1"
+        app:layout_row="3" />
+
+    <Spinner
+        android:id="@+id/spinneryellow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:contentDescription="@string/creditsinput"
+        android:minHeight="48dp"
+        android:text="@string/yellow"
+        app:layout_column="1"
+        app:layout_row="4" />
+
+    <Spinner
+        android:id="@+id/spinnergreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:contentDescription="@string/creditsinput"
+        android:minHeight="48dp"
+        android:text="@string/green"
+        app:layout_column="1"
+        app:layout_row="5" />
+
+    <TextView
+        android:id="@+id/textviewremaining"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/remaining_credits"
+        app:layout_column="0"
+        app:layout_row="0" />
+
+    <TextView
+        android:id="@+id/creditsremaining"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:layout_column="1"
+        app:layout_row="0" />
+
+</androidx.gridlayout.widget.GridLayout>

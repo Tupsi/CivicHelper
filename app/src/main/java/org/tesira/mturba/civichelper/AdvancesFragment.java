@@ -8,8 +8,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
@@ -34,6 +36,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.tesira.mturba.civichelper.card.Advance;
 import org.tesira.mturba.civichelper.card.CardColor;
@@ -136,7 +139,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         advances = new ArrayList<>();
         binding.btnBuy.setOnClickListener(v -> {
             buyAdvances();
-            Navigation.findNavController(v).popBackStack();
+//            Navigation.findNavController(v).popBackStack();
         });
 
         if (savedInstanceState != null) {
@@ -192,7 +195,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 }
                 int rest = treasure - total;
                 adapter.setRemainingTreasure(rest);
-                mRecyclerView.setAdapter(adapter);
+                // works for auto greying out to expensive cards, but resets view to first item
+                // also crashes on long click on some android versions
+                //                mRecyclerView.setAdapter(adapter);
             }
 
             @Override
@@ -256,11 +261,15 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     }
 
     private void buyAdvances() {
-        Log.v("Button", "Buy button pressed!");
         for (String name: tracker.getSelection()) {
-            Log.v("Button", name);
             purchasedAdvances.add(name);
             addBonus(name);
+            Advance adv = Advance.getAdvanceFromName(advances, name);
+            Integer effect = adv.getEffects().get("Credits");
+            if (effect != null) {
+                Log.v("effect", "" + effect);
+                new ExtraCreditsDialogFragment(this,20).show(getParentFragmentManager(), "ExtraCreditsDialogFragment");
+            }
         }
     }
 
@@ -301,6 +310,11 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
 
 //        Log.v("treasure", "getTreasure :" + treasure);
         return treasure;
+    }
+
+    public void setTreasure(int newTreasure) {
+        treasure = newTreasure;
+        mTreasureInput.setText(String.valueOf(treasure));
     }
 
     public void updateRemaining() {
@@ -535,11 +549,29 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
      */
     public void saveBonus() {
         SharedPreferences.Editor editor = savedCards.edit();
-        editor.putInt("bonusRed", bonusRed);
-        editor.putInt("bonusGreen", bonusGreen);
         editor.putInt("bonusBlue", bonusBlue);
-        editor.putInt("bonusYellow", bonusYellow);
+        editor.putInt("bonusGreen", bonusGreen);
         editor.putInt("bonusOrange", bonusOrange);
+        editor.putInt("bonusRed", bonusRed);
+        editor.putInt("bonusYellow", bonusYellow);
         editor.commit();
+        Log.v("DEMO", "saveBonus in Advanced");
+
+    }
+
+    public void showToast(String text) {
+        Toast.makeText(getContext(), text,Toast.LENGTH_LONG).show();
+    }
+
+    public void updateBonus(int blue, int green, int orange, int red, int yellow) {
+        Log.v("SPINNER", " : "+blue+" : "+green+" : "+orange+" : "+red+" : "+yellow);
+        Log.v("SPINNER", " : "+bonusBlue+" : "+bonusGreen+" : "+bonusOrange+" : "+bonusRed+" : "+bonusYellow);
+        bonusBlue += blue;
+        bonusGreen += green;
+        bonusOrange += orange;
+        bonusRed += red;
+        bonusYellow += yellow;
+        Log.v("SPINNER", " : "+bonusBlue+" : "+bonusGreen+" : "+bonusOrange+" : "+bonusRed+" : "+bonusYellow);
+        saveBonus();
     }
 }

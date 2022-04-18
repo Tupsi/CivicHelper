@@ -47,12 +47,6 @@ public class HomeFragment extends Fragment {
     private int bonusOrange;
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        binding = null;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container,false);
@@ -109,6 +103,7 @@ public class HomeFragment extends Fragment {
         editor.putInt("bonusYellow", bonusYellow);
         editor.putInt("bonusOrange", bonusOrange);
         editor.commit();
+        Log.v("HOME", "saveBonus in Home");
     }
 
     @Override
@@ -124,8 +119,30 @@ public class HomeFragment extends Fragment {
 
     public void onPause() {
         super.onPause();
-        Log.v("DEMO","---> onPause() <--- ");
+        Log.v("HOME","---> onPause() <--- ");
         saveBonus();
+    }
+
+    public void onStart() {
+        super.onStart();
+        Log.v("HOME","---> onStart() <--- ");
+    }
+
+    public void onResume() {
+        super.onResume();
+        Log.v("HOME","---> onResume() <--- ");
+    }
+
+    public void onStop() {
+        super.onStop();
+        Log.v("HOME","---> onStop() <--- ");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding = null;
+        Log.v("HOME","---> onDestroy() <--- ");
     }
 
 }
