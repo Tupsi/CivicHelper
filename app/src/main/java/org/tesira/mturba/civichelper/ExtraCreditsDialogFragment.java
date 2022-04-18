@@ -1,6 +1,7 @@
 package org.tesira.mturba.civichelper;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
@@ -16,14 +18,44 @@ import org.tesira.mturba.civichelper.databinding.DialogCreditsBinding;
 public class ExtraCreditsDialogFragment extends DialogFragment {
 
     private DialogCreditsBinding binding;
-    String items[] = {"0", "5", "10", "15", "20"};
+//    String items[] = {"0", "5", "10", "15", "20"};
+    String items[];
     private int credits, blue, green, yellow, orange, red;
     private AlertDialog dialog;
     private AdvancesFragment fragment;
 
+    public interface ExtracCreditsDialogListener {
+        public void onDialogPositiveClick(DialogFragment dialog);
+    }
+
+    ExtracCreditsDialogListener listener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        listener = (ExtracCreditsDialogListener) fragment;
+
+        try {
+            listener = (ExtracCreditsDialogListener) fragment;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " must implement ExtraCreditsDialogListener");
+        }
+    }
+
     public ExtraCreditsDialogFragment(AdvancesFragment fragment, int credits) {
         this.fragment = fragment;
         this.credits = credits;
+        switch (credits) {
+            case 10 :
+                items = new String[] {"0", "5", "10"};
+                break;
+            case 20:
+                items = new String[] {"0", "5", "10", "15", "20"};
+                break;
+            case 30:
+                items = new String[] {"0", "5", "10", "15", "20", "25", "30"};
+                break;
+        }
     }
 
 
@@ -65,6 +97,7 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         fragment.updateBonus(blue, green, orange, red, yellow);
+                        listener.onDialogPositiveClick(ExtraCreditsDialogFragment.this);
                     }
                 });
 //                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

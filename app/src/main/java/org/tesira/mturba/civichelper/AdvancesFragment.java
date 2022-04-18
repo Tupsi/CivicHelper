@@ -10,9 +10,11 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.selection.ItemKeyProvider;
@@ -64,7 +66,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 /**
  * A fragment representing a list of Items.
  */
-public class AdvancesFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class AdvancesFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, ExtraCreditsDialogFragment.ExtracCreditsDialogListener {
 
     private static final String ADVANCES_LIST = "advancesList";
     private static final String TREASURE_BOX = "treasure";
@@ -261,15 +263,21 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     }
 
     private void buyAdvances() {
+        int credits = 0;
         for (String name: tracker.getSelection()) {
             purchasedAdvances.add(name);
             addBonus(name);
             Advance adv = Advance.getAdvanceFromName(advances, name);
             Integer effect = adv.getEffects().get("Credits");
             if (effect != null) {
-                Log.v("effect", "" + effect);
-                new ExtraCreditsDialogFragment(this,20).show(getParentFragmentManager(), "ExtraCreditsDialogFragment");
+                credits += effect;
             }
+        }
+        if (credits > 0) {
+            new ExtraCreditsDialogFragment(this,credits).show(getParentFragmentManager(), "ExtraCredits");
+        } else
+        {
+            NavHostFragment.findNavController(this).popBackStack();
         }
     }
 
@@ -573,5 +581,11 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         bonusYellow += yellow;
         Log.v("SPINNER", " : "+bonusBlue+" : "+bonusGreen+" : "+bonusOrange+" : "+bonusRed+" : "+bonusYellow);
         saveBonus();
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        Log.v("Listener", "ExtraCredits closing...");
+        NavHostFragment.findNavController(this).popBackStack();
     }
 }
