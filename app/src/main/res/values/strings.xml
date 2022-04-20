@@ -28,5 +28,7 @@
     <string name="yellow">Yellow</string>
     <string name="green">Green</string>
     <string name="remaining_credits">Remaining Credits : </string>
+    <!-- Anatomy Dialog -->
+    <string name="dialog_anatomy">You bought the Anatomy Advance, pick the extra science card.</string>
 
 </resources>

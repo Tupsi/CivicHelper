@@ -67,7 +67,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 /**
  * A fragment representing a list of Items.
  */
-public class AdvancesFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, ExtraCreditsDialogFragment.ExtracCreditsDialogListener {
+public class AdvancesFragment extends Fragment
+        implements SharedPreferences.OnSharedPreferenceChangeListener,
+        ExtraCreditsDialogFragment.ExtracCreditsDialogListener {
 
     private static final String ADVANCES_LIST = "advancesList";
     private static final String TREASURE_BOX = "treasure";
@@ -96,6 +98,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private int bonusOrange;
     private Set<String> bonusFamily;
     private Set<String> greenCardsAnatomy;
+    private int numberDialogs = 0;
 
 
     // TODO: Customize parameter argument names
@@ -273,29 +276,37 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
 
     private void buyAdvances() {
         int credits = 0;
+        boolean buyAnatomy = false;
         for (String name: tracker.getSelection()) {
             Advance adv = Advance.getAdvanceFromName(advances, name);
+            // add to list of bought cards
             purchasedAdvances.add(name);
+            // remove from possible buy option for Anatomy
+            greenCardsAnatomy.remove(name);
+            if (name.equals("Anatomy")) buyAnatomy = true;
             bonusFamily.add(adv.getFamilyname());
-            Log.d("Family", adv.getFamilyname());
             addBonus(name);
             Integer effect = adv.getEffects().get("Credits");
             if (effect != null) {
                 credits += effect;
             }
         }
-        if (credits > 0) {
-            new ExtraCreditsDialogFragment(this,credits).show(getParentFragmentManager(), "ExtraCredits");
-        } else
-        {
-            NavHostFragment.findNavController(this).popBackStack();
+        if (buyAnatomy) {
+            numberDialogs++;
+            new AnatomyDialogFragment(this, greenCardsAnatomy).show(getParentFragmentManager(), "Anatomy");
         }
+
+        if (credits > 0) {
+            numberDialogs++;
+            new ExtraCreditsDialogFragment(this,credits).show(getParentFragmentManager(), "ExtraCredits");
+        }
+        returnToDashboard();
+
     }
 
     private void addBonus(String name) {
         Advance adv = Advance.getAdvanceFromName(advances, name);
         for (Credit credit: adv.getCredits()) {
-//            Log.v("Credits", credit.getGroup().getName() + " : " + credit.getValue());
             switch (credit.getGroup()) {
                 case BLUE :
                     bonusBlue += credit.getValue();
@@ -314,10 +325,11 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                     break;
             }
         }
-        // if advance is in first or second row (VP 1 or 3), add family bonus
-        if (adv.getVp() < 6) {
+    }
 
-        }
+    public void addAnatomyFreeCard(String name) {
+        purchasedAdvances.add(name);
+        addBonus(name);
     }
 
     /**
@@ -612,7 +624,14 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-//        Log.v("Listener", "ExtraCredits closing...");
         NavHostFragment.findNavController(this).popBackStack();
+    }
+    public void returnToDashboard() {
+        if (numberDialogs == 0) {
+            NavHostFragment.findNavController(this).popBackStack();
+        } else
+        {
+            numberDialogs--;
+        }
     }
 }

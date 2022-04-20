@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private DrawerLayout drawerLayout;
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,14 +24,15 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         drawerLayout = binding.drawerLayout;
         setContentView(binding.getRoot());
-        NavController navController = Navigation.findNavController(this, R.id.myNavHostFragment);
+//        NavController navController = Navigation.findNavController(this, R.id.myNavHostFragment);
+        navController = Navigation.findNavController(this, R.id.myNavHostFragment);
         NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.myNavHostFragment);
+//        NavController navController = Navigation.findNavController(this, R.id.myNavHostFragment);
         return NavigationUI.navigateUp(navController, drawerLayout);
     }
 }

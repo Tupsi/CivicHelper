@@ -227,11 +227,16 @@ public class Advance {
      */
     public static Set<String> getGreenCards(List<Advance> list) {
         Set<String> greenCards = new HashSet<>();
-        for (Advance adv: list) {
+        for (Advance adv : list) {
             List<CardColor> colors = adv.getGroups();
-            if (colors.get(0).getName().equals("Science")) {
-                greenCards.add(adv.getName());
-                Log.v("GREEN", adv.getName());
+            if (colors.size() == 1) {
+                if (colors.get(0).getName().equals("Science") && adv.getPrice() < 100) {
+                    greenCards.add(adv.getName());
+                }
+            } else {
+                if ((colors.get(0).getName().equals("Science") || colors.get(1).getName().equals("Science")) && adv.getPrice() < 100 ) {
+                    greenCards.add(adv.getName());
+                }
             }
         }
         return greenCards;

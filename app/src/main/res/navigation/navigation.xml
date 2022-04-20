@@ -12,16 +12,23 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_advancesFragment"
-            app:destination="@id/advancesFragment" />
+            app:destination="@id/advancesFragment"
+            app:popUpTo="@id/homeFragment" />
         <action
             android:id="@+id/action_homeFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
+            app:destination="@id/settingsFragment"
+            app:popUpTo="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/advancesFragment"
         android:name="org.tesira.mturba.civichelper.AdvancesFragment"
         android:label="@string/item_advances"
-        tools:layout="@layout/fragment_advances" />
+        tools:layout="@layout/fragment_advances" >
+        <action
+            android:id="@+id/action_advancesFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:popUpTo="@id/advancesFragment" />
+    </fragment>
     <fragment
         android:id="@+id/aboutFragment"
         android:name="org.tesira.mturba.civichelper.AboutFragment"

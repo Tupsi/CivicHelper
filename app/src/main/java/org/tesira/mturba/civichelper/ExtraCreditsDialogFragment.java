@@ -97,7 +97,8 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         fragment.updateBonus(blue, green, orange, red, yellow);
-                        listener.onDialogPositiveClick(ExtraCreditsDialogFragment.this);
+                        fragment.returnToDashboard();
+//                        listener.onDialogPositiveClick(ExtraCreditsDialogFragment.this);
                     }
                 });
 //                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
