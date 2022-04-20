@@ -1,5 +1,7 @@
 package org.tesira.mturba.civichelper.card;
 
+import static org.tesira.mturba.civichelper.card.CardColor.GREEN;
+
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
@@ -13,7 +15,9 @@ import org.tesira.mturba.civichelper.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -125,6 +129,10 @@ public class Advance {
         this.familyname = familyname;
     }
 
+    public CardColor getPrimaryColor() {
+        return groups.get(0);
+    }
+
     public int getColor(){
         int rgb = 0;
         if (groups.size() == 1) {
@@ -208,5 +216,24 @@ public class Advance {
             }
             Log.d("Family", "size :" + list.size());
         }
+    }
+
+    /**
+     * @param list Adcances list
+     * @return only green cards under 100
+     *
+     * Is used to get a set of undiscounted green cards under 100. This is needed
+     * for buying Anatomy
+     */
+    public static Set<String> getGreenCards(List<Advance> list) {
+        Set<String> greenCards = new HashSet<>();
+        for (Advance adv: list) {
+            List<CardColor> colors = adv.getGroups();
+            if (colors.get(0).getName().equals("Science")) {
+                greenCards.add(adv.getName());
+                Log.v("GREEN", adv.getName());
+            }
+        }
+        return greenCards;
     }
 }

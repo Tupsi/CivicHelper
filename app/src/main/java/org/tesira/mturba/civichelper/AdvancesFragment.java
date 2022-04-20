@@ -95,6 +95,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private int bonusYellow;
     private int bonusOrange;
     private Set<String> bonusFamily;
+    private Set<String> greenCardsAnatomy;
 
 
     // TODO: Customize parameter argument names
@@ -162,6 +163,12 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             case "price" :
 //                Collections.sort(advances);
                 advances.sort(Comparator.comparing(Advance::getPrice).thenComparing(Advance::getName));
+                break;
+            case "color":
+                advances.sort(Comparator.comparing(Advance::getPrimaryColor).thenComparing(Advance::getPrice));
+                break;
+            case "family":
+                advances.sort(Comparator.comparing(Advance::getFamily).thenComparing(Advance::getVp));
                 break;
             case "name" :
             default :
@@ -364,7 +371,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
      * Imports all civilization advances from file into an ArrayList to be used in the RecyclerView.
      * @param advances The ArrayList in which to import the civilization advances to.
      * @param filename The filename of the xml data of all civilization advances.
-     */
+     *
+     * also stores all green cards with price under 100 in an extra Set for a potential Anatomy buy
+     * */
     private void importAdvances(List<Advance> advances, String filename) {
         try {
             InputStream is = requireActivity().getAssets().open(filename);
@@ -407,6 +416,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 }
             }
             Advance.addFamilyBonus(advances);
+            greenCardsAnatomy = Advance.getGreenCards(advances);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -492,6 +502,9 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         switch (key){
             case "sort" :
                 sortingOrder = sharedPreferences.getString("sort", "name");
+                if (sortingOrder.equals("family")) {
+                    sharedPreferences.edit().putString("columns","3").commit();
+                }
             case "name" :
             default:
                 break;
