@@ -14,6 +14,7 @@ import org.tesira.mturba.civichelper.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class to represent a civilization advance.
@@ -34,7 +35,8 @@ public class Advance {
     // effects hold special bonuses during gameplay, to be displayed at in summation
     // on  startscreen
     private HashMap<String, Integer> effects;
-
+    private int familybonus;
+    private String familyname;
 
     public Advance() {
         this.groups = new ArrayList<>();
@@ -107,6 +109,22 @@ public class Advance {
         credits.add(credit);
     }
 
+    public int getFamilybonus() {
+        return familybonus;
+    }
+
+    public void setFamilybonus(int familybonus) {
+        this.familybonus = familybonus;
+    }
+
+    public String getFamilyname() {
+        return familyname;
+    }
+
+    public void setFamilyname(String familyname) {
+        this.familyname = familyname;
+    }
+
     public int getColor(){
         int rgb = 0;
         if (groups.size() == 1) {
@@ -164,5 +182,31 @@ public class Advance {
             }
         }
         return -1;
+    }
+
+    public static void addFamilyBonus(List<Advance> list) {
+        for (Advance adv : list) {
+            int family = adv.getFamily();
+            List<Advance> result;
+            Log.d("Family", adv.getName());
+            switch (adv.getVp()) {
+                case 1:
+                    Log.d("Family", adv.getName() + "in 1");
+                    adv.setFamilybonus(10);
+                    result = list.stream().filter(i -> (i.getVp() == 3 && i.family == family)).collect(Collectors.toList());
+                    adv.setFamilyname(result.get(0).getName());
+                    break;
+                case 3:
+                    adv.setFamilybonus(20);
+                    result = list.stream().filter(i -> (i.getVp() == 6 && i.family == family)).collect(Collectors.toList());
+                    adv.setFamilyname(result.get(0).getName());
+                    break;
+                case 6:
+                    adv.setFamilybonus(0);
+                    adv.setFamilyname("");
+                    break;
+            }
+            Log.d("Family", "size :" + list.size());
+        }
     }
 }

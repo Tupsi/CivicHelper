@@ -53,6 +53,7 @@ import org.w3c.dom.NodeList;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +74,8 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private static final String MONEY_LEFT = "moneyLeft";
     private static final String FILENAME = "advances.xml";
     private static final String PURCHASED = "purchasedAdvances";
+    private static final String FAMILY = "familyBonus";
+
     // arraylist of all civilization cards
     public List<Advance> advances;
     private MyAdvancesRecyclerViewAdapter adapter;
@@ -91,7 +94,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private int bonusBlue;
     private int bonusYellow;
     private int bonusOrange;
-
+    private Set<String> bonusFamily;
 
 
     // TODO: Customize parameter argument names
@@ -127,6 +130,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         }
         savedCards = this.getActivity().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE );
         purchasedAdvances = savedCards.getStringSet(PURCHASED, new HashSet<>());
+        bonusFamily = savedCards.getStringSet(FAMILY, new HashSet<>());
         loadBonus();
     }
 
@@ -190,7 +194,6 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             @Override
             public void onItemStateChanged(@NonNull String key, boolean selected) {
                 super.onItemStateChanged(key, selected);
-//                Log.v("TRACKER", "onItemStateChanged : " + key + " : " + selected);
                 // item got deselected, need to redo total selected
                 if (!selected) {
                     setTotal(calculateTotal());
@@ -205,13 +208,11 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
             @Override
             public void onSelectionRefresh() {
                 super.onSelectionRefresh();
-//                Log.v("TRACKER", "onSelectionRefresh fired");
             }
 
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
-//                Log.v("TRACKER", "onSelectionChanged fired");
             }
 
             @Override
@@ -223,6 +224,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         if (savedInstanceState != null) {
             tracker.onRestoreInstanceState(savedInstanceState);
         }
+        // we want free stuff already selected
         selectZeroCostAdvances();
         mTreasureInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -265,9 +267,11 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private void buyAdvances() {
         int credits = 0;
         for (String name: tracker.getSelection()) {
-            purchasedAdvances.add(name);
-            addBonus(name);
             Advance adv = Advance.getAdvanceFromName(advances, name);
+            purchasedAdvances.add(name);
+            bonusFamily.add(adv.getFamilyname());
+            Log.d("Family", adv.getFamilyname());
+            addBonus(name);
             Integer effect = adv.getEffects().get("Credits");
             if (effect != null) {
                 credits += effect;
@@ -284,7 +288,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     private void addBonus(String name) {
         Advance adv = Advance.getAdvanceFromName(advances, name);
         for (Credit credit: adv.getCredits()) {
-            Log.v("Credits", credit.getGroup().getName() + " : " + credit.getValue());
+//            Log.v("Credits", credit.getGroup().getName() + " : " + credit.getValue());
             switch (credit.getGroup()) {
                 case BLUE :
                     bonusBlue += credit.getValue();
@@ -302,6 +306,10 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                     bonusYellow += credit.getValue();
                     break;
             }
+        }
+        // if advance is in first or second row (VP 1 or 3), add family bonus
+        if (adv.getVp() < 6) {
+
         }
     }
 
@@ -398,6 +406,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                     advances.add(advance);
                 }
             }
+            Advance.addFamilyBonus(advances);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -414,6 +423,14 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
                 current -= group1;
             } else {
                 current -= group2;
+            }
+        }
+        if (bonusFamily.contains(advance.getName())) {
+            Log.d("FamilyBonus", "hat familiy bonus :" + advance.getName());
+            if (advance.getVp() == 3) {
+                current -= 10;
+            } else {
+                current -= 20;
             }
         }
         if (current < 0) {
@@ -524,15 +541,12 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     public void saveVars() {
         SharedPreferences.Editor editor = prefs.edit();
         Log.v("Button", "saving...");
-        for (String name: purchasedAdvances
-             ) {
-            Log.v("Button", "inSave: " + name);
-        }
         editor.putInt(TREASURE_BOX, treasure);
         editor.apply();
         SharedPreferences.Editor editorCards = savedCards.edit();
         editorCards.putInt("saved", purchasedAdvances.size());
         editorCards.putStringSet(PURCHASED, purchasedAdvances);
+        editorCards.putStringSet(FAMILY, bonusFamily);
         editorCards.commit();
     }
     @SuppressLint("SetTextI18n")
@@ -563,7 +577,7 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
         editor.putInt("bonusRed", bonusRed);
         editor.putInt("bonusYellow", bonusYellow);
         editor.commit();
-        Log.v("DEMO", "saveBonus in Advanced");
+//        Log.v("DEMO", "saveBonus in Advanced");
 
     }
 
@@ -572,20 +586,20 @@ public class AdvancesFragment extends Fragment implements SharedPreferences.OnSh
     }
 
     public void updateBonus(int blue, int green, int orange, int red, int yellow) {
-        Log.v("SPINNER", " : "+blue+" : "+green+" : "+orange+" : "+red+" : "+yellow);
-        Log.v("SPINNER", " : "+bonusBlue+" : "+bonusGreen+" : "+bonusOrange+" : "+bonusRed+" : "+bonusYellow);
+//        Log.v("SPINNER", " : "+blue+" : "+green+" : "+orange+" : "+red+" : "+yellow);
+//        Log.v("SPINNER", " : "+bonusBlue+" : "+bonusGreen+" : "+bonusOrange+" : "+bonusRed+" : "+bonusYellow);
         bonusBlue += blue;
         bonusGreen += green;
         bonusOrange += orange;
         bonusRed += red;
         bonusYellow += yellow;
-        Log.v("SPINNER", " : "+bonusBlue+" : "+bonusGreen+" : "+bonusOrange+" : "+bonusRed+" : "+bonusYellow);
+//        Log.v("SPINNER", " : "+bonusBlue+" : "+bonusGreen+" : "+bonusOrange+" : "+bonusRed+" : "+bonusYellow);
         saveBonus();
     }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        Log.v("Listener", "ExtraCredits closing...");
+//        Log.v("Listener", "ExtraCredits closing...");
         NavHostFragment.findNavController(this).popBackStack();
     }
 }

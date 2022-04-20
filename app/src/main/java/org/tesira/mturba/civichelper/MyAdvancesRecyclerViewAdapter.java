@@ -1,6 +1,7 @@
 package org.tesira.mturba.civichelper;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.selection.SelectionTracker;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,6 +93,16 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
             holder.mCardView.setBackgroundResource(R.drawable.item_background);
             holder.mCardView.setAlpha(1F);
         }
+        int bonus = mValues.get(position).getFamilybonus();
+        if (bonus > 0) {
+            holder.mFamilybox.setVisibility(View.VISIBLE);
+            holder.mFamilyBonus.setText(String.valueOf(bonus));
+            holder.mFamilyName.setText(mValues.get(position).getFamilyname());
+        }
+        else {
+            holder.mFamilybox.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     private void mixedBackground(@NonNull ViewHolder holder, Resources res) {
@@ -168,6 +180,9 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
         public View mCardView;
         public final TextView mNameView;
         public final TextView mPriceView;
+        public final TextView mFamilyBonus;
+        public final TextView mFamilyName;
+        public final LinearLayout mFamilybox;
 
         public Advance mItem;
 
@@ -178,6 +193,9 @@ public class MyAdvancesRecyclerViewAdapter extends RecyclerView.Adapter<MyAdvanc
             mNameView = binding.name;
             mPriceView = binding.price;
             mCardView = binding.card;
+            mFamilyBonus = binding.familybonus;
+            mFamilyName = binding.familyname;
+            mFamilybox = binding.familylayout;
         }
 
         @NonNull
