@@ -291,17 +291,18 @@ public class AdvancesFragment extends Fragment
                 credits += effect;
             }
         }
-        if (buyAnatomy) {
+//        Log.v("GREEN", ""+greenCardsAnatomy.size());
+        if ((greenCardsAnatomy.size() > 0) &&  buyAnatomy) {
             numberDialogs++;
             new AnatomyDialogFragment(this, greenCardsAnatomy).show(getParentFragmentManager(), "Anatomy");
+//            Log.v("TEST", "test");
         }
 
         if (credits > 0) {
             numberDialogs++;
             new ExtraCreditsDialogFragment(this,credits).show(getParentFragmentManager(), "ExtraCredits");
         }
-        returnToDashboard();
-
+        returnToDashboard(false);
     }
 
     private void addBonus(String name) {
@@ -422,13 +423,14 @@ public class AdvancesFragment extends Fragment
                         int value = parseInt(element2.getElementsByTagName("effect").item(x).getTextContent());
                         advance.addEffect(name, value);
                     }
-                    int current = calculateCurrentPrice(advance);
-                    advance.setPrice(current);
+//                    int current = calculateCurrentPrice(advance);
+//                    advance.setPrice(current);
                     advances.add(advance);
                 }
             }
             Advance.addFamilyBonus(advances);
-            greenCardsAnatomy = Advance.getGreenCards(advances);
+            greenCardsAnatomy = Advance.getGreenCards(advances, purchasedAdvances);
+            setCurrentPrice();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -448,7 +450,7 @@ public class AdvancesFragment extends Fragment
             }
         }
         if (bonusFamily.contains(advance.getName())) {
-            Log.d("FamilyBonus", "hat familiy bonus :" + advance.getName());
+//            Log.d("FamilyBonus", "hat familiy bonus :" + advance.getName());
             if (advance.getVp() == 3) {
                 current -= 10;
             } else {
@@ -459,6 +461,35 @@ public class AdvancesFragment extends Fragment
             current = 0;
         }
         return current;
+    }
+
+    private void setCurrentPrice() {
+        for (Advance adv: advances) {
+            int current = adv.getPrice();
+            if (adv.getGroups().size() == 1 ) {
+                current -= getReductionFromGroup(adv.getGroups().get(0));
+            } else {
+                int group1 = getReductionFromGroup(adv.getGroups().get(0));
+                int group2 = getReductionFromGroup(adv.getGroups().get(1));
+                if (group1 > group2) {
+                    current -= group1;
+                } else {
+                    current -= group2;
+                }
+            }
+            if (bonusFamily.contains(adv.getName())) {
+//                Log.d("FamilyBonus", "hat familiy bonus :" + adv.getName());
+                if (adv.getVp() == 3) {
+                    current -= 10;
+                } else {
+                    current -= 20;
+                }
+            }
+            if (current < 0) {
+                current = 0;
+            }
+            adv.setPrice(current);
+        }
     }
 
     private int getReductionFromGroup(CardColor cardColor) {
@@ -626,12 +657,17 @@ public class AdvancesFragment extends Fragment
     public void onDialogPositiveClick(DialogFragment dialog) {
         NavHostFragment.findNavController(this).popBackStack();
     }
-    public void returnToDashboard() {
-        if (numberDialogs == 0) {
-            NavHostFragment.findNavController(this).popBackStack();
-        } else
-        {
-            numberDialogs--;
+    public void returnToDashboard(boolean tookWrittenRecord) {
+        if (tookWrittenRecord) {
+//            numberDialogs++;
+            new ExtraCreditsDialogFragment(this,10).show(getParentFragmentManager(), "ExtraCredits");
+        } else {
+            if (numberDialogs == 0) {
+                NavHostFragment.findNavController(this).popBackStack();
+            } else
+            {
+                numberDialogs--;
+            }
         }
     }
 }

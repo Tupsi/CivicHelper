@@ -220,22 +220,26 @@ public class Advance {
 
     /**
      * @param list Adcances list
+     * @param purchasedAdvances
      * @return only green cards under 100
      *
      * Is used to get a set of undiscounted green cards under 100. This is needed
      * for buying Anatomy
      */
-    public static Set<String> getGreenCards(List<Advance> list) {
+    public static Set<String> getGreenCards(List<Advance> list, Set<String> purchasedAdvances) {
         Set<String> greenCards = new HashSet<>();
         for (Advance adv : list) {
-            List<CardColor> colors = adv.getGroups();
-            if (colors.size() == 1) {
-                if (colors.get(0).getName().equals("Science") && adv.getPrice() < 100) {
-                    greenCards.add(adv.getName());
-                }
-            } else {
-                if ((colors.get(0).getName().equals("Science") || colors.get(1).getName().equals("Science")) && adv.getPrice() < 100 ) {
-                    greenCards.add(adv.getName());
+            boolean isBought = purchasedAdvances.contains(adv.getName());
+            if (!isBought) {
+                List<CardColor> colors = adv.getGroups();
+                if (colors.size() == 1) {
+                    if (colors.get(0).getName().equals("Science") && adv.getPrice() < 100) {
+                        greenCards.add(adv.getName());
+                    }
+                } else {
+                    if ((colors.get(0).getName().equals("Science") || colors.get(1).getName().equals("Science")) && adv.getPrice() < 100 ) {
+                        greenCards.add(adv.getName());
+                    }
                 }
             }
         }

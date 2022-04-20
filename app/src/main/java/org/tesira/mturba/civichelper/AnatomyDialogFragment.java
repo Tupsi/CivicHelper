@@ -36,7 +36,11 @@ public class AnatomyDialogFragment extends DialogFragment {
                 public void onClick(DialogInterface dialog, int which) {
 //                    Log.v("Anatomy", "clicked: " + greenCards[which]);
                     fragment.addAnatomyFreeCard(greenCards[which]);
-                    fragment.returnToDashboard();
+                    if (greenCards[which].equals("Written Record")) {
+                        fragment.returnToDashboard(true);
+                    } else {
+                        fragment.returnToDashboard(false);
+                    }
                 }
             });
             return builder.create();
