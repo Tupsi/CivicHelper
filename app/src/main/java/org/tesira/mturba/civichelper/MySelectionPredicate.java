@@ -1,7 +1,5 @@
 package org.tesira.mturba.civichelper;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.selection.SelectionTracker;
 import org.tesira.mturba.civichelper.card.Advance;
@@ -22,12 +20,9 @@ public class MySelectionPredicate<String> extends SelectionTracker.SelectionPred
     @Override
     public boolean canSetStateForKey(@NonNull String key, boolean nextState) {
 
-//        int idx = myList.get(0).getIndexFromName(myList, (java.lang.String) key);
-//        int current = myList.get(idx).getPrice();
         Advance adv = Advance.getAdvanceFromName(myList, (java.lang.String) key);
         int current = adv.getPrice();
         Integer effect = adv.getEffects().get("CreditsOnce");
-        Log.v("effect", " " + effect);
         treasure = fragment.getTreasure();
         total = fragment.calculateTotal();
         if (!nextState) {

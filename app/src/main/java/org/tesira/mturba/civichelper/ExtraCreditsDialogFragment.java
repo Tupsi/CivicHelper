@@ -15,32 +15,18 @@ import androidx.fragment.app.DialogFragment;
 
 import org.tesira.mturba.civichelper.databinding.DialogCreditsBinding;
 
+/**
+ * Dialog for Advances Written Record, Monument, Library
+ *
+ * https://developer.android.com/guide/topics/ui/dialogs
+ */
 public class ExtraCreditsDialogFragment extends DialogFragment {
 
     private DialogCreditsBinding binding;
-//    String items[] = {"0", "5", "10", "15", "20"};
-    String items[];
+    String[] items;
     private int credits, blue, green, yellow, orange, red;
     private AlertDialog dialog;
     private AdvancesFragment fragment;
-
-    public interface ExtracCreditsDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
-    }
-
-    ExtracCreditsDialogListener listener;
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        listener = (ExtracCreditsDialogListener) fragment;
-
-        try {
-            listener = (ExtracCreditsDialogListener) fragment;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(getActivity().toString() + " must implement ExtraCreditsDialogListener");
-        }
-    }
 
     public ExtraCreditsDialogFragment(AdvancesFragment fragment, int credits) {
         this.fragment = fragment;
@@ -59,34 +45,23 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
     }
 
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         binding = DialogCreditsBinding.inflate(getLayoutInflater());
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, items);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, items);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-//        ArrayAdapter<String> spinnerAdapterBlue = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, items);
-//        spinnerAdapterBlue.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerblue.setAdapter(spinnerAdapter);
         binding.spinnerblue.setOnItemSelectedListener(new MyOnItemSelectedListener());
-//        ArrayAdapter<String> spinnerAdapterRed = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, items);
-//        spinnerAdapterRed.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerred.setAdapter(spinnerAdapter);
         binding.spinnerred.setOnItemSelectedListener(new MyOnItemSelectedListener());
-//        ArrayAdapter<String> spinnerAdapterOrange = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, items);
-//        spinnerAdapterOrange.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerorange.setAdapter(spinnerAdapter);
         binding.spinnerorange.setOnItemSelectedListener(new MyOnItemSelectedListener());
-//        ArrayAdapter<String> spinnerAdapterYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, items);
-//        spinnerAdapterYellow.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinneryellow.setAdapter(spinnerAdapter);
         binding.spinneryellow.setOnItemSelectedListener(new MyOnItemSelectedListener());
-//        ArrayAdapter<String> spinnerAdapterGreen = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, items);
-//        spinnerAdapterGreen.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnergreen.setAdapter(spinnerAdapter);
         binding.spinnergreen.setOnItemSelectedListener(new MyOnItemSelectedListener());
-
         binding.creditsremaining.setText(String.valueOf(credits));
 
         // Use the Builder class for convenient dialog construction
@@ -94,18 +69,10 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         builder.setTitle(R.string.dialog_extra_credits);
         View spinnerView = binding.getRoot();
         builder.setView(spinnerView);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        fragment.updateBonus(blue, green, orange, red, yellow);
-                        fragment.returnToDashboard(false);
-//                        listener.onDialogPositiveClick(ExtraCreditsDialogFragment.this);
-                    }
-                });
-//                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        // User cancelled the dialog
-//                    }
-//                });
+        builder.setPositiveButton(R.string.ok, (dialog, id) -> {
+            fragment.updateBonus(blue, green, orange, red, yellow);
+            fragment.returnToDashboard(false);
+        });
         // Create the AlertDialog object and return it
         dialog = builder.create();
         return dialog;
@@ -137,19 +104,13 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            Log.v("SPINNER", "nothing selected");
         }
 
         public void calculateCredits() {
             int total;
             total = blue + green + orange + red + yellow;
             binding.creditsremaining.setText(String.valueOf(credits - total));
-            if (total != credits) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-            }
-            else {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-            }
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(total == credits);
         }
     }
 }

@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.tesira.mturba.civichelper.card.Advance;
-import org.tesira.mturba.civichelper.placeholder.PlaceholderContent.PlaceholderItem;
 import org.tesira.mturba.civichelper.databinding.ItemRowBinding;
 
 import java.util.ArrayList;

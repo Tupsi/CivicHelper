@@ -166,6 +166,12 @@ public class Advance {
                 return R.color.purple_700;
         }
     }
+
+    /**
+     * @param list List of Advances
+     * @param name Name of the Advance
+     * @return {@link Advance} object of the given name.
+     */
     public static Advance getAdvanceFromName(List<Advance> list, String name) {
         int i = 0;
         for (Advance adv: list) {
@@ -179,27 +185,19 @@ public class Advance {
         return null;
     }
 
-    public int getIndexFromName(List<Advance> list, String name) {
-        int i = 0;
-        for (Advance adv: list) {
-            if (adv.getName().equals(name)) {
-                return i;
-            }
-            else {
-                i++;
-            }
-        }
-        return -1;
-    }
-
+    /**
+     * @param list list of Advances
+     *
+     * Adds the row/family bonus to each advance. Advances with one victory point give
+     * +10 the the one with 3 VP and this card gives +20 to the last in the row which
+     * always has 6 VP.
+     */
     public static void addFamilyBonus(List<Advance> list) {
         for (Advance adv : list) {
             int family = adv.getFamily();
             List<Advance> result;
-            Log.d("Family", adv.getName());
             switch (adv.getVp()) {
                 case 1:
-                    Log.d("Family", adv.getName() + "in 1");
                     adv.setFamilybonus(10);
                     result = list.stream().filter(i -> (i.getVp() == 3 && i.family == family)).collect(Collectors.toList());
                     adv.setFamilyname(result.get(0).getName());
@@ -214,17 +212,17 @@ public class Advance {
                     adv.setFamilyname("");
                     break;
             }
-            Log.d("Family", "size :" + list.size());
         }
     }
 
     /**
-     * @param list Adcances list
-     * @param purchasedAdvances
+     * @param list Advances list
+     * @param purchasedAdvances Set of Advances already bought.
      * @return only green cards under 100
      *
-     * Is used to get a set of undiscounted green cards under 100. This is needed
-     * for buying Anatomy
+     * Is used to get a set of green cards under 100. This is needed
+     * for buying Anatomy and needs to be called before the reduction/bonus is calculated for each
+     * card as the rule states this only advances which have a base price under 100 can be selected.
      */
     public static Set<String> getGreenCards(List<Advance> list, Set<String> purchasedAdvances) {
         Set<String> greenCards = new HashSet<>();

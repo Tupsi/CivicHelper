@@ -27,7 +27,6 @@ public class MyItemDetailsLookup extends ItemDetailsLookup<String> {
                 return ((MyAdvancesRecyclerViewAdapter.ViewHolder) viewHolder).getItemDetails();
             }
         }
-        Log.v("DEBUG", "view null in ItemDetails call");
         return null;
     }
 }

@@ -68,8 +68,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * A fragment representing a list of Items.
  */
 public class AdvancesFragment extends Fragment
-        implements SharedPreferences.OnSharedPreferenceChangeListener,
-        ExtraCreditsDialogFragment.ExtracCreditsDialogListener {
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
+//        ExtraCreditsDialogFragment.ExtracCreditsDialogListener {
 
     private static final String ADVANCES_LIST = "advancesList";
     private static final String TREASURE_BOX = "treasure";
@@ -133,13 +133,14 @@ public class AdvancesFragment extends Fragment
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
         savedCards = this.getActivity().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE );
+        // Set<String> s = new HashSet<String>(sharedPrefs.getStringSet("key", new HashSet<String>()));
         purchasedAdvances = savedCards.getStringSet(PURCHASED, new HashSet<>());
         bonusFamily = savedCards.getStringSet(FAMILY, new HashSet<>());
         loadBonus();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
@@ -269,7 +270,7 @@ public class AdvancesFragment extends Fragment
      */
     private void removePurchasedAdvances() {
         for (String name: purchasedAdvances) {
-            Advance adv = advances.get(advances.get(0).getIndexFromName(advances, name));
+            Advance adv = Advance.getAdvanceFromName(advances, name);
             advances.remove(adv);
         }
     }
@@ -291,11 +292,9 @@ public class AdvancesFragment extends Fragment
                 credits += effect;
             }
         }
-//        Log.v("GREEN", ""+greenCardsAnatomy.size());
         if ((greenCardsAnatomy.size() > 0) &&  buyAnatomy) {
             numberDialogs++;
             new AnatomyDialogFragment(this, greenCardsAnatomy).show(getParentFragmentManager(), "Anatomy");
-//            Log.v("TEST", "test");
         }
 
         if (credits > 0) {
@@ -371,10 +370,10 @@ public class AdvancesFragment extends Fragment
     public int calculateTotal() {
         total = 0;
         for (String name : tracker.getSelection()) {
-            int idx = advances.get(0).getIndexFromName(advances, name);
+//            int idx = advances.get(0).getIndexFromName(advances, name);
+//            int currentPrice = advances.get(idx).getPrice();
             Advance adv = Advance.getAdvanceFromName(advances, name);
-
-            int currentPrice = advances.get(idx).getPrice();
+            int currentPrice = adv.getPrice();
             total += currentPrice;
         }
         return total;
@@ -423,8 +422,6 @@ public class AdvancesFragment extends Fragment
                         int value = parseInt(element2.getElementsByTagName("effect").item(x).getTextContent());
                         advance.addEffect(name, value);
                     }
-//                    int current = calculateCurrentPrice(advance);
-//                    advance.setPrice(current);
                     advances.add(advance);
                 }
             }
@@ -436,33 +433,6 @@ public class AdvancesFragment extends Fragment
         }
     }
 
-    private int calculateCurrentPrice(Advance advance) {
-        int current = advance.getPrice();
-        if (advance.getGroups().size() == 1 ) {
-            current -= getReductionFromGroup(advance.getGroups().get(0));
-        } else {
-            int group1 = getReductionFromGroup(advance.getGroups().get(0));
-            int group2 = getReductionFromGroup(advance.getGroups().get(1));
-            if (group1 > group2) {
-                current -= group1;
-            } else {
-                current -= group2;
-            }
-        }
-        if (bonusFamily.contains(advance.getName())) {
-//            Log.d("FamilyBonus", "hat familiy bonus :" + advance.getName());
-            if (advance.getVp() == 3) {
-                current -= 10;
-            } else {
-                current -= 20;
-            }
-        }
-        if (current < 0) {
-            current = 0;
-        }
-        return current;
-    }
-
     private void setCurrentPrice() {
         for (Advance adv: advances) {
             int current = adv.getPrice();
@@ -471,11 +441,7 @@ public class AdvancesFragment extends Fragment
             } else {
                 int group1 = getReductionFromGroup(adv.getGroups().get(0));
                 int group2 = getReductionFromGroup(adv.getGroups().get(1));
-                if (group1 > group2) {
-                    current -= group1;
-                } else {
-                    current -= group2;
-                }
+                current -= Math.max(group1, group2);
             }
             if (bonusFamily.contains(adv.getName())) {
 //                Log.d("FamilyBonus", "hat familiy bonus :" + adv.getName());
@@ -541,7 +507,6 @@ public class AdvancesFragment extends Fragment
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
         switch (key){
             case "sort" :
                 sortingOrder = sharedPreferences.getString("sort", "name");
@@ -552,19 +517,14 @@ public class AdvancesFragment extends Fragment
             default:
                 break;
         }
-        Log.v("PREF", "onSharedPrefChanged: "+sortingOrder);
     }
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        Log.v("save", "saving states");
         super.onSaveInstanceState(savedInstanceState);
         tracker.onSaveInstanceState(savedInstanceState);
         // save stuff
-//        savedInstanceState.putSerializable(ADVANCES_LIST, (Serializable) advances);
         int money = parseInt(mTreasureInput.getText().toString());
         savedInstanceState.putInt(TREASURE_BOX, money);
-//        int moneyleft = Integer.parseInt(mBuyPrice.getText().toString());
-//        savedInstanceState.putInt(MONEY_LEFT, moneyleft);
     }
 
     public void onStart() {
@@ -596,7 +556,6 @@ public class AdvancesFragment extends Fragment
 
     public void saveVars() {
         SharedPreferences.Editor editor = prefs.edit();
-        Log.v("Button", "saving...");
         editor.putInt(TREASURE_BOX, treasure);
         editor.apply();
         SharedPreferences.Editor editorCards = savedCards.edit();
@@ -642,24 +601,21 @@ public class AdvancesFragment extends Fragment
     }
 
     public void updateBonus(int blue, int green, int orange, int red, int yellow) {
-//        Log.v("SPINNER", " : "+blue+" : "+green+" : "+orange+" : "+red+" : "+yellow);
-//        Log.v("SPINNER", " : "+bonusBlue+" : "+bonusGreen+" : "+bonusOrange+" : "+bonusRed+" : "+bonusYellow);
         bonusBlue += blue;
         bonusGreen += green;
         bonusOrange += orange;
         bonusRed += red;
         bonusYellow += yellow;
-//        Log.v("SPINNER", " : "+bonusBlue+" : "+bonusGreen+" : "+bonusOrange+" : "+bonusRed+" : "+bonusYellow);
         saveBonus();
     }
 
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        NavHostFragment.findNavController(this).popBackStack();
-    }
+//    @Override
+//    public void onDialogPositiveClick(DialogFragment dialog) {
+//        NavHostFragment.findNavController(this).popBackStack();
+//    }
+
     public void returnToDashboard(boolean tookWrittenRecord) {
         if (tookWrittenRecord) {
-//            numberDialogs++;
             new ExtraCreditsDialogFragment(this,10).show(getParentFragmentManager(), "ExtraCredits");
         } else {
             if (numberDialogs == 0) {
