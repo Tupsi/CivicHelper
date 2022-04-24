@@ -13,6 +13,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -45,6 +46,7 @@ import org.tesira.mturba.civichelper.card.CardColor;
 import org.tesira.mturba.civichelper.card.Credit;
 import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
 import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
+import org.tesira.mturba.civichelper.db.CivicViewModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -78,12 +80,14 @@ public class AdvancesFragment extends Fragment
     private static final String PURCHASED = "purchasedAdvances";
     private static final String FAMILY = "familyBonus";
 
+    private CivicViewModel model;
+
     // arraylist of all civilization cards
     public List<Advance> advances;
     private MyAdvancesRecyclerViewAdapter adapter;
     private SharedPreferences prefs, savedCards;
     private String sortingOrder;
-    protected RecyclerView mRecyclerView;
+    protected RecyclerView mRecyclerVie;
     protected EditText mTreasureInput;
     protected TextView mBuyPrice;
     private SelectionTracker<String> tracker;
@@ -125,18 +129,18 @@ public class AdvancesFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        sortingOrder = prefs.getString("sort", "name");
-        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
-        prefs.registerOnSharedPreferenceChangeListener(this);
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
-        savedCards = this.getActivity().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE );
-        // Set<String> s = new HashSet<String>(sharedPrefs.getStringSet("key", new HashSet<String>()));
-        purchasedAdvances = savedCards.getStringSet(PURCHASED, new HashSet<>());
-        bonusFamily = savedCards.getStringSet(FAMILY, new HashSet<>());
-        loadBonus();
+//        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+//        sortingOrder = prefs.getString("sort", "name");
+//        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
+//        prefs.registerOnSharedPreferenceChangeListener(this);
+//        if (getArguments() != null) {
+//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+//        }
+//        savedCards = this.getActivity().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE );
+//        // Set<String> s = new HashSet<String>(sharedPrefs.getStringSet("key", new HashSet<String>()));
+//        purchasedAdvances = savedCards.getStringSet(PURCHASED, new HashSet<>());
+//        bonusFamily = savedCards.getStringSet(FAMILY, new HashSet<>());
+//        loadBonus();
     }
 
     @Override
@@ -144,116 +148,125 @@ public class AdvancesFragment extends Fragment
                              Bundle savedInstanceState) {
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
-//        View rootView = inflater.inflate(R.layout.fragment_advances, container, false);
-        mTreasureInput = rootView.findViewById(R.id.treasure);
-        mBuyPrice = rootView.findViewById(R.id.moneyleft);
-        advances = new ArrayList<>();
-        binding.btnBuy.setOnClickListener(v -> {
-            buyAdvances();
-//            Navigation.findNavController(v).popBackStack();
+        RecyclerView recyclerView = rootView.findViewById(R.id.list);
+        final CivicsListAdapter adapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
+        model = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
+        model.getAllCivics().observe(requireActivity(), civics -> {
+            adapter.submitList(civics);
         });
 
-        if (savedInstanceState != null) {
-            Log.v("save", "savedInstanceState YES/if");
-        } else {
-            Log.v("save", "savedInstanceState NO/else");
-        }
-        loadVars();
-        importAdvances(advances, FILENAME);
-        setTotal(0);
-
-        // sorting the cards
-        switch (sortingOrder) {
-            case "price" :
-//                Collections.sort(advances);
-                advances.sort(Comparator.comparing(Advance::getPrice).thenComparing(Advance::getName));
-                break;
-            case "color":
-                advances.sort(Comparator.comparing(Advance::getPrimaryColor).thenComparing(Advance::getPrice));
-                break;
-            case "family":
-                advances.sort(Comparator.comparing(Advance::getFamily).thenComparing(Advance::getVp));
-                break;
-            case "name" :
-            default :
-//                Collections.sort(advances, (lhs, rhs) -> lhs.getName().compareTo(rhs.getName()));
-                advances.sort(Comparator.comparing(Advance::getName));
-                break;
-        }
-        removePurchasedAdvances();
-
-        // Set the adapter
-        Context context = rootView.getContext();
-        mRecyclerView = rootView.findViewById(R.id.list);
-        if (mColumnCount <= 1) {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-        } else {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-        }
-        adapter = new MyAdvancesRecyclerViewAdapter(advances, context);
-        adapter.setRemainingTreasure(treasure);
-        mRecyclerView.setAdapter(adapter);
-        tracker = new SelectionTracker.Builder<>(
-                "my-selection-id",
-                mRecyclerView,
-                new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, advances, adapter),
-                new MyItemDetailsLookup(mRecyclerView),
-                StorageStrategy.createStringStorage())
-               .withSelectionPredicate(new MySelectionPredicate<>(this, advances)).build();
-        adapter.setSelectionTracker(tracker);
-        tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
-            @Override
-            public void onItemStateChanged(@NonNull String key, boolean selected) {
-                super.onItemStateChanged(key, selected);
-                // item got deselected, need to redo total selected
-                if (!selected) {
-                    setTotal(calculateTotal());
-                }
-                int rest = treasure - total;
-                adapter.setRemainingTreasure(rest);
-                // works for auto greying out to expensive cards, but resets view to first item
-                // also crashes on long click on some android versions
-                //                mRecyclerView.setAdapter(adapter);
-            }
-
-            @Override
-            public void onSelectionRefresh() {
-                super.onSelectionRefresh();
-            }
-
-            @Override
-            public void onSelectionChanged() {
-                super.onSelectionChanged();
-            }
-
-            @Override
-            public void onSelectionRestored() {
-                super.onSelectionRestored();
-            }
-        });
-        setHasOptionsMenu(true);
-        if (savedInstanceState != null) {
-            tracker.onRestoreInstanceState(savedInstanceState);
-        }
-        // we want free stuff already selected
-        selectZeroCostAdvances();
-        mTreasureInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                updateRemaining();
-            }
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-        mTreasureInput.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                if (treasure < total) {
-                    tracker.clearSelection();
-                }
-            }
-        });
+////        View rootView = inflater.inflate(R.layout.fragment_advances, container, false);
+//        mTreasureInput = rootView.findViewById(R.id.treasure);
+//        mBuyPrice = rootView.findViewById(R.id.moneyleft);
+//        advances = new ArrayList<>();
+//        binding.btnBuy.setOnClickListener(v -> {
+//            buyAdvances();
+////            Navigation.findNavController(v).popBackStack();
+//        });
+//
+//        if (savedInstanceState != null) {
+//            Log.v("save", "savedInstanceState YES/if");
+//        } else {
+//            Log.v("save", "savedInstanceState NO/else");
+//        }
+//        loadVars();
+//        importAdvances(advances, FILENAME);
+//        setTotal(0);
+//
+//        // sorting the cards
+//        switch (sortingOrder) {
+//            case "price" :
+////                Collections.sort(advances);
+//                advances.sort(Comparator.comparing(Advance::getPrice).thenComparing(Advance::getName));
+//                break;
+//            case "color":
+//                advances.sort(Comparator.comparing(Advance::getPrimaryColor).thenComparing(Advance::getPrice));
+//                break;
+//            case "family":
+//                advances.sort(Comparator.comparing(Advance::getFamily).thenComparing(Advance::getVp));
+//                break;
+//            case "name" :
+//            default :
+////                Collections.sort(advances, (lhs, rhs) -> lhs.getName().compareTo(rhs.getName()));
+//                advances.sort(Comparator.comparing(Advance::getName));
+//                break;
+//        }
+//        removePurchasedAdvances();
+//
+//        // Set the adapter
+//        Context context = rootView.getContext();
+//        mRecyclerView = rootView.findViewById(R.id.list);
+//        if (mColumnCount <= 1) {
+//            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+//        } else {
+//            mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+//        }
+//        adapter = new MyAdvancesRecyclerViewAdapter(advances, context);
+//        adapter.setRemainingTreasure(treasure);
+//        mRecyclerView.setAdapter(adapter);
+//        tracker = new SelectionTracker.Builder<>(
+//                "my-selection-id",
+//                mRecyclerView,
+//                new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, advances, adapter),
+//                new MyItemDetailsLookup(mRecyclerView),
+//                StorageStrategy.createStringStorage())
+//               .withSelectionPredicate(new MySelectionPredicate<>(this, advances)).build();
+//        adapter.setSelectionTracker(tracker);
+//        tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
+//            @Override
+//            public void onItemStateChanged(@NonNull String key, boolean selected) {
+//                super.onItemStateChanged(key, selected);
+//                // item got deselected, need to redo total selected
+//                if (!selected) {
+//                    setTotal(calculateTotal());
+//                }
+//                int rest = treasure - total;
+//                adapter.setRemainingTreasure(rest);
+//                // works for auto greying out to expensive cards, but resets view to first item
+//                // also crashes on long click on some android versions
+//                //                mRecyclerView.setAdapter(adapter);
+//            }
+//
+//            @Override
+//            public void onSelectionRefresh() {
+//                super.onSelectionRefresh();
+//            }
+//
+//            @Override
+//            public void onSelectionChanged() {
+//                super.onSelectionChanged();
+//            }
+//
+//            @Override
+//            public void onSelectionRestored() {
+//                super.onSelectionRestored();
+//            }
+//        });
+//        setHasOptionsMenu(true);
+//        if (savedInstanceState != null) {
+//            tracker.onRestoreInstanceState(savedInstanceState);
+//        }
+//        // we want free stuff already selected
+//        selectZeroCostAdvances();
+//        mTreasureInput.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                updateRemaining();
+//            }
+//            @Override
+//            public void afterTextChanged(Editable s) {}
+//        });
+//        mTreasureInput.setOnFocusChangeListener((v, hasFocus) -> {
+//            if (!hasFocus) {
+//                if (treasure < total) {
+//                    tracker.clearSelection();
+//                }
+//            }
+//        });
         return rootView;
     }
 

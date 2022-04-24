@@ -11,18 +11,18 @@ public class CivicViewModel extends AndroidViewModel {
 
     private CivicRepository mRepository;
     private final LiveData<List<CivilizationAdvance>> mAllCivics;
-    private final LiveData<List<PurchasedAdvance>> mAllPurchases;
+//    private final LiveData<List<PurchasedAdvance>> mAllPurchases;
 
     public CivicViewModel(@NonNull Application application) {
         super(application);
         mRepository = new CivicRepository(application);
         mAllCivics = mRepository.getAllCivics();
-        mAllPurchases = mRepository.getAllPurchases();
+//        mAllPurchases = mRepository.getAllPurchases();
     }
 
-    LiveData<List<CivilizationAdvance>> getAllCivics() {return mAllCivics;}
-    LiveData<List<PurchasedAdvance>> getAllPurchases() {return mAllPurchases;}
+    public LiveData<List<CivilizationAdvance>> getAllCivics() {return mAllCivics;}
+//    public LiveData<List<PurchasedAdvance>> getAllPurchases() {return mAllPurchases;}
 
     public void insert(CivilizationAdvance civic) {mRepository.insert(civic);}
-    public void insert(PurchasedAdvance purchases) {mRepository.insert(purchases);}
+//    public void insert(PurchasedAdvance purchases) {mRepository.insert(purchases);}
 }

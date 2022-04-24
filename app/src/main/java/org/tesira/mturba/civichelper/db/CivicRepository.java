@@ -6,33 +6,34 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-class CivicRepository {
+public class CivicRepository {
 
     private CivilizationAdvanceDao mCivicDao;
-    private PurchasedAdvanceDao mPurchaseDao;
+//    private PurchasedAdvanceDao mPurchaseDao;
     private LiveData<List<CivilizationAdvance>> mAllCivics;
-    private LiveData<List<PurchasedAdvance>> mAllPurchases;
+//    private LiveData<List<PurchasedAdvance>> mAllPurchases;
 
-    CivicRepository(Application application) {
+    public CivicRepository(Application application) {
         CivicHelperDatabase db = CivicHelperDatabase.getDatabase(application);
         mCivicDao = db.civicDao();
-        mPurchaseDao = db.purchaseDao();
+        mAllCivics = mCivicDao.getAdvancesByPrice();
+//        mPurchaseDao = db.purchaseDao();
     }
 
-    LiveData<List<CivilizationAdvance>> getAllCivics() {
+    public LiveData<List<CivilizationAdvance>> getAllCivics() {
         return mAllCivics;
     }
 
-    LiveData<List<PurchasedAdvance>> getAllPurchases() {
-        return mAllPurchases;
-    }
+//    public LiveData<List<PurchasedAdvance>> getAllPurchases() {
+//        return mAllPurchases;
+//    }
 
-    void insert(CivilizationAdvance civic) {
+    public void insert(CivilizationAdvance civic) {
         CivicHelperDatabase.databaseWriteExecutor.execute(()-> {mCivicDao.insert(civic);});
     }
 
-    void insert(PurchasedAdvance card) {
-        CivicHelperDatabase.databaseWriteExecutor.execute(()-> {mPurchaseDao.insert(card);});
-    }
+//    public void insert(PurchasedAdvance card) {
+//        CivicHelperDatabase.databaseWriteExecutor.execute(()-> {mPurchaseDao.insert(card);});
+//    }
 
 }

@@ -5,11 +5,11 @@ package org.tesira.mturba.civichelper.card;
  * Literacy, Philosophy, Mathematics and Wonders of the World which belong to two {@link CardColor}.
  */
 public enum CardColor {
-    RED("Civic"),
-    GREEN("Science"),
     BLUE("Arts"),
-    YELLOW("Religion"),
-    ORANGE("Crafts");
+    GREEN("Science"),
+    ORANGE("Crafts"),
+    RED("Civic"),
+    YELLOW("Religion");
 
     private String name;
 
