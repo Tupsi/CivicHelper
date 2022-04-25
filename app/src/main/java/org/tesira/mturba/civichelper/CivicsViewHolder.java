@@ -1,5 +1,6 @@
 package org.tesira.mturba.civichelper;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,9 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
     private final TextView bonusCardItemView;
     private final TextView bonusItemView;
 
+    private int total;
+    private int treasure;
+
     private CivicsViewHolder(View itemView) {
         super(itemView);
         nameItemView = itemView.findViewById(R.id.name);
@@ -24,8 +28,9 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
         bonusItemView = itemView.findViewById(R.id.familybonus);
     }
 
-    public void bindName(String name) {
+    public void bindName(String name, Drawable drawable) {
         nameItemView.setText(name);
+        nameItemView.setBackground(drawable);
     }
     public void bindPrice(int price) {
         priceItemView.setText(String.valueOf(price));

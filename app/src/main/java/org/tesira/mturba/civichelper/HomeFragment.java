@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.databinding.DataBindingUtil;
@@ -28,6 +29,7 @@ import androidx.preference.PreferenceManager;
 
 import org.tesira.mturba.civichelper.card.CardColor;
 import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
+import org.tesira.mturba.civichelper.db.CivicViewModel;
 
 import java.util.HashMap;
 
@@ -45,17 +47,22 @@ public class HomeFragment extends Fragment {
     private int bonusBlue;
     private int bonusYellow;
     private int bonusOrange;
+    private CivicViewModel mCivicViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container,false);
         prefs = getContext().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE);
-//        View view = binding.getRoot();
+        mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
+        mCivicViewModel.test++;
+        Log.v("MODEL", "test var Home Fragment :"+mCivicViewModel.test);
+
+        View view = binding.getRoot();
         binding.startBtn.setOnClickListener(v -> onClickButton(v));
         binding.resetBtn.setOnClickListener(v -> onClickButton(v));
         setHasOptionsMenu(true);
-        loadBonus();
+//        loadBonus();
         return binding.getRoot();
     }
 

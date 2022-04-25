@@ -1,8 +1,12 @@
 package org.tesira.mturba.civichelper;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
@@ -22,11 +26,13 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull CivicsViewHolder holder, int position) {
-            Card current = getItem(position);
-            holder.bindName(current.getName());
-            holder.bindPrice(current.getPrice());
-            holder.bindBonus(current.getBonus());
-            holder.bindBonusCard(current.getBonusCard());
+        Card current = getItem(position);
+        Resources res = holder.itemView.getResources();
+
+        holder.bindName(current.getName(), getItemBackgroundColor(current, res));
+        holder.bindPrice(current.getPrice());
+        holder.bindBonus(current.getBonus());
+        holder.bindBonusCard(current.getBonusCard());
     }
 
     static class CivicsDiff extends DiffUtil.ItemCallback<Card> {
@@ -40,5 +46,59 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         public boolean areContentsTheSame(@NonNull Card oldItem, @NonNull Card newItem) {
             return oldItem.getName().equals(newItem.getName());
         }
+    }
+
+    public static Drawable getItemBackgroundColor(Card card, Resources res) {
+        int backgroundColor = 0;
+        if (card.getGroup2() == null) {
+            switch (card.getGroup1()) {
+                case ORANGE:
+                    backgroundColor = R.color.crafts;
+                    break;
+                case YELLOW:
+                    backgroundColor = R.color.religion;
+                    break;
+                case RED:
+                    backgroundColor = R.color.civic;
+                    break;
+                case GREEN:
+                    backgroundColor = R.color.science;
+                    break;
+                case BLUE:
+                    backgroundColor = R.color.arts;
+                    break;
+                default:
+                    backgroundColor = R.color.purple_700;
+                    break;
+            }
+        } else {
+            switch (card.getName()) {
+                case "Engineering":
+                    backgroundColor = R.drawable.engineering_background;
+                break;
+                case "Mathematics":
+                    backgroundColor = R.drawable.mathematics_background;
+                break;
+                case "Mysticism":
+                    backgroundColor = R.drawable.mysticism_background;
+                break;
+                case "Written Record":
+                    backgroundColor = R.drawable.written_record_background;
+                break;
+                case "Theocracy":
+                    backgroundColor = R.drawable.theocracy_background;
+                break;
+                case "Literacy":
+                    backgroundColor = R.drawable.literacy_background;
+                break;
+                case "Wonder of the World":
+                    backgroundColor = R.drawable.wonders_of_the_world_background;
+                break;
+                case "Philosophy":
+                    backgroundColor = R.drawable.philosophy_background;
+                break;
+            }
+        }
+        return ResourcesCompat.getDrawable(res,backgroundColor, null);
     }
 }

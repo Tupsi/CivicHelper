@@ -1,6 +1,7 @@
 package org.tesira.mturba.civichelper.db;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -11,6 +12,8 @@ public class CivicViewModel extends AndroidViewModel {
 
     private CivicRepository mRepository;
     private final LiveData<List<Card>> mAllCivics;
+    public int test;
+
 //    private final LiveData<List<PurchasedAdvance>> mAllPurchases;
 
     public CivicViewModel(@NonNull Application application) {
@@ -18,6 +21,7 @@ public class CivicViewModel extends AndroidViewModel {
         mRepository = new CivicRepository(application);
         mAllCivics = mRepository.getAllCivics();
 //        mAllPurchases = mRepository.getAllPurchases();
+        test = 5;
     }
 
     public LiveData<List<Card>> getAllCivics() {return mAllCivics;}

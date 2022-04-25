@@ -8,27 +8,19 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
-import androidx.recyclerview.selection.StorageStrategy;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,7 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +37,6 @@ import org.tesira.mturba.civichelper.card.Advance;
 import org.tesira.mturba.civichelper.card.CardColor;
 import org.tesira.mturba.civichelper.card.Credit;
 import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
-import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,15 +44,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -80,17 +64,17 @@ public class AdvancesFragment extends Fragment
     private static final String PURCHASED = "purchasedAdvances";
     private static final String FAMILY = "familyBonus";
 
-    private CivicViewModel model;
+    private CivicViewModel mCivicViewModel;
 
     // arraylist of all civilization cards
     public List<Advance> advances;
     private MyAdvancesRecyclerViewAdapter adapter;
-    private SharedPreferences prefs, savedCards;
     private String sortingOrder;
     protected RecyclerView mRecyclerVie;
     protected EditText mTreasureInput;
     protected TextView mBuyPrice;
     private SelectionTracker<String> tracker;
+    private SharedPreferences prefs, savedCards;
     private int total;
     private int treasure;
     private FragmentAdvancesBinding binding;
@@ -129,14 +113,14 @@ public class AdvancesFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        savedCards = this.getActivity().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE );
 //        sortingOrder = prefs.getString("sort", "name");
 //        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
 //        prefs.registerOnSharedPreferenceChangeListener(this);
 //        if (getArguments() != null) {
 //            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
 //        }
-//        savedCards = this.getActivity().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE );
 //        // Set<String> s = new HashSet<String>(sharedPrefs.getStringSet("key", new HashSet<String>()));
 //        purchasedAdvances = savedCards.getStringSet(PURCHASED, new HashSet<>());
 //        bonusFamily = savedCards.getStringSet(FAMILY, new HashSet<>());
@@ -152,11 +136,26 @@ public class AdvancesFragment extends Fragment
         final CivicsListAdapter adapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        model = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        model.getAllCivics().observe(requireActivity(), civics -> {
+        mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
+        mCivicViewModel.test++;
+        Log.v("MODEL", "test var Advance Fragment :"+mCivicViewModel.test);
+
+        mCivicViewModel.getAllCivics().observe(requireActivity(), civics -> {
             adapter.submitList(civics);
         });
 
+//        treasure = prefs.getInt(TREASURE_BOX,0);
+        mTreasureInput = rootView.findViewById(R.id.treasure);
+        mTreasureInput.setText(String.valueOf(prefs.getInt(TREASURE_BOX,0)));
+        mTreasureInput.setOnEditorActionListener((v, keyCode, event) -> {
+                // hide virtual keyboard on enter
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mTreasureInput.getWindowToken(), 0);
+                return true;
+        });
+
+        mBuyPrice = rootView.findViewById(R.id.moneyleft);
+        mBuyPrice.setText(String.valueOf(treasure));
 ////        View rootView = inflater.inflate(R.layout.fragment_advances, container, false);
 //        mTreasureInput = rootView.findViewById(R.id.treasure);
 //        mBuyPrice = rootView.findViewById(R.id.moneyleft);
@@ -392,60 +391,6 @@ public class AdvancesFragment extends Fragment
         return total;
     }
 
-    /**
-     * Imports all civilization advances from file into an ArrayList to be used in the RecyclerView.
-     * @param advances The ArrayList in which to import the civilization advances to.
-     * @param filename The filename of the xml data of all civilization advances.
-     *
-     * also stores all green cards with price under 100 in an extra Set for a potential Anatomy buy
-     * */
-    private void importAdvances(List<Advance> advances, String filename) {
-        try {
-            InputStream is = requireActivity().getAssets().open(filename);
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(is);
-            Element element = doc.getDocumentElement();
-            element.normalize();
-            NodeList nList = doc.getElementsByTagName("advance");
-            for (int i=0; i<nList.getLength(); i++) {
-                Node node = nList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Advance advance = new Advance();
-                    String readElement;
-                    Element element2 = (Element) node;
-                    readElement = element2.getElementsByTagName("name").item(0).getTextContent();
-                    advance.setName(readElement);
-                    readElement = element2.getElementsByTagName("family").item(0).getTextContent();
-                    advance.setFamily(parseInt(readElement));
-                    readElement = element2.getElementsByTagName("vp").item(0).getTextContent();
-                    advance.setVp(parseInt(readElement));
-                    readElement = element2.getElementsByTagName("price").item(0).getTextContent();
-                    advance.setPrice(parseInt(readElement));
-                    for (int x=0; x<element2.getElementsByTagName("group").getLength();x++) {
-                        advance.addGroup(element2.getElementsByTagName("group").item(x).getTextContent());
-                    }
-                    for (int x=0; x<element2.getElementsByTagName("credit").getLength(); x++) {
-                        String color = element2.getElementsByTagName("credit").item(x).getAttributes().item(0).getTextContent();
-                        int discount = parseInt(element2.getElementsByTagName("credit").item(x).getTextContent());
-                        advance.addCredits(color, discount);
-                    }
-                    for (int x=0; x<element2.getElementsByTagName("effect").getLength(); x++) {
-                        String name = element2.getElementsByTagName("effect").item(x).getAttributes().item(0).getTextContent();
-                        int value = parseInt(element2.getElementsByTagName("effect").item(x).getTextContent());
-                        advance.addEffect(name, value);
-                    }
-                    advances.add(advance);
-                }
-            }
-            Advance.addFamilyBonus(advances);
-            greenCardsAnatomy = Advance.getGreenCards(advances, purchasedAdvances);
-            setCurrentPrice();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void setCurrentPrice() {
         for (Advance adv: advances) {
             int current = adv.getPrice();
@@ -569,13 +514,13 @@ public class AdvancesFragment extends Fragment
 
     public void saveVars() {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(TREASURE_BOX, treasure);
+        editor.putInt(TREASURE_BOX, Integer.parseInt(mTreasureInput.getText().toString()));
         editor.apply();
-        SharedPreferences.Editor editorCards = savedCards.edit();
-        editorCards.putInt("saved", purchasedAdvances.size());
-        editorCards.putStringSet(PURCHASED, purchasedAdvances);
-        editorCards.putStringSet(FAMILY, bonusFamily);
-        editorCards.commit();
+//        SharedPreferences.Editor editorCards = savedCards.edit();
+//        editorCards.putInt("saved", purchasedAdvances.size());
+//        editorCards.putStringSet(PURCHASED, purchasedAdvances);
+//        editorCards.putStringSet(FAMILY, bonusFamily);
+//        editorCards.commit();
     }
     @SuppressLint("SetTextI18n")
     public void loadVars() {

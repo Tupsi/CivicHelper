@@ -8,6 +8,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import org.tesira.mturba.civichelper.databinding.ActivityMainBinding;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
         NavigationUI.setupWithNavController(binding.navView, navController);
         mCivicViewModel = new ViewModelProvider(this).get(CivicViewModel.class);
+        Log.v("MODEL", "test var MainActivity :"+mCivicViewModel.test);
 //        LiveData<List<Card>> all = mCivicViewModel.getAllCivics();
 //        for (Card adv: all.getValue()) {
 //            Log.v("DB", adv.getName());

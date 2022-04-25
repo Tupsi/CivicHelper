@@ -70,6 +70,11 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
         }
     };
 
+
+    /**
+     * Imports all civilization advances from file into the database to be used in the RecyclerView.
+     * Calculates and adds the special family bonus.
+     * */
     private static void importCivicsFromXML() {
         CardDao dao = INSTANCE.civicDao();
         try {
@@ -125,7 +130,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
 //                        adv.addEffect(name, value);
 //                    }
 //                    advances.getValue().add(adv);
-                    Card civic = new Card(name, family, vp, price, color[0], color[1], credits[0], credits[1], credits[2], credits[3], credits[4], null, 0);
+                    Card civic = new Card(name, family, vp, price, color[0], color[1], credits[0], credits[1], credits[2], credits[3], credits[4], null, 0, false);
                     dao.insert(civic);
                 }
             }
@@ -137,7 +142,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
         }
         // now we need to inject the family bonus 10/20
         List<Card> cards;
-        for (int i=1; i<= 17; i++) {
+        for (int i=1; i<= NUMBER_OF_FAMILIES; i++) {
             cards = dao.getAdvancesByFamily(i);
             dao.updateBonusCard(cards.get(0).getName(), cards.get(1).getName());
             dao.updateBonus(cards.get(0).getName(),10);
