@@ -9,7 +9,6 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import org.tesira.mturba.civichelper.card.Advance;
 import org.tesira.mturba.civichelper.card.CardColor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -17,22 +16,24 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-//@Database(entities = {CivilizationAdvance.class, PurchasedAdvance.class}, version = 1, exportSchema = false)
-@Database(entities = {CivilizationAdvance.class}, version = 1, exportSchema = false)
+//@Database(entities = {Card.class, PurchasedAdvance.class}, version = 1, exportSchema = false)
+@Database(entities = {Card.class}, version = 1, exportSchema = false)
 public abstract class CivicHelperDatabase extends RoomDatabase {
 
-    public abstract CivilizationAdvanceDao civicDao();
+    public abstract CardDao civicDao();
 //    public abstract PurchasedAdvanceDao purchaseDao();
 
     private static volatile CivicHelperDatabase INSTANCE;
     private static volatile Context ASSET_CONTEXT;
     private static final int NUMBER_OF_THREADS = 4;
+    private static final int NUMBER_OF_FAMILIES = 17;
     private static final String FILENAME = "advances.xml";
 
     static final ExecutorService databaseWriteExecutor =
@@ -44,7 +45,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             Log.v("DB", "getDataBase INSTANCE == null");
             synchronized (CivicHelperDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic_db").addCallback(sRoomDatabaseCallback).build();
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic.db").addCallback(sRoomDatabaseCallback).build();
                     ASSET_CONTEXT = context;
                 }
             }
@@ -56,15 +57,13 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-            Log.v("DB", "onCreate Callback");
             // If you want to keep data through app restarts,
             // comment out the following block
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
                 // If you want to start with more words, just add them.
-                CivilizationAdvanceDao dao = INSTANCE.civicDao();
+                CardDao dao = INSTANCE.civicDao();
                 dao.deleteAll();
-
                 importCivicsFromXML();
                 Log.v("DB", "creating");
             });
@@ -72,7 +71,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
     };
 
     private static void importCivicsFromXML() {
-        CivilizationAdvanceDao dao = INSTANCE.civicDao();
+        CardDao dao = INSTANCE.civicDao();
         try {
             InputStream is = ASSET_CONTEXT.getAssets().open(FILENAME);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -126,7 +125,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
 //                        adv.addEffect(name, value);
 //                    }
 //                    advances.getValue().add(adv);
-                    CivilizationAdvance civic = new CivilizationAdvance(name, family, vp, price, color[0], color[1], credits[0], credits[1], credits[2], credits[3], credits[4]);
+                    Card civic = new Card(name, family, vp, price, color[0], color[1], credits[0], credits[1], credits[2], credits[3], credits[4], null, 0);
                     dao.insert(civic);
                 }
             }
@@ -135,6 +134,15 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
 //            setCurrentPrice();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        // now we need to inject the family bonus 10/20
+        List<Card> cards;
+        for (int i=1; i<= 17; i++) {
+            cards = dao.getAdvancesByFamily(i);
+            dao.updateBonusCard(cards.get(0).getName(), cards.get(1).getName());
+            dao.updateBonus(cards.get(0).getName(),10);
+            dao.updateBonusCard(cards.get(1).getName(), cards.get(2).getName());
+            dao.updateBonus(cards.get(1).getName(),20);
         }
     }
 }

@@ -8,19 +8,21 @@ import java.util.List;
 
 public class CivicRepository {
 
-    private CivilizationAdvanceDao mCivicDao;
+    private Application mApplication;
+    private CardDao mCivicDao;
 //    private PurchasedAdvanceDao mPurchaseDao;
-    private LiveData<List<CivilizationAdvance>> mAllCivics;
+    private LiveData<List<Card>> mAllCivics;
 //    private LiveData<List<PurchasedAdvance>> mAllPurchases;
 
     public CivicRepository(Application application) {
+        this.mApplication = application;
         CivicHelperDatabase db = CivicHelperDatabase.getDatabase(application);
         mCivicDao = db.civicDao();
         mAllCivics = mCivicDao.getAdvancesByPrice();
 //        mPurchaseDao = db.purchaseDao();
     }
 
-    public LiveData<List<CivilizationAdvance>> getAllCivics() {
+    public LiveData<List<Card>> getAllCivics() {
         return mAllCivics;
     }
 
@@ -28,7 +30,7 @@ public class CivicRepository {
 //        return mAllPurchases;
 //    }
 
-    public void insert(CivilizationAdvance civic) {
+    public void insertCard(Card civic) {
         CivicHelperDatabase.databaseWriteExecutor.execute(()-> {mCivicDao.insert(civic);});
     }
 

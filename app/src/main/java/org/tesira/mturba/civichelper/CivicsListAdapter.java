@@ -6,11 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
-import org.tesira.mturba.civichelper.db.CivilizationAdvance;
+import org.tesira.mturba.civichelper.db.Card;
 
-public class CivicsListAdapter extends ListAdapter<CivilizationAdvance, CivicsViewHolder> {
+public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
 
-    public CivicsListAdapter(@NonNull DiffUtil.ItemCallback<CivilizationAdvance> diffCallback) {
+    public CivicsListAdapter(@NonNull DiffUtil.ItemCallback<Card> diffCallback) {
         super(diffCallback);
     }
 
@@ -22,20 +22,22 @@ public class CivicsListAdapter extends ListAdapter<CivilizationAdvance, CivicsVi
 
     @Override
     public void onBindViewHolder(@NonNull CivicsViewHolder holder, int position) {
-            CivilizationAdvance current = getItem(position);
+            Card current = getItem(position);
             holder.bindName(current.getName());
             holder.bindPrice(current.getPrice());
+            holder.bindBonus(current.getBonus());
+            holder.bindBonusCard(current.getBonusCard());
     }
 
-    static class CivicsDiff extends DiffUtil.ItemCallback<CivilizationAdvance> {
+    static class CivicsDiff extends DiffUtil.ItemCallback<Card> {
 
         @Override
-        public boolean areItemsTheSame(@NonNull CivilizationAdvance oldItem, @NonNull CivilizationAdvance newItem) {
+        public boolean areItemsTheSame(@NonNull Card oldItem, @NonNull Card newItem) {
             return oldItem == newItem;
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull CivilizationAdvance oldItem, @NonNull CivilizationAdvance newItem) {
+        public boolean areContentsTheSame(@NonNull Card oldItem, @NonNull Card newItem) {
             return oldItem.getName().equals(newItem.getName());
         }
     }

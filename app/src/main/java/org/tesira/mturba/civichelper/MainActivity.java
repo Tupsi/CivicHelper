@@ -1,24 +1,16 @@
 package org.tesira.mturba.civichelper;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.tesira.mturba.civichelper.databinding.ActivityMainBinding;
-import org.tesira.mturba.civichelper.db.CivicHelperDatabase;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
-import org.tesira.mturba.civichelper.db.CivilizationAdvance;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
         NavigationUI.setupWithNavController(binding.navView, navController);
         mCivicViewModel = new ViewModelProvider(this).get(CivicViewModel.class);
-//        LiveData<List<CivilizationAdvance>> all = mCivicViewModel.getAllCivics();
-//        for (CivilizationAdvance adv: all.getValue()) {
+//        LiveData<List<Card>> all = mCivicViewModel.getAllCivics();
+//        for (Card adv: all.getValue()) {
 //            Log.v("DB", adv.getName());
 //        }
     }

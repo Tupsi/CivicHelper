@@ -10,7 +10,7 @@ import java.util.List;
 public class CivicViewModel extends AndroidViewModel {
 
     private CivicRepository mRepository;
-    private final LiveData<List<CivilizationAdvance>> mAllCivics;
+    private final LiveData<List<Card>> mAllCivics;
 //    private final LiveData<List<PurchasedAdvance>> mAllPurchases;
 
     public CivicViewModel(@NonNull Application application) {
@@ -20,9 +20,9 @@ public class CivicViewModel extends AndroidViewModel {
 //        mAllPurchases = mRepository.getAllPurchases();
     }
 
-    public LiveData<List<CivilizationAdvance>> getAllCivics() {return mAllCivics;}
+    public LiveData<List<Card>> getAllCivics() {return mAllCivics;}
 //    public LiveData<List<PurchasedAdvance>> getAllPurchases() {return mAllPurchases;}
 
-    public void insert(CivilizationAdvance civic) {mRepository.insert(civic);}
+    public void insert(Card civic) {mRepository.insertCard(civic);}
 //    public void insert(PurchasedAdvance purchases) {mRepository.insert(purchases);}
 }

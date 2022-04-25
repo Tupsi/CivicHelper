@@ -12,8 +12,10 @@ import org.tesira.mturba.civichelper.card.Credit;
 import java.util.HashMap;
 import java.util.List;
 
+import kotlin.jvm.JvmOverloads;
+
 @Entity(tableName = "card_table", indices = {@Index("name")})
-public class CivilizationAdvance {
+public class Card {
 
     @PrimaryKey
     @NonNull
@@ -65,22 +67,27 @@ public class CivilizationAdvance {
     @ColumnInfo(name="creditsYellow")
     private int mCreditsYellow;
 
+    @ColumnInfo(name="bonusCard")
+    private String mBonusCard;
+
+    @ColumnInfo(name="bonus")
+    private int mBonus;
 
     // optional
+
     // effects hold special bonuses during gameplay, to be displayed at in summation
     // on  startscreen
 //    private HashMap<String, Integer> mEffects;
 //    private int mFamilyBonus;
 //    private String mFamilyName;
 
-//    public CivilizationAdvance(@NonNull String name) {
+//    public Card(@NonNull String name) {
 //        this.mName = name;
 //    }
-
-    public CivilizationAdvance(@NonNull String mName, int mFamily, int mVp, int mPrice,
-                               @NonNull CardColor mGroup1, CardColor mGroup2, int mCreditsBlue,
-                               int mCreditsGreen, int mCreditsOrange,
-                               int mCreditsRed, int mCreditsYellow) {
+    public Card(@NonNull String mName, int mFamily, int mVp, int mPrice,
+                @NonNull CardColor mGroup1, CardColor mGroup2, int mCreditsBlue,
+                int mCreditsGreen, int mCreditsOrange,
+                int mCreditsRed, int mCreditsYellow, String mBonusCard, int mBonus) {
         this.mName = mName;
         this.mFamily = mFamily;
         this.mVp = mVp;
@@ -92,6 +99,8 @@ public class CivilizationAdvance {
         this.mCreditsOrange = mCreditsOrange;
         this.mCreditsRed = mCreditsRed;
         this.mCreditsYellow = mCreditsYellow;
+        this.mBonusCard = mBonusCard;
+        this.mBonus = mBonus;
     }
 
     public String getName(){return this.mName;}
@@ -136,4 +145,9 @@ public class CivilizationAdvance {
     public int getCreditsYellow() {
         return mCreditsYellow;
     }
+
+    public String getBonusCard() { return mBonusCard; }
+
+    public int getBonus() { return mBonus; }
+
 }
