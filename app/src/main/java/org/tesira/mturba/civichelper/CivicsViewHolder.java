@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.w3c.dom.Text;
@@ -16,6 +17,7 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
     private final TextView priceItemView;
     private final TextView bonusCardItemView;
     private final TextView bonusItemView;
+    private final View mCardView;
 
     private int total;
     private int treasure;
@@ -26,6 +28,7 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
         priceItemView = itemView.findViewById(R.id.price);
         bonusCardItemView = itemView.findViewById(R.id.familyname);
         bonusItemView = itemView.findViewById(R.id.familybonus);
+        mCardView = itemView.findViewById(R.id.card);
     }
 
     public void bindName(String name, Drawable drawable) {
@@ -37,10 +40,18 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
     }
     public void bindBonusCard(String cardName) {bonusCardItemView.setText(cardName);};
     public void bindBonus(int bonus) {bonusItemView.setText(String.valueOf(bonus));}
+    public void bindIsActive(boolean isActive) {mCardView.setActivated(isActive);}
 
     static CivicsViewHolder create(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_row, parent, false);
         return new CivicsViewHolder(view);
+    }
+
+    public ItemDetailsLookup.ItemDetails<String> getItemDetails() {
+//            Log.v ("INFOI", "ItemDetails getAdapter        :" + getAdapterPosition());
+//            Log.v ("INFOI", "ItemDetails getBindingAdapter :" + getBindingAdapterPosition());
+//            Log.v ("INFOI", "ItemDetails getBindingAdapter :" + getAbsoluteAdapterPosition());
+        return new MyItemDetails(getBindingAdapterPosition(), nameItemView.getText().toString());
     }
 }

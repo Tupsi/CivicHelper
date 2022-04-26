@@ -36,10 +36,6 @@ public class Card {
     @ColumnInfo(name="price")
     private int mPrice;
 
-//    @NonNull
-//    @ColumnInfo(name="currentPrice")
-//    private int mCurrentPrice;
-
     @NonNull
     @ColumnInfo(name="group1")
     private CardColor mGroup1;
@@ -73,6 +69,7 @@ public class Card {
     @ColumnInfo(name="bonus")
     private int mBonus;
 
+    @NonNull
     @ColumnInfo(name="isBuyable")
     private boolean mIsBuyable;
 
@@ -154,6 +151,6 @@ public class Card {
 
     public int getBonus() { return mBonus; }
 
-    public boolean isBuyable() { return mIsBuyable; }
+    public boolean getIsBuyable() { return mIsBuyable; }
 
 }

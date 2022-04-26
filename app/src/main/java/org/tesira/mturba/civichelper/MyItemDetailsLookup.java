@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.tesira.mturba.civichelper.db.CivicViewModel;
+
 public class MyItemDetailsLookup extends ItemDetailsLookup<String> {
 
     private final RecyclerView mRecyclerView;
@@ -23,8 +25,8 @@ public class MyItemDetailsLookup extends ItemDetailsLookup<String> {
         View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
         if (view != null) {
             RecyclerView.ViewHolder viewHolder = mRecyclerView.getChildViewHolder(view);
-            if (viewHolder instanceof MyAdvancesRecyclerViewAdapter.ViewHolder) {
-                return ((MyAdvancesRecyclerViewAdapter.ViewHolder) viewHolder).getItemDetails();
+            if (viewHolder instanceof CivicsViewHolder) {
+                return ((CivicsViewHolder) viewHolder).getItemDetails();
             }
         }
         return null;

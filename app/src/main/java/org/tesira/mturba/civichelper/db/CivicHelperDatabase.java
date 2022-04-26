@@ -45,7 +45,10 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             Log.v("DB", "getDataBase INSTANCE == null");
             synchronized (CivicHelperDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic.db").addCallback(sRoomDatabaseCallback).build();
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic.db")
+                            .addCallback(sRoomDatabaseCallback)
+                            .allowMainThreadQueries()
+                            .build();
                     ASSET_CONTEXT = context;
                 }
             }

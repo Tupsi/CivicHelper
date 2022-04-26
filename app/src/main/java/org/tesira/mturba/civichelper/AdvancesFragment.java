@@ -10,17 +10,20 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StorageStrategy;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,18 +40,11 @@ import org.tesira.mturba.civichelper.card.Advance;
 import org.tesira.mturba.civichelper.card.CardColor;
 import org.tesira.mturba.civichelper.card.Credit;
 import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
+import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * A fragment representing a list of Items.
@@ -72,11 +68,11 @@ public class AdvancesFragment extends Fragment
     private String sortingOrder;
     protected RecyclerView mRecyclerVie;
     protected EditText mTreasureInput;
-    protected TextView mBuyPrice;
+    protected TextView mRemainingText;
     private SelectionTracker<String> tracker;
     private SharedPreferences prefs, savedCards;
-    private int total;
-    private int treasure;
+//    private int total;
+//    private int treasure;
     private FragmentAdvancesBinding binding;
     private Set<String> purchasedAdvances;
     private int bonusRed;
@@ -100,7 +96,7 @@ public class AdvancesFragment extends Fragment
 //     */
 //    public AdvancesFragment() {
 //    }
-
+//
 //    @SuppressWarnings("unused")
 //    public static AdvancesFragment newInstance(int columnCount) {
 //        AdvancesFragment fragment = new AdvancesFragment();
@@ -114,9 +110,10 @@ public class AdvancesFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        savedCards = this.getActivity().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE );
-//        sortingOrder = prefs.getString("sort", "name");
-//        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
+        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
+        sortingOrder = prefs.getString("sort", "name");
+
+        //        savedCards = this.getActivity().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE );
 //        prefs.registerOnSharedPreferenceChangeListener(this);
 //        if (getArguments() != null) {
 //            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -132,31 +129,68 @@ public class AdvancesFragment extends Fragment
                              Bundle savedInstanceState) {
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
-        RecyclerView recyclerView = rootView.findViewById(R.id.list);
+        RecyclerView mRecyclerView = rootView.findViewById(R.id.list);
         final CivicsListAdapter adapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        mCivicViewModel.test++;
-        Log.v("MODEL", "test var Advance Fragment :"+mCivicViewModel.test);
+        mRecyclerView.setAdapter(adapter);
 
-        mCivicViewModel.getAllCivics().observe(requireActivity(), civics -> {
+        if (mColumnCount <= 1) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
+        } else {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(rootView.getContext(), mColumnCount));
+        }
+
+//        recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
+        mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
+        mCivicViewModel.getAllCivics(sortingOrder).observe(requireActivity(), civics -> {
             adapter.submitList(civics);
         });
 
-//        treasure = prefs.getInt(TREASURE_BOX,0);
         mTreasureInput = rootView.findViewById(R.id.treasure);
-        mTreasureInput.setText(String.valueOf(prefs.getInt(TREASURE_BOX,0)));
+        mRemainingText = rootView.findViewById(R.id.moneyleft);
+//        total = 0;
+//        treasure = prefs.getInt(TREASURE_BOX,0);
+//        mCivicViewModel.setTreasure(prefs.getInt(TREASURE_BOX,0));
+        mCivicViewModel.getTreasure().observe(requireActivity(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer treasure) {
+                mTreasureInput.setText(String.valueOf(treasure));
+            }
+        });
+//        mCivicViewModel.getTotal().observe(requireActivity(), new Observer<Integer>() {
+//            @Override
+//            public void onChanged(Integer total) {
+//                if (getContext() != null) {
+//                    mRemainingText.setText(getString(R.string.remaining_treasure)+(mCivicViewModel.getTreasure().getValue() - total));
+//                }
+//
+//            }
+//        });
+
+        mCivicViewModel.getRemaining().observe(requireActivity(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer remaining) {
+                Log.v("CONTEXT", "aussen");
+                if (getContext() != null) {
+                    Log.v("CONTEXT", "innen");
+                    mRemainingText.setText(requireActivity().getString(R.string.remaining_treasure)+remaining);
+                }
+                else {
+                    Log.v("CONTEXT", "else ohne context");
+                }
+            }
+        });
+
+
+//        mRemainingText.setText(getString(R.string.remaining_treasure)+(mCivicViewModel.getTreasure() - mCivicViewModel.getTotal()));
+//        mTreasureInput.setText(String.valueOf(mCivicViewModel.getTreasure()));
         mTreasureInput.setOnEditorActionListener((v, keyCode, event) -> {
+                mCivicViewModel.setTreasure(Integer.parseInt(mTreasureInput.getText().toString()));
                 // hide virtual keyboard on enter
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mTreasureInput.getWindowToken(), 0);
                 return true;
         });
 
-        mBuyPrice = rootView.findViewById(R.id.moneyleft);
-        mBuyPrice.setText(String.valueOf(treasure));
-////        View rootView = inflater.inflate(R.layout.fragment_advances, container, false);
 //        mTreasureInput = rootView.findViewById(R.id.treasure);
 //        mBuyPrice = rootView.findViewById(R.id.moneyleft);
 //        advances = new ArrayList<>();
@@ -193,56 +227,49 @@ public class AdvancesFragment extends Fragment
 //                break;
 //        }
 //        removePurchasedAdvances();
-//
-//        // Set the adapter
-//        Context context = rootView.getContext();
-//        mRecyclerView = rootView.findViewById(R.id.list);
-//        if (mColumnCount <= 1) {
-//            mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-//        } else {
-//            mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-//        }
-//        adapter = new MyAdvancesRecyclerViewAdapter(advances, context);
-//        adapter.setRemainingTreasure(treasure);
-//        mRecyclerView.setAdapter(adapter);
-//        tracker = new SelectionTracker.Builder<>(
-//                "my-selection-id",
-//                mRecyclerView,
-//                new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, advances, adapter),
-//                new MyItemDetailsLookup(mRecyclerView),
-//                StorageStrategy.createStringStorage())
-//               .withSelectionPredicate(new MySelectionPredicate<>(this, advances)).build();
-//        adapter.setSelectionTracker(tracker);
-//        tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
-//            @Override
-//            public void onItemStateChanged(@NonNull String key, boolean selected) {
-//                super.onItemStateChanged(key, selected);
-//                // item got deselected, need to redo total selected
+
+        tracker = new SelectionTracker.Builder<>(
+                "my-selection-id",
+                mRecyclerView,
+                new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, mCivicViewModel
+                        .getAllCivics(sortingOrder)),
+                new MyItemDetailsLookup(mRecyclerView),
+                    StorageStrategy.createStringStorage())
+                    .withSelectionPredicate(new MySelectionPredicate<>(this, mCivicViewModel))
+                    .build();
+        adapter.setSelectionTracker(tracker);
+        tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
+            @Override
+            public void onItemStateChanged(@NonNull String key, boolean selected) {
+                super.onItemStateChanged(key, selected);
+                // item got deselected, need to redo total selected
 //                if (!selected) {
 //                    setTotal(calculateTotal());
 //                }
+                mCivicViewModel.setTotal(calculateTotal());
 //                int rest = treasure - total;
-//                adapter.setRemainingTreasure(rest);
-//                // works for auto greying out to expensive cards, but resets view to first item
-//                // also crashes on long click on some android versions
-//                //                mRecyclerView.setAdapter(adapter);
-//            }
-//
-//            @Override
-//            public void onSelectionRefresh() {
-//                super.onSelectionRefresh();
-//            }
-//
-//            @Override
-//            public void onSelectionChanged() {
-//                super.onSelectionChanged();
-//            }
-//
-//            @Override
-//            public void onSelectionRestored() {
-//                super.onSelectionRestored();
-//            }
-//        });
+
+                mCivicViewModel.updateIsBuyable();
+                // works for auto greying out to expensive cards, but resets view to first item
+                // also crashes on long click on some android versions
+                //                mRecyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onSelectionRefresh() {
+                super.onSelectionRefresh();
+            }
+
+            @Override
+            public void onSelectionChanged() {
+                super.onSelectionChanged();
+            }
+
+            @Override
+            public void onSelectionRestored() {
+                super.onSelectionRestored();
+            }
+        });
 //        setHasOptionsMenu(true);
 //        if (savedInstanceState != null) {
 //            tracker.onRestoreInstanceState(savedInstanceState);
@@ -266,6 +293,7 @@ public class AdvancesFragment extends Fragment
 //                }
 //            }
 //        });
+
         return rootView;
     }
 
@@ -344,47 +372,46 @@ public class AdvancesFragment extends Fragment
         addBonus(name);
     }
 
-    /**
-     * @return Current Treasure from input field.
-     */
-    public int getTreasure() {
-        String treasureInput = mTreasureInput.getText().toString();
-        if (treasureInput.isEmpty()) {
-            treasure = 0;
-        } else {
-            treasure = Integer.parseInt(treasureInput);
-        }
+//    /**
+//     * @return Current Treasure from input field.
+//     */
+//    public int getTreasure() {
+//        String treasureInput = mTreasureInput.getText().toString();
+//        if (treasureInput.isEmpty()) {
+//            treasure = 0;
+//        } else {
+//            treasure = Integer.parseInt(treasureInput);
+//        }
+//
+////        Log.v("treasure", "getTreasure :" + treasure);
+//        return treasure;
+//    }
 
-//        Log.v("treasure", "getTreasure :" + treasure);
-        return treasure;
-    }
+//    public void setTreasure(int newTreasure) {
+//        treasure = newTreasure;
+//        mTreasureInput.setText(String.valueOf(treasure));
+//    }
+//
+//    public void setRemaining() {
+//        getTreasure();
+//        mRemainingText.setText(getString(R.string.remaining_treasure)+(treasure-total));
+//    }
 
-    public void setTreasure(int newTreasure) {
-        treasure = newTreasure;
-        mTreasureInput.setText(String.valueOf(treasure));
-    }
-
-    public void updateRemaining() {
-        getTreasure();
-        mBuyPrice.setText(getString(R.string.remaining_treasure)+(treasure-total));
-    }
-    @SuppressLint("SetTextI18n")
-    public void setTotal(int total) {
-        this.total = total;
-        // showing not total on screen but remaining
-        mBuyPrice.setText(getString(R.string.remaining_treasure)+(treasure-total));
-    }
+//    @SuppressLint("SetTextI18n")
+//    public void setTotal(int total) {
+//        this.total = total;
+//        // showing not total on screen but remaining
+//        mRemainingText.setText(getString(R.string.remaining_treasure)+(treasure-total));
+//    }
 
     /**
      * Calculates the sum of all currently selected advances during the buy process.
      * @return Total price.
      */
     public int calculateTotal() {
-        total = 0;
+        int total = 0;
         for (String name : tracker.getSelection()) {
-//            int idx = advances.get(0).getIndexFromName(advances, name);
-//            int currentPrice = advances.get(idx).getPrice();
-            Advance adv = Advance.getAdvanceFromName(advances, name);
+            Card adv = mCivicViewModel.getAdvanceByName(name);
             int currentPrice = adv.getPrice();
             total += currentPrice;
         }
@@ -498,8 +525,8 @@ public class AdvancesFragment extends Fragment
     public void onPause() {
         super.onPause();
         Log.v("DEMO","---> onPause() <--- ");
-        saveVars();
-        saveBonus();
+//        saveVars();
+//        saveBonus();
     }
 
     public void onStop() {
@@ -512,44 +539,29 @@ public class AdvancesFragment extends Fragment
         Log.v("DEMO","---> onDestroy() <--- ");
     }
 
-    public void saveVars() {
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(TREASURE_BOX, Integer.parseInt(mTreasureInput.getText().toString()));
-        editor.apply();
-//        SharedPreferences.Editor editorCards = savedCards.edit();
-//        editorCards.putInt("saved", purchasedAdvances.size());
-//        editorCards.putStringSet(PURCHASED, purchasedAdvances);
-//        editorCards.putStringSet(FAMILY, bonusFamily);
-//        editorCards.commit();
-    }
-    @SuppressLint("SetTextI18n")
-    public void loadVars() {
-        treasure = prefs.getInt(TREASURE_BOX,0);
-        mTreasureInput.setText(""+treasure);
-    }
 
-    /**
-     * loads already bought bonuses from SharePreferences file
-     */
-    public void loadBonus() {
-        bonusRed = savedCards.getInt("bonusRed", 0);
-        bonusGreen = savedCards.getInt("bonusGreen", 0);
-        bonusBlue = savedCards.getInt("bonusBlue", 0);
-        bonusYellow = savedCards.getInt("bonusYellow", 0);
-        bonusOrange = savedCards.getInt("bonusOrange", 0);
-    }
+//    /**
+//     * loads already bought bonuses from SharePreferences file
+//     */
+//    public void loadBonus() {
+//        bonusRed = savedCards.getInt("bonusRed", 0);
+//        bonusGreen = savedCards.getInt("bonusGreen", 0);
+//        bonusBlue = savedCards.getInt("bonusBlue", 0);
+//        bonusYellow = savedCards.getInt("bonusYellow", 0);
+//        bonusOrange = savedCards.getInt("bonusOrange", 0);
+//    }
 
     /**
      * saves already bought bonuses to SharedPreferences file
      */
     public void saveBonus() {
-        SharedPreferences.Editor editor = savedCards.edit();
-        editor.putInt("bonusBlue", bonusBlue);
-        editor.putInt("bonusGreen", bonusGreen);
-        editor.putInt("bonusOrange", bonusOrange);
-        editor.putInt("bonusRed", bonusRed);
-        editor.putInt("bonusYellow", bonusYellow);
-        editor.commit();
+//        SharedPreferences.Editor editor = savedCards.edit();
+//        editor.putInt("bonusBlue", bonusBlue);
+//        editor.putInt("bonusGreen", bonusGreen);
+//        editor.putInt("bonusOrange", bonusOrange);
+//        editor.putInt("bonusRed", bonusRed);
+//        editor.putInt("bonusYellow", bonusYellow);
+//        editor.commit();
 //        Log.v("DEMO", "saveBonus in Advanced");
 
     }

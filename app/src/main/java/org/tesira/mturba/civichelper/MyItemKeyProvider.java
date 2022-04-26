@@ -1,32 +1,38 @@
 package org.tesira.mturba.civichelper;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.selection.ItemKeyProvider;
 import org.tesira.mturba.civichelper.card.Advance;
+import org.tesira.mturba.civichelper.db.Card;
+
 import java.util.List;
 
 public class MyItemKeyProvider<S> extends ItemKeyProvider<String> {
 
-    private final List<Advance> itemList;
-    private final MyAdvancesRecyclerViewAdapter adapter;
+//    private final List<Advance> itemList;
+    private final LiveData<List<Card>> itemList;
 
-    public MyItemKeyProvider(int scope, List<Advance> itemList, MyAdvancesRecyclerViewAdapter adapter) {
+    public MyItemKeyProvider(int scope, LiveData<List<Card>> itemList) {
         super(scope);
         this.itemList = itemList;
-        this.adapter = adapter;
     }
 
     @Nullable
     @Override
     public String getKey(int position) {
-        return itemList.get(position).getName();
+
+        Log.v("MODEL", "inside getKey von MyItemKeyProvider :" + position);
+        return itemList.getValue().get(position).getName();
     }
 
     @Override
     public int getPosition(@NonNull String key) {
         int pos = 0;
-        for (Advance adv : itemList) {
+        for (Card adv : itemList.getValue()) {
             if (key.equals(adv.getName())) {
                 return pos;
             }

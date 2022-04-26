@@ -18,7 +18,7 @@ public interface CardDao {
     void deleteAll();
 
     @Query("SELECT * FROM card_table ORDER BY name ASC")
-    LiveData<List<Card>> getAdvancesByName();
+    List<Card> getAdvancesByName();
 
     @Query("SELECT * FROM card_table ORDER BY price ASC")
     LiveData<List<Card>> getAdvancesByPrice();
@@ -34,5 +34,12 @@ public interface CardDao {
 
     @Query("UPDATE card_table SET bonus = :newBonus WHERE name = :name")
     void updateBonus(String name, int newBonus);
+
+    @Query("SELECT * FROM card_table WHERE name = :name ")
+    LiveData<List<Card>> getAdvanceByName(String name);
+
+    @Query("SELECT * FROM card_table WHERE name = :name ")
+    Card getAdvanceByNameToCard(String name);
+
 
 }
