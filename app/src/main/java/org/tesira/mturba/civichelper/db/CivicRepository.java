@@ -89,4 +89,8 @@ public class CivicRepository {
         return future.get();
     }
 
+    public void updateIsBuyable(int remaining) {
+        mCivicDao.updateIsBuyable(remaining);
+    }
+
 }

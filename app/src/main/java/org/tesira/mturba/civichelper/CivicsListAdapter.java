@@ -1,6 +1,5 @@
 package org.tesira.mturba.civichelper;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -14,10 +13,12 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
 import org.tesira.mturba.civichelper.db.Card;
+import org.tesira.mturba.civichelper.db.CivicViewModel;
 
 public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
 
     private SelectionTracker<String> tracker;
+    private CivicViewModel mCivicViewModel;
 
     public CivicsListAdapter(@NonNull DiffUtil.ItemCallback<Card> diffCallback) {
         super(diffCallback);
@@ -49,26 +50,23 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
             Toast.makeText(v.getContext(), name
                     + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_SHORT).show();
         });
-//        int price = mValues.get(position).getPrice();
-//        if (!isActivated && remainingTreasure < price) {
-//            holder.mCardView.setBackgroundResource(R.color.dark_grey);
-//            holder.mCardView.setAlpha(0.5F);
-//        } else {
-//            holder.mCardView.setBackgroundResource(R.drawable.item_background);
-//            holder.mCardView.setAlpha(1F);
-//        }
-//        int bonus = mValues.get(position).getFamilybonus();
-//        if (bonus > 0) {
-//            holder.mFamilybox.setVisibility(View.VISIBLE);
+        int price = current.getPrice();
+        if (!isActivated && mCivicViewModel.getRemaining().getValue() < price) {
+            holder.mCardView.setBackgroundResource(R.color.dark_grey);
+            holder.mCardView.setAlpha(0.5F);
+        } else {
+            holder.mCardView.setBackgroundResource(R.drawable.item_background);
+            holder.mCardView.setAlpha(1F);
+        }
+//        int bonus = current.getFamilybonus();
+        if (current.getBonus() > 0) {
+            holder.mFamilyBox.setVisibility(View.VISIBLE);
 //            holder.mFamilyBonus.setText(String.valueOf(bonus));
 //            holder.mFamilyName.setText(mValues.get(position).getFamilyname());
-//        }
-//        else {
-//            holder.mFamilybox.setVisibility(View.INVISIBLE);
-//        }
-
-
-
+        }
+        else {
+            holder.mFamilyBox.setVisibility(View.INVISIBLE);
+        }
     }
 
     static class CivicsDiff extends DiffUtil.ItemCallback<Card> {
@@ -86,6 +84,7 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
     public void setSelectionTracker(SelectionTracker<String> tracker) {
         this.tracker = tracker;
     }
+    public void setCivicViewModel(CivicViewModel model) {this.mCivicViewModel = model;}
 
     public static Drawable getItemBackgroundColor(Card card, Resources res) {
         int backgroundColor = 0;

@@ -41,5 +41,7 @@ public interface CardDao {
     @Query("SELECT * FROM card_table WHERE name = :name ")
     Card getAdvanceByNameToCard(String name);
 
+    @Query("UPDATE card_table SET isBuyable = 1 WHERE price > :remaining ")
+    void updateIsBuyable(int remaining);
 
 }

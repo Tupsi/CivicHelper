@@ -4,12 +4,11 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
 
 class CivicsViewHolder extends RecyclerView.ViewHolder {
 
@@ -17,7 +16,8 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
     private final TextView priceItemView;
     private final TextView bonusCardItemView;
     private final TextView bonusItemView;
-    private final View mCardView;
+    public final View mCardView;
+    public final LinearLayout mFamilyBox;
 
     private int total;
     private int treasure;
@@ -29,6 +29,7 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
         bonusCardItemView = itemView.findViewById(R.id.familyname);
         bonusItemView = itemView.findViewById(R.id.familybonus);
         mCardView = itemView.findViewById(R.id.card);
+        mFamilyBox = itemView.findViewById(R.id.familylayout);
     }
 
     public void bindName(String name, Drawable drawable) {
@@ -49,9 +50,6 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
     }
 
     public ItemDetailsLookup.ItemDetails<String> getItemDetails() {
-//            Log.v ("INFOI", "ItemDetails getAdapter        :" + getAdapterPosition());
-//            Log.v ("INFOI", "ItemDetails getBindingAdapter :" + getBindingAdapterPosition());
-//            Log.v ("INFOI", "ItemDetails getBindingAdapter :" + getAbsoluteAdapterPosition());
         return new MyItemDetails(getBindingAdapterPosition(), nameItemView.getText().toString());
     }
 }

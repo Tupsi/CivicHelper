@@ -55,7 +55,7 @@ public class CivicViewModel extends AndroidViewModel {
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
 
     public void updateIsBuyable() {
-
+        mRepository.updateIsBuyable(remaining.getValue());
     }
 
     public MutableLiveData<Integer> getTreasure() {

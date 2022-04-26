@@ -238,6 +238,7 @@ public class AdvancesFragment extends Fragment
                     .withSelectionPredicate(new MySelectionPredicate<>(this, mCivicViewModel))
                     .build();
         adapter.setSelectionTracker(tracker);
+        adapter.setCivicViewModel(mCivicViewModel);
         tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
             @Override
             public void onItemStateChanged(@NonNull String key, boolean selected) {
@@ -246,10 +247,10 @@ public class AdvancesFragment extends Fragment
 //                if (!selected) {
 //                    setTotal(calculateTotal());
 //                }
+                Log.v("OBSERVER", "inside onItemStateChanged : " + key);
                 mCivicViewModel.setTotal(calculateTotal());
 //                int rest = treasure - total;
 
-                mCivicViewModel.updateIsBuyable();
                 // works for auto greying out to expensive cards, but resets view to first item
                 // also crashes on long click on some android versions
                 //                mRecyclerView.setAdapter(adapter);
@@ -258,16 +259,20 @@ public class AdvancesFragment extends Fragment
             @Override
             public void onSelectionRefresh() {
                 super.onSelectionRefresh();
+                mCivicViewModel.updateIsBuyable();
+                Log.v("OBSERVER", "inside onSelectionRefresh");
             }
 
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
+                Log.v("OBSERVER", "inside onSelectionChanged");
             }
 
             @Override
             public void onSelectionRestored() {
                 super.onSelectionRestored();
+                Log.v("OBSERVER", "inside onSelectionRestored");
             }
         });
 //        setHasOptionsMenu(true);
