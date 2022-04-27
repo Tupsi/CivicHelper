@@ -44,7 +44,7 @@ public interface CivicHelperDao {
     @Query("UPDATE cards SET isBuyable = 1 WHERE price > :remaining ")
     void updateIsBuyable(int remaining);
 
-    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL")
+    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY price ASC")
     LiveData<List<Card>> getAdvancesByPrice();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

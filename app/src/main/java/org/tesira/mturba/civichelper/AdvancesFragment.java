@@ -75,11 +75,11 @@ public class AdvancesFragment extends Fragment
 //    private int treasure;
     private FragmentAdvancesBinding binding;
     private Set<String> purchasedAdvances;
-    private int bonusRed;
-    private int bonusGreen;
-    private int bonusBlue;
-    private int bonusYellow;
-    private int bonusOrange;
+//    private int bonusRed;
+//    private int bonusGreen;
+//    private int bonusBlue;
+//    private int bonusYellow;
+//    private int bonusOrange;
     private Set<String> bonusFamily;
     private Set<String> greenCardsAnatomy;
     private int numberDialogs = 0;
@@ -127,6 +127,7 @@ public class AdvancesFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
         RecyclerView mRecyclerView = rootView.findViewById(R.id.list);
@@ -162,13 +163,13 @@ public class AdvancesFragment extends Fragment
 //        });
 
         mCivicViewModel.getRemaining().observe(requireActivity(), remaining -> {
-            Log.v("CONTEXT", "aussen");
+//            Log.v("CONTEXT", "aussen");
             if (getContext() != null) {
-                Log.v("CONTEXT", "innen");
+//                Log.v("CONTEXT", "innen");
                 mRemainingText.setText(requireActivity().getString(R.string.remaining_treasure)+remaining);
             }
             else {
-                Log.v("CONTEXT", "else ohne context");
+//                Log.v("CONTEXT", "else ohne context");
             }
         });
 
@@ -320,7 +321,7 @@ public class AdvancesFragment extends Fragment
             // add to list of bought cards
             Log.v("BUY", "Adding " + name);
             mCivicViewModel.insertPurchase(name);
-//            addBonus(name);
+            addBonus(name);
 
 
 
@@ -350,64 +351,24 @@ public class AdvancesFragment extends Fragment
     }
 
     private void addBonus(String name) {
-        Advance adv = Advance.getAdvanceFromName(advances, name);
-        for (Credit credit: adv.getCredits()) {
-            switch (credit.getGroup()) {
-                case BLUE :
-                    bonusBlue += credit.getValue();
-                    break;
-                case RED:
-                    bonusRed += credit.getValue();
-                    break;
-                case GREEN:
-                    bonusGreen += credit.getValue();
-                    break;
-                case ORANGE:
-                    bonusOrange += credit.getValue();
-                    break;
-                case YELLOW:
-                    bonusYellow += credit.getValue();
-                    break;
-            }
-        }
+        Card adv = mCivicViewModel.getAdvanceByName(name);
+        int newValue;
+        newValue = adv.getCreditsBlue() + mCivicViewModel.getBonusBlue();
+        mCivicViewModel.setBonusBlue(newValue);;
+        newValue = adv.getCreditsGreen() + mCivicViewModel.getBonusGreen();
+        mCivicViewModel.setBonusGreen(newValue);
+        newValue = adv.getCreditsOrange() + mCivicViewModel.getBonusOrange();
+        mCivicViewModel.setBonusOrange(newValue);
+        newValue = adv.getCreditsRed() + mCivicViewModel.getBonusRed();
+        mCivicViewModel.setBonusRed(newValue);
+        newValue = adv.getCreditsYellow() + mCivicViewModel.getBonusYellow();
+        mCivicViewModel.setBonusYellow(newValue);
     }
 
     public void addAnatomyFreeCard(String name) {
-        purchasedAdvances.add(name);
+        mCivicViewModel.insertPurchase(name);
         addBonus(name);
     }
-
-//    /**
-//     * @return Current Treasure from input field.
-//     */
-//    public int getTreasure() {
-//        String treasureInput = mTreasureInput.getText().toString();
-//        if (treasureInput.isEmpty()) {
-//            treasure = 0;
-//        } else {
-//            treasure = Integer.parseInt(treasureInput);
-//        }
-//
-////        Log.v("treasure", "getTreasure :" + treasure);
-//        return treasure;
-//    }
-
-//    public void setTreasure(int newTreasure) {
-//        treasure = newTreasure;
-//        mTreasureInput.setText(String.valueOf(treasure));
-//    }
-//
-//    public void setRemaining() {
-//        getTreasure();
-//        mRemainingText.setText(getString(R.string.remaining_treasure)+(treasure-total));
-//    }
-
-//    @SuppressLint("SetTextI18n")
-//    public void setTotal(int total) {
-//        this.total = total;
-//        // showing not total on screen but remaining
-//        mRemainingText.setText(getString(R.string.remaining_treasure)+(treasure-total));
-//    }
 
     /**
      * Calculates the sum of all currently selected advances during the buy process.
@@ -452,19 +413,19 @@ public class AdvancesFragment extends Fragment
         int bonus = 0;
         switch (cardColor) {
             case BLUE:
-                bonus = bonusBlue;
+                bonus = mCivicViewModel.getBonusBlue();
                 break;
             case YELLOW:
-                bonus = bonusYellow;
+                bonus = mCivicViewModel.getBonusYellow();
                 break;
             case ORANGE:
-                bonus = bonusOrange;
+                bonus = mCivicViewModel.getBonusOrange();
                 break;
             case GREEN:
-                bonus = bonusGreen;
+                bonus = mCivicViewModel.getBonusGreen();
                 break;
             case RED:
-                bonus = bonusRed;
+                bonus = mCivicViewModel.getBonusRed();
                 break;
         }
         return bonus;
@@ -576,14 +537,14 @@ public class AdvancesFragment extends Fragment
         Toast.makeText(getContext(), text,Toast.LENGTH_LONG).show();
     }
 
-    public void updateBonus(int blue, int green, int orange, int red, int yellow) {
-        bonusBlue += blue;
-        bonusGreen += green;
-        bonusOrange += orange;
-        bonusRed += red;
-        bonusYellow += yellow;
-        saveBonus();
-    }
+//    public void updateBonus(int blue, int green, int orange, int red, int yellow) {
+//        bonusBlue += blue;
+//        bonusGreen += green;
+//        bonusOrange += orange;
+//        bonusRed += red;
+//        bonusYellow += yellow;
+//        saveBonus();
+//    }
 
 //    @Override
 //    public void onDialogPositiveClick(DialogFragment dialog) {

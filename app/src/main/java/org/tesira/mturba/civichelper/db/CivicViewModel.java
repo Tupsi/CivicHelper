@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -23,10 +24,19 @@ public class CivicViewModel extends AndroidViewModel {
     private MutableLiveData<Integer> total;
     private MutableLiveData<Integer> remaining;
 
+    private MutableLiveData<HashMap<String, Integer>> cardBonus;
+    private int bonusBlue;
+    private int bonusGreen;
+    private int bonusOrange;
+    private int bonusRed;
+    private int bonusYellow;
+
+
 //    private final LiveData<List<Purchase>> mAllPurchases;
 
     public CivicViewModel(@NonNull Application application) throws ExecutionException, InterruptedException {
         super(application);
+        cardBonus = new MutableLiveData<>(new HashMap<>());
         mRepository = new CivicRepository(application);
         mAllCivics = mRepository.getAllCivics();
         allCards = mRepository.getAllCivics().getValue();
@@ -78,5 +88,62 @@ public class CivicViewModel extends AndroidViewModel {
 
     public void setRemaining(MutableLiveData<Integer> remaining) {
         this.remaining = remaining;
+    }
+
+    public int getBonusBlue() {
+        return bonusBlue;
+    }
+
+    public void setBonusBlue(int bonusBlue) {
+        this.bonusBlue = bonusBlue;
+    }
+
+    public int getBonusGreen() {
+        return bonusGreen;
+    }
+
+    public void setBonusGreen(int bonusGreen) {
+        this.bonusGreen = bonusGreen;
+    }
+
+    public int getBonusOrange() {
+        return bonusOrange;
+    }
+
+    public void setBonusOrange(int bonusOrange) {
+        this.bonusOrange = bonusOrange;
+    }
+
+    public int getBonusRed() {
+        return bonusRed;
+    }
+
+    public void setBonusRed(int bonusRed) {
+        this.bonusRed = bonusRed;
+    }
+
+    public int getBonusYellow() {
+        return bonusYellow;
+    }
+
+    public void setBonusYellow(int bonusYellow) {
+        this.bonusYellow = bonusYellow;
+    }
+
+    public MutableLiveData<HashMap<String, Integer>> getCardBonus() {
+        return cardBonus;
+    }
+
+    public void setCardBonus(MutableLiveData<HashMap<String, Integer>> cardBonus) {
+        this.cardBonus = cardBonus;
+    }
+
+    public void setAllBonus(int blue, int green, int orange, int red, int yellow) {
+        Log.v("MAIN","Model : " + blue + " : " + green + " : " + orange + " : " + red + " : " + yellow);
+        this.bonusBlue = blue;
+        this.bonusGreen = green;
+        this.bonusOrange = orange;
+        this.bonusRed = red;
+        this.bonusYellow = yellow;
     }
 }

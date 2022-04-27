@@ -43,29 +43,17 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
-    private static final String PURCHASED = "purchasedAdvances";
-    private SharedPreferences prefs;
-    private int bonusRed;
-    private int bonusGreen;
-    private int bonusBlue;
-    private int bonusYellow;
-    private int bonusOrange;
     private CivicViewModel mCivicViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentHomeBinding.inflate(inflater, container,false);
-        prefs = getContext().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE);
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        mCivicViewModel.test++;
-        Log.v("MODEL", "test var Home Fragment :"+mCivicViewModel.test);
-
-        View view = binding.getRoot();
         binding.startBtn.setOnClickListener(v -> onClickButton(v));
         binding.resetBtn.setOnClickListener(v -> onClickButton(v));
         setHasOptionsMenu(true);
-//        loadBonus();
         mCivicViewModel.getAllPurchases().observeForever(purchases -> {
             for (Purchase name: purchases) {
                 Log.v("BUY", "observer : "+name.getName());
@@ -74,53 +62,60 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
     public void onClickButton(View v) {
         switch (v.getId()) {
             case R.id.startBtn:
                 Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_advancesFragment);
                 break;
             case R.id.resetBtn:
-                newGame();
+                ((MainActivity) getActivity()).newGame();
+                loadBonus();
                 break;
         }
     }
 
-    public void newGame() {
-        prefs.edit().clear().apply();
-        mCivicViewModel.deletePurchases();
-//        loadBonus();
-    }
+//    public void newGame() {
+//        prefs.edit().clear().apply();
+//        mCivicViewModel.deletePurchases();
+////        loadBonus();
+//    }
 
     public void loadBonus() {
 //        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        bonusRed = prefs.getInt("bonusRed", 0);
-        bonusGreen = prefs.getInt("bonusGreen", 0);
-        bonusBlue = prefs.getInt("bonusBlue", 0);
-        bonusYellow = prefs.getInt("bonusYellow", 0);
-        bonusOrange = prefs.getInt("bonusOrange", 0);
-        binding.bonusBlue.setText(String.valueOf(bonusBlue));
+//        bonusRed = prefs.getInt("bonusRed", 0);
+//        bonusGreen = prefs.getInt("bonusGreen", 0);
+//        bonusBlue = prefs.getInt("bonusBlue", 0);
+//        bonusYellow = prefs.getInt("bonusYellow", 0);
+//        bonusOrange = prefs.getInt("bonusOrange", 0);
+        Log.v("MAIN", "loading Bonus inside Home Fragment : "+mCivicViewModel.getBonusBlue());
+        binding.bonusBlue.setText(String.valueOf(mCivicViewModel.getBonusBlue()));
         binding.bonusBlue.setBackgroundResource(R.color.arts);
-        binding.bonusRed.setText(String.valueOf(bonusRed));
+        binding.bonusRed.setText(String.valueOf(mCivicViewModel.getBonusRed()));
         binding.bonusRed.setBackgroundResource(R.color.civic);
-        binding.bonusGreen.setText(String.valueOf(bonusGreen));
+        binding.bonusGreen.setText(String.valueOf(mCivicViewModel.getBonusGreen()));
         binding.bonusGreen.setBackgroundResource(R.color.science);
-        binding.bonusOrange.setText(String.valueOf(bonusOrange));
+        binding.bonusOrange.setText(String.valueOf(mCivicViewModel.getBonusOrange()));
         binding.bonusOrange.setBackgroundResource(R.color.crafts);
-        binding.bonusYellow.setText(String.valueOf(bonusYellow));
+        binding.bonusYellow.setText(String.valueOf(mCivicViewModel.getBonusYellow()));
         binding.bonusYellow.setBackgroundResource(R.color.religion);
     }
 
-    public void saveBonus() {
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("bonusRed", bonusRed);
-        editor.putInt("bonusGreen", bonusGreen);
-        editor.putInt("bonusBlue", bonusBlue);
-        editor.putInt("bonusYellow", bonusYellow);
-        editor.putInt("bonusOrange", bonusOrange);
-        editor.apply();
-        Log.v("HOME", "saveBonus in Home");
-    }
+//    public void saveBonus() {
+////        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.putInt("bonusRed", bonusRed);
+//        editor.putInt("bonusGreen", bonusGreen);
+//        editor.putInt("bonusBlue", bonusBlue);
+//        editor.putInt("bonusYellow", bonusYellow);
+//        editor.putInt("bonusOrange", bonusOrange);
+//        editor.apply();
+//        Log.v("HOME", "saveBonus in Home");
+//    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -136,7 +131,7 @@ public class HomeFragment extends Fragment {
     public void onPause() {
         super.onPause();
         Log.v("HOME","---> onPause() <--- ");
-        saveBonus();
+//        saveBonus();
     }
 
     public void onStart() {
@@ -147,6 +142,7 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.v("HOME","---> onResume() <--- ");
+        loadBonus();
     }
 
     public void onStop() {

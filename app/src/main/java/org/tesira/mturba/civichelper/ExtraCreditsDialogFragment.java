@@ -70,7 +70,8 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         View spinnerView = binding.getRoot();
         builder.setView(spinnerView);
         builder.setPositiveButton(R.string.ok, (dialog, id) -> {
-            fragment.updateBonus(blue, green, orange, red, yellow);
+// TO-DO nach ViewModel verschieben
+            //            fragment.updateBonus(blue, green, orange, red, yellow);
             fragment.returnToDashboard(false);
         });
         // Create the AlertDialog object and return it
