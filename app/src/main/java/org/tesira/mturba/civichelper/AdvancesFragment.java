@@ -320,14 +320,17 @@ public class AdvancesFragment extends Fragment
             // add to list of bought cards
             Log.v("BUY", "Adding " + name);
             mCivicViewModel.insertPurchase(name);
-//            purchasedAdvances.add(name);
+//            addBonus(name);
+
+
+
+            //            purchasedAdvances.add(name);
 
             // remove from possible buy option for Anatomy
 //
 //            greenCardsAnatomy.remove(name);
 //            if (name.equals("Anatomy")) buyAnatomy = true;
 //            bonusFamily.add(adv.getFamilyname());
-//            addBonus(name);
 //            Integer effect = adv.getEffects().get("Credits");
 //            if (effect != null) {
 //                credits += effect;
@@ -489,7 +492,8 @@ public class AdvancesFragment extends Fragment
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
+        return NavigationUI.onNavDestinationSelected(item,
+                Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
     }
 
     @Override
