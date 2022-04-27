@@ -1,7 +1,6 @@
 package org.tesira.mturba.civichelper.db;
 
 import android.app.Application;
-import android.service.autofill.UserData;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -9,16 +8,14 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class CivicRepository {
 
     private Application mApplication;
-    private CardDao mCivicDao;
-//    private PurchasedAdvanceDao mPurchaseDao;
+    private CivicHelperDao mCivicDao;
     private LiveData<List<Card>> mAllCivics;
-//    private LiveData<List<PurchasedAdvance>> mAllPurchases;
+    private LiveData<List<Purchase>> mAllPurchases;
     private List<Card> cachedCards;
 
     public CivicRepository(Application application) {
@@ -30,9 +27,20 @@ public class CivicRepository {
             Log.v("DB", "creating");
             cachedCards = mCivicDao.getAdvancesByName();
         });
-
-//        mPurchaseDao = db.purchaseDao();
     }
+
+    public void deletePurchases() {mCivicDao.deleteAllPurchases();}
+    public LiveData<List<Purchase>> getAllPurchases() { return mCivicDao.getPurchases(); }
+    public void insertPurchase(String name) {
+
+         CivicHelperDatabase.databaseWriteExecutor.execute(() -> {
+            // Populate the database in the background.
+            // If you want to start with more words, just add them.
+             mCivicDao.insertPurchase(new Purchase(name));
+            Log.v("BUY", "writing in executur :" + name);
+        });
+    }
+
 
     public Card getAdvanceByNameToCard(String name) {
 
@@ -42,12 +50,7 @@ public class CivicRepository {
     // Asynch, needed if DB is created without .allowMainThreadQueries()
     public Card getAdvanceByNameAsync(String name) throws ExecutionException, InterruptedException {
 
-        Callable<Card> callable = new Callable<Card>() {
-            @Override
-            public Card call() throws Exception {
-                return mCivicDao.getAdvanceByNameToCard(name);
-            }
-        };
+        Callable<Card> callable = () -> mCivicDao.getAdvanceByNameToCard(name);
         Future<Card> future = CivicHelperDatabase.databaseWriteExecutor.submit(callable);
         return future.get();
     }
@@ -62,29 +65,24 @@ public class CivicRepository {
         return mAllCivics;
     }
 
-//    public LiveData<List<PurchasedAdvance>> getAllPurchases() {
+//    public LiveData<List<Purchase>> getAllPurchases() {
 //        return mAllPurchases;
 //    }
 
-    public void insertCard(Card civic) {
-        Log.v("MODEL","vor Executor");
-        CivicHelperDatabase.databaseWriteExecutor.execute(()-> {mCivicDao.insert(civic);});
-        Log.v("MODEL","nach Executor");
-    }
+//    public void insertCard(Card civic) {
+//        Log.v("MODEL","vor Executor");
+//        CivicHelperDatabase.databaseWriteExecutor.execute(()-> {mCivicDao.insert(civic);});
+//        Log.v("MODEL","nach Executor");
+//    }
 
-//    public void insert(PurchasedAdvance card) {
+//    public void insert(Purchase card) {
 //        CivicHelperDatabase.databaseWriteExecutor.execute(()-> {mPurchaseDao.insert(card);});
 //    }
 
 
     public List<Card> getAllCards() throws ExecutionException, InterruptedException {
 
-        Callable<List<Card>> callable = new Callable<List<Card>>() {
-            @Override
-            public List<Card> call() throws Exception {
-                return mCivicDao.getAdvancesByName();
-            }
-        };
+        Callable<List<Card>> callable = () -> mCivicDao.getAdvancesByName();
         Future<List<Card>> future = CivicHelperDatabase.databaseWriteExecutor.submit(callable);
         return future.get();
     }

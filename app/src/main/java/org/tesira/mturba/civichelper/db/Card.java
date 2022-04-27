@@ -14,7 +14,7 @@ import java.util.List;
 
 import kotlin.jvm.JvmOverloads;
 
-@Entity(tableName = "card_table", indices = {@Index("name")})
+@Entity(tableName = "cards", indices = {@Index("name")})
 public class Card {
 
     @PrimaryKey
@@ -24,42 +24,33 @@ public class Card {
 
     // advances are divided in three columns and 17 rows and give a bonus for buying the
     // next in line in the same row
-    @NonNull
     @ColumnInfo(name="family")
     private int mFamily;                 // give bonus to next family member in same row
 
-    @NonNull
     @ColumnInfo(name="vp")
     private int mVp;                     // victory points (1,3,6)
 
-    @NonNull
     @ColumnInfo(name="price")
     private int mPrice;
 
-    @NonNull
     @ColumnInfo(name="group1")
     private CardColor mGroup1;
 
     @ColumnInfo(name="group2")
     private CardColor mGroup2;
 
-    @NonNull
     @ColumnInfo(name="creditsBlue")
     private int mCreditsBlue;
 
-    @NonNull
     @ColumnInfo(name="creditsGreen")
     private int mCreditsGreen;
 
-    @NonNull
     @ColumnInfo(name="creditsOrange")
     private int mCreditsOrange;
 
-    @NonNull
     @ColumnInfo(name="creditsRed")
     private int mCreditsRed;
 
-    @NonNull
     @ColumnInfo(name="creditsYellow")
     private int mCreditsYellow;
 
@@ -69,7 +60,6 @@ public class Card {
     @ColumnInfo(name="bonus")
     private int mBonus;
 
-    @NonNull
     @ColumnInfo(name="isBuyable")
     private boolean mIsBuyable;
 

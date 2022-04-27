@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -30,8 +31,10 @@ import androidx.preference.PreferenceManager;
 import org.tesira.mturba.civichelper.card.CardColor;
 import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
+import org.tesira.mturba.civichelper.db.Purchase;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +53,7 @@ public class HomeFragment extends Fragment {
     private CivicViewModel mCivicViewModel;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container,false);
         prefs = getContext().getSharedPreferences(PURCHASED, Context.MODE_PRIVATE);
@@ -63,6 +66,11 @@ public class HomeFragment extends Fragment {
         binding.resetBtn.setOnClickListener(v -> onClickButton(v));
         setHasOptionsMenu(true);
 //        loadBonus();
+        mCivicViewModel.getAllPurchases().observeForever(purchases -> {
+            for (Purchase name: purchases) {
+                Log.v("BUY", "observer : "+name.getName());
+            }
+        });
         return binding.getRoot();
     }
 
@@ -78,8 +86,9 @@ public class HomeFragment extends Fragment {
     }
 
     public void newGame() {
-        prefs.edit().clear().commit();
-        loadBonus();
+        prefs.edit().clear().apply();
+        mCivicViewModel.deletePurchases();
+//        loadBonus();
     }
 
     public void loadBonus() {
@@ -109,7 +118,7 @@ public class HomeFragment extends Fragment {
         editor.putInt("bonusBlue", bonusBlue);
         editor.putInt("bonusYellow", bonusYellow);
         editor.putInt("bonusOrange", bonusOrange);
-        editor.commit();
+        editor.apply();
         Log.v("HOME", "saveBonus in Home");
     }
 

@@ -1,15 +1,12 @@
 package org.tesira.mturba.civichelper.db;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -26,7 +23,7 @@ public class CivicViewModel extends AndroidViewModel {
     private MutableLiveData<Integer> total;
     private MutableLiveData<Integer> remaining;
 
-//    private final LiveData<List<PurchasedAdvance>> mAllPurchases;
+//    private final LiveData<List<Purchase>> mAllPurchases;
 
     public CivicViewModel(@NonNull Application application) throws ExecutionException, InterruptedException {
         super(application);
@@ -43,14 +40,13 @@ public class CivicViewModel extends AndroidViewModel {
     }
     public CivicRepository getRepository() {return mRepository;}
 
+    public LiveData<List<Purchase>> getAllPurchases() {return mRepository.getAllPurchases();}
+    public void insertPurchase(String purchase) {mRepository.insertPurchase(purchase);}
+    public void deletePurchases() {mRepository.deletePurchases();}
+
     public LiveData<List<Card>> getAllCivics( String sortingOrder) {return mAllCivics;}
-//    public LiveData<List<PurchasedAdvance>> getAllPurchases() {return mAllPurchases;}
 
-    public void insert(Card civic) {mRepository.insertCard(civic);}
-//    public void insert(PurchasedAdvance purchases) {mRepository.insert(purchases);}
-
-//    public LiveData<List<Card>> getAdvanceByName(String name) {
-//        return mRepository.getAdvanceByName(name);}
+//    public void insert(Card civic) {mRepository.insertCard(civic);}
 
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
 

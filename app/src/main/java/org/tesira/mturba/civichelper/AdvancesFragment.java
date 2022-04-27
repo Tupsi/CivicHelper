@@ -150,12 +150,7 @@ public class AdvancesFragment extends Fragment
 //        total = 0;
 //        treasure = prefs.getInt(TREASURE_BOX,0);
 //        mCivicViewModel.setTreasure(prefs.getInt(TREASURE_BOX,0));
-        mCivicViewModel.getTreasure().observe(requireActivity(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer treasure) {
-                mTreasureInput.setText(String.valueOf(treasure));
-            }
-        });
+        mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> mTreasureInput.setText(String.valueOf(treasure)));
 //        mCivicViewModel.getTotal().observe(requireActivity(), new Observer<Integer>() {
 //            @Override
 //            public void onChanged(Integer total) {
@@ -166,17 +161,14 @@ public class AdvancesFragment extends Fragment
 //            }
 //        });
 
-        mCivicViewModel.getRemaining().observe(requireActivity(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer remaining) {
-                Log.v("CONTEXT", "aussen");
-                if (getContext() != null) {
-                    Log.v("CONTEXT", "innen");
-                    mRemainingText.setText(requireActivity().getString(R.string.remaining_treasure)+remaining);
-                }
-                else {
-                    Log.v("CONTEXT", "else ohne context");
-                }
+        mCivicViewModel.getRemaining().observe(requireActivity(), remaining -> {
+            Log.v("CONTEXT", "aussen");
+            if (getContext() != null) {
+                Log.v("CONTEXT", "innen");
+                mRemainingText.setText(requireActivity().getString(R.string.remaining_treasure)+remaining);
+            }
+            else {
+                Log.v("CONTEXT", "else ohne context");
             }
         });
 
@@ -191,13 +183,14 @@ public class AdvancesFragment extends Fragment
                 return true;
         });
 
+        binding.btnBuy.setOnClickListener(v -> {
+            buyAdvances();
+//            Navigation.findNavController(v).popBackStack();
+        });
+
 //        mTreasureInput = rootView.findViewById(R.id.treasure);
 //        mBuyPrice = rootView.findViewById(R.id.moneyleft);
 //        advances = new ArrayList<>();
-//        binding.btnBuy.setOnClickListener(v -> {
-//            buyAdvances();
-////            Navigation.findNavController(v).popBackStack();
-//        });
 //
 //        if (savedInstanceState != null) {
 //            Log.v("save", "savedInstanceState YES/if");
@@ -319,34 +312,38 @@ public class AdvancesFragment extends Fragment
             advances.remove(adv);
         }
     }
-
     private void buyAdvances() {
         int credits = 0;
         boolean buyAnatomy = false;
-        for (String name: tracker.getSelection()) {
-            Advance adv = Advance.getAdvanceFromName(advances, name);
+        for (String name : tracker.getSelection()) {
+            Card adv = mCivicViewModel.getAdvanceByName(name);
             // add to list of bought cards
-            purchasedAdvances.add(name);
-            // remove from possible buy option for Anatomy
-            greenCardsAnatomy.remove(name);
-            if (name.equals("Anatomy")) buyAnatomy = true;
-            bonusFamily.add(adv.getFamilyname());
-            addBonus(name);
-            Integer effect = adv.getEffects().get("Credits");
-            if (effect != null) {
-                credits += effect;
-            }
-        }
-        if ((greenCardsAnatomy.size() > 0) &&  buyAnatomy) {
-            numberDialogs++;
-            new AnatomyDialogFragment(this, greenCardsAnatomy).show(getParentFragmentManager(), "Anatomy");
-        }
+            Log.v("BUY", "Adding " + name);
+            mCivicViewModel.insertPurchase(name);
+//            purchasedAdvances.add(name);
 
-        if (credits > 0) {
-            numberDialogs++;
-            new ExtraCreditsDialogFragment(this,credits).show(getParentFragmentManager(), "ExtraCredits");
+            // remove from possible buy option for Anatomy
+//
+//            greenCardsAnatomy.remove(name);
+//            if (name.equals("Anatomy")) buyAnatomy = true;
+//            bonusFamily.add(adv.getFamilyname());
+//            addBonus(name);
+//            Integer effect = adv.getEffects().get("Credits");
+//            if (effect != null) {
+//                credits += effect;
+//            }
+//        }
+//        if ((greenCardsAnatomy.size() > 0) &&  buyAnatomy) {
+//            numberDialogs++;
+//            new AnatomyDialogFragment(this, greenCardsAnatomy).show(getParentFragmentManager(), "Anatomy");
+//        }
+//
+//        if (credits > 0) {
+//            numberDialogs++;
+//            new ExtraCreditsDialogFragment(this,credits).show(getParentFragmentManager(), "ExtraCredits");
+//        }
+//        returnToDashboard(false);
         }
-        returnToDashboard(false);
     }
 
     private void addBonus(String name) {
@@ -501,7 +498,7 @@ public class AdvancesFragment extends Fragment
             case "sort" :
                 sortingOrder = sharedPreferences.getString("sort", "name");
                 if (sortingOrder.equals("family")) {
-                    sharedPreferences.edit().putString("columns","3").commit();
+                    sharedPreferences.edit().putString("columns","3").apply();
                 }
             case "name" :
             default:

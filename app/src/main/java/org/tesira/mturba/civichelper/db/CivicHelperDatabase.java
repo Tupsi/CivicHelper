@@ -23,12 +23,10 @@ import java.util.concurrent.Executors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-//@Database(entities = {Card.class, PurchasedAdvance.class}, version = 1, exportSchema = false)
-@Database(entities = {Card.class}, version = 1, exportSchema = false)
+@Database(entities = {Card.class, Purchase.class}, version = 1, exportSchema = false)
 public abstract class CivicHelperDatabase extends RoomDatabase {
 
-    public abstract CardDao civicDao();
-//    public abstract PurchasedAdvanceDao purchaseDao();
+    public abstract CivicHelperDao civicDao();
 
     private static volatile CivicHelperDatabase INSTANCE;
     private static volatile Context ASSET_CONTEXT;
@@ -45,7 +43,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             Log.v("DB", "getDataBase INSTANCE == null");
             synchronized (CivicHelperDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic.db")
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic_helper.db")
                             .addCallback(sRoomDatabaseCallback)
                             .allowMainThreadQueries()
                             .build();
@@ -65,7 +63,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
                 // If you want to start with more words, just add them.
-                CardDao dao = INSTANCE.civicDao();
+                CivicHelperDao dao = INSTANCE.civicDao();
                 dao.deleteAll();
                 importCivicsFromXML();
                 Log.v("DB", "creating");
@@ -79,7 +77,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
      * Calculates and adds the special family bonus.
      * */
     private static void importCivicsFromXML() {
-        CardDao dao = INSTANCE.civicDao();
+        CivicHelperDao dao = INSTANCE.civicDao();
         try {
             InputStream is = ASSET_CONTEXT.getAssets().open(FILENAME);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
