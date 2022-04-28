@@ -172,7 +172,7 @@ public class AdvancesFragment extends Fragment
 
         binding.btnBuy.setOnClickListener(v -> {
             buyAdvances();
-            Navigation.findNavController(v).popBackStack();
+//            Navigation.findNavController(v).popBackStack();
         });
 
 //        mTreasureInput = rootView.findViewById(R.id.treasure);
@@ -301,32 +301,30 @@ public class AdvancesFragment extends Fragment
             Log.v("BUY", "Adding " + name);
             mCivicViewModel.insertPurchase(name);
             addBonus(name);
-//TODO calculate new currentPrice based on bonuses, check double colored, family
-//TODO remove bonus from price for next round
-//TODO remove used treasure from field and save new value to pref
 
-            // remove from possible buy option for Anatomy
-//
+            //TODO remove bonus from price for next round
+            //TODO remove used treasure from field and save new value to pref
+
+//            // remove from possible buy option for Anatomy
 //            greenCardsAnatomy.remove(name);
-//            if (name.equals("Anatomy")) buyAnatomy = true;
-//            bonusFamily.add(adv.getFamilyname());
+            if (name.equals("Anatomy")) buyAnatomy = true;
+
 //            Integer effect = adv.getEffects().get("Credits");
 //            if (effect != null) {
 //                credits += effect;
 //            }
-//        }
-//        if ((greenCardsAnatomy.size() > 0) &&  buyAnatomy) {
-//            numberDialogs++;
-//            new AnatomyDialogFragment(this, greenCardsAnatomy).show(getParentFragmentManager(), "Anatomy");
-//        }
+        }
+        if ((mCivicViewModel.getAnatomyCards().size() > 0) &&  buyAnatomy) {
+            numberDialogs++;
+            new AnatomyDialogFragment(this, mCivicViewModel.getAnatomyCards()).show(getParentFragmentManager(), "Anatomy");
+        }
 //
 //        if (credits > 0) {
 //            numberDialogs++;
 //            new ExtraCreditsDialogFragment(this,credits).show(getParentFragmentManager(), "ExtraCredits");
 //        }
-//        returnToDashboard(false);
-        }
         mCivicViewModel.calculateCurrentPrice();
+        returnToDashboard(false);
     }
 
     private void addBonus(String name) {

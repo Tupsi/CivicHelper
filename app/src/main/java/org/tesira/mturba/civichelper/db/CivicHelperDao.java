@@ -61,4 +61,7 @@ public interface CivicHelperDao {
 
     @Query("Update cards SET currentPrice = price")
     void resetCurrentPrice();
+
+    @Query("SELECT cards.name FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL AND price < 100 AND (group1 = 'GREEN' OR group2 = 'GREEN') ORDER BY cards.name ASC")
+    List<String> getAnatomyCards();
 }

@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,10 +24,9 @@ public class AnatomyDialogFragment extends DialogFragment {
         private AdvancesFragment fragment;
         private String[] greenCards;
 
-        public AnatomyDialogFragment(AdvancesFragment fragment, Set<String> greenCards) {
+        public AnatomyDialogFragment(AdvancesFragment fragment, List<String> greenCards) {
             this.fragment = fragment;
             this.greenCards = greenCards.toArray(new String[0]);
-            Arrays.sort(this.greenCards);
         }
 
         @NonNull

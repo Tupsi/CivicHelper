@@ -105,4 +105,5 @@ public class CivicViewModel extends AndroidViewModel {
         }
     }
 
+    public List<String> getAnatomyCards(){return mRepository.getAnatomyCards();}
 }
