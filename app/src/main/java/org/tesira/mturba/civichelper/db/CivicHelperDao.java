@@ -55,4 +55,10 @@ public interface CivicHelperDao {
 
     @Query("SELECT * FROM purchases")
     LiveData<List<Purchase>> getPurchases();
+
+    @Query("UPDATE cards SET currentPrice = :current WHERE name = :name")
+    void updateCurrentPrice(String name, int current);
+
+    @Query("Update cards SET currentPrice = price")
+    void resetCurrentPrice();
 }

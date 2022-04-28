@@ -37,7 +37,7 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         Resources res = holder.itemView.getResources();
 
         holder.bindName(name, getItemBackgroundColor(current, res));
-        holder.bindPrice(current.getPrice());
+        holder.bindPrice(current.getCurrentPrice());
         holder.bindBonus(current.getBonus());
         holder.bindBonusCard(current.getBonusCard());
 

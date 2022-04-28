@@ -65,16 +65,10 @@ public class CivicRepository {
         return mAllCivics;
     }
 
-//    public LiveData<List<Purchase>> getAllPurchases() {
-//        return mAllPurchases;
-//    }
-
+// Examples of I need to switch to asynch calls
 //    public void insertCard(Card civic) {
-//        Log.v("MODEL","vor Executor");
 //        CivicHelperDatabase.databaseWriteExecutor.execute(()-> {mCivicDao.insert(civic);});
-//        Log.v("MODEL","nach Executor");
 //    }
-
 //    public void insert(Purchase card) {
 //        CivicHelperDatabase.databaseWriteExecutor.execute(()-> {mPurchaseDao.insert(card);});
 //    }
@@ -90,5 +84,7 @@ public class CivicRepository {
     public void updateIsBuyable(int remaining) {
         mCivicDao.updateIsBuyable(remaining);
     }
+    public void updateCurrentPrice(String name, int current) { mCivicDao.updateCurrentPrice(name, current);}
+    public void resetCurrentPrice(){mCivicDao.resetCurrentPrice();}
 
 }

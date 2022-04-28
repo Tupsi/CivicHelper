@@ -13,10 +13,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.tesira.mturba.civichelper.card.CardColor;
 import org.tesira.mturba.civichelper.databinding.ActivityMainBinding;
+import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         drawerLayout = binding.drawerLayout;
         setContentView(binding.getRoot());
-//        NavController navController = Navigation.findNavController(this, R.id.myNavHostFragment);
         navController = Navigation.findNavController(this, R.id.myNavHostFragment);
         NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
         NavigationUI.setupWithNavController(binding.navView, navController);
@@ -48,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-//        NavController navController = Navigation.findNavController(this, R.id.myNavHostFragment);
         return NavigationUI.navigateUp(navController, drawerLayout);
     }
 
@@ -61,35 +62,28 @@ public class MainActivity extends AppCompatActivity {
     public void loadBonus() {
         int blue, green, orange, red, yellow;
         Log.v("MAIN", "loadBonus inside Main");
-        blue = savedBonus.getInt("bonusBlue", 0);
-        green = savedBonus.getInt("bonusGreen", 0);
-        orange = savedBonus.getInt("bonusOrange", 0);
-        red = savedBonus.getInt("bonusRed", 0);
-        yellow = savedBonus.getInt("bonusYellow", 0);
+        blue = savedBonus.getInt(CardColor.BLUE.getName(), 0);
+        green = savedBonus.getInt(CardColor.GREEN.getName(), 0);
+        orange = savedBonus.getInt(CardColor.ORANGE.getName(), 0);
+        red = savedBonus.getInt(CardColor.RED.getName(), 0);
+        yellow = savedBonus.getInt(CardColor.YELLOW.getName(), 0);
         Log.v("MAIN"," : " + blue + " : " + green + " : " + orange + " : " + red + " : " + yellow);
-        mCivicViewModel.getCardBonus().getValue().put("blue", blue);
-        mCivicViewModel.getCardBonus().getValue().put("green", green);
-        mCivicViewModel.getCardBonus().getValue().put("orange", orange);
-        mCivicViewModel.getCardBonus().getValue().put("red", red);
-        mCivicViewModel.getCardBonus().getValue().put("yellow", yellow);
-        mCivicViewModel.setAllBonus(blue, green, orange, red, yellow);
-        Log.v("MAIN", "loading Bonus inside MainActiviy : "+mCivicViewModel.getBonusBlue());
-
+        mCivicViewModel.getCardBonus().getValue().put(CardColor.BLUE, blue);
+        mCivicViewModel.getCardBonus().getValue().put(CardColor.GREEN, green);
+        mCivicViewModel.getCardBonus().getValue().put(CardColor.ORANGE, orange);
+        mCivicViewModel.getCardBonus().getValue().put(CardColor.RED, red);
+        mCivicViewModel.getCardBonus().getValue().put(CardColor.YELLOW, yellow);
     }
 
     public void saveBonus() {
         SharedPreferences.Editor editor = savedBonus.edit();
 
         // HashMap Save
-
-        editor.putInt("bonusBlue", mCivicViewModel.getBonusBlue());
-        editor.putInt("bonusGreen", mCivicViewModel.getBonusGreen());
-        editor.putInt("bonusOrange", mCivicViewModel.getBonusOrange());
-        editor.putInt("bonusRed", mCivicViewModel.getBonusRed());
-        editor.putInt("bonusYellow", mCivicViewModel.getBonusYellow());
+        for (Map.Entry<CardColor, Integer> entry: mCivicViewModel.getCardBonus().getValue().entrySet()){
+            editor.putInt(entry.getKey().getName(), entry.getValue());
+        }
         editor.commit();
-        Log.v("MAIN", "" + mCivicViewModel.getBonusBlue() + " : " + mCivicViewModel.getBonusGreen());
-        Log.v("MAIN", "saveBonus in Advanced");
+        Log.v("MAIN", "saveBonus in Main");
     }
     public void newGame() {
         Log.v("MAIN","clearing sharedPrefs from MAIN...");
@@ -101,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         Log.v("MAIN","---> onPause() <--- ");
         saveVars();
-        saveBonus();
     }
 
     public void onStart() {
@@ -116,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onStop() {
         super.onStop();
-        saveBonus();
+//        saveBonus();
         Log.v("MAIN","---> onStop() <--- ");
     }
 

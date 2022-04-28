@@ -131,7 +131,9 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
 //                        adv.addEffect(name, value);
 //                    }
 //                    advances.getValue().add(adv);
-                    Card civic = new Card(name, family, vp, price, color[0], color[1], credits[0], credits[1], credits[2], credits[3], credits[4], null, 0, false);
+                    Card civic = new Card(name, family, vp, price, color[0], color[1], credits[0],
+                            credits[1], credits[2], credits[3], credits[4], null,
+                            0, false, price);
                     dao.insert(civic);
                 }
             }

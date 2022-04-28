@@ -63,6 +63,9 @@ public class Card {
     @ColumnInfo(name="isBuyable")
     private boolean mIsBuyable;
 
+    @ColumnInfo(name="currentPrice")
+    private int mCurrentPrice;
+
     // optional
 
     // effects hold special bonuses during gameplay, to be displayed at in summation
@@ -77,7 +80,7 @@ public class Card {
     public Card(@NonNull String mName, int mFamily, int mVp, int mPrice,
                 @NonNull CardColor mGroup1, CardColor mGroup2, int mCreditsBlue,
                 int mCreditsGreen, int mCreditsOrange,
-                int mCreditsRed, int mCreditsYellow, String mBonusCard, int mBonus, boolean mIsBuyable) {
+                int mCreditsRed, int mCreditsYellow, String mBonusCard, int mBonus, boolean mIsBuyable, int mCurrentPrice) {
         this.mName = mName;
         this.mFamily = mFamily;
         this.mVp = mVp;
@@ -92,6 +95,7 @@ public class Card {
         this.mBonusCard = mBonusCard;
         this.mBonus = mBonus;
         this.mIsBuyable = mIsBuyable;
+        this.mCurrentPrice = mCurrentPrice;
     }
 
     public String getName(){return this.mName;}
@@ -143,4 +147,5 @@ public class Card {
 
     public boolean getIsBuyable() { return mIsBuyable; }
 
+    public int getCurrentPrice() { return mCurrentPrice; }
 }
