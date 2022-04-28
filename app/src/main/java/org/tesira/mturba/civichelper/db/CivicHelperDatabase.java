@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-@Database(entities = {Card.class, Purchase.class}, version = 1, exportSchema = false)
+@Database(entities = {Card.class, Purchase.class, Effect.class}, version = 1, exportSchema = false)
 public abstract class CivicHelperDatabase extends RoomDatabase {
 
     public abstract CivicHelperDao civicDao();
@@ -64,7 +64,8 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                 // Populate the database in the background.
                 // If you want to start with more words, just add them.
                 CivicHelperDao dao = INSTANCE.civicDao();
-                dao.deleteAll();
+                dao.deleteAllCards();
+                dao.deleteAllEffects();
                 importCivicsFromXML();
                 Log.v("DB", "creating");
             });
@@ -86,6 +87,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             Element element = doc.getDocumentElement();
             element.normalize();
             NodeList nList = doc.getElementsByTagName("advance");
+            Log.v("DB", "number " + nList.getLength());
             for (int i=0; i<nList.getLength(); i++) {
                 Node node = nList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -125,15 +127,19 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                                 break;
                         }
                     }
-//                    for (int x=0; x<element2.getElementsByTagName("effect").getLength(); x++) {
-//                        String name = element2.getElementsByTagName("effect").item(x).getAttributes().item(0).getTextContent();
-//                        int value = parseInt(element2.getElementsByTagName("effect").item(x).getTextContent());
-//                        adv.addEffect(name, value);
-//                    }
+                    for (int x=0; x<element2.getElementsByTagName("effect").getLength(); x++) {
+                        String effect = element2.getElementsByTagName("effect").item(x).getAttributes().item(0).getTextContent();
+                        int value = Integer.parseInt(element2.getElementsByTagName("effect").item(x).getTextContent());
+                        Effect newEffect = new Effect(name, effect, value);
+                        dao.insertEffect(newEffect);
+                        //                        adv.addEffect(name, value);
+                    }
 //                    advances.getValue().add(adv);
+                    Log.v("DB", "name : " + name);
                     Card civic = new Card(name, family, vp, price, color[0], color[1], credits[0],
                             credits[1], credits[2], credits[3], credits[4], null,
                             0, false, price);
+
                     dao.insert(civic);
                 }
             }

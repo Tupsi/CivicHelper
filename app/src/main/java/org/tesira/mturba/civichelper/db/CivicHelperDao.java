@@ -15,7 +15,10 @@ public interface CivicHelperDao {
     void insert(Card civilizationAdvance);
 
     @Query("DELETE FROM cards")
-    void deleteAll();
+    void deleteAllCards();
+
+    @Query("DELETE FROM effects")
+    void deleteAllEffects();
 
     @Query("SELECT * FROM cards ORDER BY name ASC")
     List<Card> getAdvancesByName();
@@ -64,4 +67,7 @@ public interface CivicHelperDao {
 
     @Query("SELECT cards.name FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL AND price < 100 AND (group1 = 'GREEN' OR group2 = 'GREEN') ORDER BY cards.name ASC")
     List<String> getAnatomyCards();
+
+    @Insert
+    void insertEffect(Effect effect);
 }
