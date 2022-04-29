@@ -10,7 +10,7 @@
         <item>color</item>
         <item>family</item>
         <item>name</item>
-        <item>price</item>
+        <item>currentPrice</item>
     </string-array>
 
     <string-array name="civilizations_entries">

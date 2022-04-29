@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -45,7 +46,9 @@ import org.tesira.mturba.civichelper.db.CivicViewModel;
 import org.tesira.mturba.civichelper.db.Effect;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
@@ -78,6 +81,7 @@ public class AdvancesFragment extends Fragment
     private Set<String> bonusFamily;
     private Set<String> greenCardsAnatomy;
     private int numberDialogs = 0;
+    private LiveData<List<Card>> listCivics;
 
 
     // TODO: Customize parameter argument names
@@ -107,7 +111,8 @@ public class AdvancesFragment extends Fragment
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
         sortingOrder = prefs.getString("sort", "name");
-
+        mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
+        listCivics = mCivicViewModel.getAllCivics(sortingOrder);
 //        prefs.registerOnSharedPreferenceChangeListener(this);
 //        if (getArguments() != null) {
 //            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -133,9 +138,10 @@ public class AdvancesFragment extends Fragment
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(rootView.getContext(), mColumnCount));
         }
-
-        mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        mCivicViewModel.getAllCivics(sortingOrder).observe(requireActivity(), civics -> {
+//        mCivicViewModel.getAllCivics(sortingOrder).observe(requireActivity(), civics -> {
+//            adapter.submitList(civics);
+//        });
+        listCivics.observe(requireActivity(), civics -> {
             adapter.submitList(civics);
         });
 
@@ -263,7 +269,14 @@ public class AdvancesFragment extends Fragment
 //        }
 
         // we want free stuff already selected
-//        selectZeroCostAdvances();
+
+//        try {
+//            selectZeroCostAdvances();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         //        mTreasureInput.addTextChangedListener(new TextWatcher() {
 //            @Override
@@ -286,12 +299,20 @@ public class AdvancesFragment extends Fragment
         return rootView;
     }
 
-    private void selectZeroCostAdvances() {
-        for (Card adv: mCivicViewModel.getAllCivics(sortingOrder).getValue()) {
+    private void selectZeroCostAdvances() throws ExecutionException, InterruptedException {
+        for (Card adv: mCivicViewModel.getAllCardsForFree()) {
             if (adv.getCurrentPrice() == 0) {
+                Log.v("FREE", " : " + adv.getName());
                 tracker.select(adv.getName());
             }
         }
+
+        //        List<Card> cards = mCivicViewModel.getAdvancesForFree();
+//        if (cards == null) return;
+//        for (Card adv: cards) {
+//            Log.v("ZERO", " : " + adv.getName());
+//                tracker.select(adv.getName());
+//        }
     }
 
     private void buyAdvances() {
@@ -305,7 +326,6 @@ public class AdvancesFragment extends Fragment
             mCivicViewModel.insertPurchase(name);
             addBonus(name);
 
-            //TODO remove bonus from price for next round
             //TODO remove used treasure from field and save new value to pref
 
             if (name.equals("Anatomy")) buyAnatomy = true;

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -80,6 +81,12 @@ public class CivicRepository {
         Future<List<Card>> future = CivicHelperDatabase.databaseWriteExecutor.submit(callable);
         return future.get();
     }
+    public List<Card> getAllCardsForFree() throws ExecutionException, InterruptedException {
+
+        Callable<List<Card>> callable = () -> mCivicDao.getAdvancesForFree();
+        Future<List<Card>> future = CivicHelperDatabase.databaseWriteExecutor.submit(callable);
+        return future.get();
+    }
 
     public void updateIsBuyable(int remaining) {
         mCivicDao.updateIsBuyable(remaining);
@@ -88,4 +95,7 @@ public class CivicRepository {
     public void resetCurrentPrice(){mCivicDao.resetCurrentPrice();}
     public List<String> getAnatomyCards(){ return mCivicDao.getAnatomyCards();}
     public List<Effect> getEffect(String advance, String name) {return mCivicDao.getEffect(advance, name);}
+    public List<Card> getPurchasesForBonus() {return mCivicDao.getPurchasesForBonus();}
+    public List<Card> getAdvancesForFree() {return mCivicDao.getAdvancesForFree();}
+    public LiveData<List<Card>> getAdvancesLive(String order) {return mCivicDao.getAdvancesLive(order);}
 }

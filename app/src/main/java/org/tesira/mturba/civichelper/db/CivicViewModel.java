@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import org.tesira.mturba.civichelper.card.CardColor;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -91,29 +92,40 @@ public class CivicViewModel extends AndroidViewModel {
     }
 
     public void calculateCurrentPrice() {
+        int newCurrent;
         for (Card adv: mAllCivics.getValue()) {
-            int newCurrent;
             if (adv.getGroup2() == null) {
                 newCurrent = adv.getPrice() - cardBonus.getValue().getOrDefault(adv.getGroup1(),0);
-                mRepository.updateCurrentPrice(adv.getName(), newCurrent);
             } else {
                 int group1 = cardBonus.getValue().getOrDefault(adv.getGroup1(),0);
                 int group2 = cardBonus.getValue().getOrDefault(adv.getGroup2(),0);
                 newCurrent = adv.getPrice() - Math.max(group1, group2);
-                mRepository.updateCurrentPrice(adv.getName(), newCurrent);
             }
+            if (newCurrent < 0 ) newCurrent = 0;
+            mRepository.updateCurrentPrice(adv.getName(), newCurrent);
         }
+        // adding special family bonus if predecessor bought
+        for (Card adv: mRepository.getPurchasesForBonus()) {
+            Card bonusTo = mRepository.getAdvanceByNameToCard(adv.getBonusCard());
+            newCurrent = bonusTo.getCurrentPrice() - adv.getBonus();
+            if (newCurrent < 0 ) newCurrent = 0;
+            mRepository.updateCurrentPrice(adv.getBonusCard(), newCurrent);
+        }
+
     }
 
     public List<String> getAnatomyCards(){return mRepository.getAnatomyCards();}
     public List<Effect> getEffect(String advance, String name){return mRepository.getEffect(advance, name);}
 
     public void updateBonus(int blue, int green, int orange, int red, int yellow) {
-
         cardBonus.getValue().compute(CardColor.BLUE,(k,v)->(v==null)?0+blue:v+blue);
         cardBonus.getValue().compute(CardColor.GREEN, (k,v) ->(v==null)?0+green:v+green);
         cardBonus.getValue().compute(CardColor.ORANGE, (k,v) ->(v==null)?0+orange:v+orange);
         cardBonus.getValue().compute(CardColor.RED, (k,v) ->(v==null)?0+red:v+red);
         cardBonus.getValue().compute(CardColor.YELLOW, (k,v) ->(v==null)?0+yellow:v+yellow);
     }
+
+    public List<Card> getAdvancesForFree() {return mRepository.getAdvancesForFree();}
+    public List<Card> getAllCardsForFree() throws ExecutionException, InterruptedException {return mRepository.getAllCardsForFree();}
+    public LiveData<List<Card>> getAdvancesLive(String order) {return mRepository.getAdvancesLive(order);}
 }

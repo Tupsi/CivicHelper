@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 @Dao
@@ -47,8 +49,15 @@ public interface CivicHelperDao {
     @Query("UPDATE cards SET isBuyable = 1 WHERE price > :remaining ")
     void updateIsBuyable(int remaining);
 
-    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY price ASC")
+    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY currentPrice ASC")
     LiveData<List<Card>> getAdvancesByPrice();
+
+    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY :order ASC")
+    LiveData<List<Card>> getAdvancesLive(String order);
+
+
+    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL AND currentPrice = 0")
+    List<Card> getAdvancesForFree();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertPurchase(Purchase purchase);
@@ -58,6 +67,9 @@ public interface CivicHelperDao {
 
     @Query("SELECT * FROM purchases")
     LiveData<List<Purchase>> getPurchases();
+
+    @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL AND cards.vp < 6")
+    List<Card> getPurchasesForBonus();
 
     @Query("UPDATE cards SET currentPrice = :current WHERE name = :name")
     void updateCurrentPrice(String name, int current);
