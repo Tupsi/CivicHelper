@@ -42,9 +42,11 @@ import org.tesira.mturba.civichelper.card.Credit;
 import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
 import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
+import org.tesira.mturba.civichelper.db.Effect;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A fragment representing a list of Items.
@@ -297,6 +299,7 @@ public class AdvancesFragment extends Fragment
         boolean buyAnatomy = false;
         for (String name : tracker.getSelection()) {
             Card adv = mCivicViewModel.getAdvanceByName(name);
+            List<Effect> effects = mCivicViewModel.getEffect(name,"Credits");
             // add to list of bought cards
             Log.v("BUY", "Adding " + name);
             mCivicViewModel.insertPurchase(name);
@@ -305,24 +308,21 @@ public class AdvancesFragment extends Fragment
             //TODO remove bonus from price for next round
             //TODO remove used treasure from field and save new value to pref
 
-//            // remove from possible buy option for Anatomy
-//            greenCardsAnatomy.remove(name);
             if (name.equals("Anatomy")) buyAnatomy = true;
-
-//            Integer effect = adv.getEffects().get("Credits");
-//            if (effect != null) {
-//                credits += effect;
-//            }
+            if (effects.size() == 1) {
+                credits += effects.get(0).getValue();
+            }
+            Log.v("CREDITS", "credits beim Kauf : " + name + " : " + credits);
         }
         if ((mCivicViewModel.getAnatomyCards().size() > 0) &&  buyAnatomy) {
             numberDialogs++;
             new AnatomyDialogFragment(this, mCivicViewModel.getAnatomyCards()).show(getParentFragmentManager(), "Anatomy");
         }
-//
-//        if (credits > 0) {
-//            numberDialogs++;
-//            new ExtraCreditsDialogFragment(this,credits).show(getParentFragmentManager(), "ExtraCredits");
-//        }
+
+        if (credits > 0) {
+            numberDialogs++;
+            new ExtraCreditsDialogFragment(mCivicViewModel,this,credits).show(getParentFragmentManager(), "ExtraCredits");
+        }
         mCivicViewModel.calculateCurrentPrice();
         returnToDashboard(false);
     }
@@ -442,7 +442,7 @@ public class AdvancesFragment extends Fragment
 
     public void returnToDashboard(boolean tookWrittenRecord) {
         if (tookWrittenRecord) {
-            new ExtraCreditsDialogFragment(this,10).show(getParentFragmentManager(), "ExtraCredits");
+            new ExtraCreditsDialogFragment( mCivicViewModel,this,10).show(getParentFragmentManager(), "ExtraCredits");
         } else {
             if (numberDialogs == 0) {
                 NavHostFragment.findNavController(this).popBackStack();

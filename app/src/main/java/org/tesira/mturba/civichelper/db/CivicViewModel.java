@@ -106,4 +106,14 @@ public class CivicViewModel extends AndroidViewModel {
     }
 
     public List<String> getAnatomyCards(){return mRepository.getAnatomyCards();}
+    public List<Effect> getEffect(String advance, String name){return mRepository.getEffect(advance, name);}
+
+    public void updateBonus(int blue, int green, int orange, int red, int yellow) {
+
+        cardBonus.getValue().compute(CardColor.BLUE,(k,v)->(v==null)?0+blue:v+blue);
+        cardBonus.getValue().compute(CardColor.GREEN, (k,v) ->(v==null)?0+green:v+green);
+        cardBonus.getValue().compute(CardColor.ORANGE, (k,v) ->(v==null)?0+orange:v+orange);
+        cardBonus.getValue().compute(CardColor.RED, (k,v) ->(v==null)?0+red:v+red);
+        cardBonus.getValue().compute(CardColor.YELLOW, (k,v) ->(v==null)?0+yellow:v+yellow);
+    }
 }

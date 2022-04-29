@@ -1,10 +1,7 @@
 package org.tesira.mturba.civichelper;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import org.tesira.mturba.civichelper.databinding.DialogCreditsBinding;
+import org.tesira.mturba.civichelper.db.CivicViewModel;
 
 /**
  * Dialog for Advances Written Record, Monument, Library
@@ -26,9 +24,11 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
     String[] items;
     private int credits, blue, green, yellow, orange, red;
     private AlertDialog dialog;
+    private CivicViewModel mCivicViewModel;
     private AdvancesFragment fragment;
 
-    public ExtraCreditsDialogFragment(AdvancesFragment fragment, int credits) {
+    public ExtraCreditsDialogFragment(CivicViewModel mCivicViewModel, AdvancesFragment fragment,  int credits) {
+        this.mCivicViewModel = mCivicViewModel;
         this.fragment = fragment;
         this.credits = credits;
         switch (credits) {
@@ -70,8 +70,9 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         View spinnerView = binding.getRoot();
         builder.setView(spinnerView);
         builder.setPositiveButton(R.string.ok, (dialog, id) -> {
-// TO-DO nach ViewModel verschieben
-            //            fragment.updateBonus(blue, green, orange, red, yellow);
+            mCivicViewModel.updateBonus(blue, green, orange, red, yellow);
+            // save to prefs
+            ((MainActivity) getActivity()).saveBonus();
             fragment.returnToDashboard(false);
         });
         // Create the AlertDialog object and return it

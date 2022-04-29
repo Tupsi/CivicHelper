@@ -70,4 +70,7 @@ public interface CivicHelperDao {
 
     @Insert
     void insertEffect(Effect effect);
+
+    @Query("SELECT * FROM effects WHERE name = :name AND advance = :advance ORDER BY advance ASC")
+    List<Effect> getEffect(String advance, String name);
 }

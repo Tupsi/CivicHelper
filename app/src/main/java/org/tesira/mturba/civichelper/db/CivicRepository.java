@@ -87,4 +87,5 @@ public class CivicRepository {
     public void updateCurrentPrice(String name, int current) { mCivicDao.updateCurrentPrice(name, current);}
     public void resetCurrentPrice(){mCivicDao.resetCurrentPrice();}
     public List<String> getAnatomyCards(){ return mCivicDao.getAnatomyCards();}
+    public List<Effect> getEffect(String advance, String name) {return mCivicDao.getEffect(advance, name);}
 }
