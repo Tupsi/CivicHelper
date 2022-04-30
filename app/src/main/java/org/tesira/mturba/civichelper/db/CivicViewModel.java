@@ -9,13 +9,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.selection.Selection;
 
-import org.tesira.mturba.civichelper.card.CardColor;
-
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
 
 public class CivicViewModel extends AndroidViewModel {
 
@@ -74,6 +70,10 @@ public class CivicViewModel extends AndroidViewModel {
         return cardBonus;
     }
 
+    /**
+     * Updates the card price, checking for best color if the card is in two groups and for
+     * the special family/row bonus.
+     */
     public void calculateCurrentPrice() {
         int newCurrent;
         for (Card adv: mAllCivics.getValue()) {
@@ -95,7 +95,6 @@ public class CivicViewModel extends AndroidViewModel {
             if (newCurrent < 0 ) newCurrent = 0;
             mRepository.updateCurrentPrice(adv.getBonusCard(), newCurrent);
         }
-
     }
 
     public List<String> getAnatomyCards(){return mRepository.getAnatomyCards();}
@@ -110,11 +109,11 @@ public class CivicViewModel extends AndroidViewModel {
      * @param yellow additional bonus for yellow cards.
      */
     public void updateBonus(int blue, int green, int orange, int red, int yellow) {
-        cardBonus.getValue().compute(CardColor.BLUE,(k,v)->(v==null)?0+blue:v+blue);
-        cardBonus.getValue().compute(CardColor.GREEN, (k,v) ->(v==null)?0+green:v+green);
-        cardBonus.getValue().compute(CardColor.ORANGE, (k,v) ->(v==null)?0+orange:v+orange);
-        cardBonus.getValue().compute(CardColor.RED, (k,v) ->(v==null)?0+red:v+red);
-        cardBonus.getValue().compute(CardColor.YELLOW, (k,v) ->(v==null)?0+yellow:v+yellow);
+        cardBonus.getValue().compute(CardColor.BLUE,(k,v)->(v==null)? blue :v+blue);
+        cardBonus.getValue().compute(CardColor.GREEN, (k,v) ->(v==null)? green :v+green);
+        cardBonus.getValue().compute(CardColor.ORANGE, (k,v) ->(v==null)? orange :v+orange);
+        cardBonus.getValue().compute(CardColor.RED, (k,v) ->(v==null)? red :v+red);
+        cardBonus.getValue().compute(CardColor.YELLOW, (k,v) ->(v==null)? yellow :v+yellow);
     }
 
     /**

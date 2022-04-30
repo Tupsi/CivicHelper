@@ -1,7 +1,7 @@
-package org.tesira.mturba.civichelper.card;
+package org.tesira.mturba.civichelper.db;
 
 /**
- * Each {@link Card} is of one color with the exception of Mysticism, Written Record, Theocracy,
+ * Each {@link org.tesira.mturba.civichelper.db.Card} is of one color with the exception of Mysticism, Written Record, Theocracy,
  * Literacy, Philosophy, Mathematics and Wonders of the World which belong to two {@link CardColor}.
  */
 public enum CardColor {

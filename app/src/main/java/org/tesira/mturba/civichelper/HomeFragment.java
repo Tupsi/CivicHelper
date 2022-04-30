@@ -2,13 +2,10 @@ package org.tesira.mturba.civichelper;
 
 import static androidx.navigation.Navigation.findNavController;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -18,23 +15,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.databinding.DataBindingUtil;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.PreferenceManager;
 
-import org.tesira.mturba.civichelper.card.CardColor;
 import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
+import org.tesira.mturba.civichelper.db.CardColor;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
-import org.tesira.mturba.civichelper.db.Purchase;
-
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.

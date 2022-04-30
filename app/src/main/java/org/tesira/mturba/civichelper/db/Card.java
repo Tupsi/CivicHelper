@@ -6,8 +6,6 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-import org.tesira.mturba.civichelper.card.CardColor;
-
 @Entity(tableName = "cards", indices = {@Index("name")})
 public class Card {
 

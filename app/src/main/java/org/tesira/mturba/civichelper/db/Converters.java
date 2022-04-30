@@ -2,8 +2,6 @@ package org.tesira.mturba.civichelper.db;
 
 import androidx.room.TypeConverter;
 
-import org.tesira.mturba.civichelper.card.CardColor;
-
 public class Converters {
 
     @TypeConverter

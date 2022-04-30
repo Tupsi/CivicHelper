@@ -13,12 +13,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
-import org.tesira.mturba.civichelper.card.CardColor;
 import org.tesira.mturba.civichelper.databinding.ActivityMainBinding;
-import org.tesira.mturba.civichelper.db.Card;
+import org.tesira.mturba.civichelper.db.CardColor;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -82,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         for (Map.Entry<CardColor, Integer> entry: mCivicViewModel.getCardBonus().getValue().entrySet()){
             editor.putInt(entry.getKey().getName(), entry.getValue());
         }
-        editor.commit();
+        editor.apply();
         Log.v("MAIN", "saveBonus in Main");
     }
     public void newGame() {

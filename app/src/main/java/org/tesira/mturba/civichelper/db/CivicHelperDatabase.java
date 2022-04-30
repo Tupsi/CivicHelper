@@ -9,7 +9,6 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import org.tesira.mturba.civichelper.card.CardColor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -47,7 +46,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                             .addCallback(sRoomDatabaseCallback)
                             .allowMainThreadQueries()
                             .build();
-                    ASSET_CONTEXT = context;
+                    ASSET_CONTEXT = context.getApplicationContext();
                 }
             }
         }
