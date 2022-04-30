@@ -56,30 +56,18 @@ import java.util.stream.Collectors;
  */
 public class AdvancesFragment extends Fragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
-//        ExtraCreditsDialogFragment.ExtracCreditsDialogListener {
 
-    private static final String ADVANCES_LIST = "advancesList";
     private static final String TREASURE_BOX = "treasure";
-    private static final String MONEY_LEFT = "moneyLeft";
-    private static final String FILENAME = "advances.xml";
-    private static final String PURCHASED = "purchasedAdvances";
-    private static final String FAMILY = "familyBonus";
 
     private CivicViewModel mCivicViewModel;
 
     // arraylist of all civilization cards
-    public List<Advance> advances;
-    private MyAdvancesRecyclerViewAdapter adapter;
     private String sortingOrder;
-    protected RecyclerView mRecyclerVie;
     protected EditText mTreasureInput;
     protected TextView mRemainingText;
     private SelectionTracker<String> tracker;
     private SharedPreferences prefs, savedCards;
     private FragmentAdvancesBinding binding;
-    private Set<String> purchasedAdvances;
-    private Set<String> bonusFamily;
-    private Set<String> greenCardsAnatomy;
     private int numberDialogs = 0;
     private LiveData<List<Card>> listCivics;
 
