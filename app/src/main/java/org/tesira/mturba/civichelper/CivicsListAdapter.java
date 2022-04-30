@@ -2,6 +2,7 @@ package org.tesira.mturba.civichelper;
 
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -76,11 +77,13 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
 
         @Override
         public boolean areItemsTheSame(@NonNull Card oldItem, @NonNull Card newItem) {
+            Log.v("DIFF", "inside are ItemsTheSame");
             return oldItem == newItem;
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Card oldItem, @NonNull Card newItem) {
+            Log.v("DIFF", "inside are ContentTheSame");
             return oldItem.getIsBuyable() == oldItem.getIsBuyable();
         }
     }

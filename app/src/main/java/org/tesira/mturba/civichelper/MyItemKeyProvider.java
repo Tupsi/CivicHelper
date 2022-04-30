@@ -6,14 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.selection.ItemKeyProvider;
-import org.tesira.mturba.civichelper.card.Advance;
 import org.tesira.mturba.civichelper.db.Card;
 
 import java.util.List;
 
 public class MyItemKeyProvider<S> extends ItemKeyProvider<String> {
 
-//    private final List<Advance> itemList;
     private final LiveData<List<Card>> itemList;
 
     public MyItemKeyProvider(int scope, LiveData<List<Card>> itemList) {

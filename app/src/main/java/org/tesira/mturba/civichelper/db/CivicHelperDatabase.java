@@ -143,9 +143,6 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                     dao.insert(civic);
                 }
             }
-//            Advance.addFamilyBonus(advances.getValue());
-//            greenCardsAnatomy.setValue(Advance.getGreenCards(advances.getValue(), purchasedAdvances.getValue()));
-//            setCurrentPrice();
         } catch (Exception e) {
             e.printStackTrace();
         }

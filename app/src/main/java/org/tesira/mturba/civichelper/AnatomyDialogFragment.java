@@ -10,6 +10,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import org.tesira.mturba.civichelper.db.CivicViewModel;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -23,8 +25,10 @@ public class AnatomyDialogFragment extends DialogFragment {
 
         private AdvancesFragment fragment;
         private String[] greenCards;
+        private CivicViewModel mCivicViewModel;
 
-        public AnatomyDialogFragment(AdvancesFragment fragment, List<String> greenCards) {
+        public AnatomyDialogFragment(CivicViewModel model,AdvancesFragment fragment, List<String> greenCards) {
+            this.mCivicViewModel = model;
             this.fragment = fragment;
             this.greenCards = greenCards.toArray(new String[0]);
         }
@@ -37,7 +41,9 @@ public class AnatomyDialogFragment extends DialogFragment {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.dialog_anatomy);
             builder.setItems(greenCards, (dialog, which) -> {
-                fragment.addAnatomyFreeCard(greenCards[which]);
+                mCivicViewModel.insertPurchase(greenCards[which]);
+                mCivicViewModel.addBonus(greenCards[which]);
+//                fragment.addAnatomyFreeCard(greenCards[which]);
                 fragment.returnToDashboard(greenCards[which].equals("Written Record"));
             });
             return builder.create();

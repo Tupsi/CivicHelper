@@ -27,18 +27,18 @@ public class MySelectionPredicate<String> extends SelectionTracker.SelectionPred
     public boolean canSetStateForKey(@NonNull String key, boolean nextState) {
         // check if there is still enough treasure to buy the new selected card
         Card adv = mCivicViewModel.getAdvanceByName((java.lang.String) key);
-        Log.v("Model", " Test if possible to select for key :" +key);
+//        Log.v("Model", " Test if possible to select for key :" +key);
         int current = adv.getCurrentPrice();
         treasure = mCivicViewModel.getTreasure().getValue();
         total = mCivicViewModel.getTotal().getValue();
 
         // check for library effect which gives you +40 treasure this round
         List<Effect> effect = mCivicViewModel.getEffect(adv.getName(), "CreditsOnce");
-        Log.v("EFFECT", "credits check list size : " + effect.size());
+//        Log.v("EFFECT", "credits check list size : " + effect.size());
         if (!nextState) {
             if (effect.size() == 1) {
                 mCivicViewModel.setTreasure(treasure -= 40);
-                fragment.showToast( key + " deselected, removing the temporary 40 treasure.");
+                fragment.showToast( " deselected, removing the temporary 40 treasure.");
             }
             return true;
         }
@@ -48,7 +48,7 @@ public class MySelectionPredicate<String> extends SelectionTracker.SelectionPred
                 mCivicViewModel.setTreasure(treasure += 40);
                 fragment.showToast(key + " selected, temporary adding 40 treasure.");
             }
-            mCivicViewModel.setTotal(total + current);
+//            mCivicViewModel.setTotal(total + current);
             return true;
         }
         return false;

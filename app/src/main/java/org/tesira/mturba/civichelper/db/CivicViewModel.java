@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.selection.Selection;
 
 import org.tesira.mturba.civichelper.card.CardColor;
 
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 public class CivicViewModel extends AndroidViewModel {
 
@@ -21,11 +23,9 @@ public class CivicViewModel extends AndroidViewModel {
     private final LiveData<List<Card>> mAllCivics;
     List<Card> allCards;
     public List<Card> cachedCards;
-    private Application application;
     private MutableLiveData<Integer> treasure;
     private MutableLiveData<Integer> total;
     private MutableLiveData<Integer> remaining;
-
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
 
     public CivicViewModel(@NonNull Application application) throws ExecutionException, InterruptedException {
@@ -39,9 +39,7 @@ public class CivicViewModel extends AndroidViewModel {
         total = new MutableLiveData<>(0);
         remaining = new MutableLiveData<>();
     }
-    public CivicRepository getRepository() {return mRepository;}
 
-    public LiveData<List<Purchase>> getAllPurchases() {return mRepository.getAllPurchases();}
     public void insertPurchase(String purchase) {mRepository.insertPurchase(purchase);}
     public void deletePurchases() {
         mRepository.deletePurchases();
@@ -69,26 +67,11 @@ public class CivicViewModel extends AndroidViewModel {
     public MutableLiveData<Integer> getTotal() {
         return total;
     }
-
-    public void setTotal(int total) {
-        this.total.setValue(total);
-        this.remaining.setValue(this.treasure.getValue() - this.total.getValue());
-    }
-
     public MutableLiveData<Integer> getRemaining() {
         return remaining;
     }
-
-    public void setRemaining(MutableLiveData<Integer> remaining) {
-        this.remaining = remaining;
-    }
-
     public MutableLiveData<HashMap<CardColor, Integer>> getCardBonus() {
         return cardBonus;
-    }
-
-    public void setCardBonus(MutableLiveData<HashMap<CardColor, Integer>> cardBonus) {
-        this.cardBonus = cardBonus;
     }
 
     public void calculateCurrentPrice() {
@@ -118,6 +101,14 @@ public class CivicViewModel extends AndroidViewModel {
     public List<String> getAnatomyCards(){return mRepository.getAnatomyCards();}
     public List<Effect> getEffect(String advance, String name){return mRepository.getEffect(advance, name);}
 
+    /**
+     * Updates the Bonus for all colors by adding the respective fields to cardBonus HashSet.
+     * @param blue additional bonus for blue cards.
+     * @param green additional bonus for green cards.
+     * @param orange additional bonus for orange cards.
+     * @param red additional bonus for red cards.
+     * @param yellow additional bonus for yellow cards.
+     */
     public void updateBonus(int blue, int green, int orange, int red, int yellow) {
         cardBonus.getValue().compute(CardColor.BLUE,(k,v)->(v==null)?0+blue:v+blue);
         cardBonus.getValue().compute(CardColor.GREEN, (k,v) ->(v==null)?0+green:v+green);
@@ -126,7 +117,27 @@ public class CivicViewModel extends AndroidViewModel {
         cardBonus.getValue().compute(CardColor.YELLOW, (k,v) ->(v==null)?0+yellow:v+yellow);
     }
 
-    public List<Card> getAdvancesForFree() {return mRepository.getAdvancesForFree();}
-    public List<Card> getAllCardsForFree() throws ExecutionException, InterruptedException {return mRepository.getAllCardsForFree();}
-    public LiveData<List<Card>> getAdvancesLive(String order) {return mRepository.getAdvancesLive(order);}
+    /**
+     * Calculates the sum of all currently selected advances during the buy process.
+     * @param selection Currently selected cards from the View.
+     */
+    public void calculateTotal(Selection<String> selection) {
+        int newTotal = 0;
+        for (String name : selection) {
+            Card adv = getAdvanceByName(name);
+            newTotal += adv.getCurrentPrice();
+        }
+        this.total.setValue(newTotal);
+        this.remaining.setValue(treasure.getValue() - newTotal);
+    }
+
+    /**
+     * Adds the bonuses of a bought card to the cardBonus HashSet.
+     * @param name The name of the bought card.
+     */
+    public void addBonus(String name) {
+        Card adv = getAdvanceByName(name);
+        updateBonus(adv.getCreditsBlue(), adv.getCreditsGreen(), adv.getCreditsOrange(), adv.getCreditsRed(), adv.getCreditsYellow());
+    }
+
 }

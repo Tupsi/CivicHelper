@@ -37,19 +37,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.tesira.mturba.civichelper.card.Advance;
-import org.tesira.mturba.civichelper.card.CardColor;
-import org.tesira.mturba.civichelper.card.Credit;
 import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
 import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 import org.tesira.mturba.civichelper.db.Effect;
-
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 /**
  * A fragment representing a list of Items.
@@ -101,14 +93,6 @@ public class AdvancesFragment extends Fragment
         sortingOrder = prefs.getString("sort", "name");
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
         listCivics = mCivicViewModel.getAllCivics(sortingOrder);
-//        prefs.registerOnSharedPreferenceChangeListener(this);
-//        if (getArguments() != null) {
-//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-//        }
-//        // Set<String> s = new HashSet<String>(sharedPrefs.getStringSet("key", new HashSet<String>()));
-//        purchasedAdvances = savedCards.getStringSet(PURCHASED, new HashSet<>());
-//        bonusFamily = savedCards.getStringSet(FAMILY, new HashSet<>());
-//        loadBonus();
     }
 
     @Override
@@ -126,34 +110,19 @@ public class AdvancesFragment extends Fragment
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(rootView.getContext(), mColumnCount));
         }
-//        mCivicViewModel.getAllCivics(sortingOrder).observe(requireActivity(), civics -> {
-//            adapter.submitList(civics);
-//        });
         listCivics.observe(requireActivity(), civics -> {
             adapter.submitList(civics);
         });
 
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
-        mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> mTreasureInput.setText(String.valueOf(treasure)));
-//        mCivicViewModel.getTotal().observe(requireActivity(), new Observer<Integer>() {
-//            @Override
-//            public void onChanged(Integer total) {
-//                if (getContext() != null) {
-//                    mRemainingText.setText(getString(R.string.remaining_treasure)+(mCivicViewModel.getTreasure().getValue() - total));
-//                }
-//
-//            }
-//        });
-
+        mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> {
+            Log.v("OBSERVER", "Treasure :");
+            mTreasureInput.setText(String.valueOf(treasure));
+        });
         mCivicViewModel.getRemaining().observe(requireActivity(), remaining -> {
-//            Log.v("CONTEXT", "aussen");
             if (getContext() != null) {
-//                Log.v("CONTEXT", "innen");
                 mRemainingText.setText(requireActivity().getString(R.string.remaining_treasure)+remaining);
-            }
-            else {
-//                Log.v("CONTEXT", "else ohne context");
             }
         });
 
@@ -171,39 +140,6 @@ public class AdvancesFragment extends Fragment
 //            Navigation.findNavController(v).popBackStack();
         });
 
-//        mTreasureInput = rootView.findViewById(R.id.treasure);
-//        mBuyPrice = rootView.findViewById(R.id.moneyleft);
-//        advances = new ArrayList<>();
-//
-//        if (savedInstanceState != null) {
-//            Log.v("save", "savedInstanceState YES/if");
-//        } else {
-//            Log.v("save", "savedInstanceState NO/else");
-//        }
-//        loadVars();
-//        importAdvances(advances, FILENAME);
-//        setTotal(0);
-//
-//        // sorting the cards
-//        switch (sortingOrder) {
-//            case "price" :
-////                Collections.sort(advances);
-//                advances.sort(Comparator.comparing(Advance::getPrice).thenComparing(Advance::getName));
-//                break;
-//            case "color":
-//                advances.sort(Comparator.comparing(Advance::getPrimaryColor).thenComparing(Advance::getPrice));
-//                break;
-//            case "family":
-//                advances.sort(Comparator.comparing(Advance::getFamily).thenComparing(Advance::getVp));
-//                break;
-//            case "name" :
-//            default :
-////                Collections.sort(advances, (lhs, rhs) -> lhs.getName().compareTo(rhs.getName()));
-//                advances.sort(Comparator.comparing(Advance::getName));
-//                break;
-//        }
-//        removePurchasedAdvances();
-
         tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
                 mRecyclerView,
@@ -219,14 +155,9 @@ public class AdvancesFragment extends Fragment
             @Override
             public void onItemStateChanged(@NonNull String key, boolean selected) {
                 super.onItemStateChanged(key, selected);
-                // item got deselected, need to redo total selected
-//                if (!selected) {
-//                    setTotal(calculateTotal());
-//                }
+                // item selection changed, we need to redo total selected cost
                 Log.v("OBSERVER", "inside onItemStateChanged : " + key);
-                mCivicViewModel.setTotal(calculateTotal());
-//                int rest = treasure - total;
-
+                mCivicViewModel.calculateTotal(tracker.getSelection());
                 // works for auto greying out to expensive cards, but resets view to first item
                 // also crashes on long click on some android versions
                 //                mRecyclerView.setAdapter(adapter);
@@ -251,56 +182,11 @@ public class AdvancesFragment extends Fragment
                 Log.v("OBSERVER", "inside onSelectionRestored");
             }
         });
-//        setHasOptionsMenu(true);
-//        if (savedInstanceState != null) {
-//            tracker.onRestoreInstanceState(savedInstanceState);
-//        }
-
-        // we want free stuff already selected
-
-//        try {
-//            selectZeroCostAdvances();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
-        //        mTreasureInput.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                updateRemaining();
-//            }
-//            @Override
-//            public void afterTextChanged(Editable s) {}
-//        });
-//        mTreasureInput.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (!hasFocus) {
-//                if (treasure < total) {
-//                    tracker.clearSelection();
-//                }
-//            }
-//        });
-
-        return rootView;
-    }
-
-    private void selectZeroCostAdvances() throws ExecutionException, InterruptedException {
-        for (Card adv: mCivicViewModel.getAllCardsForFree()) {
-            if (adv.getCurrentPrice() == 0) {
-                Log.v("FREE", " : " + adv.getName());
-                tracker.select(adv.getName());
-            }
+        if (savedInstanceState != null) {
+            tracker.onRestoreInstanceState(savedInstanceState);
         }
-
-        //        List<Card> cards = mCivicViewModel.getAdvancesForFree();
-//        if (cards == null) return;
-//        for (Card adv: cards) {
-//            Log.v("ZERO", " : " + adv.getName());
-//                tracker.select(adv.getName());
-//        }
+//        setHasOptionsMenu(true);
+        return rootView;
     }
 
     private void buyAdvances() {
@@ -312,10 +198,7 @@ public class AdvancesFragment extends Fragment
             // add to list of bought cards
             Log.v("BUY", "Adding " + name);
             mCivicViewModel.insertPurchase(name);
-            addBonus(name);
-
-            //TODO remove used treasure from field and save new value to pref
-
+            mCivicViewModel.addBonus(name);
             if (name.equals("Anatomy")) buyAnatomy = true;
             if (effects.size() == 1) {
                 credits += effects.get(0).getValue();
@@ -324,7 +207,7 @@ public class AdvancesFragment extends Fragment
         }
         if ((mCivicViewModel.getAnatomyCards().size() > 0) &&  buyAnatomy) {
             numberDialogs++;
-            new AnatomyDialogFragment(this, mCivicViewModel.getAnatomyCards()).show(getParentFragmentManager(), "Anatomy");
+            new AnatomyDialogFragment(mCivicViewModel,this, mCivicViewModel.getAnatomyCards()).show(getParentFragmentManager(), "Anatomy");
         }
 
         if (credits > 0) {
@@ -334,54 +217,19 @@ public class AdvancesFragment extends Fragment
         returnToDashboard(false);
     }
 
-    private void addBonus(String name) {
-        Card adv = mCivicViewModel.getAdvanceByName(name);
-        mCivicViewModel.getCardBonus().getValue().compute(CardColor.BLUE,(k,v)->(v==null)?0+adv.getCreditsBlue():v+adv.getCreditsBlue());
-        mCivicViewModel.getCardBonus().getValue().compute(CardColor.GREEN, (k,v) ->(v==null)?0+adv.getCreditsGreen():v+adv.getCreditsGreen());
-        mCivicViewModel.getCardBonus().getValue().compute(CardColor.ORANGE, (k,v) ->(v==null)?0+adv.getCreditsOrange():v+adv.getCreditsOrange());
-        mCivicViewModel.getCardBonus().getValue().compute(CardColor.RED, (k,v) ->(v==null)?0+adv.getCreditsRed():v+adv.getCreditsRed());
-        mCivicViewModel.getCardBonus().getValue().compute(CardColor.YELLOW, (k,v) ->(v==null)?0+adv.getCreditsYellow():v+adv.getCreditsYellow());
-
-        // save to prefs
-        ((MainActivity) getActivity()).saveBonus();
-    }
-
-    public void addAnatomyFreeCard(String name) {
-        mCivicViewModel.insertPurchase(name);
-        addBonus(name);
-    }
-
-    /**
-     * Calculates the sum of all currently selected advances during the buy process.
-     * @return Total price.
-     */
-    public int calculateTotal() {
-        int total = 0;
-        for (String name : tracker.getSelection()) {
-            Card adv = mCivicViewModel.getAdvanceByName(name);
-            int currentPrice = adv.getCurrentPrice();
-            total += currentPrice;
-        }
-        return total;
-    }
+//    private void addBonus(String name) {
+//        Card adv = mCivicViewModel.getAdvanceByName(name);
+//        mCivicViewModel.updateBonus(adv.getCreditsBlue(), adv.getCreditsGreen(), adv.getCreditsOrange(), adv.getCreditsRed(), adv.getCreditsYellow());
+//    }
+//
+//    public void addAnatomyFreeCard(String name) {
+//        mCivicViewModel.insertPurchase(name);
+//        mCivicViewModel.addBonus(name);
+//    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.options_menu, menu);
-//        MenuItem searchItem = menu.findItem(R.id.action_search);
-//        SearchView searchView = (SearchView) searchItem.getActionView();
-//        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                adapter.getFilter().filter(newText);
-//                return false;
-//            }
-//        });
     }
 
     @Override
@@ -439,7 +287,7 @@ public class AdvancesFragment extends Fragment
     }
 
     public void showToast(String text) {
-        Toast.makeText(getContext(), text,Toast.LENGTH_LONG).show();
+        if (getContext() != null) Toast.makeText(getContext(), text,Toast.LENGTH_LONG).show();
     }
 
 //    @Override
@@ -447,12 +295,26 @@ public class AdvancesFragment extends Fragment
 //        NavHostFragment.findNavController(this).popBackStack();
 //    }
 
+    /**
+     * Returns the application back to the dashboard, but checks first if another dialog
+     * must be presented because special cards where bought.
+     * @param tookWrittenRecord True if Anatomy was bought and the selected free card
+     *                          is Written Record.
+     */
     public void returnToDashboard(boolean tookWrittenRecord) {
+        // if the card selected in with Anatomy is Written Record,
+        // we have to open the extra Credits Dialog
         if (tookWrittenRecord) {
             new ExtraCreditsDialogFragment( mCivicViewModel,this,10).show(getParentFragmentManager(), "ExtraCredits");
         } else {
             if (numberDialogs == 0) {
                 mCivicViewModel.calculateCurrentPrice();
+                //TODO remove used treasure from field and save new value to pref
+                // works, just uncomment
+                //mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - mCivicViewModel.getTotal().getValue());
+
+                // save bonuses to prefs
+                ((MainActivity) getActivity()).saveBonus();
                 NavHostFragment.findNavController(this).popBackStack();
             } else
             {

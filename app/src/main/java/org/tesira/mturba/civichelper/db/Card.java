@@ -7,12 +7,6 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import org.tesira.mturba.civichelper.card.CardColor;
-import org.tesira.mturba.civichelper.card.Credit;
-
-import java.util.HashMap;
-import java.util.List;
-
-import kotlin.jvm.JvmOverloads;
 
 @Entity(tableName = "cards", indices = {@Index("name")})
 public class Card {
