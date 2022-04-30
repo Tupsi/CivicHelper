@@ -93,6 +93,8 @@ public class AdvancesFragment extends Fragment
         sortingOrder = prefs.getString("sort", "name");
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
         listCivics = mCivicViewModel.getAllCivics(sortingOrder);
+        Log.v("LIST", "sorting order : " + sortingOrder);
+//        listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
     }
 
     @Override
@@ -120,9 +122,12 @@ public class AdvancesFragment extends Fragment
             Log.v("OBSERVER", "Treasure :");
             mTreasureInput.setText(String.valueOf(treasure));
         });
-        mCivicViewModel.getRemaining().observe(requireActivity(), remaining -> {
-            if (getContext() != null) {
-                mRemainingText.setText(requireActivity().getString(R.string.remaining_treasure)+remaining);
+        mCivicViewModel.getRemaining().observe(requireActivity(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer remaining) {
+                if (AdvancesFragment.this.getContext() != null) {
+                    mRemainingText.setText(AdvancesFragment.this.requireActivity().getString(R.string.remaining_treasure) + remaining);
+                }
             }
         });
 
@@ -143,8 +148,7 @@ public class AdvancesFragment extends Fragment
         tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
                 mRecyclerView,
-                new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, mCivicViewModel
-                        .getAllCivics(sortingOrder)),
+                new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, listCivics),
                 new MyItemDetailsLookup(mRecyclerView),
                     StorageStrategy.createStringStorage())
                     .withSelectionPredicate(new MySelectionPredicate<>(this, mCivicViewModel))
@@ -193,7 +197,7 @@ public class AdvancesFragment extends Fragment
         int credits = 0;
         boolean buyAnatomy = false;
         for (String name : tracker.getSelection()) {
-            Card adv = mCivicViewModel.getAdvanceByName(name);
+//            Card adv = mCivicViewModel.getAdvanceByName(name);
             List<Effect> effects = mCivicViewModel.getEffect(name,"Credits");
             // add to list of bought cards
             Log.v("BUY", "Adding " + name);
@@ -216,16 +220,6 @@ public class AdvancesFragment extends Fragment
         }
         returnToDashboard(false);
     }
-
-//    private void addBonus(String name) {
-//        Card adv = mCivicViewModel.getAdvanceByName(name);
-//        mCivicViewModel.updateBonus(adv.getCreditsBlue(), adv.getCreditsGreen(), adv.getCreditsOrange(), adv.getCreditsRed(), adv.getCreditsYellow());
-//    }
-//
-//    public void addAnatomyFreeCard(String name) {
-//        mCivicViewModel.insertPurchase(name);
-//        mCivicViewModel.addBonus(name);
-//    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {

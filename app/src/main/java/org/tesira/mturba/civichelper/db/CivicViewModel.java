@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.selection.Selection;
 
 import java.util.HashMap;
@@ -17,7 +18,6 @@ public class CivicViewModel extends AndroidViewModel {
 
     private CivicRepository mRepository;
     private final LiveData<List<Card>> mAllCivics;
-    List<Card> allCards;
     public List<Card> cachedCards;
     private MutableLiveData<Integer> treasure;
     private MutableLiveData<Integer> total;
@@ -29,11 +29,17 @@ public class CivicViewModel extends AndroidViewModel {
         cardBonus = new MutableLiveData<>(new HashMap<>());
         mRepository = new CivicRepository(application);
         mAllCivics = mRepository.getAllCivics();
-        allCards = mRepository.getAllCivics().getValue();
         cachedCards = mRepository.getAllCards();
         treasure = new MutableLiveData<>();
         total = new MutableLiveData<>(0);
         remaining = new MutableLiveData<>();
+        mRepository.getAllCivics().observeForever(new Observer<List<Card>>() {
+            @Override
+            public void onChanged(List<Card> cards) {
+                Log.v("OBSERVER", "getAllCivics changed");
+                cachedCards = cards;
+            }
+        });
     }
 
     public void insertPurchase(String purchase) {mRepository.insertPurchase(purchase);}
@@ -43,8 +49,7 @@ public class CivicViewModel extends AndroidViewModel {
         cardBonus.setValue(new HashMap<>());
     }
 
-    public LiveData<List<Card>> getAllCivics( String sortingOrder) {return mAllCivics;}
-
+    public LiveData<List<Card>> getAllCivics( String sortingOrder) {return mRepository.getAllCivicsSorted(sortingOrder);}
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
 
     public void updateIsBuyable() {
@@ -76,7 +81,7 @@ public class CivicViewModel extends AndroidViewModel {
      */
     public void calculateCurrentPrice() {
         int newCurrent;
-        for (Card adv: mAllCivics.getValue()) {
+        for (Card adv: cachedCards) {
             if (adv.getGroup2() == null) {
                 newCurrent = adv.getPrice() - cardBonus.getValue().getOrDefault(adv.getGroup1(),0);
             } else {

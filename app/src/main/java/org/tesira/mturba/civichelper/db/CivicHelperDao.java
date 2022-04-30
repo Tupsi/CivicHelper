@@ -5,10 +5,6 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Update;
-
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 @Dao
@@ -25,12 +21,6 @@ public interface CivicHelperDao {
     @Query("SELECT * FROM cards ORDER BY name ASC")
     List<Card> getAdvancesByName();
 
-    @Query("SELECT * FROM cards ORDER BY price ASC")
-    LiveData<List<Card>> getAdvancesByPriceOld();
-
-    @Query("SELECT * FROM cards ORDER BY :sorting ASC")
-    LiveData<List<Card>> getAdvances(String sorting);
-
     @Query("SELECT * FROM cards WHERE family = :familyNumber ORDER BY vp ASC")
     List<Card> getAdvancesByFamily(int familyNumber);
 
@@ -40,8 +30,8 @@ public interface CivicHelperDao {
     @Query("UPDATE cards SET bonus = :newBonus WHERE name = :name")
     void updateBonus(String name, int newBonus);
 
-    @Query("SELECT * FROM cards WHERE name = :name ")
-    LiveData<List<Card>> getAdvanceByName(String name);
+//    @Query("SELECT * FROM cards WHERE name = :name ")
+//    LiveData<List<Card>> getAdvanceByName(String name);
 
     @Query("SELECT * FROM cards WHERE name = :name ")
     Card getAdvanceByNameToCard(String name);
@@ -52,21 +42,20 @@ public interface CivicHelperDao {
     @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY currentPrice ASC")
     LiveData<List<Card>> getAdvancesByPrice();
 
-    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY :order ASC")
-    LiveData<List<Card>> getAdvancesLive(String order);
+    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY " +
+            "CASE WHEN :sortingOrder = 'name' THEN cards.name END ASC," +
+            "CASE WHEN :sortingOrder = 'currentPrice'THEN cards.currentPrice END ,cards.name ASC," +
+            "CASE WHEN :sortingOrder = 'family' THEN cards.family END ASC")
+    LiveData<List<Card>> getAllAdvancesNotBought(String sortingOrder);
 
-
-    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL AND currentPrice = 0")
-    List<Card> getAdvancesForFree();
+//    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL AND currentPrice = 0")
+//    List<Card> getAdvancesForFree();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertPurchase(Purchase purchase);
 
     @Query("DELETE FROM purchases")
     void deleteAllPurchases();
-
-    @Query("SELECT * FROM purchases")
-    LiveData<List<Purchase>> getPurchases();
 
     @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL AND cards.vp < 6")
     List<Card> getPurchasesForBonus();
