@@ -343,7 +343,6 @@ public class AdvancesFragment extends Fragment
             numberDialogs++;
             new ExtraCreditsDialogFragment(mCivicViewModel,this,credits).show(getParentFragmentManager(), "ExtraCredits");
         }
-        mCivicViewModel.calculateCurrentPrice();
         returnToDashboard(false);
     }
 
@@ -372,7 +371,7 @@ public class AdvancesFragment extends Fragment
         int total = 0;
         for (String name : tracker.getSelection()) {
             Card adv = mCivicViewModel.getAdvanceByName(name);
-            int currentPrice = adv.getPrice();
+            int currentPrice = adv.getCurrentPrice();
             total += currentPrice;
         }
         return total;
@@ -465,6 +464,7 @@ public class AdvancesFragment extends Fragment
             new ExtraCreditsDialogFragment( mCivicViewModel,this,10).show(getParentFragmentManager(), "ExtraCredits");
         } else {
             if (numberDialogs == 0) {
+                mCivicViewModel.calculateCurrentPrice();
                 NavHostFragment.findNavController(this).popBackStack();
             } else
             {

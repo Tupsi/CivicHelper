@@ -34,35 +34,38 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
     public void onBindViewHolder(@NonNull CivicsViewHolder holder, int position) {
         Card current = getItem(position);
         String name = current.getName();
+        int price = current.getCurrentPrice();
         Resources res = holder.itemView.getResources();
+        boolean isSelected = tracker.isSelected(name);
 
         holder.bindName(name, getItemBackgroundColor(current, res));
         holder.bindPrice(current.getCurrentPrice());
         holder.bindBonus(current.getBonus());
         holder.bindBonusCard(current.getBonusCard());
 
-        boolean isActivated = tracker.isSelected(name);
 
-        holder.bindIsActive(isActivated);
+        holder.bindIsActive(isSelected);
         holder.itemView.setOnClickListener(v -> {
             // clicked on single card in list
             tracker.select(name);
             Toast.makeText(v.getContext(), name
                     + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_SHORT).show();
         });
-        int price = current.getPrice();
-        if (!isActivated && mCivicViewModel.getRemaining().getValue() < price) {
-            holder.mCardView.setBackgroundResource(R.color.dark_grey);
-            holder.mCardView.setAlpha(0.5F);
+        if (!isSelected && price == 0) {
+            tracker.select(name);
         } else {
-            holder.mCardView.setBackgroundResource(R.drawable.item_background);
-            holder.mCardView.setAlpha(1F);
+            // can we buy the card?
+            if (!isSelected && mCivicViewModel.getRemaining().getValue() < price) {
+                holder.mCardView.setBackgroundResource(R.color.dark_grey);
+                holder.mCardView.setAlpha(0.5F);
+            } else {
+                holder.mCardView.setBackgroundResource(R.drawable.item_background);
+                holder.mCardView.setAlpha(1F);
+            }
         }
-//        int bonus = current.getFamilybonus();
+
         if (current.getBonus() > 0) {
             holder.mFamilyBox.setVisibility(View.VISIBLE);
-//            holder.mFamilyBonus.setText(String.valueOf(bonus));
-//            holder.mFamilyName.setText(mValues.get(position).getFamilyname());
         }
         else {
             holder.mFamilyBox.setVisibility(View.INVISIBLE);

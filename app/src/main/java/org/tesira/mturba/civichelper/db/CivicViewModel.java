@@ -102,6 +102,7 @@ public class CivicViewModel extends AndroidViewModel {
                 newCurrent = adv.getPrice() - Math.max(group1, group2);
             }
             if (newCurrent < 0 ) newCurrent = 0;
+            Log.v("CALC", "new Price for " + adv.getName() + " : " + newCurrent);
             mRepository.updateCurrentPrice(adv.getName(), newCurrent);
         }
         // adding special family bonus if predecessor bought

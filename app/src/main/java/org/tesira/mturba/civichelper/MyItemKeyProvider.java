@@ -31,9 +31,11 @@ public class MyItemKeyProvider<S> extends ItemKeyProvider<String> {
 
     @Override
     public int getPosition(@NonNull String key) {
+        Log.v("MODEL", "inside getPosition von MyItemKeyProvider :" + key);
         int pos = 0;
         for (Card adv : itemList.getValue()) {
             if (key.equals(adv.getName())) {
+                Log.v("MODEL", "inside getPosition von MyItemKeyProvider Position :" + pos);
                 return pos;
             }
             else {

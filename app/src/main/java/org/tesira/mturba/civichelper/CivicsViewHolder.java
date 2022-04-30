@@ -19,9 +19,6 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
     public final View mCardView;
     public final LinearLayout mFamilyBox;
 
-    private int total;
-    private int treasure;
-
     private CivicsViewHolder(View itemView) {
         super(itemView);
         nameItemView = itemView.findViewById(R.id.name);

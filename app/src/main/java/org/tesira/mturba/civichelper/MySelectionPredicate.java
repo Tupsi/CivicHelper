@@ -7,6 +7,9 @@ import androidx.recyclerview.selection.SelectionTracker;
 
 import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
+import org.tesira.mturba.civichelper.db.Effect;
+
+import java.util.List;
 
 public class MySelectionPredicate<String> extends SelectionTracker.SelectionPredicate<String> {
 
@@ -23,28 +26,27 @@ public class MySelectionPredicate<String> extends SelectionTracker.SelectionPred
     @Override
     public boolean canSetStateForKey(@NonNull String key, boolean nextState) {
         // check if there is still enough treasure to buy the new selected card
-
         Card adv = mCivicViewModel.getAdvanceByName((java.lang.String) key);
-        Log.v("Model", "key :" +key);
-        int current = adv.getPrice();
+        Log.v("Model", " Test if possible to select for key :" +key);
+        int current = adv.getCurrentPrice();
         treasure = mCivicViewModel.getTreasure().getValue();
         total = mCivicViewModel.getTotal().getValue();
 
-//        Integer effect = adv.getEffects().get("CreditsOnce");
-//        Integer effect = null;
+        // check for library effect which gives you +40 treasure this round
+        List<Effect> effect = mCivicViewModel.getEffect(adv.getName(), "CreditsOnce");
         if (!nextState) {
-//            if (effect != null) {
-//                mCivicViewModel.setTreasure(treasure -= 40);
-//                fragment.showToast("Library deselected, removing the temporary 40 treasure.");
-//            }
+            if (effect != null) {
+                mCivicViewModel.setTreasure(treasure -= 40);
+                fragment.showToast( key + " deselected, removing the temporary 40 treasure.");
+            }
             return true;
         }
 
         if (treasure >= total + current) {
-//            if (effect != null) {
-//                mCivicViewModel.setTreasure(treasure += 40);
-//                fragment.showToast("Library selected, temporary adding 40 treasure.");
-//            }
+            if (effect != null) {
+                mCivicViewModel.setTreasure(treasure += 40);
+                fragment.showToast(key + " selected, temporary adding 40 treasure.");
+            }
             mCivicViewModel.setTotal(total + current);
             return true;
         }
