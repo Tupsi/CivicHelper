@@ -2,13 +2,11 @@ package org.tesira.mturba.civichelper;
 
 import static java.lang.Integer.parseInt;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -31,7 +29,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -41,6 +38,8 @@ import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
 import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 import org.tesira.mturba.civichelper.db.Effect;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,7 +60,9 @@ public class AdvancesFragment extends Fragment
     private SharedPreferences prefs, savedCards;
     private FragmentAdvancesBinding binding;
     private int numberDialogs = 0;
-    private LiveData<List<Card>> listCivics;
+    private LiveData<List<Card>> listCivicsLive;
+    private List<Card> listCivics;
+    private MyItemKeyProvider<String> myItemKeyProvider;
 
 
     // TODO: Customize parameter argument names
@@ -92,7 +93,6 @@ public class AdvancesFragment extends Fragment
         mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
         sortingOrder = prefs.getString("sort", "name");
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        listCivics = mCivicViewModel.getAllCivics(sortingOrder);
         Log.v("LIST", "sorting order : " + sortingOrder);
 //        listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
     }
@@ -101,6 +101,7 @@ public class AdvancesFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        listCivicsLive = mCivicViewModel.getAllCivics(sortingOrder);
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
         RecyclerView mRecyclerView = rootView.findViewById(R.id.list);
@@ -112,8 +113,10 @@ public class AdvancesFragment extends Fragment
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(rootView.getContext(), mColumnCount));
         }
-        listCivics.observe(requireActivity(), civics -> {
+        listCivicsLive.observe(requireActivity(), civics -> {
             adapter.submitList(civics);
+            myItemKeyProvider.setItemList(civics);
+//            Log.v("TAG44", "size of listCivivs :" + listCivics.size());
         });
 
         mTreasureInput = rootView.findViewById(R.id.treasure);
@@ -144,11 +147,11 @@ public class AdvancesFragment extends Fragment
             buyAdvances();
 //            Navigation.findNavController(v).popBackStack();
         });
-
+        myItemKeyProvider = new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, listCivics, mCivicViewModel);
         tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
                 mRecyclerView,
-                new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, listCivics),
+                myItemKeyProvider,
                 new MyItemDetailsLookup(mRecyclerView),
                     StorageStrategy.createStringStorage())
                     .withSelectionPredicate(new MySelectionPredicate<>(this, mCivicViewModel))

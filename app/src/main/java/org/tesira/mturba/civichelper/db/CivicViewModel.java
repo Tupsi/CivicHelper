@@ -33,13 +33,6 @@ public class CivicViewModel extends AndroidViewModel {
         treasure = new MutableLiveData<>();
         total = new MutableLiveData<>(0);
         remaining = new MutableLiveData<>();
-        mRepository.getAllCivics().observeForever(new Observer<List<Card>>() {
-            @Override
-            public void onChanged(List<Card> cards) {
-                Log.v("OBSERVER", "getAllCivics changed");
-                cachedCards = cards;
-            }
-        });
     }
 
     public void insertPurchase(String purchase) {mRepository.insertPurchase(purchase);}
