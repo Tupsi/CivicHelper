@@ -20,15 +20,9 @@ public class MyItemKeyProvider<S> extends ItemKeyProvider<String> {
 
     public MyItemKeyProvider(int scope, List<Card> list, CivicViewModel model) {
         super(scope);
-//        this.itemList = itemList;
+        this.itemList = list;
         this.mCivicViewModel = model;
         itemList = model.cachedCards;
-        mCivicViewModel.getAllCivics("name").observeForever(new Observer<List<Card>>() {
-            @Override
-            public void onChanged(List<Card> cards) {
-                itemList = cards;
-            }
-        });
         Log.v("TAG44", "size of itemList in MyItemKeyProv :" + itemList.size());
         Log.v("TAG44", "1.Karte itemList in MyItemKeyProv :" + itemList.get(0).getName());
 

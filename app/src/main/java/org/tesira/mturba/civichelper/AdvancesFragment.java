@@ -60,8 +60,7 @@ public class AdvancesFragment extends Fragment
     private SharedPreferences prefs, savedCards;
     private FragmentAdvancesBinding binding;
     private int numberDialogs = 0;
-    private LiveData<List<Card>> listCivicsLive;
-    private List<Card> listCivics;
+    private List<Card> listCivics = new ArrayList<>();
     private MyItemKeyProvider<String> myItemKeyProvider;
 
 
@@ -101,7 +100,7 @@ public class AdvancesFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        listCivicsLive = mCivicViewModel.getAllCivics(sortingOrder);
+        listCivics = mCivicViewModel.getAllCivics(sortingOrder);
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
         RecyclerView mRecyclerView = rootView.findViewById(R.id.list);
@@ -113,11 +112,8 @@ public class AdvancesFragment extends Fragment
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(rootView.getContext(), mColumnCount));
         }
-        listCivicsLive.observe(requireActivity(), civics -> {
-            adapter.submitList(civics);
-            myItemKeyProvider.setItemList(civics);
-//            Log.v("TAG44", "size of listCivivs :" + listCivics.size());
-        });
+        adapter.submitList(listCivics);
+//        myItemKeyProvider.setItemList(listCivics);
 
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
@@ -147,7 +143,10 @@ public class AdvancesFragment extends Fragment
             buyAdvances();
 //            Navigation.findNavController(v).popBackStack();
         });
+        Log.v("TAG44", "size of listCivics in Observer :" + listCivics.size());
+        Log.v("TAG44", "1.Karte listCivcs in Observert :" + listCivics.get(0).getName());
         myItemKeyProvider = new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, listCivics, mCivicViewModel);
+        Log.v("TAG44", "about to create tracker...");
         tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
                 mRecyclerView,

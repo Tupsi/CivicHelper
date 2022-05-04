@@ -46,7 +46,7 @@ public interface CivicHelperDao {
             "CASE WHEN :sortingOrder = 'name' THEN cards.name END ASC," +
             "CASE WHEN :sortingOrder = 'currentPrice'THEN cards.currentPrice END ,cards.name ASC," +
             "CASE WHEN :sortingOrder = 'family' THEN cards.family END ASC")
-    LiveData<List<Card>> getAllAdvancesNotBought(String sortingOrder);
+    List<Card> getAllAdvancesNotBought(String sortingOrder);
 
 //    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL AND currentPrice = 0")
 //    List<Card> getAdvancesForFree();

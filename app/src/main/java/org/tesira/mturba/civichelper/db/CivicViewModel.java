@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 public class CivicViewModel extends AndroidViewModel {
 
     private CivicRepository mRepository;
-    private final LiveData<List<Card>> mAllCivics;
+//    private final LiveData<List<Card>> mAllCivics;
     public List<Card> cachedCards;
     private MutableLiveData<Integer> treasure;
     private MutableLiveData<Integer> total;
@@ -28,7 +28,7 @@ public class CivicViewModel extends AndroidViewModel {
         super(application);
         cardBonus = new MutableLiveData<>(new HashMap<>());
         mRepository = new CivicRepository(application);
-        mAllCivics = mRepository.getAllCivics();
+//        mAllCivics = mRepository.getAllCivics();
         cachedCards = mRepository.getAllCards();
         treasure = new MutableLiveData<>();
         total = new MutableLiveData<>(0);
@@ -42,7 +42,10 @@ public class CivicViewModel extends AndroidViewModel {
         cardBonus.setValue(new HashMap<>());
     }
 
-    public LiveData<List<Card>> getAllCivics( String sortingOrder) {return mRepository.getAllCivicsSorted(sortingOrder);}
+    public List<Card> getAllCivics( String sortingOrder) {
+        cachedCards = mRepository.getAllCivicsSorted(sortingOrder);
+        return cachedCards;
+    }
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
 
     public void updateIsBuyable() {
@@ -136,5 +139,4 @@ public class CivicViewModel extends AndroidViewModel {
         Card adv = getAdvanceByName(name);
         updateBonus(adv.getCreditsBlue(), adv.getCreditsGreen(), adv.getCreditsOrange(), adv.getCreditsRed(), adv.getCreditsYellow());
     }
-
 }

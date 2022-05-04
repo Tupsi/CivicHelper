@@ -57,10 +57,10 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         } else {
             // can we buy the card?
             if (!isSelected && mCivicViewModel.getRemaining().getValue() < price) {
-                holder.mCardView.setBackgroundResource(R.color.dark_grey);
+//                holder.mCardView.setBackgroundResource(R.color.dark_grey);
                 holder.mCardView.setAlpha(0.5F);
             } else {
-                holder.mCardView.setBackgroundResource(R.drawable.item_background);
+//                holder.mCardView.setBackgroundResource(R.drawable.item_background);
                 holder.mCardView.setAlpha(1F);
             }
         }

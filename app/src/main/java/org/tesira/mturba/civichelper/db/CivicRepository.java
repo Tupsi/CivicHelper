@@ -18,7 +18,7 @@ public class CivicRepository {
     public CivicRepository(Application application) {
         CivicHelperDatabase db = CivicHelperDatabase.getDatabase(application);
         mCivicDao = db.civicDao();
-        mAllCivics = mCivicDao.getAdvancesByPrice();
+//        mAllCivics = mCivicDao.getAdvancesByPrice();
 //        CivicHelperDatabase.databaseWriteExecutor.execute(() -> {
 //            Log.v("DB", "creating");
 //        });
@@ -36,9 +36,9 @@ public class CivicRepository {
         return mCivicDao.getAdvanceByNameToCard(name);
     }
 
-    public LiveData<List<Card>> getAllCivics() {
-        return mCivicDao.getAdvancesByPrice();
-    }
+//    public LiveData<List<Card>> getAllCivics() {
+//        return mCivicDao.getAdvancesByPrice();
+//    }
 
 // Asynch, needed if DB is created without .allowMainThreadQueries()
 //    public Card getAdvanceByNameAsync(String name) throws ExecutionException, InterruptedException {
@@ -58,7 +58,6 @@ public class CivicRepository {
 
 
     public List<Card> getAllCards() throws ExecutionException, InterruptedException {
-
         Callable<List<Card>> callable = () -> mCivicDao.getAdvancesByName();
         Future<List<Card>> future = CivicHelperDatabase.databaseWriteExecutor.submit(callable);
         return future.get();
@@ -73,6 +72,6 @@ public class CivicRepository {
     public List<Effect> getEffect(String advance, String name) {return mCivicDao.getEffect(advance, name);}
     public List<Card> getPurchasesForBonus() {return mCivicDao.getPurchasesForBonus();}
 
-    public LiveData<List<Card>> getAllCivicsSorted(String sortingOrder) {
+    public List<Card> getAllCivicsSorted(String sortingOrder) {
         return mCivicDao.getAllAdvancesNotBought(sortingOrder);}
 }
