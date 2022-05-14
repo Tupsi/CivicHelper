@@ -138,6 +138,7 @@ public class Card {
     public int getBonus() { return mBonus; }
 
     public boolean getIsBuyable() { return mIsBuyable; }
+    public void setIsBuyable(boolean isBuyable) { mIsBuyable = isBuyable; }
 
     public int getCurrentPrice() { return mCurrentPrice; }
 }

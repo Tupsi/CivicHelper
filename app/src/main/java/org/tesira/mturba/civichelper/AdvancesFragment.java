@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -62,6 +63,8 @@ public class AdvancesFragment extends Fragment
     private int numberDialogs = 0;
     private List<Card> listCivics = new ArrayList<>();
     private MyItemKeyProvider<String> myItemKeyProvider;
+    private LinearLayoutManager mLayout;
+    private CivicsListAdapter mAdapter;
 
 
     // TODO: Customize parameter argument names
@@ -104,15 +107,18 @@ public class AdvancesFragment extends Fragment
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
         RecyclerView mRecyclerView = rootView.findViewById(R.id.list);
-        final CivicsListAdapter adapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff());
-        mRecyclerView.setAdapter(adapter);
+//        final CivicsListAdapter adapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff());
 
         if (mColumnCount <= 1) {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
+            mLayout = new LinearLayoutManager(rootView.getContext());
+            mRecyclerView.setLayoutManager(mLayout);
         } else {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(rootView.getContext(), mColumnCount));
+            mLayout = new GridLayoutManager(rootView.getContext(), mColumnCount);
+            mRecyclerView.setLayoutManager(mLayout);
         }
-        adapter.submitList(listCivics);
+        mAdapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff(), mLayout);
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.submitList(listCivics);
 //        myItemKeyProvider.setItemList(listCivics);
 
         mTreasureInput = rootView.findViewById(R.id.treasure);
@@ -155,8 +161,8 @@ public class AdvancesFragment extends Fragment
                     StorageStrategy.createStringStorage())
                     .withSelectionPredicate(new MySelectionPredicate<>(this, mCivicViewModel))
                     .build();
-        adapter.setSelectionTracker(tracker);
-        adapter.setCivicViewModel(mCivicViewModel);
+        mAdapter.setSelectionTracker(tracker);
+        mAdapter.setCivicViewModel(mCivicViewModel);
         tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
             @Override
             public void onItemStateChanged(@NonNull String key, boolean selected) {
@@ -164,22 +170,24 @@ public class AdvancesFragment extends Fragment
                 // item selection changed, we need to redo total selected cost
                 Log.v("OBSERVER", "inside onItemStateChanged : " + key);
                 mCivicViewModel.calculateTotal(tracker.getSelection());
+//                checkBuyable();
                 // works for auto greying out to expensive cards, but resets view to first item
                 // also crashes on long click on some android versions
-                //                mRecyclerView.setAdapter(adapter);
+//                                mRecyclerView.setAdapter(mAdapter);
             }
 
             @Override
             public void onSelectionRefresh() {
                 super.onSelectionRefresh();
-                mCivicViewModel.updateIsBuyable();
                 Log.v("OBSERVER", "inside onSelectionRefresh");
             }
 
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
+                mCivicViewModel.updateIsBuyable();
                 Log.v("OBSERVER", "inside onSelectionChanged");
+//                checkBuyable();
             }
 
             @Override
@@ -187,12 +195,27 @@ public class AdvancesFragment extends Fragment
                 super.onSelectionRestored();
                 Log.v("OBSERVER", "inside onSelectionRestored");
             }
+
         });
         if (savedInstanceState != null) {
             tracker.onRestoreInstanceState(savedInstanceState);
         }
-//        setHasOptionsMenu(true);
+
+        //        setHasOptionsMenu(true);
         return rootView;
+    }
+
+    private void checkBuyable() {
+        int first = mLayout.findFirstVisibleItemPosition();
+        int last = mLayout.findLastVisibleItemPosition();
+        Log.v("VISIBLE", " first : " + first + " : last : " + last);
+        for (int i = first; i <= last; i++) {
+            Log.v("VISIBLE","card : " + mAdapter.getCurrentList().get(i).getName());
+        }
+//        int i1 = findFirstVisibleItemPosition();
+//        int findFirstCompletelyVisibleItemPosition();
+//        int findLastVisibleItemPosition();
+//        int findLastCompletelyVisibleItemPosition();
     }
 
     private void buyAdvances() {

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 
 import org.tesira.mturba.civichelper.db.Card;
@@ -20,9 +21,11 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
 
     private SelectionTracker<String> tracker;
     private CivicViewModel mCivicViewModel;
+    private LinearLayoutManager mLayout;
 
-    public CivicsListAdapter(@NonNull DiffUtil.ItemCallback<Card> diffCallback) {
+    public CivicsListAdapter(@NonNull DiffUtil.ItemCallback<Card> diffCallback, LinearLayoutManager layout) {
         super(diffCallback);
+        this.mLayout = layout;
     }
 
     @NonNull
@@ -51,6 +54,7 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
             tracker.select(name);
             Toast.makeText(v.getContext(), name
                     + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_SHORT).show();
+//            checkBuyable();
         });
         if (!isSelected && price == 0) {
             tracker.select(name);
@@ -78,7 +82,7 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         @Override
         public boolean areItemsTheSame(@NonNull Card oldItem, @NonNull Card newItem) {
             Log.v("DIFF", "inside are ItemsTheSame");
-            return oldItem == newItem;
+            return oldItem.getIsBuyable() == newItem.getIsBuyable();
         }
 
         @Override
@@ -144,5 +148,20 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
             }
         }
         return ResourcesCompat.getDrawable(res,backgroundColor, null);
+    }
+
+    private void checkBuyable() {
+        int first = mLayout.findFirstCompletelyVisibleItemPosition();
+        int last = mLayout.findLastVisibleItemPosition();
+        Log.v("VISIBLE", " first : " + first + " : last : " + last);
+        for (int i = first; i <= last; i++) {
+//            mAdapter.notifyItemChanged(i);
+        }
+//        mAdapter.notifyDataSetChanged();
+//        int i1 = findFirstVisibleItemPosition();
+//        int findFirstCompletelyVisibleItemPosition();
+//        int findLastVisibleItemPosition();
+//        int findLastCompletelyVisibleItemPosition();
+
     }
 }

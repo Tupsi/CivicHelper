@@ -49,6 +49,11 @@ public class CivicViewModel extends AndroidViewModel {
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
 
     public void updateIsBuyable() {
+        Log.v("MODEL", "remaining : " + remaining.getValue());
+        int rest = remaining.getValue();
+        for (Card adv: cachedCards) {
+            adv.setIsBuyable(rest >= adv.getCurrentPrice());
+        }
         mRepository.updateIsBuyable(remaining.getValue());
     }
 

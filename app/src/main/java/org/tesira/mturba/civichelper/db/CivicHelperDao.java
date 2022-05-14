@@ -36,7 +36,7 @@ public interface CivicHelperDao {
     @Query("SELECT * FROM cards WHERE name = :name ")
     Card getAdvanceByNameToCard(String name);
 
-    @Query("UPDATE cards SET isBuyable = 1 WHERE price > :remaining ")
+    @Query("UPDATE cards SET isBuyable = 1 WHERE currentPrice < :remaining ")
     void updateIsBuyable(int remaining);
 
     @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY currentPrice ASC")
