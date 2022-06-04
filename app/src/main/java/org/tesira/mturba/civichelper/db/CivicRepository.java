@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import org.tesira.mturba.civichelper.Calamity;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -74,4 +76,5 @@ public class CivicRepository {
 
     public List<Card> getAllCivicsSorted(String sortingOrder) {
         return mCivicDao.getAllAdvancesNotBought(sortingOrder);}
+    public List<Calamity> getCalamityBonus(){return mCivicDao.getCalamityBonus();};
 }

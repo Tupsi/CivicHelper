@@ -5,6 +5,10 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+
+import org.tesira.mturba.civichelper.Calamity;
+
+import java.util.HashMap;
 import java.util.List;
 
 @Dao
@@ -74,4 +78,7 @@ public interface CivicHelperDao {
 
     @Query("SELECT * FROM effects WHERE name = :name AND advance = :advance ORDER BY advance ASC")
     List<Effect> getEffect(String advance, String name);
+
+    @Query("SELECT  effects.name AS calamity, SUM(effects.value) AS bonus FROM effects LEFT JOIN purchases on effects.advance = purchases.name WHERE purchases.name IS NOT NULL GROUP BY effects.name")
+    List<Calamity> getCalamityBonus();
 }

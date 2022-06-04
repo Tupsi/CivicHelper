@@ -30,7 +30,7 @@ public class MySelectionPredicate<String> extends SelectionTracker.SelectionPred
 //        Log.v("Model", " Test if possible to select for key :" +key);
         int current = adv.getCurrentPrice();
         treasure = mCivicViewModel.getTreasure().getValue();
-        total = mCivicViewModel.getTotal().getValue();
+        total = treasure - mCivicViewModel.getRemaining().getValue();
 
         // check for library effect which gives you +40 treasure this round
         List<Effect> effect = mCivicViewModel.getEffect(adv.getName(), "CreditsOnce");

@@ -15,14 +15,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SimpleAdapter;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
 import org.tesira.mturba.civichelper.db.CardColor;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +41,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private CivicViewModel mCivicViewModel;
+    private CalamityAdapter calamityAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -47,7 +57,12 @@ public class HomeFragment extends Fragment {
 //                Log.v("BUY", "observer : "+name.getName());
 //            }
 //        });
-        return binding.getRoot();
+        View rootView = binding.getRoot();
+        RecyclerView mRecyclerView = rootView.findViewById(R.id.listCalamity);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
+        calamityAdapter = new CalamityAdapter(mCivicViewModel.getCalamityBonus(), this.getContext());
+        mRecyclerView.setAdapter(calamityAdapter);
+        return rootView;
     }
 
     @Override
@@ -63,6 +78,7 @@ public class HomeFragment extends Fragment {
             case R.id.resetBtn:
                 ((MainActivity) getActivity()).newGame();
                 loadBonus();
+                calamityAdapter.clearData();
                 break;
         }
     }

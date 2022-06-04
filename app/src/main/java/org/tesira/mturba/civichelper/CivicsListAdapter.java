@@ -1,5 +1,6 @@
 package org.tesira.mturba.civichelper;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,9 +25,11 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
     private SelectionTracker<String> tracker;
     private CivicViewModel mCivicViewModel;
     private LinearLayoutManager mLayout;
+    private AdvancesFragment mFragment;
 
-    public CivicsListAdapter(@NonNull DiffUtil.ItemCallback<Card> diffCallback, LinearLayoutManager layout) {
+    public CivicsListAdapter(@NonNull DiffUtil.ItemCallback<Card> diffCallback, LinearLayoutManager layout, AdvancesFragment advancesFragment) {
         super(diffCallback);
+        mFragment = advancesFragment;
         this.mLayout = layout;
     }
 
@@ -94,7 +99,9 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
     public void setSelectionTracker(SelectionTracker<String> tracker) {
         this.tracker = tracker;
     }
-    public void setCivicViewModel(CivicViewModel model) {this.mCivicViewModel = model;}
+    public void setCivicViewModel(CivicViewModel model) {
+        this.mCivicViewModel = model;
+    }
 
     public static Drawable getItemBackgroundColor(Card card, Resources res) {
         int backgroundColor = 0;

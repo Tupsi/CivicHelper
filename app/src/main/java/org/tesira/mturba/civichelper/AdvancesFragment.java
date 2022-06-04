@@ -95,7 +95,9 @@ public class AdvancesFragment extends Fragment
         mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
         sortingOrder = prefs.getString("sort", "name");
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        Log.v("LIST", "sorting order : " + sortingOrder);
+        // reset remaining
+        mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue());
+//        Log.v("LIST", "sorting order : " + sortingOrder);
 //        listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
     }
 
@@ -116,7 +118,7 @@ public class AdvancesFragment extends Fragment
             mLayout = new GridLayoutManager(rootView.getContext(), mColumnCount);
             mRecyclerView.setLayoutManager(mLayout);
         }
-        mAdapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff(), mLayout);
+        mAdapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff(), mLayout, this);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.submitList(listCivics);
 //        myItemKeyProvider.setItemList(listCivics);
@@ -126,13 +128,13 @@ public class AdvancesFragment extends Fragment
         mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> {
             Log.v("OBSERVER", "Treasure :");
             mTreasureInput.setText(String.valueOf(treasure));
+            mAdapter.notifyDataSetChanged();
         });
-        mCivicViewModel.getRemaining().observe(requireActivity(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer remaining) {
-                if (AdvancesFragment.this.getContext() != null) {
-                    mRemainingText.setText(AdvancesFragment.this.requireActivity().getString(R.string.remaining_treasure) + remaining);
-                }
+        mCivicViewModel.getRemaining().observe(requireActivity(), remaining -> {
+            Log.v("OBSERVER", "treasure remaining : "+remaining);
+            if (AdvancesFragment.this.getContext() != null) {
+                mRemainingText.setText(String.valueOf(remaining));
+//                mAdapter.notifyDataSetChanged();
             }
         });
 
@@ -170,10 +172,10 @@ public class AdvancesFragment extends Fragment
                 // item selection changed, we need to redo total selected cost
                 Log.v("OBSERVER", "inside onItemStateChanged : " + key);
                 mCivicViewModel.calculateTotal(tracker.getSelection());
-//                checkBuyable();
-                // works for auto greying out to expensive cards, but resets view to first item
-                // also crashes on long click on some android versions
-//                                mRecyclerView.setAdapter(mAdapter);
+                int price = mCivicViewModel.getAdvanceByName(key).getPrice();
+                if (!selected) price *= -1;
+                Log.v("OBSERVER", "price :" + price);
+//                mCivicViewModel.updateTotal(price);
             }
 
             @Override
@@ -185,9 +187,7 @@ public class AdvancesFragment extends Fragment
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
-                mCivicViewModel.updateIsBuyable();
                 Log.v("OBSERVER", "inside onSelectionChanged");
-//                checkBuyable();
             }
 
             @Override
