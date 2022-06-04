@@ -487,7 +487,7 @@
         <name>Trade Routes</name>
         <family>16</family>
         <vp>3</vp>
-        <group>YELLOW</group>
+        <group>ORANGE</group>
         <price>180</price>
         <credit group="ORANGE">10</credit>
         <credit group="YELLOW">5</credit>
