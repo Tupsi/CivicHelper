@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-@Database(entities = {Card.class, Purchase.class, Effect.class, SpecialAbility.class}, version = 1, exportSchema = false)
+@Database(entities = {Card.class, Purchase.class, Effect.class, SpecialAbility.class, Immunity.class}, version = 1, exportSchema = false)
 public abstract class CivicHelperDatabase extends RoomDatabase {
 
     public abstract CivicHelperDao civicDao();
@@ -129,10 +129,15 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
 
                     dao.insert(civic);
                     for (int x=0; x<element2.getElementsByTagName("special").getLength();x++) {
-                        String abilitytext = element2.getElementsByTagName("special").item(0).getTextContent();
-                        SpecialAbility ability = new SpecialAbility(name, abilitytext);
-                        Log.v("DBSTART", "Ability: " + name + " :name: " + abilitytext);
+                        String abilityText = element2.getElementsByTagName("special").item(x).getTextContent();
+                        SpecialAbility ability = new SpecialAbility(name, abilityText);
                         dao.insertSpecialAbility(ability);
+                    }
+                    for (int x=0; x<element2.getElementsByTagName("immunity").getLength();x++) {
+                        String immunityText = element2.getElementsByTagName("immunity").item(x).getTextContent();
+                        Immunity immunity = new Immunity(name, immunityText);
+                        Log.v("DBSTART", "Immunity: " + name + " :name: " + immunityText);
+                        dao.insertImmunity(immunity);
                     }
                 }
             }

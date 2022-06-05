@@ -156,7 +156,7 @@
         <credit group="BLUE">20</credit>
         <credit group="YELLOW">5</credit>
         <immunity>Can not be a target of Politics from other players.</immunity>
-        <immunity>Ignore Cultural Ascendancy of other players.</immunity>
+        <immunity>Cultural Ascendancy of other players is ignored.</immunity>
     </advance>
     <advance>
         <name>Written Record</name>
@@ -343,7 +343,7 @@
         <effect name="Regression">1</effect>
         <special>May destroy all units in one area that is adjacent by land.</special>
         <immunity>Can not be targeted by Fundamentalism.</immunity>
-
+     </advance>
      <advance>
         <name>Monotheism</name>
         <family>11</family>
@@ -539,8 +539,7 @@
         <credit group="RED">10</credit>
         <credit group="ORANGE">5</credit>
         <effect name="Civil War">5</effect>
-        <immunity>Token movement ignores Diplomacy of other players.</immunity>
-        <immunity>Cultural Ascendancy of other players is ignored.</immunity>
+        <immunity>Diplomacy of other players is ignored.</immunity>
     </advance>
      <advance>
         <name>Advanced Military</name>
@@ -551,6 +550,7 @@
         <credit group="RED">20</credit>
         <credit group="GREEN">5</credit>
         <effect name="Civil Disorder">1</effect>
+        <immunity>Cultural Ascendancy of other players is ignored.</immunity>
     </advance>
 <!--
      <advance>
