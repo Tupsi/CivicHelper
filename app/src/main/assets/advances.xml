@@ -370,7 +370,7 @@
         <credit group="YELLOW">10</credit>
         <credit group="RED">5</credit>
         <effect name="Superstition">1</effect>
-         <special>May annex 1 pirate city or &#8924; up to 5 barbarians anywhere on the map.</special>
+         <special>May annex 1 pirate city or up to 5 barbarians anywhere on the map.</special>
     </advance>
      <advance>
         <name>Theology</name>
@@ -412,7 +412,7 @@
         <credit group="BLUE">20</credit>
         <credit group="YELLOW">5</credit>
         <effect name="Barbarian Hordes">5</effect>
-         <special>Gain 5 treasury from stock, or pay to annex an adjacent area (1 treasury per unit).</special>
+        <special>Gain 5 treasury from stock, or pay to annex an adjacent area (1 treasury per unit).</special>
     </advance>
      <advance>
         <name>Music</name>
@@ -497,7 +497,7 @@
         <price>180</price>
         <credit group="ORANGE">10</credit>
         <credit group="YELLOW">5</credit>
-         <special>Discard any commodities for twice their face value in treasury tokens.</special>
+        <special>Discard any commodities for twice their face value in treasury tokens.</special>
     </advance>
      <advance>
         <name>Trade Empire</name>
