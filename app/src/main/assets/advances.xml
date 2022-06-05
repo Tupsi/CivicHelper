@@ -109,8 +109,9 @@
         <credit group="BLUE">10</credit>
         <credit group="RED">5</credit>
         <effect name="Treachery">1</effect>
+        <immunity>Players are not allowed to move tokens into areas containing your cities, except for areas where a conflict situation already occurs. This does not count for players holding Diplomacy or Military.</immunity>
     </advance>
-        <advance>
+    <advance>
         <name>Provincial Empire</name>
         <family>4</family>
         <vp>6</vp>
@@ -121,6 +122,7 @@
         <effect name="Barbarian Hordes">5</effect>
         <effect name="Tyranny">5</effect>
         <special>Up to 5 adjacent players give you a 2+ commodity of their choice.</special>
+        <immunity>Provincial Empire from other players.</immunity>
     </advance>
     <advance>
         <name>Monarchy</name>
@@ -153,6 +155,8 @@
         <price>280</price>
         <credit group="BLUE">20</credit>
         <credit group="YELLOW">5</credit>
+        <immunity>Can not be a target of Politics from other players.</immunity>
+        <immunity>Ignore Cultural Ascendancy of other players.</immunity>
     </advance>
     <advance>
         <name>Written Record</name>
@@ -337,8 +341,9 @@
         <credit group="YELLOW">10</credit>
         <credit group="BLUE">5</credit>
         <effect name="Regression">1</effect>
-         <special>May destroy all units in one area that is adjacent by land.</special>
-    </advance>
+        <special>May destroy all units in one area that is adjacent by land.</special>
+        <immunity>Can not be targeted by Fundamentalism.</immunity>
+
      <advance>
         <name>Monotheism</name>
         <family>11</family>
@@ -348,7 +353,8 @@
         <credit group="YELLOW">20</credit>
         <credit group="RED">5</credit>
         <effect name="Iconoclasm and Heresy">1</effect>
-         <special>May annex all units in one area that is adjacent by land.</special>
+        <special>May annex all units in one area that is adjacent by land.</special>
+        <immunity>Can not be a target of Monotheism from other players.</immunity>
     </advance>
      <advance>
         <name>Theocracy</name>
@@ -381,7 +387,8 @@
         <credit group="YELLOW">20</credit>
         <credit group="GREEN">5</credit>
         <effect name="Iconoclasm and Heresy">-3</effect>
-    </advance>
+        <immunity>Can not be a target of Monotheism from other players.</immunity>
+     </advance>
      <advance>
         <name>Drama and Poetry</name>
         <family>13</family>
@@ -413,6 +420,7 @@
         <credit group="YELLOW">5</credit>
         <effect name="Barbarian Hordes">5</effect>
         <special>Gain 5 treasury from stock, or pay to annex an adjacent area (1 treasury per unit).</special>
+        <immunity>Can not be a target of Politics from other players.</immunity>
     </advance>
      <advance>
         <name>Music</name>
@@ -449,6 +457,7 @@
         <credit group="GREEN">20</credit>
         <effect name="Civil War">5</effect>
         <effect name="Iconoclasm and Heresy">-2</effect>
+        <immunity>Can not be targeted by Fundamentalism.</immunity>
     </advance>
      <advance>
         <name>Astronavigation</name>
@@ -478,6 +487,7 @@
         <price>230</price>
         <credit group="RED">20</credit>
         <credit group="ORANGE">5</credit>
+        <immunity>Provincial Empire from other players.</immunity>
     </advance>
      <advance>
         <name>Coinage</name>
@@ -518,6 +528,7 @@
         <price>90</price>
         <credit group="ORANGE">10</credit>
         <credit group="RED">5</credit>
+        <immunity>Metallworking from other players is ignored.</immunity>
     </advance>
      <advance>
         <name>Military</name>
@@ -528,6 +539,8 @@
         <credit group="RED">10</credit>
         <credit group="ORANGE">5</credit>
         <effect name="Civil War">5</effect>
+        <immunity>Token movement ignores Diplomacy of other players.</immunity>
+        <immunity>Cultural Ascendancy of other players is ignored.</immunity>
     </advance>
      <advance>
         <name>Advanced Military</name>
