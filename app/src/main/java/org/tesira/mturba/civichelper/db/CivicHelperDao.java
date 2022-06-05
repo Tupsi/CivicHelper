@@ -79,7 +79,7 @@ public interface CivicHelperDao {
     @Query("SELECT * FROM effects WHERE name = :name AND advance = :advance ORDER BY advance ASC")
     List<Effect> getEffect(String advance, String name);
 
-    @Query("SELECT  effects.name AS calamity, SUM(effects.value) AS bonus FROM effects LEFT JOIN purchases on effects.advance = purchases.name WHERE purchases.name IS NOT NULL AND calamity NOT LIKE 'Credits%' GROUP BY effects.name ORDER BY calamity ASC")
+    @Query("SELECT  effects.name AS calamity, SUM(effects.value) AS bonus FROM effects LEFT JOIN purchases on effects.advance = purchases.name WHERE purchases.name IS NOT NULL AND calamity NOT LIKE 'Credits%' AND calamity NOT LIKE 'FreeScience' GROUP BY effects.name ORDER BY calamity ASC")
     List<Calamity> getCalamityBonus();
 
     @Insert
