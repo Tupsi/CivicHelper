@@ -28,9 +28,7 @@ public class CivicRepository {
 
     public void deletePurchases() {mCivicDao.deleteAllPurchases();}
     public void insertPurchase(String name) {
-         CivicHelperDatabase.databaseWriteExecutor.execute(() -> {
-             mCivicDao.insertPurchase(new Purchase(name));
-        });
+         CivicHelperDatabase.databaseWriteExecutor.execute(() -> mCivicDao.insertPurchase(new Purchase(name)));
     }
 
 
@@ -76,5 +74,6 @@ public class CivicRepository {
 
     public List<Card> getAllCivicsSorted(String sortingOrder) {
         return mCivicDao.getAllAdvancesNotBought(sortingOrder);}
-    public List<Calamity> getCalamityBonus(){return mCivicDao.getCalamityBonus();};
+    public List<Calamity> getCalamityBonus() {return mCivicDao.getCalamityBonus();}
+    public List<String> getSpecialAbilities() {return mCivicDao.getSpecialAbilities();}
 }

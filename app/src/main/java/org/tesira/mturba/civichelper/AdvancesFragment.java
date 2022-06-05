@@ -172,10 +172,9 @@ public class AdvancesFragment extends Fragment
                 // item selection changed, we need to redo total selected cost
                 Log.v("OBSERVER", "inside onItemStateChanged : " + key);
                 mCivicViewModel.calculateTotal(tracker.getSelection());
-                int price = mCivicViewModel.getAdvanceByName(key).getPrice();
-                if (!selected) price *= -1;
-                Log.v("OBSERVER", "price :" + price);
-//                mCivicViewModel.updateTotal(price);
+//                int price = mCivicViewModel.getAdvanceByName(key).getPrice();
+//                if (!selected) price *= -1;
+//                Log.v("OBSERVER", "price :" + price);
             }
 
             @Override

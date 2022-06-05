@@ -8,21 +8,18 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-@Database(entities = {Card.class, Purchase.class, Effect.class}, version = 1, exportSchema = false)
+@Database(entities = {Card.class, Purchase.class, Effect.class, SpecialAbility.class}, version = 1, exportSchema = false)
 public abstract class CivicHelperDatabase extends RoomDatabase {
 
     public abstract CivicHelperDao civicDao();
@@ -37,9 +34,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public static CivicHelperDatabase getDatabase(final Context context) {
-        Log.v("DB", "getDataBase");
         if (INSTANCE == null) {
-            Log.v("DB", "getDataBase INSTANCE == null");
             synchronized (CivicHelperDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic_helper.db")
@@ -66,7 +61,6 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                 dao.deleteAllCards();
                 dao.deleteAllEffects();
                 importCivicsFromXML();
-                Log.v("DB", "creating");
             });
         }
     };
@@ -86,7 +80,6 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             Element element = doc.getDocumentElement();
             element.normalize();
             NodeList nList = doc.getElementsByTagName("advance");
-            Log.v("DB", "number " + nList.getLength());
             for (int i=0; i<nList.getLength(); i++) {
                 Node node = nList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -103,10 +96,8 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                     for (int x=0; x<element2.getElementsByTagName("group").getLength();x++) {
                         color[x] = CardColor.valueOf(element2.getElementsByTagName("group").item(x).getTextContent());
                     }
-                    Log.v("DB", "color 1 :" + color[0] + " -  color2 :" + color[1]);
                     for (int x=0; x<element2.getElementsByTagName("credit").getLength(); x++) {
                         CardColor cardColor = CardColor.valueOf(element2.getElementsByTagName("credit").item(x).getAttributes().item(0).getTextContent());
-                        Log.v("DB", name + " : CardColor :" + cardColor);
                         int discount = Integer.parseInt(element2.getElementsByTagName("credit").item(x).getTextContent());
                         switch(cardColor) {
                             case BLUE:
@@ -131,15 +122,18 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                         int value = Integer.parseInt(element2.getElementsByTagName("effect").item(x).getTextContent());
                         Effect newEffect = new Effect(name, effect, value);
                         dao.insertEffect(newEffect);
-                        //                        adv.addEffect(name, value);
                     }
-//                    advances.getValue().add(adv);
-                    Log.v("DB", "name : " + name);
                     Card civic = new Card(name, family, vp, price, color[0], color[1], credits[0],
                             credits[1], credits[2], credits[3], credits[4], null,
                             0, false, price);
 
                     dao.insert(civic);
+                    for (int x=0; x<element2.getElementsByTagName("special").getLength();x++) {
+                        String abilitytext = element2.getElementsByTagName("special").item(0).getTextContent();
+                        SpecialAbility ability = new SpecialAbility(name, abilitytext);
+                        Log.v("DBSTART", "Ability: " + name + " :name: " + abilitytext);
+                        dao.insertSpecialAbility(ability);
+                    }
                 }
             }
         } catch (Exception e) {

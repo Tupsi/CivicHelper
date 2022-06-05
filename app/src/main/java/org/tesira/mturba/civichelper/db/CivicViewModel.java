@@ -51,6 +51,7 @@ public class CivicViewModel extends AndroidViewModel {
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
 
     public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
+    public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
 
     public void updateIsBuyable() {
         Log.v("MODEL", "remaining : " + remaining.getValue());
@@ -131,7 +132,8 @@ public class CivicViewModel extends AndroidViewModel {
     }
 
     /**
-     * Calculates the sum of all currently selected advances during the buy process.
+     * Calculates the sum of all currently selected advances during the buy process and
+     * updates remaining treasure.
      * @param selection Currently selected cards from the View.
      */
     public void calculateTotal(Selection<String> selection) {
@@ -140,7 +142,6 @@ public class CivicViewModel extends AndroidViewModel {
             Card adv = getAdvanceByName(name);
             newTotal += adv.getCurrentPrice();
         }
-//        this.total.setValue(newTotal);
         this.remaining.setValue(treasure.getValue() - newTotal);
     }
 

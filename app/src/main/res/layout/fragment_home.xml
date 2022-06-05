@@ -13,7 +13,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
@@ -23,86 +23,157 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Buy Advances"
-        app:layout_constraintBottom_toTopOf="@+id/resetBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/resetBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
         android:text="New Game"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvBoni"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="304dp"
+        android:layout_marginBottom="685dp"
+        android:text="Colorbonus"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startBtn" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/bonusBlue"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/color_bonus"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="397dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="43dp"
+        android:gravity="end"
+        android:padding="5dp"
         android:text="Blue"
-        app:layout_constraintBottom_toTopOf="@+id/bonusGreen"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/text_size_bonus"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bonusGreen"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/color_bonus"
         android:layout_height="wrap_content"
+        android:gravity="end"
+        android:padding="5dp"
         android:text="Green"
-        app:layout_constraintBottom_toTopOf="@+id/bonusOrange"
-        app:layout_constraintStart_toStartOf="@+id/bonusBlue"
-        app:layout_constraintTop_toBottomOf="@+id/bonusBlue" />
+        android:textColor="#000000"
+        android:textColorHighlight="#F8F5F5"
+        android:textSize="@dimen/text_size_bonus"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/bonusBlue"
+        app:layout_constraintTop_toTopOf="@+id/bonusBlue" />
 
     <TextView
         android:id="@+id/bonusOrange"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/color_bonus"
         android:layout_height="wrap_content"
+        android:gravity="end"
+        android:padding="5dp"
         android:text="Orange"
-        app:layout_constraintBottom_toTopOf="@+id/bonusRed"
-        app:layout_constraintStart_toStartOf="@+id/bonusGreen"
-        app:layout_constraintTop_toBottomOf="@+id/bonusGreen" />
+        android:textColor="#ffffff"
+        android:textSize="@dimen/text_size_bonus"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/bonusGreen"
+        app:layout_constraintTop_toTopOf="@+id/bonusGreen" />
 
     <TextView
         android:id="@+id/bonusRed"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/color_bonus"
         android:layout_height="wrap_content"
+        android:gravity="end"
+        android:padding="5dp"
         android:text="Red"
-        app:layout_constraintBottom_toTopOf="@+id/bonusYellow"
-        app:layout_constraintStart_toStartOf="@+id/bonusOrange"
-        app:layout_constraintTop_toBottomOf="@+id/bonusOrange" />
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/text_size_bonus"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/bonusOrange"
+        app:layout_constraintTop_toTopOf="@+id/bonusOrange" />
 
     <TextView
         android:id="@+id/bonusYellow"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/color_bonus"
         android:layout_height="wrap_content"
+        android:gravity="end"
+        android:padding="5dp"
         android:text="Yellow"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
-        app:layout_constraintStart_toStartOf="@+id/bonusRed"
-        app:layout_constraintTop_toBottomOf="@+id/bonusRed" />
+        android:textColor="#000000"
+        android:textSize="@dimen/text_size_bonus"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/bonusRed"
+        app:layout_constraintTop_toTopOf="@+id/bonusRed" />
+
+    <TextView
+        android:id="@+id/tvCalamityBonus"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="92dp"
+        android:text="Calamity Effects Overview"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listCalamity"
         android:name="org.tesira.mturba.civichelper.HomeFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="272dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bonusYellow"
-        tools:context=".AdvancesFragment"
+        app:layout_constraintTop_toBottomOf="@+id/tvCalamityBonus"
+        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/item_row_calamity" />
+
+    <TextView
+        android:id="@+id/tvSpecials"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="437dp"
+        android:text="Special Abilities Overview"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listAbility"
+        android:name="org.tesira.mturba.civichelper.HomeFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layoutManager="LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSpecials"
+        tools:listitem="@layout/item_row_specials" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

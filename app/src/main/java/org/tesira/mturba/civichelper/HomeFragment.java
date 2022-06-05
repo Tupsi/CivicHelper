@@ -42,6 +42,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private CivicViewModel mCivicViewModel;
     private CalamityAdapter calamityAdapter;
+    private SpecialsAdapter specialsAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -49,8 +50,8 @@ public class HomeFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentHomeBinding.inflate(inflater, container,false);
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        binding.startBtn.setOnClickListener(v -> onClickButton(v));
-        binding.resetBtn.setOnClickListener(v -> onClickButton(v));
+        binding.startBtn.setOnClickListener(this::onClickButton);
+        binding.resetBtn.setOnClickListener(this::onClickButton);
         setHasOptionsMenu(true);
 //        mCivicViewModel.getAllPurchases().observeForever(purchases -> {
 //            for (Purchase name: purchases) {
@@ -62,6 +63,11 @@ public class HomeFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         calamityAdapter = new CalamityAdapter(mCivicViewModel.getCalamityBonus(), this.getContext());
         mRecyclerView.setAdapter(calamityAdapter);
+
+        mRecyclerView = rootView.findViewById(R.id.listAbility);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
+        specialsAdapter = new SpecialsAdapter(mCivicViewModel.getSpecialAbilities().toArray(new String[0]));
+        mRecyclerView.setAdapter(specialsAdapter);
         return rootView;
     }
 
@@ -79,6 +85,7 @@ public class HomeFragment extends Fragment {
                 ((MainActivity) getActivity()).newGame();
                 loadBonus();
                 calamityAdapter.clearData();
+                specialsAdapter.clearData();
                 break;
         }
     }

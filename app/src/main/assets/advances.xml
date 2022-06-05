@@ -89,6 +89,7 @@
         <price>270</price>
         <credit group="YELLOW">20</credit>
         <credit group="BLUE">5</credit>
+        <special>May move 5 tokens anywhere on the map if population limit is not reached.</special>
     </advance>
     <advance>
         <name>Urbanism</name>
@@ -119,6 +120,7 @@
         <credit group="YELLOW">5</credit>
         <effect name="Barbarian Hordes">5</effect>
         <effect name="Tyranny">5</effect>
+        <special>Up to 5 adjacent players give you a 2+ commodity of their choice.</special>
     </advance>
     <advance>
         <name>Monarchy</name>
@@ -234,7 +236,7 @@
         <price>160</price>
         <credit group="ORANGE">10</credit>
         <credit group="GREEN">10</credit>
-        <effect name="Earthquake (City reduced)">1</effect>
+        <effect name="Earthquake (city reduced)">-99</effect>
         <effect name="Flood">-5</effect>
     </advance>
      <advance>
@@ -335,6 +337,7 @@
         <credit group="YELLOW">10</credit>
         <credit group="BLUE">5</credit>
         <effect name="Regression">1</effect>
+         <special>May destroy all units in one area that is adjacent by land.</special>
     </advance>
      <advance>
         <name>Monotheism</name>
@@ -345,6 +348,7 @@
         <credit group="YELLOW">20</credit>
         <credit group="RED">5</credit>
         <effect name="Iconoclasm and Heresy">1</effect>
+         <special>May annex all units in one area that is adjacent by land.</special>
     </advance>
      <advance>
         <name>Theocracy</name>
@@ -355,7 +359,7 @@
         <price>80</price>
         <credit group="RED">5</credit>
         <credit group="YELLOW">5</credit>
-        <effect name="Iconoclasm and Heresy (2 cards)">-1</effect>
+        <effect name="Iconoclasm and Heresy (prevent all with 2 commodity cards)">-99</effect>
     </advance>
      <advance>
         <name>Universal Doctrine</name>
@@ -366,6 +370,7 @@
         <credit group="YELLOW">10</credit>
         <credit group="RED">5</credit>
         <effect name="Superstition">1</effect>
+         <special>May annex 1 pirate city or &#8924; up to 5 barbarians anywhere on the map.</special>
     </advance>
      <advance>
         <name>Theology</name>
@@ -396,7 +401,7 @@
         <price>130</price>
         <credit group="BLUE">10</credit>
         <credit group="RED">5</credit>
-        <effect name="Buy 3s for 9">1</effect>
+        <extra name="Buy 3s for 9">1</extra>
     </advance>
      <advance>
         <name>Politics</name>
@@ -407,6 +412,7 @@
         <credit group="BLUE">20</credit>
         <credit group="YELLOW">5</credit>
         <effect name="Barbarian Hordes">5</effect>
+         <special>Gain 5 treasury from stock, or pay to annex an adjacent area (1 treasury per unit).</special>
     </advance>
      <advance>
         <name>Music</name>
@@ -430,7 +436,7 @@
         <effect name="Superstition">-1</effect>
         <effect name="Slave Revolt">-1</effect>
         <effect name="Epidemic (Prim)">-5</effect>
-        <effect name="Regression (destroy 2 cities)">1</effect>
+        <effect name="Regression (destroy 2 cities)">-99</effect>
     </advance>
      <advance>
         <name>Philosophy</name>
@@ -491,6 +497,7 @@
         <price>180</price>
         <credit group="ORANGE">10</credit>
         <credit group="YELLOW">5</credit>
+         <special>Discard any commodities for twice their face value in treasury tokens.</special>
     </advance>
      <advance>
         <name>Trade Empire</name>

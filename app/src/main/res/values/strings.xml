@@ -30,5 +30,8 @@
     <string name="remaining_credits">Remaining Credits : </string>
     <!-- Anatomy Dialog -->
     <string name="dialog_anatomy">You bought the Anatomy Advance, pick the extra science card.</string>
+    <string name="element_text">special ability</string>
+    <string name="calamitytext">Calamitytext</string>
+    <string name="value">value</string>
 
 </resources>
