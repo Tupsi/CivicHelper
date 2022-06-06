@@ -1,5 +1,6 @@
 package org.tesira.mturba.civichelper;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,14 @@ public class SpecialsAdapter extends RecyclerView.Adapter<SpecialsAdapter.ViewHo
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.getTextView().setText(localDataSet[position]);
+        if (position % 2 == 0) {
+            viewHolder.getTextView().setBackgroundResource(R.drawable.generic_background);
+        } else {
+
+        }
+        if (viewHolder.getTextView().getText().toString().startsWith("_")) {
+            viewHolder.getTextView().setTypeface(viewHolder.getTextView().getTypeface(), Typeface.BOLD);
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

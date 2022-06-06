@@ -66,7 +66,16 @@ public class HomeFragment extends Fragment {
 
         mRecyclerView = rootView.findViewById(R.id.listAbility);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        specialsAdapter = new SpecialsAdapter(mCivicViewModel.getSpecialAbilities().toArray(new String[0]));
+        List<String> specialsList = mCivicViewModel.getSpecialAbilities();
+        specialsList.add(0,"___Special Abilities");
+        if (specialsList.size() % 2 == 0) {
+            specialsList.add(               "___Immunities");
+        } else {
+            specialsList.add(               "");
+            specialsList.add(               "___Immunities");
+        }
+        specialsList.addAll(mCivicViewModel.getImmunities());
+        specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
         mRecyclerView.setAdapter(specialsAdapter);
         return rootView;
     }

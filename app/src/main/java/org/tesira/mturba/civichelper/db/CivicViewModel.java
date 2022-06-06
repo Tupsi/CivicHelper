@@ -19,10 +19,8 @@ import java.util.concurrent.ExecutionException;
 public class CivicViewModel extends AndroidViewModel {
 
     private CivicRepository mRepository;
-//    private final LiveData<List<Card>> mAllCivics;
     public List<Card> cachedCards;
     private MutableLiveData<Integer> treasure;
-//    private MutableLiveData<Integer> total;
     private MutableLiveData<Integer> remaining;
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
 
@@ -30,10 +28,8 @@ public class CivicViewModel extends AndroidViewModel {
         super(application);
         cardBonus = new MutableLiveData<>(new HashMap<>());
         mRepository = new CivicRepository(application);
-//        mAllCivics = mRepository.getAllCivics();
         cachedCards = mRepository.getAllCards();
         treasure = new MutableLiveData<>();
-//        total = new MutableLiveData<>(0);
         remaining = new MutableLiveData<>();
     }
 
@@ -52,6 +48,7 @@ public class CivicViewModel extends AndroidViewModel {
 
     public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
     public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
+    public List<String> getImmunities() {return mRepository.getImmunities();}
 
     public void updateIsBuyable() {
         Log.v("MODEL", "remaining : " + remaining.getValue());
@@ -69,15 +66,8 @@ public class CivicViewModel extends AndroidViewModel {
     public void setTreasure(int treasure) {
         this.treasure.setValue(treasure);
         this.remaining.setValue(treasure);
-//        this.remaining.setValue(treasure - this.total.getValue());
     }
 
-//    public MutableLiveData<Integer> getTotal() {
-//        return total;
-//    }
-//    public void setTotal(int total) {
-//        this.total.setValue(total);
-//    }
     public MutableLiveData<Integer> getRemaining() {
         return remaining;
     }
@@ -144,11 +134,6 @@ public class CivicViewModel extends AndroidViewModel {
         }
         this.remaining.setValue(treasure.getValue() - newTotal);
     }
-
-//    public void updateTotal(int price){
-//        this.total.setValue(this.total.getValue() + price);
-////        this.remaining.setValue(treasure.getValue() - this.total.getValue());
-//    }
 
     /**
      * Adds the bonuses of a bought card to the cardBonus HashSet.

@@ -58,17 +58,6 @@ public class Card {
     @ColumnInfo(name="currentPrice")
     private int mCurrentPrice;
 
-    // optional
-
-    // effects hold special bonuses during gameplay, to be displayed at in summation
-    // on  startscreen
-//    private HashMap<String, Integer> mEffects;
-//    private int mFamilyBonus;
-//    private String mFamilyName;
-
-//    public Card(@NonNull String name) {
-//        this.mName = name;
-//    }
     public Card(@NonNull String mName, int mFamily, int mVp, int mPrice,
                 @NonNull CardColor mGroup1, CardColor mGroup2, int mCreditsBlue,
                 int mCreditsGreen, int mCreditsOrange,

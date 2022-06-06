@@ -1,8 +1,6 @@
 package org.tesira.mturba.civichelper.db;
 
 import android.content.Context;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
@@ -136,7 +134,6 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                     for (int x=0; x<element2.getElementsByTagName("immunity").getLength();x++) {
                         String immunityText = element2.getElementsByTagName("immunity").item(x).getTextContent();
                         Immunity immunity = new Immunity(name, immunityText);
-                        Log.v("DBSTART", "Immunity: " + name + " :name: " + immunityText);
                         dao.insertImmunity(immunity);
                     }
                 }

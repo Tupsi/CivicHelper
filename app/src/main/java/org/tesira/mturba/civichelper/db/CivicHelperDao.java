@@ -90,4 +90,7 @@ public interface CivicHelperDao {
 
     @Insert
     void insertImmunity(Immunity immunity);
+
+    @Query("SELECT immunity.immunity FROM immunity LEFT JOIN purchases on immunity.advance = purchases.name WHERE purchases.name IS NOT NULL")
+    List<String> getImmunities();
 }
