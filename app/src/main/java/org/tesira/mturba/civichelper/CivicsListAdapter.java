@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
@@ -26,6 +28,7 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
     private CivicViewModel mCivicViewModel;
     private LinearLayoutManager mLayout;
     private AdvancesFragment mFragment;
+    private RecyclerView.LayoutManager manager;
 
     public CivicsListAdapter(@NonNull DiffUtil.ItemCallback<Card> diffCallback, LinearLayoutManager layout, AdvancesFragment advancesFragment) {
         super(diffCallback);
@@ -33,33 +36,45 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         this.mLayout = layout;
     }
 
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        manager = recyclerView.getLayoutManager();
+    }
+
     @NonNull
     @Override
     public CivicsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.v("HOLDER", "inside onCreateViewHolder :" + viewType);
         return CivicsViewHolder.create(parent);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CivicsViewHolder holder, int position) {
+
         Card current = getItem(position);
         String name = current.getName();
         int price = current.getCurrentPrice();
         Resources res = holder.itemView.getResources();
         boolean isSelected = tracker.isSelected(name);
 
+//        checkVisibility();
         holder.bindName(name, getItemBackgroundColor(current, res));
         holder.bindPrice(current.getCurrentPrice());
         holder.bindBonus(current.getBonus());
         holder.bindBonusCard(current.getBonusCard());
 
+        if (tracker.hasSelection()) {
+            Log.v("HOLDER", "inside onBindViewHolder :" + name + " : Position: " + position);
+        }
 
         holder.bindIsActive(isSelected);
         holder.itemView.setOnClickListener(v -> {
             // clicked on single card in list
+            Log.v("HOLDER", "inside onBindViewHolder onClickListener");
             tracker.select(name);
-            Toast.makeText(v.getContext(), name
-                    + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_SHORT).show();
-//            checkBuyable();
+//            Toast.makeText(v.getContext(), name
+//                    + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_SHORT).show();
         });
         if (!isSelected && price == 0) {
             tracker.select(name);
@@ -157,18 +172,34 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         return ResourcesCompat.getDrawable(res,backgroundColor, null);
     }
 
-    private void checkBuyable() {
-        int first = mLayout.findFirstCompletelyVisibleItemPosition();
+    public void checkBuyable(Integer value) {
+        int first = mLayout.findFirstVisibleItemPosition();
         int last = mLayout.findLastVisibleItemPosition();
         Log.v("VISIBLE", " first : " + first + " : last : " + last);
-        for (int i = first; i <= last; i++) {
-//            mAdapter.notifyItemChanged(i);
+        TextView priceText;
+        for (int i = first; i < last; i++) {
+            View child = mLayout.getChildAt(i);
+            if (child != null) {
+                priceText = mLayout.getChildAt(i).findViewById(R.id.price);
+                int price = Integer.parseInt((String) priceText.getText());
+                if (price > value) {
+                    Log.v("VISIBLE", "needs notifyItemChanged");
+                }
+
+            }
+//            notifyItemChanged(i);
         }
-//        mAdapter.notifyDataSetChanged();
-//        int i1 = findFirstVisibleItemPosition();
-//        int findFirstCompletelyVisibleItemPosition();
-//        int findLastVisibleItemPosition();
-//        int findLastCompletelyVisibleItemPosition();
+    }
+
+    public void checkVisibility(){
+        Log.v("VIS", "getChildCount: " + manager.getChildCount());
+        for (int i=0; i < manager.getChildCount(); i++  ) {
+            if (manager.isViewPartiallyVisible(manager.getChildAt(i),false, true)) {
+                View child = manager.getChildAt(i);
+                Card currentCard = getItem(i);
+                Log.v("VIS", "checkVis :" + currentCard.getName() + " : " + i);
+            }
+        }
 
     }
 }

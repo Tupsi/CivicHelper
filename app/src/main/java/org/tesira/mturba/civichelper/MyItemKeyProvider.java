@@ -23,8 +23,8 @@ public class MyItemKeyProvider<S> extends ItemKeyProvider<String> {
         this.itemList = list;
         this.mCivicViewModel = model;
         itemList = model.cachedCards;
-        Log.v("TAG44", "size of itemList in MyItemKeyProv :" + itemList.size());
-        Log.v("TAG44", "1.Karte itemList in MyItemKeyProv :" + itemList.get(0).getName());
+//        Log.v("TAG44", "size of itemList in MyItemKeyProv :" + itemList.size());
+//        Log.v("TAG44", "1.Karte itemList in MyItemKeyProv :" + itemList.get(0).getName());
 
     }
 
@@ -38,11 +38,10 @@ public class MyItemKeyProvider<S> extends ItemKeyProvider<String> {
 
     @Override
     public int getPosition(@NonNull String key) {
-        Log.v("MODEL", "inside getPosition von MyItemKeyProvider :" + key);
         int pos = 0;
         for (Card adv : itemList) {
             if (key.equals(adv.getName())) {
-                Log.v("MODEL", "inside getPosition von MyItemKeyProvider Position :" + pos);
+                Log.v("MODEL", "inside getPosition von MyItemKeyProvider: " + key + " : Position :" + pos);
                 return pos;
             }
             else {

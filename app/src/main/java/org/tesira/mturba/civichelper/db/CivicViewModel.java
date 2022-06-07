@@ -65,6 +65,10 @@ public class CivicViewModel extends AndroidViewModel {
 
     public void setTreasure(int treasure) {
         this.treasure.setValue(treasure);
+//        this.remaining.setValue(treasure);
+    }
+
+    public void setRemaining(int treasure) {
         this.remaining.setValue(treasure);
     }
 

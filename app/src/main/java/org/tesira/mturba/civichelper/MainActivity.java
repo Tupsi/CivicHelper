@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
         mCivicViewModel = new ViewModelProvider(this).get(CivicViewModel.class);
         mCivicViewModel.setTreasure(prefs.getInt(TREASURE_BOX,0));
+        mCivicViewModel.setRemaining(prefs.getInt(TREASURE_BOX,0));
         loadBonus();
     }
 

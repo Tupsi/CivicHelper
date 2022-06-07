@@ -16,6 +16,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.selection.ItemKeyProvider;
+import androidx.recyclerview.selection.MutableSelection;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -58,13 +59,16 @@ public class AdvancesFragment extends Fragment
     protected EditText mTreasureInput;
     protected TextView mRemainingText;
     private SelectionTracker<String> tracker;
-    private SharedPreferences prefs, savedCards;
+    private SharedPreferences prefs;
     private FragmentAdvancesBinding binding;
     private int numberDialogs = 0;
     private List<Card> listCivics = new ArrayList<>();
     private MyItemKeyProvider<String> myItemKeyProvider;
     private LinearLayoutManager mLayout;
     private CivicsListAdapter mAdapter;
+    MutableSelection<String> currentSelection = new MutableSelection<>();
+    private Observer<Integer> mObserver;
+    private RecyclerView mRecyclerView;
 
 
     // TODO: Customize parameter argument names
@@ -108,7 +112,7 @@ public class AdvancesFragment extends Fragment
         listCivics = mCivicViewModel.getAllCivics(sortingOrder);
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
-        RecyclerView mRecyclerView = rootView.findViewById(R.id.list);
+        mRecyclerView = rootView.findViewById(R.id.list);
 //        final CivicsListAdapter adapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff());
 
         if (mColumnCount <= 1) {
@@ -130,13 +134,33 @@ public class AdvancesFragment extends Fragment
             mTreasureInput.setText(String.valueOf(treasure));
             mAdapter.notifyDataSetChanged();
         });
-        mCivicViewModel.getRemaining().observe(requireActivity(), remaining -> {
-            Log.v("OBSERVER", "treasure remaining : "+remaining);
-            if (AdvancesFragment.this.getContext() != null) {
-                mRemainingText.setText(String.valueOf(remaining));
-//                mAdapter.notifyDataSetChanged();
+        mObserver = new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer remaining) {
+                Log.v("OBSERVER", "treasure remaining : " + remaining);
+                if (AdvancesFragment.this.getContext() != null) {
+                    mRemainingText.setText(String.valueOf(remaining));
+                    if (tracker != null) {
+                        updateViews();
+                    }
+                }
             }
-        });
+        };
+
+        mCivicViewModel.getRemaining().observe(requireActivity(), mObserver);
+//        mCivicViewModel.getRemaining().observe(requireActivity(), new Observer<Integer>() {
+//            @Override
+//            public void onChanged(Integer remaining) {
+//                Log.v("OBSERVER", "treasure remaining : " + remaining);
+//                if (AdvancesFragment.this.getContext() != null) {
+//                    mRemainingText.setText(String.valueOf(remaining));
+//                    if (tracker != null) {
+////                        mAdapter.notifyDataSetChanged();
+//                        updateAdaper();
+//                    }
+//                }
+//            }
+//        });
 
         // close SoftKeyboard on Enter
         mTreasureInput.setOnEditorActionListener((v, keyCode, event) -> {
@@ -151,10 +175,7 @@ public class AdvancesFragment extends Fragment
             buyAdvances();
 //            Navigation.findNavController(v).popBackStack();
         });
-        Log.v("TAG44", "size of listCivics in Observer :" + listCivics.size());
-        Log.v("TAG44", "1.Karte listCivcs in Observert :" + listCivics.get(0).getName());
         myItemKeyProvider = new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, listCivics, mCivicViewModel);
-        Log.v("TAG44", "about to create tracker...");
         tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
                 mRecyclerView,
@@ -166,12 +187,15 @@ public class AdvancesFragment extends Fragment
         mAdapter.setSelectionTracker(tracker);
         mAdapter.setCivicViewModel(mCivicViewModel);
         tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
+
+
             @Override
             public void onItemStateChanged(@NonNull String key, boolean selected) {
                 super.onItemStateChanged(key, selected);
                 // item selection changed, we need to redo total selected cost
-                Log.v("OBSERVER", "inside onItemStateChanged : " + key);
-                mCivicViewModel.calculateTotal(tracker.getSelection());
+                Log.v("OBSERVER", "inside onItemStateChanged : " + key + " : " + selected);
+//                mCivicViewModel.calculateTotal(tracker.getSelection());
+                tracker.copySelection(currentSelection);
 //                int price = mCivicViewModel.getAdvanceByName(key).getPrice();
 //                if (!selected) price *= -1;
 //                Log.v("OBSERVER", "price :" + price);
@@ -181,12 +205,15 @@ public class AdvancesFragment extends Fragment
             public void onSelectionRefresh() {
                 super.onSelectionRefresh();
                 Log.v("OBSERVER", "inside onSelectionRefresh");
+
             }
 
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
                 Log.v("OBSERVER", "inside onSelectionChanged");
+                mCivicViewModel.calculateTotal(currentSelection);
+//                updateViews();
             }
 
             @Override
@@ -202,6 +229,30 @@ public class AdvancesFragment extends Fragment
 
         //        setHasOptionsMenu(true);
         return rootView;
+    }
+
+    private void updateViews() {
+        LinearLayoutManager lm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+        // Get adapter positions for first and last visible items on screen.
+        int firstVisible = lm.findFirstVisibleItemPosition();
+        int lastVisible = lm.findLastVisibleItemPosition();
+        for (int i = firstVisible; i <= lastVisible; i++) {
+            // Find the view that corresponds to this position in the adapter.
+            View visibleView = lm.findViewByPosition(i);
+            TextView priceText = visibleView.findViewById(R.id.price);
+            TextView nameText = visibleView.findViewById(R.id.name);
+            String name = nameText.getText().toString();
+            boolean isSelected = tracker.isSelected(name);
+            int price = Integer.parseInt(priceText.getText().toString());
+            View mCardView = visibleView.findViewById(R.id.card);
+            if (!isSelected) {
+                if (price > mCivicViewModel.getRemaining().getValue()) {
+                    mCardView.setAlpha(0.5F);
+                } else {
+                    mCardView.setAlpha(1.0F);
+                }
+            }
+        }
     }
 
     private void checkBuyable() {
@@ -301,6 +352,10 @@ public class AdvancesFragment extends Fragment
 
     public void onDestroy() {
         super.onDestroy();
+        tracker = null;
+        mCivicViewModel.getRemaining().removeObservers(requireActivity());
+        mCivicViewModel.getTreasure().removeObservers(requireActivity());
+        binding = null;
         Log.v("DEMO","---> onDestroy() <--- ");
     }
 
@@ -333,6 +388,7 @@ public class AdvancesFragment extends Fragment
 
                 // save bonuses to prefs
                 ((MainActivity) getActivity()).saveBonus();
+                mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
                 NavHostFragment.findNavController(this).popBackStack();
             } else
             {
