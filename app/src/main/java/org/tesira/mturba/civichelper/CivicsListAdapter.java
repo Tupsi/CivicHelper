@@ -58,7 +58,6 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         Resources res = holder.itemView.getResources();
         boolean isSelected = tracker.isSelected(name);
 
-//        checkVisibility();
         holder.bindName(name, getItemBackgroundColor(current, res));
         holder.bindPrice(current.getCurrentPrice());
         holder.bindBonus(current.getBonus());

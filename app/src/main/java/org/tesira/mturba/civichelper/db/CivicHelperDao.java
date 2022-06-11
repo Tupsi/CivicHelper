@@ -34,9 +34,6 @@ public interface CivicHelperDao {
     @Query("UPDATE cards SET bonus = :newBonus WHERE name = :name")
     void updateBonus(String name, int newBonus);
 
-//    @Query("SELECT * FROM cards WHERE name = :name ")
-//    LiveData<List<Card>> getAdvanceByName(String name);
-
     @Query("SELECT * FROM cards WHERE name = :name ")
     Card getAdvanceByNameToCard(String name);
 
@@ -52,8 +49,11 @@ public interface CivicHelperDao {
             "CASE WHEN :sortingOrder = 'family' THEN cards.family END ASC")
     List<Card> getAllAdvancesNotBought(String sortingOrder);
 
-//    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL AND currentPrice = 0")
-//    List<Card> getAdvancesForFree();
+    @Query("SELECT * FROM cards ORDER BY name ASC")
+    List<Card> getAllAdvancesSortedByName();
+
+    @Query("SELECT purchases.name FROM purchases ORDER BY name ASC")
+    List<String> getPurchases();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertPurchase(Purchase purchase);

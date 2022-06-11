@@ -77,4 +77,6 @@ public class CivicRepository {
     public List<Calamity> getCalamityBonus() {return mCivicDao.getCalamityBonus();}
     public List<String> getSpecialAbilities() {return mCivicDao.getSpecialAbilities();}
     public List<String> getImmunities() {return mCivicDao.getImmunities();}
+    public List<Card> getAllAdvancesSortedByName() {return mCivicDao.getAllAdvancesSortedByName();}
+    public List<String> getPurchases() {return mCivicDao.getPurchases();}
 }

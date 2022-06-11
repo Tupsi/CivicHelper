@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Civic Helper</string>
-    <string name="about_text">about text</string>
+    <string name="about_text">This is an app to for the board games Mega Civilization,
+        Western Empires and Eastern Empires to help out with the tracking of which civilization
+        advances could be bought and what they currently cost.
+        It calculates the bonuses of the colors.</string>
     <string name="money">Treasure</string>
     <!-- Preference Titles -->
     <string name="pref_civilization">Civilization</string>
@@ -11,7 +14,7 @@
     <!-- Menu Names -->
     <string name="item_preferences">Preferences</string>
     <string name="item_about">About</string>
-    <string name="item_advances">Advances</string>
+    <string name="item_advances">Buy Advances</string>
     <string name="item_search">Search</string>
 
     <!-- Buying Advances Fragment-->
@@ -33,5 +36,6 @@
     <string name="element_text">special ability</string>
     <string name="calamitytext">Calamitytext</string>
     <string name="value">value</string>
+    <string name="item_purchases">Purchases</string>
 
 </resources>

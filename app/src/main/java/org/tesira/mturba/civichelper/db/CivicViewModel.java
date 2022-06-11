@@ -45,7 +45,8 @@ public class CivicViewModel extends AndroidViewModel {
         return cachedCards;
     }
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
-
+    public List<Card> getAllAdvancesSortedByName() {return mRepository.getAllAdvancesSortedByName();}
+    public List<String> getPurchases() {return mRepository.getPurchases();}
     public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
     public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
     public List<String> getImmunities() {return mRepository.getImmunities();}

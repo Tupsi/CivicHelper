@@ -93,6 +93,10 @@ public class Card {
         return mPrice;
     }
 
+    public String getPriceAsString() {
+        return Integer.toString(mPrice);
+    }
+
     @NonNull
     public CardColor getGroup1() {
         return mGroup1;

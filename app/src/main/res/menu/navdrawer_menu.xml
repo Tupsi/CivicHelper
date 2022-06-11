@@ -4,8 +4,13 @@
 
     <item
         android:id="@+id/advancesFragment"
-        android:icon="@android:drawable/ic_dialog_dialer"
+        android:icon="@drawable/ic_baseline_add_shopping_cart_24"
         android:title="@string/item_advances" />
+    <item
+        android:id="@+id/purchasesFragment"
+        android:icon="@drawable/ic_baseline_currency_bitcoin_24"
+        android:title="@string/item_purchases" />
+
     <item
         android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_baseline_settings_24"
