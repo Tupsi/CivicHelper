@@ -9,6 +9,11 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
     <item
+        android:title="New Game"
+        android:menuCategory="secondary"
+        android:id="@+id/menu_newGame"
+        />
+    <item
         android:id="@+id/settingsFragment"
         android:menuCategory="secondary"
         android:title="@string/item_preferences" />

@@ -50,6 +50,7 @@ public class CivicViewModel extends AndroidViewModel {
     public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
     public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
     public List<String> getImmunities() {return mRepository.getImmunities();}
+    public int sumVp() {return mRepository.sumVp();}
 
     public void updateIsBuyable() {
         Log.v("MODEL", "remaining : " + remaining.getValue());

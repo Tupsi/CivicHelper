@@ -93,4 +93,7 @@ public interface CivicHelperDao {
 
     @Query("SELECT immunity.immunity FROM immunity LEFT JOIN purchases on immunity.advance = purchases.name WHERE purchases.name IS NOT NULL")
     List<String> getImmunities();
+
+    @Query("SELECT SUM(cards.vp) AS sum FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL")
+    int sumVp();
 }

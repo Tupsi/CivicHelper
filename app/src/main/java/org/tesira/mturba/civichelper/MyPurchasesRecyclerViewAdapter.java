@@ -55,7 +55,11 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
         if (mPurchases.contains(holder.mItem.getName())) {
 //            holder.mCardView.setAlpha(1.0F);
             holder.mCardView.setBackgroundResource(R.drawable.card_selected);
-            holder.mPrice.setVisibility(View.INVISIBLE);
+            holder.mPrice.setVisibility(View.GONE);
+            holder.mFamilyBox.setVisibility(View.GONE);
+            ViewGroup.LayoutParams params = holder.mCardView.getLayoutParams();
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            holder.mCardView.requestLayout();
         } else {
 //            holder.mCardView.setAlpha(0.5F);
         }

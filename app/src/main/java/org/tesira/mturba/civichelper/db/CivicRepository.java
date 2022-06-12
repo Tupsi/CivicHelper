@@ -79,4 +79,5 @@ public class CivicRepository {
     public List<String> getImmunities() {return mCivicDao.getImmunities();}
     public List<Card> getAllAdvancesSortedByName() {return mCivicDao.getAllAdvancesSortedByName();}
     public List<String> getPurchases() {return mCivicDao.getPurchases();}
+    public int sumVp() {return mCivicDao.sumVp();}
 }

@@ -38,8 +38,8 @@ public class HomeFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentHomeBinding.inflate(inflater, container,false);
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        binding.startBtn.setOnClickListener(this::onClickButton);
-        binding.resetBtn.setOnClickListener(this::onClickButton);
+//        binding.startBtn.setOnClickListener(this::onClickButton);
+//        binding.resetBtn.setOnClickListener(this::onClickButton);
         setHasOptionsMenu(true);
 //        mCivicViewModel.getAllPurchases().observeForever(purchases -> {
 //            for (Purchase name: purchases) {
@@ -65,6 +65,7 @@ public class HomeFragment extends Fragment {
         specialsList.addAll(mCivicViewModel.getImmunities());
         specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
         mRecyclerView.setAdapter(specialsAdapter);
+        binding.tvVp.setText("VP: " + mCivicViewModel.sumVp());
         return rootView;
     }
 
@@ -75,16 +76,20 @@ public class HomeFragment extends Fragment {
 
     public void onClickButton(View v) {
         switch (v.getId()) {
-            case R.id.startBtn:
-                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_advancesFragment);
-                break;
-            case R.id.resetBtn:
-                ((MainActivity) getActivity()).newGame();
-                loadBonus();
-                calamityAdapter.clearData();
-                specialsAdapter.clearData();
-                break;
+//            case R.id.startBtn:
+//                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_advancesFragment);
+//                break;
+//            case R.id.resetBtn:
+//                resetGame();
+//                break;
         }
+    }
+
+    public void resetGame() {
+        ((MainActivity) getActivity()).newGame();
+        loadBonus();
+        calamityAdapter.clearData();
+        specialsAdapter.clearData();
     }
 
     public void loadBonus() {
@@ -108,7 +113,15 @@ public class HomeFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.menu_newGame:
+                resetGame();
+                return true;
+
+            default:
+                return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
+        }
+//        return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
     }
 
     public void onPause() {
