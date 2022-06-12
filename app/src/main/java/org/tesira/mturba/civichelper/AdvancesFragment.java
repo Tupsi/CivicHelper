@@ -233,23 +233,27 @@ public class AdvancesFragment extends Fragment
 
     private void updateViews() {
         LinearLayoutManager lm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-        // Get adapter positions for first and last visible items on screen.
-        int firstVisible = lm.findFirstVisibleItemPosition();
-        int lastVisible = lm.findLastVisibleItemPosition();
-        for (int i = firstVisible; i <= lastVisible; i++) {
-            // Find the view that corresponds to this position in the adapter.
-            View visibleView = lm.findViewByPosition(i);
-            TextView priceText = visibleView.findViewById(R.id.price);
-            TextView nameText = visibleView.findViewById(R.id.name);
-            String name = nameText.getText().toString();
-            boolean isSelected = tracker.isSelected(name);
-            int price = Integer.parseInt(priceText.getText().toString());
-            View mCardView = visibleView.findViewById(R.id.card);
-            if (!isSelected) {
-                if (price > mCivicViewModel.getRemaining().getValue()) {
-                    mCardView.setAlpha(0.5F);
-                } else {
-                    mCardView.setAlpha(1.0F);
+        if (lm != null) {
+            // Get adapter positions for first and last visible items on screen.
+            int firstVisible = lm.findFirstVisibleItemPosition();
+            int lastVisible = lm.findLastVisibleItemPosition();
+            for (int i = firstVisible; i <= lastVisible; i++) {
+                // Find the view that corresponds to this position in the adapter.
+                View visibleView = lm.findViewByPosition(i);
+                if (visibleView != null) {
+                    TextView priceText = visibleView.findViewById(R.id.price);
+                    TextView nameText = visibleView.findViewById(R.id.name);
+                    String name = nameText.getText().toString();
+                    boolean isSelected = tracker.isSelected(name);
+                    int price = Integer.parseInt(priceText.getText().toString());
+                    View mCardView = visibleView.findViewById(R.id.card);
+                    if (!isSelected) {
+                        if (price > mCivicViewModel.getRemaining().getValue()) {
+                            mCardView.setAlpha(0.5F);
+                        } else {
+                            mCardView.setAlpha(1.0F);
+                        }
+                    }
                 }
             }
         }
