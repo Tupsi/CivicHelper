@@ -53,7 +53,10 @@ public interface CivicHelperDao {
     List<Card> getAllAdvancesSortedByName();
 
     @Query("SELECT purchases.name FROM purchases ORDER BY name ASC")
-    List<String> getPurchases();
+    List<String> getPurchasesAsString();
+
+    @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL")
+    List<Card> getPurchasesAsCard();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertPurchase(Purchase purchase);

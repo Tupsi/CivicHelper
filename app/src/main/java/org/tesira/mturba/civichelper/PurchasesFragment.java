@@ -65,7 +65,7 @@ public class PurchasesFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyPurchasesRecyclerViewAdapter(mCivicViewModel.getAllAdvancesSortedByName(), mCivicViewModel.getPurchases()));
+            recyclerView.setAdapter(new MyPurchasesRecyclerViewAdapter(mCivicViewModel.getPurchasesAsCard()));
         }
         return view;
     }

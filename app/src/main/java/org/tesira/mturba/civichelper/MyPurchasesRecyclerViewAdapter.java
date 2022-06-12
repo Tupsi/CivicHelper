@@ -21,11 +21,9 @@ import java.util.List;
 public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurchasesRecyclerViewAdapter.ViewHolder> {
 
     private final List<Card> mValues;
-    private final List<String> mPurchases;
 
-    public MyPurchasesRecyclerViewAdapter(List<Card> items, List<String> purchases) {
+    public MyPurchasesRecyclerViewAdapter(List<Card> items) {
         mValues = items;
-        mPurchases = purchases;
     }
 
     @Override
@@ -52,17 +50,17 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
         String bonus = "+" + holder.mItem.getBonus() + " to " + holder.mItem.getBonusCard();
         holder.mBonus.setText(bonus);
 
-        if (mPurchases.contains(holder.mItem.getName())) {
-//            holder.mCardView.setAlpha(1.0F);
-            holder.mCardView.setBackgroundResource(R.drawable.card_selected);
-            holder.mPrice.setVisibility(View.GONE);
-            holder.mFamilyBox.setVisibility(View.GONE);
-            ViewGroup.LayoutParams params = holder.mCardView.getLayoutParams();
-            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            holder.mCardView.requestLayout();
-        } else {
-//            holder.mCardView.setAlpha(0.5F);
-        }
+//        if (mPurchases.contains(holder.mItem.getName())) {
+////            holder.mCardView.setAlpha(1.0F);
+//            holder.mCardView.setBackgroundResource(R.drawable.card_selected);
+//            holder.mPrice.setVisibility(View.GONE);
+//            holder.mFamilyBox.setVisibility(View.GONE);
+//            ViewGroup.LayoutParams params = holder.mCardView.getLayoutParams();
+//            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//            holder.mCardView.requestLayout();
+//        } else {
+////            holder.mCardView.setAlpha(0.5F);
+//        }
     }
 
     @Override

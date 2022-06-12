@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -125,24 +126,26 @@ public class AdvancesFragment extends Fragment
         mAdapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff(), mLayout, this);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.submitList(listCivics);
-//        myItemKeyProvider.setItemList(listCivics);
-
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
         mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> {
             Log.v("OBSERVER", "Treasure :");
             mTreasureInput.setText(String.valueOf(treasure));
+            mCivicViewModel.setRemaining(treasure);
+//            mRemainingText.setText(String.valueOf(treasure));
+            if (tracker != null) {
+                tracker.clearSelection();
+            }
             mAdapter.notifyDataSetChanged();
+//            updateViews();
+            mRecyclerView.setAdapter(mAdapter);
         });
-        mObserver = new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer remaining) {
-                Log.v("OBSERVER", "treasure remaining : " + remaining);
-                if (AdvancesFragment.this.getContext() != null) {
-                    mRemainingText.setText(String.valueOf(remaining));
-                    if (tracker != null) {
-                        updateViews();
-                    }
+        mObserver = remaining -> {
+            Log.v("OBSERVER", "treasure remaining : " + remaining);
+            if (AdvancesFragment.this.getContext() != null) {
+                mRemainingText.setText(String.valueOf(remaining));
+                if (tracker != null) {
+                    updateViews();
                 }
             }
         };
@@ -168,8 +171,22 @@ public class AdvancesFragment extends Fragment
                 // hide virtual keyboard on enter
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mTreasureInput.getWindowToken(), 0);
+//                mCivicViewModel.calculateTotal(currentSelection);
                 return true;
         });
+//        mTreasureInput.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                // If the event is a key-down event on the "enter" button
+//                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+//                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+//                    // Perform action on key press
+////                    Toast.makeText(v.getContext(), mTreasureInput.getText(), Toast.LENGTH_SHORT).show();
+//                    return false;
+//                }
+//                return false;
+//            }
+//        });
 
         binding.btnBuy.setOnClickListener(v -> {
             buyAdvances();
@@ -336,22 +353,22 @@ public class AdvancesFragment extends Fragment
 
     public void onStart() {
         super.onStart();
-        Log.v("DEMO","---> onStart() <--- ");
+        Log.v("ADVANCES","---> onStart() <--- ");
     }
 
     public void onResume() {
         super.onResume();
-        Log.v("DEMO","---> onResume() <--- ");
+        Log.v("ADVANCES","---> onResume() <--- ");
     }
 
     public void onPause() {
         super.onPause();
-        Log.v("DEMO","---> onPause() <--- ");
+        Log.v("ADVANCES","---> onPause() <--- ");
     }
 
     public void onStop() {
         super.onStop();
-        Log.v("DEMO","---> onStop() <--- ");
+        Log.v("DEADVANCESO","---> onStop() <--- ");
     }
 
     public void onDestroy() {
@@ -360,7 +377,7 @@ public class AdvancesFragment extends Fragment
         mCivicViewModel.getRemaining().removeObservers(requireActivity());
         mCivicViewModel.getTreasure().removeObservers(requireActivity());
         binding = null;
-        Log.v("DEMO","---> onDestroy() <--- ");
+        Log.v("ADVANCES","---> onDestroy() <--- ");
     }
 
     public void showToast(String text) {
@@ -392,7 +409,9 @@ public class AdvancesFragment extends Fragment
 
                 // save bonuses to prefs
                 ((MainActivity) getActivity()).saveBonus();
-                mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
+//                mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
+                mCivicViewModel.setRemaining(0);
+                mCivicViewModel.setTreasure(0);
                 NavHostFragment.findNavController(this).popBackStack();
             } else
             {

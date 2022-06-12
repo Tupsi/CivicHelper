@@ -46,7 +46,8 @@ public class CivicViewModel extends AndroidViewModel {
     }
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
     public List<Card> getAllAdvancesSortedByName() {return mRepository.getAllAdvancesSortedByName();}
-    public List<String> getPurchases() {return mRepository.getPurchases();}
+    public List<String> getPurchasesAsString() {return mRepository.getPurchasesAsString();}
+    public List<Card> getPurchasesAsCard() {return mRepository.getPurchasesAsCard();}
     public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
     public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
     public List<String> getImmunities() {return mRepository.getImmunities();}
@@ -134,13 +135,14 @@ public class CivicViewModel extends AndroidViewModel {
      */
     public void calculateTotal(Selection<String> selection) {
         int newTotal = 0;
-        for (String name : selection) {
-            Card adv = getAdvanceByName(name);
-            newTotal += adv.getCurrentPrice();
+        if (selection.size() > 0) {
+            for (String name : selection) {
+                Card adv = getAdvanceByName(name);
+                newTotal += adv.getCurrentPrice();
+            }
+            this.remaining.setValue(treasure.getValue() - newTotal);
         }
-        this.remaining.setValue(treasure.getValue() - newTotal);
     }
-
     /**
      * Adds the bonuses of a bought card to the cardBonus HashSet.
      * @param name The name of the bought card.
