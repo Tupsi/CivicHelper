@@ -1,8 +1,10 @@
 package org.tesira.mturba.civichelper;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -86,10 +88,31 @@ public class HomeFragment extends Fragment {
     }
 
     public void resetGame() {
-        ((MainActivity) getActivity()).newGame();
-        loadBonus();
-        calamityAdapter.clearData();
-        specialsAdapter.clearData();
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+                        ((MainActivity) getActivity()).newGame();
+                        loadBonus();
+                        calamityAdapter.clearData();
+                        specialsAdapter.clearData();
+                        binding.tvVp.setText("VP: 0");
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+
     }
 
     public void loadBonus() {

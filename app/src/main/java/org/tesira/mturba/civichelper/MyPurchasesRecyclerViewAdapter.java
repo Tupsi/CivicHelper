@@ -39,7 +39,7 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
         holder.mItem = mValues.get(position);
         holder.mName.setText(mValues.get(position).getName());
         holder.mName.setBackground(CivicsListAdapter.getItemBackgroundColor(holder.mItem, holder.itemView.getResources()));
-        holder.mPrice.setText(Integer.toString(mValues.get(position).getCurrentPrice()));
+        holder.mPrice.setText(Integer.toString(mValues.get(position).getPrice()));
 
         if (holder.mItem.getBonus() > 0) {
             holder.mFamilyBox.setVisibility(View.VISIBLE);
