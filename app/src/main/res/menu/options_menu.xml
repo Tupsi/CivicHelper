@@ -3,20 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_black_24dp"
-        android:title="@string/item_search"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="ifRoom|collapseActionView" />
+        android:id="@+id/settingsFragment"
+        android:menuCategory="secondary"
+        android:title="@string/item_preferences" />
     <item
         android:title="New Game"
         android:menuCategory="secondary"
         android:id="@+id/menu_newGame"
         />
-    <item
-        android:id="@+id/settingsFragment"
-        android:menuCategory="secondary"
-        android:title="@string/item_preferences" />
     <item
         android:id="@+id/aboutFragment"
         android:menuCategory="secondary"

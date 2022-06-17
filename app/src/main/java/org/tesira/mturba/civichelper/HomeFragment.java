@@ -68,7 +68,11 @@ public class HomeFragment extends Fragment {
         specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
         mRecyclerView.setAdapter(specialsAdapter);
         binding.tvVp.setText("VP: " + mCivicViewModel.sumVp());
+        checkAST();
         return rootView;
+    }
+
+    private void checkAST() {
     }
 
     @Override

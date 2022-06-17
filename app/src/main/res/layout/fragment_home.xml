@@ -8,36 +8,21 @@
     tools:context=".HomeFragment">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
         android:id="@+id/tvBoni"
-        android:layout_width="109dp"
-        android:layout_height="23dp"
+        android:layout_width="125dp"
+        android:layout_height="0dp"
         android:layout_margin="16dp"
         android:text="Colorbonus"
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bonusBlue"
         android:layout_width="@dimen/color_bonus"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:gravity="end"
         android:padding="5dp"
@@ -117,50 +102,93 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listCalamity"
         android:layout_width="275dp"
-        android:layout_height="180dp"
-        android:layout_margin="16dp"
-        android:layout_marginTop="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="16dp"
         app:layoutManager="LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineMitte"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvCalamityBonus"
+        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/item_row_calamity" />
+
+    <TextView
+        android:id="@+id/tvVp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="312dp"
+        android:layout_marginTop="16dp"
+        android:text="VP"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineMitte"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
 
     <TextView
         android:id="@+id/tvSpecials"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
         android:text="Special Abilities and Immunities"
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listCalamity" />
+        app:layout_constraintTop_toTopOf="@+id/guidelineMitte" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listAbility"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="176dp"
         android:layout_margin="16dp"
         android:layout_marginEnd="60dp"
         app:layoutManager="LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvSpecials"
+        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/item_row_specials" />
 
     <TextView
-        android:id="@+id/tvVp"
+        android:id="@+id/tvMBA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="310dp"
-        android:layout_marginTop="41dp"
-        android:text="TextView"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="MBA"
+        app:layout_constraintStart_toStartOf="@+id/tvVp"
+        app:layout_constraintTop_toBottomOf="@+id/tvVp" />
+
+    <TextView
+        android:id="@+id/tvLBA"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LBA"
+        app:layout_constraintStart_toStartOf="@+id/tvMBA"
+        app:layout_constraintTop_toBottomOf="@+id/tvMBA" />
+
+    <TextView
+        android:id="@+id/tvEIA"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EIA"
+        app:layout_constraintStart_toStartOf="@+id/tvLBA"
+        app:layout_constraintTop_toBottomOf="@+id/tvLBA" />
+
+    <TextView
+        android:id="@+id/tvLIA"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LIA"
+        app:layout_constraintStart_toStartOf="@+id/tvEIA"
+        app:layout_constraintTop_toBottomOf="@+id/tvEIA" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
