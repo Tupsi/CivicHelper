@@ -5,4 +5,5 @@
     <dimen name="margin_medium">5dp</dimen>
     <dimen name="color_bonus">50dp</dimen>
     <dimen name="text_size_bonus">16sp</dimen>
+    <dimen name="ast_marker">35dp</dimen>
 </resources>

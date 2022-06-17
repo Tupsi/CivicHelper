@@ -37,12 +37,14 @@ public class HomeFragment extends Fragment {
     private CivicViewModel mCivicViewModel;
     private CalamityAdapter calamityAdapter;
     private SpecialsAdapter specialsAdapter;
+    private SharedPreferences prefs;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentHomeBinding.inflate(inflater, container,false);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
 //        binding.startBtn.setOnClickListener(this::onClickButton);
 //        binding.resetBtn.setOnClickListener(this::onClickButton);
@@ -71,6 +73,8 @@ public class HomeFragment extends Fragment {
         specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
         mRecyclerView.setAdapter(specialsAdapter);
         binding.tvVp.setText("VP: " + mCivicViewModel.sumVp());
+        String civicAST = prefs.getString("civilization", "set civic in preferences");
+        binding.tvCivilization.setText("A.S.T. ranking order: " + civicAST);
         checkAST();
         return rootView;
     }
@@ -80,7 +84,6 @@ public class HomeFragment extends Fragment {
      * the background on the dashboard of the respective info textview
      */
     private void checkAST() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         String ast = prefs.getString("ast","basic");
         int vp = mCivicViewModel.sumVp();
         Log.v("checkAST", ast);

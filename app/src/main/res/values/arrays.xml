@@ -12,26 +12,6 @@
     </string-array>
 
     <string-array name="civilizations_entries">
-        <item>Minoa (AST# 1)</item>
-        <item>Saba (AST# 2)</item>
-        <item>Assyria (AST# 3)</item>
-        <item>Maurya (AST# 4)</item>
-        <item>Celt (AST# 5)</item>
-        <item>Babylon (AST# 6)</item>
-        <item>Carthage (AST# 7)</item>
-        <item>Dravidia (AST# 8)</item>
-        <item>Hati (AST# 9)</item>
-        <item>Kushan (AST#10)</item>
-        <item>Rome (AST#11)</item>
-        <item>Persia (AST#12)</item>
-        <item>Iberia (AST#13)</item>
-        <item>Nubia (AST#14)</item>
-        <item>Hellas (AST#15)</item>
-        <item>Indus (AST#16)</item>
-        <item>Egypt (AST#17)</item>
-        <item>Parthia (AST#18)</item>
-    </string-array>
-    <string-array name="civilizations_values">
         <item>Minoa</item>
         <item>Saba</item>
         <item>Assyria</item>
@@ -50,6 +30,26 @@
         <item>Indus</item>
         <item>Egypt</item>
         <item>Parthia</item>
+    </string-array>
+    <string-array name="civilizations_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
     </string-array>
     <string-array name="columns_entries">
         <item>1</item>

@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/tvBoni"
-        android:layout_width="125dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_margin="16dp"
         android:text="Colorbonus"
@@ -103,12 +103,11 @@
         android:id="@+id/listCalamity"
         android:layout_width="275dp"
         android:layout_height="0dp"
-        android:layout_marginLeft="16dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/guidelineMitte"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvCalamityBonus"
         app:layout_constraintTop_toBottomOf="@+id/tvCalamityBonus"
         app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/item_row_calamity" />
@@ -147,21 +146,20 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listAbility"
         android:layout_width="0dp"
-        android:layout_height="176dp"
-        android:layout_margin="16dp"
-        android:layout_marginEnd="60dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvSpecials"
         app:layout_constraintTop_toBottomOf="@+id/tvSpecials"
         app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/item_row_specials" />
 
     <TextView
         android:id="@+id/tvMBA"
-        android:layout_width="@dimen/color_bonus"
+        android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
         android:background="@color/ast_red"
         android:text="MBA"
@@ -171,32 +169,46 @@
 
     <TextView
         android:id="@+id/tvLBA"
-        android:layout_width="@dimen/color_bonus"
+        android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
         android:background="@color/ast_red"
         android:text="LBA"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvMBA"
         app:layout_constraintStart_toStartOf="@+id/tvMBA"
         app:layout_constraintTop_toBottomOf="@+id/tvMBA" />
 
     <TextView
         android:id="@+id/tvEIA"
-        android:layout_width="@dimen/color_bonus"
+        android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
         android:background="@color/ast_red"
         android:text="EIA"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvLBA"
         app:layout_constraintStart_toStartOf="@+id/tvLBA"
         app:layout_constraintTop_toBottomOf="@+id/tvLBA" />
 
     <TextView
         android:id="@+id/tvLIA"
-        android:layout_width="@dimen/color_bonus"
+        android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
         android:background="@color/ast_red"
         android:text="LIA"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvEIA"
         app:layout_constraintStart_toStartOf="@+id/tvEIA"
         app:layout_constraintTop_toBottomOf="@+id/tvEIA" />
+
+    <TextView
+        android:id="@+id/tvCivilization"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:text="civic not set!"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="@+id/tvBoni"
+        app:layout_constraintStart_toEndOf="@+id/tvBoni"
+        app:layout_constraintTop_toTopOf="@+id/tvBoni" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
