@@ -205,7 +205,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="20dp"
-        android:text="civic not set!"
+        android:text="ast rank order"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="@+id/tvBoni"
         app:layout_constraintStart_toEndOf="@+id/tvBoni"

@@ -73,7 +73,7 @@ public class HomeFragment extends Fragment {
         specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
         mRecyclerView.setAdapter(specialsAdapter);
         binding.tvVp.setText("VP: " + mCivicViewModel.sumVp());
-        String civicAST = prefs.getString("civilization", "set civic in preferences");
+        String civicAST = prefs.getString("civilization", "not set");
         binding.tvCivilization.setText("A.S.T. ranking order: " + civicAST);
         checkAST();
         return rootView;
