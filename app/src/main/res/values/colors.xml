@@ -17,4 +17,8 @@
     <color name="dark_grey">#88676767</color>
     <color name="red">#6f0000</color>
     <color name="green">#136e42</color>
+
+    <color name="ast_green">#48a413</color>
+    <color name="ast_red">#da0000</color>
+
 </resources>

@@ -1,6 +1,8 @@
 package org.tesira.mturba.civichelper;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,9 +18,11 @@ import android.view.ViewGroup;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import org.tesira.mturba.civichelper.databinding.FragmentHomeBinding;
+import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CardColor;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 import java.util.List;
@@ -53,7 +57,6 @@ public class HomeFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         calamityAdapter = new CalamityAdapter(mCivicViewModel.getCalamityBonus(), this.getContext());
         mRecyclerView.setAdapter(calamityAdapter);
-
         mRecyclerView = rootView.findViewById(R.id.listAbility);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         List<String> specialsList = mCivicViewModel.getSpecialAbilities();
@@ -72,7 +75,63 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * checks if certain requirements are set to advance further on the AST and sets
+     * the background on the dashboard of the respective info textview
+     */
     private void checkAST() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        String ast = prefs.getString("ast","basic");
+        int vp = mCivicViewModel.sumVp();
+        Log.v("checkAST", ast);
+        List<Card> allPurchases = mCivicViewModel.getPurchasesAsCard();
+        int size100 = 0, size200 = 0, size;
+        size = allPurchases.size();
+        for (Card card: allPurchases) {
+            if (card.getPrice() >= 100) {
+                size100++;
+            }
+            if (card.getPrice() >= 200) {
+                size200++;
+            }
+        }
+        Log.v("checkAST","100: " + size100 + " 200: " + size200);
+        if (ast.compareTo("basic") == 0){
+            if (size >= 3) {
+                // MBA needs 3 cities & 3 cards
+                binding.tvMBA.setBackgroundResource(R.color.ast_green);
+            }
+            if (size >= 3 && size100 >= 3) {
+                // LBA needs 3 cities & 3 cards 100+
+                binding.tvLBA.setBackgroundResource(R.color.ast_green);
+            }
+            if (size >= 2 && size200 >= 2) {
+                // EIA needs 4 cities & 2 cards 200+
+                binding.tvEIA.setBackgroundResource(R.color.ast_green);
+            }
+            if (size >= 3 && size200 >= 3) {
+                // LEA needs 5 cities & 3 cards 200+
+                binding.tvLIA.setBackgroundResource(R.color.ast_green);
+            }
+        } else {
+            // expert version needs a bit more
+            if (vp >= 5) {
+                // MBA needs 3 cities & 5 VP
+                binding.tvMBA.setBackgroundResource(R.color.ast_green);
+            }
+            if (size >= 12) {
+                // LBA needs 4 cities & 12 cards
+                binding.tvLBA.setBackgroundResource(R.color.ast_green);
+            }
+            if (size100 >= 10 && vp >= 38) {
+                // EIA needs 5 cities & 10 cards 100+ & 38 VP
+                binding.tvEIA.setBackgroundResource(R.color.ast_green);
+            }
+            if (size100 >= 17 && vp >= 56) {
+                // LEA needs 6 cities & 17 cards 100+ & 56 VP
+                binding.tvLIA.setBackgroundResource(R.color.ast_green);
+            }
+        }
     }
 
     @Override
@@ -104,6 +163,10 @@ public class HomeFragment extends Fragment {
                         calamityAdapter.clearData();
                         specialsAdapter.clearData();
                         binding.tvVp.setText("VP: 0");
+                        binding.tvMBA.setBackgroundResource(R.color.ast_red);
+                        binding.tvLBA.setBackgroundResource(R.color.ast_red);
+                        binding.tvEIA.setBackgroundResource(R.color.ast_red);
+                        binding.tvLIA.setBackgroundResource(R.color.ast_red);
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:

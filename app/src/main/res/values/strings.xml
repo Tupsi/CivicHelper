@@ -44,5 +44,6 @@
     <string name="calamitytext">Calamitytext</string>
     <string name="value">value</string>
     <string name="item_purchases">Purchases</string>
+    <string name="pref_ast">AST Version</string>
 
 </resources>

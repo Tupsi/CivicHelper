@@ -10,6 +10,13 @@
             android:entryValues="@array/civilizations_values"/>
 
         <ListPreference
+            android:title="@string/pref_ast"
+            app:key="ast"
+            android:entries="@array/ast_entries"
+            app:useSimpleSummaryProvider="true"
+            android:entryValues="@array/ast_values"/>
+
+        <ListPreference
             app:defaultValue="name"
             app:entries="@array/sort_entries"
             app:entryValues="@array/sort_values"
