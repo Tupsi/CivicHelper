@@ -167,6 +167,9 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
                 case "Philosophy":
                     backgroundColor = R.drawable.philosophy_background;
                 break;
+                case "Monument":
+                    backgroundColor = R.drawable.monument_background;
+                    break;
             }
         }
         return ResourcesCompat.getDrawable(res,backgroundColor, null);

@@ -16,6 +16,7 @@
         <family>1</family>
         <vp>3</vp>
         <group>ORANGE</group>
+        <group>YELLOW</group>
         <price>180</price>
         <credit group="ORANGE">10</credit>
         <credit group="YELLOW">10</credit>
@@ -59,7 +60,7 @@
         <price>230</price>
         <credit group="ORANGE">20</credit>
         <credit group="GREEN">5</credit>
-        <effect name="Slave Revolt">5</effect>
+        <effect name="Slave Revolt">1</effect>
     </advance>
     <advance>
         <name>Cloth Making</name>
@@ -496,7 +497,7 @@
         <group>GREEN</group>
         <price>90</price>
         <credit group="GREEN">10</credit>
-        <credit group="YELLOW">5</credit>
+        <credit group="RED">5</credit>
         <effect name="Corruption">-5</effect>
     </advance>
      <advance>

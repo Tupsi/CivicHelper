@@ -230,6 +230,9 @@ public class AdvancesFragment extends Fragment
                 super.onSelectionChanged();
                 Log.v("OBSERVER", "inside onSelectionChanged");
                 mCivicViewModel.calculateTotal(currentSelection);
+                if (currentSelection.size() == 0) {
+                    mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
+                }
 //                updateViews();
             }
 
