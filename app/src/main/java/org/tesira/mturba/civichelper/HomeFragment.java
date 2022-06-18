@@ -15,6 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -76,6 +78,7 @@ public class HomeFragment extends Fragment {
         String civicAST = prefs.getString("civilization", "not set");
         binding.tvCivilization.setText("A.S.T. ranking order: " + civicAST);
         checkAST();
+
         return rootView;
     }
 
@@ -83,7 +86,8 @@ public class HomeFragment extends Fragment {
      * checks if certain requirements are set to advance further on the AST and sets
      * the background on the dashboard of the respective info textview
      */
-    private void checkAST() {
+    public void checkAST() {
+        int cities = mCivicViewModel.getCities();
         String ast = prefs.getString("ast","basic");
         int vp = mCivicViewModel.sumVp();
         Log.v("checkAST", ast);
@@ -100,37 +104,37 @@ public class HomeFragment extends Fragment {
         }
         Log.v("checkAST","100: " + size100 + " 200: " + size200);
         if (ast.compareTo("basic") == 0){
-            if (size >= 3) {
+            if (size >= 3 && cities >= 3) {
                 // MBA needs 3 cities & 3 cards
                 binding.tvMBA.setBackgroundResource(R.color.ast_green);
             }
-            if (size >= 3 && size100 >= 3) {
+            if (size >= 3 && size100 >= 3 && cities >= 3) {
                 // LBA needs 3 cities & 3 cards 100+
                 binding.tvLBA.setBackgroundResource(R.color.ast_green);
             }
-            if (size >= 2 && size200 >= 2) {
+            if (size >= 2 && size200 >= 2 && cities >= 4) {
                 // EIA needs 4 cities & 2 cards 200+
                 binding.tvEIA.setBackgroundResource(R.color.ast_green);
             }
-            if (size >= 3 && size200 >= 3) {
+            if (size >= 3 && size200 >= 3 && cities >= 5) {
                 // LEA needs 5 cities & 3 cards 200+
                 binding.tvLIA.setBackgroundResource(R.color.ast_green);
             }
         } else {
             // expert version needs a bit more
-            if (vp >= 5) {
+            if (vp >= 5 && cities >= 3) {
                 // MBA needs 3 cities & 5 VP
                 binding.tvMBA.setBackgroundResource(R.color.ast_green);
             }
-            if (size >= 12) {
+            if (size >= 12 && cities >= 4) {
                 // LBA needs 4 cities & 12 cards
                 binding.tvLBA.setBackgroundResource(R.color.ast_green);
             }
-            if (size100 >= 10 && vp >= 38) {
+            if (size100 >= 10 && vp >= 38 && cities >= 5) {
                 // EIA needs 5 cities & 10 cards 100+ & 38 VP
                 binding.tvEIA.setBackgroundResource(R.color.ast_green);
             }
-            if (size100 >= 17 && vp >= 56) {
+            if (size100 >= 17 && vp >= 56 && cities >= 6) {
                 // LEA needs 6 cities & 17 cards 100+ & 56 VP
                 binding.tvLIA.setBackgroundResource(R.color.ast_green);
             }
@@ -170,6 +174,7 @@ public class HomeFragment extends Fragment {
                         binding.tvLBA.setBackgroundResource(R.color.ast_red);
                         binding.tvEIA.setBackgroundResource(R.color.ast_red);
                         binding.tvLIA.setBackgroundResource(R.color.ast_red);
+                        binding.radio0.setChecked(true);
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
@@ -216,6 +221,7 @@ public class HomeFragment extends Fragment {
         }
 //        return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
     }
+
 
     public void onPause() {
         super.onPause();

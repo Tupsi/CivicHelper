@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.RadioButton;
 
 import org.tesira.mturba.civichelper.databinding.ActivityMainBinding;
 import org.tesira.mturba.civichelper.db.CardColor;
@@ -118,4 +120,57 @@ public class MainActivity extends AppCompatActivity {
         binding = null;
         Log.v("MAIN","---> onDestroy() <--- ");
     }
+
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radio_0:
+                if (checked)
+                    mCivicViewModel.setCities(0);
+                    break;
+            case R.id.radio_1:
+                if (checked)
+                    mCivicViewModel.setCities(1);
+                    break;
+            case R.id.radio_2:
+                if (checked)
+                    mCivicViewModel.setCities(2);
+                break;
+            case R.id.radio_3:
+                if (checked)
+                    mCivicViewModel.setCities(3);
+                break;
+            case R.id.radio_4:
+                if (checked)
+                    mCivicViewModel.setCities(4);
+                break;
+            case R.id.radio_5:
+                if (checked)
+                    mCivicViewModel.setCities(5);
+                break;
+            case R.id.radio_6:
+                if (checked)
+                    mCivicViewModel.setCities(6);
+                break;
+            case R.id.radio_7:
+                if (checked)
+                    mCivicViewModel.setCities(7);
+                break;
+            case R.id.radio_8:
+                if (checked)
+                    mCivicViewModel.setCities(8);
+                break;
+            case R.id.radio_9:
+                if (checked)
+                    mCivicViewModel.setCities(9);
+                break;
+        }
+//        HomeFragment home = getFragmentManager().findFragmentById(R.id.homeFragment);
+//        home.checkAST();
+
+    }
+
 }

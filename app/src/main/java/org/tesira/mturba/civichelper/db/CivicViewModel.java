@@ -23,6 +23,7 @@ public class CivicViewModel extends AndroidViewModel {
     private MutableLiveData<Integer> treasure;
     private MutableLiveData<Integer> remaining;
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
+    private int cities;
 
     public CivicViewModel(@NonNull Application application) throws ExecutionException, InterruptedException {
         super(application);
@@ -31,6 +32,15 @@ public class CivicViewModel extends AndroidViewModel {
         cachedCards = mRepository.getAllCards();
         treasure = new MutableLiveData<>();
         remaining = new MutableLiveData<>();
+        cities = 0;
+    }
+
+    public int getCities() {
+        return cities;
+    }
+
+    public void setCities(int cities) {
+        this.cities = cities;
     }
 
     public void insertPurchase(String purchase) {mRepository.insertPurchase(purchase);}
