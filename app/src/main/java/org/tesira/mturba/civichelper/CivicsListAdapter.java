@@ -62,6 +62,7 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         holder.bindPrice(current.getCurrentPrice());
         holder.bindBonus(current.getBonus());
         holder.bindBonusCard(current.getBonusCard());
+        holder.vpItemView.setText(String.valueOf(current.getVp()));
 
         if (tracker.hasSelection()) {
             Log.v("HOLDER", "inside onBindViewHolder :" + name + " : Position: " + position);

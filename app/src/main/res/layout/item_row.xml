@@ -28,8 +28,8 @@
             android:id="@+id/familylayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:background="@drawable/item_background"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
@@ -58,6 +58,7 @@
                 android:layout_marginEnd="148dp"
                 android:layout_marginBottom="26dp"
                 android:text="TextView" />
+
         </LinearLayout>
 
         <TextView
@@ -92,6 +93,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/vp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
+            android:background="@drawable/ic_shield"
+            android:gravity="center"
+            android:text="VP"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/price"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/price"
+            app:layout_constraintVertical_bias="1.0" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
