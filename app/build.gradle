@@ -41,11 +41,11 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerview"
     implementation "androidx.recyclerview:recyclerview-selection:$rootProject.recyclerviewSelection"
-    implementation 'androidx.databinding:databinding-runtime:7.1.3'
+    implementation 'androidx.databinding:databinding-runtime:7.2.1'
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
 
-    implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
+    implementation "androidx.appcompat:appcompat:1.4.2"
 
     // Navigation components
     implementation "androidx.navigation:navigation-fragment:$rootProject.navigationVersion"
@@ -66,13 +66,13 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:$rootProject.lifecycleVersion"
 
     // UI
-    implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
-    implementation "com.google.android.material:material:$rootProject.materialVersion"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+    implementation "com.google.android.material:material:1.6.1"
 
     // Testing
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "androidx.arch.core:core-testing:$rootProject.coreTestingVersion"
-    androidTestImplementation ("androidx.test.espresso:espresso-core:$rootProject.espressoVersion", {
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     androidTestImplementation "androidx.test.ext:junit:$rootProject.androidxJunitVersion"

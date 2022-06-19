@@ -45,7 +45,6 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
     public void bindBonus(int bonus) {bonusItemView.setText(String.valueOf(bonus));}
     public void bindIsActive(boolean isActive) {mCardView.setActivated(isActive);}
 
-
     static CivicsViewHolder create(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_row, parent, false);

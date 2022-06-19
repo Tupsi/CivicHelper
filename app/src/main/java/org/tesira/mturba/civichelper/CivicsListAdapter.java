@@ -45,7 +45,6 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
     @NonNull
     @Override
     public CivicsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.v("HOLDER", "inside onCreateViewHolder :" + viewType);
         return CivicsViewHolder.create(parent);
     }
 
@@ -69,13 +68,14 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         }
 
         holder.bindIsActive(isSelected);
-        holder.itemView.setOnClickListener(v -> {
-            // clicked on single card in list
-            Log.v("HOLDER", "inside onBindViewHolder onClickListener");
-            tracker.select(name);
-//            Toast.makeText(v.getContext(), name
-//                    + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_SHORT).show();
-        });
+        // not neede because
+//        holder.itemView.setOnClickListener(v -> {
+//            // clicked on single card in list
+//            Log.v("HOLDER", "inside onBindViewHolder onClickListener");
+//            tracker.select(name);
+////            Toast.makeText(v.getContext(), name
+////                    + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_SHORT).show();
+//        });
         if (!isSelected && price == 0) {
             tracker.select(name);
         } else {

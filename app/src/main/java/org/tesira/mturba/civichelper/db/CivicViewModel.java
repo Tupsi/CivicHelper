@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.SavedStateHandle;
 import androidx.recyclerview.selection.Selection;
 
 import org.tesira.mturba.civichelper.Calamity;
@@ -18,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 
 public class CivicViewModel extends AndroidViewModel {
 
+    private SavedStateHandle state;
     private CivicRepository mRepository;
     public List<Card> cachedCards;
     private MutableLiveData<Integer> treasure;
@@ -25,8 +27,12 @@ public class CivicViewModel extends AndroidViewModel {
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
     private int cities;
 
-    public CivicViewModel(@NonNull Application application) throws ExecutionException, InterruptedException {
+    public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
+        state = savedStateHandle;
+        if (state != null) {
+            Log.v("TRACKER", "handle not null");
+        } else Log.v("TRACKER", "handle is NULL!!!");
         cardBonus = new MutableLiveData<>(new HashMap<>());
         mRepository = new CivicRepository(application);
         cachedCards = mRepository.getAllCards();

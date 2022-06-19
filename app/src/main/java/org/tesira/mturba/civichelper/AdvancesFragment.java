@@ -96,6 +96,7 @@ public class AdvancesFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Retain this fragment across configuration changes.
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
         sortingOrder = prefs.getString("sort", "name");
@@ -212,7 +213,12 @@ public class AdvancesFragment extends Fragment
                 // item selection changed, we need to redo total selected cost
                 Log.v("OBSERVER", "inside onItemStateChanged : " + key + " : " + selected);
 //                mCivicViewModel.calculateTotal(tracker.getSelection());
-                tracker.copySelection(currentSelection);
+//                tracker.copySelection(currentSelection);
+                mCivicViewModel.calculateTotal(tracker.getSelection());
+                if (tracker.getSelection().size() == 0) {
+                    mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
+                }
+
 //                int price = mCivicViewModel.getAdvanceByName(key).getPrice();
 //                if (!selected) price *= -1;
 //                Log.v("OBSERVER", "price :" + price);
@@ -229,10 +235,10 @@ public class AdvancesFragment extends Fragment
             public void onSelectionChanged() {
                 super.onSelectionChanged();
                 Log.v("OBSERVER", "inside onSelectionChanged");
-                mCivicViewModel.calculateTotal(currentSelection);
-                if (currentSelection.size() == 0) {
-                    mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
-                }
+//                mCivicViewModel.calculateTotal(currentSelection);
+//                if (currentSelection.size() == 0) {
+//                    mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
+//                }
 //                updateViews();
             }
 
@@ -244,6 +250,7 @@ public class AdvancesFragment extends Fragment
 
         });
         if (savedInstanceState != null) {
+            Log.v("TRACKER", "Tracker restores state");
             tracker.onRestoreInstanceState(savedInstanceState);
         }
 
