@@ -106,6 +106,7 @@ public class CivicViewModel extends AndroidViewModel {
      */
     public void calculateCurrentPrice() {
         int newCurrent;
+        List<Card> cachedCards = mRepository.getAllCivicsSorted("name");
         for (Card adv: cachedCards) {
             if (adv.getGroup2() == null) {
                 newCurrent = adv.getPrice() - cardBonus.getValue().getOrDefault(adv.getGroup1(),0);

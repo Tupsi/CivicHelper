@@ -115,8 +115,6 @@ public class AdvancesFragment extends Fragment
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
         mRecyclerView = rootView.findViewById(R.id.list);
-//        final CivicsListAdapter adapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff());
-
         if (mColumnCount <= 1) {
             mLayout = new LinearLayoutManager(rootView.getContext());
             mRecyclerView.setLayoutManager(mLayout);

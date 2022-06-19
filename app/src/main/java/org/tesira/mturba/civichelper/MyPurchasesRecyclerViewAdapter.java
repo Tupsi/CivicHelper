@@ -40,6 +40,8 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
         holder.mName.setText(mValues.get(position).getName());
         holder.mName.setBackground(CivicsListAdapter.getItemBackgroundColor(holder.mItem, holder.itemView.getResources()));
         holder.mPrice.setText(Integer.toString(mValues.get(position).getPrice()));
+        holder.mVp.setText(Integer.toString(mValues.get(position).getVp()));
+        holder.mCurrentPrice.setText(Integer.toString(mValues.get(position).getCurrentPrice()));
 
         if (holder.mItem.getBonus() > 0) {
             holder.mFamilyBox.setVisibility(View.VISIBLE);
@@ -75,6 +77,8 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
         public final View mCardView;
         public final LinearLayout mFamilyBox;
         public final TextView mBonus;
+        public final TextView mVp;
+        public final TextView mCurrentPrice;
 
 
         public ViewHolder(ItemRowPurchasesBinding binding) {
@@ -84,6 +88,8 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
             mCardView = binding.card;
             mFamilyBox = binding.familylayout;
             mBonus = binding.familybonus;
+            mVp = binding.vp;
+            mCurrentPrice = binding.currentPrice;
         }
 
         @Override
