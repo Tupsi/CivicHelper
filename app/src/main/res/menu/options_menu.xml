@@ -15,4 +15,9 @@
         android:id="@+id/aboutFragment"
         android:menuCategory="secondary"
         android:title="@string/item_about" />
+    <item
+        android:id="@+id/menu_debugRecalBonus"
+        android:menuCategory="secondary"
+        android:title="DEBUG: Redo Bonus"
+        />
 </menu>

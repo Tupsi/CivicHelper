@@ -1,9 +1,11 @@
 package org.tesira.mturba.civichelper.db;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,33 +14,33 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.recyclerview.selection.Selection;
 
 import org.tesira.mturba.civichelper.Calamity;
+import org.tesira.mturba.civichelper.ExtraCreditsDialogFragment;
+import org.tesira.mturba.civichelper.MainActivity;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class CivicViewModel extends AndroidViewModel {
 
-    private SavedStateHandle state;
     private CivicRepository mRepository;
     public List<Card> cachedCards;
     private MutableLiveData<Integer> treasure;
     private MutableLiveData<Integer> remaining;
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
     private int cities;
+    private Application mApplication;
 
     public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
-        state = savedStateHandle;
-        if (state != null) {
-            Log.v("TRACKER", "handle not null");
-        } else Log.v("TRACKER", "handle is NULL!!!");
         cardBonus = new MutableLiveData<>(new HashMap<>());
         mRepository = new CivicRepository(application);
         cachedCards = mRepository.getAllCards();
         treasure = new MutableLiveData<>();
         remaining = new MutableLiveData<>();
         cities = 0;
+        mApplication = application;
     }
 
     public int getCities() {
@@ -167,4 +169,44 @@ public class CivicViewModel extends AndroidViewModel {
         Card adv = getAdvanceByName(name);
         updateBonus(adv.getCreditsBlue(), adv.getCreditsGreen(), adv.getCreditsOrange(), adv.getCreditsRed(), adv.getCreditsYellow());
     }
+
+    public int recalculateBonus(SharedPreferences sharedPreferences) {
+        sharedPreferences.edit().clear().commit();
+        List<Card> purchases = mRepository.getPurchasesAsCard();
+        int blue = 0, green = 0, orange = 0, red = 0, yellow = 0, special = 0;
+        for (Card card: purchases
+             ) {
+            blue += card.getCreditsBlue();
+            green += card.getCreditsGreen();
+            orange += card.getCreditsOrange();
+            red += card.getCreditsRed();
+            yellow += card.getCreditsYellow();
+            // check for Written Record or Monument
+            List<Effect> effects = mRepository.getEffect(card.getName(), "Credits");
+            if (effects.size() == 1) {
+                special += effects.get(0).getValue();
+            }
+        }
+
+        Log.v("SPECIAL", "insides recalc : " + blue + green + orange + red + yellow);
+
+        cardBonus.getValue().put(CardColor.BLUE, blue);
+        cardBonus.getValue().put(CardColor.GREEN,green);
+        cardBonus.getValue().put(CardColor.ORANGE,orange);
+        cardBonus.getValue().put(CardColor.RED,red);
+        cardBonus.getValue().put(CardColor.YELLOW, yellow);
+        saveBonus(sharedPreferences);
+        return special;
+    }
+
+    public void saveBonus(SharedPreferences savedBonus) {
+        SharedPreferences.Editor editor = savedBonus.edit();
+        // HashMap Save
+        for (Map.Entry<CardColor, Integer> entry: this.getCardBonus().getValue().entrySet()){
+            editor.putInt(entry.getKey().getName(), entry.getValue());
+        }
+        editor.apply();
+        Log.v("MAIN", "saveBonus in Main");
+    }
+
 }

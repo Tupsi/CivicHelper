@@ -1,5 +1,6 @@
 package org.tesira.mturba.civichelper;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -35,6 +37,7 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment {
 
+    private static final String BONUS = "purchasedAdvancesBonus";
     private FragmentHomeBinding binding;
     private CivicViewModel mCivicViewModel;
     private CalamityAdapter calamityAdapter;
@@ -78,7 +81,6 @@ public class HomeFragment extends Fragment {
         String civicAST = prefs.getString("civilization", "not set");
         binding.tvCivilization.setText("A.S.T. ranking order: " + civicAST);
         checkAST();
-
         return rootView;
     }
 
@@ -157,8 +159,28 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void resetGame() {
+    public void recalculateBonus() {
+        int specials = mCivicViewModel.recalculateBonus(this.getActivity().getSharedPreferences(BONUS, Context.MODE_PRIVATE ));
+        Log.v("SPECIALS","blue   : " + mCivicViewModel.getCardBonus().getValue().get(CardColor.BLUE));
+        Log.v("SPECIALS","green  : " + mCivicViewModel.getCardBonus().getValue().get(CardColor.GREEN));
+        Log.v("SPECIALS","orange : " + mCivicViewModel.getCardBonus().getValue().get(CardColor.ORANGE));
+        Log.v("SPECIALS","red    : " + mCivicViewModel.getCardBonus().getValue().get(CardColor.RED));
+        Log.v("SPECIALS","yellow : " + mCivicViewModel.getCardBonus().getValue().get(CardColor.ORANGE));
+        Log.v("SPECIALS", "" + specials);
+        requireActivity().getSupportFragmentManager().setFragmentResultListener("extraCredits", getViewLifecycleOwner(), new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                loadBonus();
+            }
+        });
+        if (specials > 0) {
+            new ExtraCreditsDialogFragment(mCivicViewModel,null,specials).show(getParentFragmentManager(),"ExtraCredits");
+        }
+        mCivicViewModel.saveBonus(this.getActivity().getSharedPreferences(BONUS, Context.MODE_PRIVATE ));
+        loadBonus();
+    }
 
+    public void resetGame() {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -175,6 +197,8 @@ public class HomeFragment extends Fragment {
                         binding.tvEIA.setBackgroundResource(R.color.ast_red);
                         binding.tvLIA.setBackgroundResource(R.color.ast_red);
                         binding.radio0.setChecked(true);
+                        prefs.edit().remove("civilization").apply();
+                        binding.tvCivilization.setText("set civic in prefs!");
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
@@ -215,8 +239,10 @@ public class HomeFragment extends Fragment {
             case R.id.menu_newGame:
                 resetGame();
                 return true;
-
-            default:
+            case R.id.menu_debugRecalBonus:
+                recalculateBonus();
+                return true;
+           default:
                 return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
         }
 //        return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);

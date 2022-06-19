@@ -1,6 +1,8 @@
 package org.tesira.mturba.civichelper.db;
 
 import android.content.Context;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
@@ -32,11 +34,13 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public static CivicHelperDatabase getDatabase(final Context context) {
+        Log.v("DATABASE", "in getDatabase");
         if (INSTANCE == null) {
             synchronized (CivicHelperDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic_helper.db")
                             .addCallback(sRoomDatabaseCallback)
+                            .fallbackToDestructiveMigration()
                             .allowMainThreadQueries()
                             .build();
                     ASSET_CONTEXT = context.getApplicationContext();
@@ -50,11 +54,29 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
+            Log.v("DATABASE", "in callback onCreate");
             // If you want to keep data through app restarts,
             // comment out the following block
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
-                // If you want to start with more words, just add them.
+                CivicHelperDao dao = INSTANCE.civicDao();
+                dao.deleteAllCards();
+                dao.deleteAllEffects();
+                importCivicsFromXML();
+            });
+        }
+
+        /**
+         * Called when the database has been opened.
+         *
+         * @param db The database.
+         */
+        @Override
+        public void onOpen(@NonNull SupportSQLiteDatabase db) {
+            super.onOpen(db);
+            databaseWriteExecutor.execute(() -> {
+                // Populate the database in the background.
+                // DEBUGGING: remove later!
                 CivicHelperDao dao = INSTANCE.civicDao();
                 dao.deleteAllCards();
                 dao.deleteAllEffects();
@@ -68,7 +90,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
      * Imports all civilization advances from file into the database to be used in the RecyclerView.
      * Calculates and adds the special family bonus.
      * */
-    private static void importCivicsFromXML() {
+    public static synchronized void importCivicsFromXML() {
         CivicHelperDao dao = INSTANCE.civicDao();
         try {
             InputStream is = ASSET_CONTEXT.getAssets().open(FILENAME);

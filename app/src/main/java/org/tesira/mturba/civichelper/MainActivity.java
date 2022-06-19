@@ -37,13 +37,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         savedBonus = this.getSharedPreferences(BONUS, Context.MODE_PRIVATE );
+        mCivicViewModel = new ViewModelProvider(this).get(CivicViewModel.class);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         drawerLayout = binding.drawerLayout;
         setContentView(binding.getRoot());
         navController = Navigation.findNavController(this, R.id.myNavHostFragment);
         NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
         NavigationUI.setupWithNavController(binding.navView, navController);
-        mCivicViewModel = new ViewModelProvider(this).get(CivicViewModel.class);
         mCivicViewModel.setTreasure(prefs.getInt(TREASURE_BOX,0));
         mCivicViewModel.setRemaining(prefs.getInt(TREASURE_BOX,0));
         loadBonus();
@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void saveBonus() {
         SharedPreferences.Editor editor = savedBonus.edit();
-
         // HashMap Save
         for (Map.Entry<CardColor, Integer> entry: mCivicViewModel.getCardBonus().getValue().entrySet()){
             editor.putInt(entry.getKey().getName(), entry.getValue());
@@ -86,8 +85,10 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
         Log.v("MAIN", "saveBonus in Main");
     }
+
     public void newGame() {
         Log.v("MAIN","clearing sharedPrefs from MAIN...");
+
         savedBonus.edit().clear().apply();
         mCivicViewModel.deletePurchases();
     }
@@ -168,9 +169,6 @@ public class MainActivity extends AppCompatActivity {
                     mCivicViewModel.setCities(9);
                 break;
         }
-//        HomeFragment home = getFragmentManager().findFragmentById(R.id.homeFragment);
-//        home.checkAST();
-
     }
 
 }

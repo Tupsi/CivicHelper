@@ -57,12 +57,13 @@ public class CivicRepository {
 //    }
 
 
-    public List<Card> getAllCards() throws ExecutionException, InterruptedException {
-        Callable<List<Card>> callable = () -> mCivicDao.getAdvancesByName();
-        Future<List<Card>> future = CivicHelperDatabase.databaseWriteExecutor.submit(callable);
-        return future.get();
-    }
+//    public List<Card> getAllCards() throws ExecutionException, InterruptedException {
+//        Callable<List<Card>> callable = () -> mCivicDao.getAdvancesByName();
+//        Future<List<Card>> future = CivicHelperDatabase.databaseWriteExecutor.submit(callable);
+//        return future.get();
+//    }
 
+    public List<Card> getAllCards() {return mCivicDao.getAdvancesByName();}
     public void updateIsBuyable(int remaining) {
         mCivicDao.updateIsBuyable(remaining);
     }
@@ -81,4 +82,15 @@ public class CivicRepository {
     public List<String> getPurchasesAsString() {return mCivicDao.getPurchasesAsString();}
     public List<Card> getPurchasesAsCard() {return mCivicDao.getPurchasesAsCard();}
     public int sumVp() {return mCivicDao.sumVp();}
+
+    public void reloadDatabaseFromXML() {
+        //            dao.deleteAllCards();
+//            dao.deleteAllEffects();
+//            dao.deleteAllImmunities();
+//            importCivicsFromXML();
+        mCivicDao.deleteAllCards();
+        mCivicDao.deleteAllEffects();
+        mCivicDao.deleteAllImmunities();
+
+    }
 }

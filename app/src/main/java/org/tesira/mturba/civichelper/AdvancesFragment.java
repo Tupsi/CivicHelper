@@ -251,7 +251,10 @@ public class AdvancesFragment extends Fragment
         });
         if (savedInstanceState != null) {
             Log.v("TRACKER", "Tracker restores state");
+            Log.v("TRACKER", "size before restore: " + tracker.getSelection().size());
             tracker.onRestoreInstanceState(savedInstanceState);
+            Log.v("TRACKER", "size after restore: " + tracker.getSelection().size());
+
         }
 
         //        setHasOptionsMenu(true);
@@ -355,7 +358,10 @@ public class AdvancesFragment extends Fragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
+        Log.v("TRACKER", "inside onSavedInstanceState");
+        Log.v("TRACKER", " size on save: " + tracker.getSelection().size());
         tracker.onSaveInstanceState(savedInstanceState);
+
         // save stuff
         int money = parseInt(mTreasureInput.getText().toString());
         savedInstanceState.putInt(TREASURE_BOX, money);
@@ -378,15 +384,15 @@ public class AdvancesFragment extends Fragment
 
     public void onStop() {
         super.onStop();
-        Log.v("DEADVANCESO","---> onStop() <--- ");
+        Log.v("ADVANCES","---> onStop() <--- ");
     }
 
     public void onDestroy() {
         super.onDestroy();
-        tracker = null;
+//        tracker = null;
         mCivicViewModel.getRemaining().removeObservers(requireActivity());
         mCivicViewModel.getTreasure().removeObservers(requireActivity());
-        binding = null;
+//        binding = null;
         Log.v("ADVANCES","---> onDestroy() <--- ");
     }
 

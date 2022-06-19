@@ -22,6 +22,9 @@ public interface CivicHelperDao {
     @Query("DELETE FROM effects")
     void deleteAllEffects();
 
+    @Query("DELETE FROM immunity")
+    void deleteAllImmunities();
+
     @Query("SELECT * FROM cards ORDER BY name ASC")
     List<Card> getAdvancesByName();
 

@@ -28,6 +28,7 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
     private AdvancesFragment fragment;
 
     public ExtraCreditsDialogFragment(CivicViewModel mCivicViewModel, AdvancesFragment fragment,  int credits) {
+        super(R.layout.dialog_credits);
         this.mCivicViewModel = mCivicViewModel;
         this.fragment = fragment;
         this.credits = credits;
@@ -73,7 +74,11 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
             mCivicViewModel.updateBonus(blue, green, orange, red, yellow);
             // save to prefs
             ((MainActivity) getActivity()).saveBonus();
-            fragment.returnToDashboard(false);
+            if (fragment != null) {
+                fragment.returnToDashboard(false);
+            } else {
+                requireActivity().getSupportFragmentManager().setFragmentResult("extraCredits", new Bundle());
+            }
         });
         // Create the AlertDialog object and return it
         dialog = builder.create();
