@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:ems="3"
         android:hint="@string/money"
-        android:inputType="numberSigned"
+        android:inputType="phone"
         android:selectAllOnFocus="true"
         android:minHeight="48dp"
         app:layout_constraintBottom_toTopOf="@+id/list"

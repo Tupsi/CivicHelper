@@ -132,12 +132,12 @@ public class AdvancesFragment extends Fragment
             mTreasureInput.setText(String.valueOf(treasure));
             mCivicViewModel.setRemaining(treasure);
 //            mRemainingText.setText(String.valueOf(treasure));
-            if (tracker != null) {
-                tracker.clearSelection();
-            }
+//            if (tracker != null) {
+//                tracker.clearSelection();
+//            }
             mAdapter.notifyDataSetChanged();
 //            updateViews();
-            mRecyclerView.setAdapter(mAdapter);
+//            mRecyclerView.setAdapter(mAdapter);
         });
         mObserver = remaining -> {
             Log.v("OBSERVER", "treasure remaining : " + remaining);
@@ -166,7 +166,9 @@ public class AdvancesFragment extends Fragment
 
         // close SoftKeyboard on Enter
         mTreasureInput.setOnEditorActionListener((v, keyCode, event) -> {
-                mCivicViewModel.setTreasure(Integer.parseInt(mTreasureInput.getText().toString()));
+            calculateInput(mTreasureInput.getText().toString());
+            mCivicViewModel.setTreasure(calculateInput(mTreasureInput.getText().toString()));
+//                mCivicViewModel.setTreasure(Integer.parseInt(mTreasureInput.getText().toString()));
                 // hide virtual keyboard on enter
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mTreasureInput.getWindowToken(), 0);
@@ -257,6 +259,17 @@ public class AdvancesFragment extends Fragment
 
         //        setHasOptionsMenu(true);
         return rootView;
+    }
+
+    private int calculateInput(String treasureinput) {
+        String [] pieces = treasureinput.trim().split("\\D+");
+        int result = 0;
+        for (String number:pieces) {
+            Log.v("NUMBERS", number);
+            result += Integer.parseInt(number);
+        }
+        Log.v("NUMBERS", "Result: "+ result);
+        return result;
     }
 
     private void updateViews() {
