@@ -21,4 +21,8 @@
     <color name="ast_green">#48a413</color>
     <color name="ast_red">#da0000</color>
 
+    <color name="transparent">#00ff0000</color>
+    <color name="solid">#ffff0000</color>
+
+
 </resources>

@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -28,9 +30,20 @@ public class AnatomyDialogFragment extends DialogFragment {
         private CivicViewModel mCivicViewModel;
 
         public AnatomyDialogFragment(CivicViewModel model,AdvancesFragment fragment, List<String> greenCards) {
+            setCancelable(false);
             this.mCivicViewModel = model;
             this.fragment = fragment;
             this.greenCards = greenCards.toArray(new String[0]);
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            Dialog dialog = getDialog();
+            if (dialog != null) {
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    //            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            }
         }
 
         @NonNull
@@ -46,7 +59,10 @@ public class AnatomyDialogFragment extends DialogFragment {
 //                fragment.addAnatomyFreeCard(greenCards[which]);
                 fragment.returnToDashboard(greenCards[which].equals("Written Record"));
             });
-            return builder.create();
+            Dialog dialog = builder.create();
+            dialog.getWindow().setWindowAnimations(R.style.DialogAnimation);
+//            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+            return dialog;
         }
 
 }

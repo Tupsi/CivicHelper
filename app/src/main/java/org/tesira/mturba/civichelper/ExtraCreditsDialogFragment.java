@@ -1,12 +1,18 @@
 package org.tesira.mturba.civichelper;
 
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
@@ -29,6 +35,7 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
 
     public ExtraCreditsDialogFragment(CivicViewModel mCivicViewModel, AdvancesFragment fragment,  int credits) {
         super(R.layout.dialog_credits);
+        setCancelable(false);
         this.mCivicViewModel = mCivicViewModel;
         this.fragment = fragment;
         this.credits = credits;
@@ -45,6 +52,15 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+    }
 
     @NonNull
     @Override
@@ -82,6 +98,8 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         });
         // Create the AlertDialog object and return it
         dialog = builder.create();
+        dialog.getWindow().setWindowAnimations(R.style.DialogAnimation);
+//        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return dialog;
     }
 
