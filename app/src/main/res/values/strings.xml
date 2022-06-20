@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Civic Helper</string>
-    <string name="about_version">Version:\n0.09</string>
+    <string name="about_version">Version:\n0.010\n
+        - made dialog frame not cancelable and fullscreen\n
+        - added calculator to treasure input box\n
+    </string>
     <string name="about_text">
         This is a helper app for the board games Mega Civilization,
         Western Empires and Eastern Empires.\n\n
