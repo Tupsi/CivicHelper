@@ -96,15 +96,11 @@ public class AdvancesFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Retain this fragment across configuration changes.
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
         sortingOrder = prefs.getString("sort", "name");
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        // reset remaining
         mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue());
-//        Log.v("LIST", "sorting order : " + sortingOrder);
-//        listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
     }
 
     @Override
@@ -128,15 +124,18 @@ public class AdvancesFragment extends Fragment
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
         mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> {
-            Log.v("OBSERVER", "Treasure :");
+            Log.v("OBSERVER", "Treasure :" + treasure + " Remaining :" + mCivicViewModel.getRemaining().getValue());
             mTreasureInput.setText(String.valueOf(treasure));
-            mCivicViewModel.setRemaining(treasure);
-//            mRemainingText.setText(String.valueOf(treasure));
-//            if (tracker != null) {
-//                tracker.clearSelection();
-//            }
+            if (treasure < mCivicViewModel.getRemaining().getValue()) {
+                mCivicViewModel.setRemaining(treasure);
+                tracker.clearSelection();
+            } else if (tracker != null &&  tracker.getSelection().size() > 0){
+                mCivicViewModel.calculateTotal(tracker.getSelection());
+            } else {
+                mCivicViewModel.setRemaining(treasure);
+            }
             mAdapter.notifyDataSetChanged();
-//            updateViews();
+            updateViews();
 //            mRecyclerView.setAdapter(mAdapter);
         });
         mObserver = remaining -> {
@@ -205,36 +204,30 @@ public class AdvancesFragment extends Fragment
         mAdapter.setSelectionTracker(tracker);
         mAdapter.setCivicViewModel(mCivicViewModel);
         tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
-
-
             @Override
             public void onItemStateChanged(@NonNull String key, boolean selected) {
                 super.onItemStateChanged(key, selected);
                 // item selection changed, we need to redo total selected cost
-                Log.v("OBSERVER", "inside onItemStateChanged : " + key + " : " + selected);
+//                Log.v("OBSERVER", "inside onItemStateChanged : " + key + " : " + selected);
 //                mCivicViewModel.calculateTotal(tracker.getSelection());
 //                tracker.copySelection(currentSelection);
                 mCivicViewModel.calculateTotal(tracker.getSelection());
                 if (tracker.getSelection().size() == 0) {
                     mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
                 }
-
-//                int price = mCivicViewModel.getAdvanceByName(key).getPrice();
-//                if (!selected) price *= -1;
-//                Log.v("OBSERVER", "price :" + price);
             }
 
             @Override
             public void onSelectionRefresh() {
                 super.onSelectionRefresh();
-                Log.v("OBSERVER", "inside onSelectionRefresh");
+//                Log.v("OBSERVER", "inside onSelectionRefresh");
 
             }
 
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
-                Log.v("OBSERVER", "inside onSelectionChanged");
+//                Log.v("OBSERVER", "inside onSelectionChanged");
 //                mCivicViewModel.calculateTotal(currentSelection);
 //                if (currentSelection.size() == 0) {
 //                    mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());

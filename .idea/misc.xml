@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable-night/checkbox_background.xml" value="0.228" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/card_selected.xml" value="0.214" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/cardbackground.xml" value="0.2885" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/checkbox_background.xml" value="0.3475" />

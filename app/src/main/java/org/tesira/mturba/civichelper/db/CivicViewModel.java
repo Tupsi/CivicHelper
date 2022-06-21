@@ -3,20 +3,12 @@ package org.tesira.mturba.civichelper.db;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.recyclerview.selection.Selection;
-
 import org.tesira.mturba.civichelper.Calamity;
-import org.tesira.mturba.civichelper.ExtraCreditsDialogFragment;
-import org.tesira.mturba.civichelper.MainActivity;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,23 +62,13 @@ public class CivicViewModel extends AndroidViewModel {
     public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
     public List<String> getImmunities() {return mRepository.getImmunities();}
     public int sumVp() {return mRepository.sumVp();}
-
-    public void updateIsBuyable() {
-        Log.v("MODEL", "remaining : " + remaining.getValue());
-        int rest = remaining.getValue();
-        for (Card adv: cachedCards) {
-            adv.setIsBuyable(rest >= adv.getCurrentPrice());
-        }
-        mRepository.updateIsBuyable(remaining.getValue());
-    }
-
+    public void resetDB() {mRepository.resetDB();}
     public MutableLiveData<Integer> getTreasure() {
         return treasure;
     }
 
     public void setTreasure(int treasure) {
         this.treasure.setValue(treasure);
-//        this.remaining.setValue(treasure);
     }
 
     public void setRemaining(int treasure) {
@@ -189,7 +171,7 @@ public class CivicViewModel extends AndroidViewModel {
             }
         }
 
-        Log.v("SPECIAL", "insides recalc : " + blue + green + orange + red + yellow);
+//        Log.v("SPECIAL", "insides recalc : " + blue + green + orange + red + yellow);
 
         cardBonus.getValue().put(CardColor.BLUE, blue);
         cardBonus.getValue().put(CardColor.GREEN,green);
@@ -207,7 +189,7 @@ public class CivicViewModel extends AndroidViewModel {
             editor.putInt(entry.getKey().getName(), entry.getValue());
         }
         editor.apply();
-        Log.v("MAIN", "saveBonus in Main");
+//        Log.v("MAIN", "saveBonus in Main");
     }
 
 }

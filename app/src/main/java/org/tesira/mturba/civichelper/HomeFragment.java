@@ -43,6 +43,7 @@ public class HomeFragment extends Fragment {
     private CalamityAdapter calamityAdapter;
     private SpecialsAdapter specialsAdapter;
     private SharedPreferences prefs;
+    private int count=0;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -67,14 +68,19 @@ public class HomeFragment extends Fragment {
         mRecyclerView = rootView.findViewById(R.id.listAbility);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         List<String> specialsList = mCivicViewModel.getSpecialAbilities();
+        count++;
+        Log.v("CALAM", "1:" + count++ + ":" + specialsList.size());
         specialsList.add(0,"___Special Abilities");
+        Log.v("CALAM", "2:" + count++ + ":"+ specialsList.size());
         if (specialsList.size() % 2 == 0) {
             specialsList.add(               "___Immunities");
         } else {
             specialsList.add(               "");
             specialsList.add(               "___Immunities");
         }
+        Log.v("CALAM", "3:" + count++ + ":"+ specialsList.size());
         specialsList.addAll(mCivicViewModel.getImmunities());
+        Log.v("CALAM", "4:" + count++ + ":"+ specialsList.size());
         specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
         mRecyclerView.setAdapter(specialsAdapter);
         binding.tvVp.setText("VP: " + mCivicViewModel.sumVp());
@@ -199,6 +205,7 @@ public class HomeFragment extends Fragment {
                         binding.radio0.setChecked(true);
                         prefs.edit().remove("civilization").apply();
                         binding.tvCivilization.setText("set civic in prefs!");
+                        mCivicViewModel.resetDB();
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:

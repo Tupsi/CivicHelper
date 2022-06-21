@@ -1,29 +1,15 @@
 package org.tesira.mturba.civichelper.db;
 
 import android.app.Application;
-import android.util.Log;
-
-import androidx.lifecycle.LiveData;
-
 import org.tesira.mturba.civichelper.Calamity;
-
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 public class CivicRepository {
 
     private CivicHelperDao mCivicDao;
-    private LiveData<List<Card>> mAllCivics;
 
     public CivicRepository(Application application) {
         CivicHelperDatabase db = CivicHelperDatabase.getDatabase(application);
         mCivicDao = db.civicDao();
-//        mAllCivics = mCivicDao.getAdvancesByPrice();
-//        CivicHelperDatabase.databaseWriteExecutor.execute(() -> {
-//            Log.v("DB", "creating");
-//        });
     }
 
     public void deletePurchases() {mCivicDao.deleteAllPurchases();}
@@ -35,10 +21,6 @@ public class CivicRepository {
     public Card getAdvanceByNameToCard(String name) {
         return mCivicDao.getAdvanceByNameToCard(name);
     }
-
-//    public LiveData<List<Card>> getAllCivics() {
-//        return mCivicDao.getAdvancesByPrice();
-//    }
 
 // Asynch, needed if DB is created without .allowMainThreadQueries()
 //    public Card getAdvanceByNameAsync(String name) throws ExecutionException, InterruptedException {
@@ -83,14 +65,13 @@ public class CivicRepository {
     public List<Card> getPurchasesAsCard() {return mCivicDao.getPurchasesAsCard();}
     public int sumVp() {return mCivicDao.sumVp();}
 
-    public void reloadDatabaseFromXML() {
-        //            dao.deleteAllCards();
-//            dao.deleteAllEffects();
-//            dao.deleteAllImmunities();
-//            importCivicsFromXML();
-        mCivicDao.deleteAllCards();
-        mCivicDao.deleteAllEffects();
-        mCivicDao.deleteAllImmunities();
-
+    public void resetDB() {
+        CivicHelperDatabase.databaseWriteExecutor.execute(() ->{
+            mCivicDao.deleteAllCards();
+            mCivicDao.deleteAllEffects();
+            mCivicDao.deleteAllSpecials();
+            mCivicDao.deleteAllImmunities();
+            CivicHelperDatabase.importCivicsFromXML();
+        });
     }
 }

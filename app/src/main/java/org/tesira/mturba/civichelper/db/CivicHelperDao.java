@@ -5,10 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-
 import org.tesira.mturba.civichelper.Calamity;
-
-import java.util.HashMap;
 import java.util.List;
 
 @Dao
@@ -24,6 +21,9 @@ public interface CivicHelperDao {
 
     @Query("DELETE FROM immunity")
     void deleteAllImmunities();
+
+    @Query("DELETE FROM specials")
+    void deleteAllSpecials();
 
     @Query("SELECT * FROM cards ORDER BY name ASC")
     List<Card> getAdvancesByName();

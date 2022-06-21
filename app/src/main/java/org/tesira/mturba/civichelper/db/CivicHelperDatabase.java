@@ -59,9 +59,6 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             // comment out the following block
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
-                CivicHelperDao dao = INSTANCE.civicDao();
-                dao.deleteAllCards();
-                dao.deleteAllEffects();
                 importCivicsFromXML();
             });
         }
@@ -80,6 +77,8 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                 CivicHelperDao dao = INSTANCE.civicDao();
                 dao.deleteAllCards();
                 dao.deleteAllEffects();
+                dao.deleteAllSpecials();
+                dao.deleteAllImmunities();
                 importCivicsFromXML();
             });
         }
