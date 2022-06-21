@@ -138,7 +138,17 @@ public class AdvancesFragment extends Fragment
             updateViews();
 //            mRecyclerView.setAdapter(mAdapter);
         });
-        mObserver = remaining -> {
+//        mObserver = remaining -> {
+//            Log.v("OBSERVER", "treasure remaining : " + remaining);
+//            if (AdvancesFragment.this.getContext() != null) {
+//                mRemainingText.setText(String.valueOf(remaining));
+//                if (tracker != null) {
+//                    updateViews();
+//                }
+//            }
+//        };
+
+        mCivicViewModel.getRemaining().observe(requireActivity(), remaining -> {
             Log.v("OBSERVER", "treasure remaining : " + remaining);
             if (AdvancesFragment.this.getContext() != null) {
                 mRemainingText.setText(String.valueOf(remaining));
@@ -146,9 +156,7 @@ public class AdvancesFragment extends Fragment
                     updateViews();
                 }
             }
-        };
-
-        mCivicViewModel.getRemaining().observe(requireActivity(), mObserver);
+        });
 //        mCivicViewModel.getRemaining().observe(requireActivity(), new Observer<Integer>() {
 //            @Override
 //            public void onChanged(Integer remaining) {
@@ -191,6 +199,11 @@ public class AdvancesFragment extends Fragment
         binding.btnBuy.setOnClickListener(v -> {
             buyAdvances();
 //            Navigation.findNavController(v).popBackStack();
+        });
+        binding.btnClear.setOnClickListener(v -> {
+            if (tracker != null) {
+                tracker.clearSelection();
+            }
         });
         myItemKeyProvider = new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, listCivics, mCivicViewModel);
         tracker = new SelectionTracker.Builder<>(
