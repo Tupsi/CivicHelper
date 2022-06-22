@@ -18,8 +18,10 @@
     <color name="red">#6f0000</color>
     <color name="green">#136e42</color>
 
-    <color name="ast_green">#48a413</color>
+    <color name="ast_green">#33691e</color>
+    <color name="ast_onGreen">#ffffff</color>
     <color name="ast_red">#da0000</color>
+    <color name="ast_onRed">#000000</color>
 
     <color name="transparent">#00ff0000</color>
     <color name="solid">#ffff0000</color>

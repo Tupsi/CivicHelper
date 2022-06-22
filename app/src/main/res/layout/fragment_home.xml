@@ -92,7 +92,6 @@
         android:layout_margin="16dp"
         android:layout_marginStart="16dp"
         android:text="Calamity Effects Overview"
-        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -136,7 +135,6 @@
         android:layout_margin="16dp"
         android:layout_marginStart="16dp"
         android:text="Special Abilities and Immunities"
-        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -160,7 +158,7 @@
         android:id="@+id/tvMBA"
         android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
-        android:background="@color/ast_red"
+        android:gravity="center"
         android:text="MBA"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/tvVp"
@@ -170,7 +168,7 @@
         android:id="@+id/tvLBA"
         android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
-        android:background="@color/ast_red"
+        android:gravity="center"
         android:text="LBA"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/tvMBA"
@@ -181,7 +179,7 @@
         android:id="@+id/tvEIA"
         android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
-        android:background="@color/ast_red"
+        android:gravity="center"
         android:text="EIA"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/tvLBA"
@@ -192,7 +190,7 @@
         android:id="@+id/tvLIA"
         android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
-        android:background="@color/ast_red"
+        android:gravity="center"
         android:text="LIA"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/tvEIA"
@@ -214,7 +212,9 @@
         android:id="@+id/radioGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
@@ -224,11 +224,9 @@
             android:background="@drawable/checkbox_background"
             android:button="@null"
             android:gravity="center"
-            android:maxWidth="40dp"
+            android:maxWidth="48dp"
             android:minWidth="30dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="0"
-            android:textColor="@android:color/primary_text_light" />
+            android:text="0" />
 
         <RadioButton
             android:id="@+id/radio_1"
@@ -237,11 +235,9 @@
             android:background="@drawable/checkbox_background"
             android:button="@null"
             android:gravity="center"
-            android:maxWidth="40dp"
+            android:maxWidth="48dp"
             android:minWidth="30dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="1"
-            android:textColor="@android:color/primary_text_light" />
+            android:text="1" />
 
         <RadioButton
             android:id="@+id/radio_2"
@@ -250,11 +246,9 @@
             android:background="@drawable/checkbox_background"
             android:button="@null"
             android:gravity="center"
-            android:maxWidth="40dp"
+            android:maxWidth="48dp"
             android:minWidth="30dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="2"
-            android:textColor="@android:color/primary_text_light" />
+            android:text="2" />
 
         <RadioButton
             android:id="@+id/radio_3"
@@ -263,11 +257,9 @@
             android:background="@drawable/checkbox_background"
             android:button="@null"
             android:gravity="center"
-            android:maxWidth="40dp"
+            android:maxWidth="48dp"
             android:minWidth="30dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="3"
-            android:textColor="@android:color/primary_text_light" />
+            android:text="3" />
 
         <RadioButton
             android:id="@+id/radio_4"
@@ -276,11 +268,9 @@
             android:background="@drawable/checkbox_background"
             android:button="@null"
             android:gravity="center"
-            android:maxWidth="40dp"
+            android:maxWidth="48dp"
             android:minWidth="30dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="4"
-            android:textColor="@android:color/primary_text_light" />
+            android:text="4" />
 
         <RadioButton
             android:id="@+id/radio_5"
@@ -289,11 +279,9 @@
             android:background="@drawable/checkbox_background"
             android:button="@null"
             android:gravity="center"
-            android:maxWidth="40dp"
+            android:maxWidth="48dp"
             android:minWidth="30dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="5"
-            android:textColor="@android:color/primary_text_light" />
+            android:text="5" />
 
         <RadioButton
             android:id="@+id/radio_6"
@@ -302,11 +290,9 @@
             android:background="@drawable/checkbox_background"
             android:button="@null"
             android:gravity="center"
-            android:maxWidth="40dp"
+            android:maxWidth="48dp"
             android:minWidth="30dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="6"
-            android:textColor="@android:color/primary_text_light" />
+            android:text="6" />
 
         <RadioButton
             android:id="@+id/radio_7"
@@ -315,11 +301,9 @@
             android:background="@drawable/checkbox_background"
             android:button="@null"
             android:gravity="center"
-            android:maxWidth="40dp"
+            android:maxWidth="48dp"
             android:minWidth="30dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="7"
-            android:textColor="@android:color/primary_text_light" />
+            android:text="7" />
 
         <RadioButton
             android:id="@+id/radio_8"
@@ -328,11 +312,9 @@
             android:background="@drawable/checkbox_background"
             android:button="@null"
             android:gravity="center"
-            android:maxWidth="40dp"
+            android:maxWidth="48dp"
             android:minWidth="30dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="8"
-            android:textColor="@android:color/primary_text_light" />
+            android:text="8" />
 
         <RadioButton
             android:id="@+id/radio_9"
@@ -341,11 +323,9 @@
             android:background="@drawable/checkbox_background"
             android:button="@null"
             android:gravity="center"
-            android:maxWidth="40dp"
+            android:maxWidth="48dp"
             android:minWidth="30dp"
-            android:onClick="onRadioButtonClicked"
-            android:text="9"
-            android:textColor="@android:color/primary_text_light" />
+            android:text="9" />
     </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

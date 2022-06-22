@@ -3,11 +3,13 @@ package org.tesira.mturba.civichelper;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -86,6 +88,16 @@ public class HomeFragment extends Fragment {
         binding.tvVp.setText("VP: " + mCivicViewModel.sumVp());
         String civicAST = prefs.getString("civilization", "not set");
         binding.tvCivilization.setText("A.S.T. ranking order: " + civicAST);
+        binding.radio0.setOnClickListener(this::onCitiesClicked);
+        binding.radio1.setOnClickListener(this::onCitiesClicked);
+        binding.radio2.setOnClickListener(this::onCitiesClicked);
+        binding.radio3.setOnClickListener(this::onCitiesClicked);
+        binding.radio4.setOnClickListener(this::onCitiesClicked);
+        binding.radio5.setOnClickListener(this::onCitiesClicked);
+        binding.radio6.setOnClickListener(this::onCitiesClicked);
+        binding.radio7.setOnClickListener(this::onCitiesClicked);
+        binding.radio8.setOnClickListener(this::onCitiesClicked);
+        binding.radio9.setOnClickListener(this::onCitiesClicked);
         checkAST();
         return rootView;
     }
@@ -111,41 +123,68 @@ public class HomeFragment extends Fragment {
             }
         }
         Log.v("checkAST","100: " + size100 + " 200: " + size200);
+
+        // reset everything first and then see where we are
+        binding.tvMBA.setBackgroundResource(R.color.ast_red);
+        binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onRed));
+        binding.tvLBA.setBackgroundResource(R.color.ast_red);
+        binding.tvLBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onRed));
+        binding.tvEIA.setBackgroundResource(R.color.ast_red);
+        binding.tvEIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onRed));
+        binding.tvLIA.setBackgroundResource(R.color.ast_red);
+        binding.tvLIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onRed));
         if (ast.compareTo("basic") == 0){
             if (size >= 3 && cities >= 3) {
                 // MBA needs 3 cities & 3 cards
                 binding.tvMBA.setBackgroundResource(R.color.ast_green);
+                binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
             if (size >= 3 && size100 >= 3 && cities >= 3) {
                 // LBA needs 3 cities & 3 cards 100+
                 binding.tvLBA.setBackgroundResource(R.color.ast_green);
+                binding.tvLBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
             if (size >= 2 && size200 >= 2 && cities >= 4) {
                 // EIA needs 4 cities & 2 cards 200+
                 binding.tvEIA.setBackgroundResource(R.color.ast_green);
+                binding.tvEIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
             if (size >= 3 && size200 >= 3 && cities >= 5) {
                 // LEA needs 5 cities & 3 cards 200+
                 binding.tvLIA.setBackgroundResource(R.color.ast_green);
+                binding.tvLIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
         } else {
             // expert version needs a bit more
             if (vp >= 5 && cities >= 3) {
                 // MBA needs 3 cities & 5 VP
                 binding.tvMBA.setBackgroundResource(R.color.ast_green);
+                binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
             if (size >= 12 && cities >= 4) {
                 // LBA needs 4 cities & 12 cards
                 binding.tvLBA.setBackgroundResource(R.color.ast_green);
+                binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
             if (size100 >= 10 && vp >= 38 && cities >= 5) {
                 // EIA needs 5 cities & 10 cards 100+ & 38 VP
                 binding.tvEIA.setBackgroundResource(R.color.ast_green);
+                binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
             if (size100 >= 17 && vp >= 56 && cities >= 6) {
                 // LEA needs 6 cities & 17 cards 100+ & 56 VP
                 binding.tvLIA.setBackgroundResource(R.color.ast_green);
+                binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
+        }
+        int currentNightMode = getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (currentNightMode) {
+            case Configuration.UI_MODE_NIGHT_NO:
+                // Night mode is not active on device
+                break;
+            case Configuration.UI_MODE_NIGHT_YES:
+                // Night mode is active on device
+                break;
         }
     }
 
@@ -255,6 +294,55 @@ public class HomeFragment extends Fragment {
 //        return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
     }
 
+    public void onCitiesClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radio_0:
+                if (checked)
+                    mCivicViewModel.setCities(0);
+                break;
+            case R.id.radio_1:
+                if (checked)
+                    mCivicViewModel.setCities(1);
+                break;
+            case R.id.radio_2:
+                if (checked)
+                    mCivicViewModel.setCities(2);
+                break;
+            case R.id.radio_3:
+                if (checked)
+                    mCivicViewModel.setCities(3);
+                break;
+            case R.id.radio_4:
+                if (checked)
+                    mCivicViewModel.setCities(4);
+                break;
+            case R.id.radio_5:
+                if (checked)
+                    mCivicViewModel.setCities(5);
+                break;
+            case R.id.radio_6:
+                if (checked)
+                    mCivicViewModel.setCities(6);
+                break;
+            case R.id.radio_7:
+                if (checked)
+                    mCivicViewModel.setCities(7);
+                break;
+            case R.id.radio_8:
+                if (checked)
+                    mCivicViewModel.setCities(8);
+                break;
+            case R.id.radio_9:
+                if (checked)
+                    mCivicViewModel.setCities(9);
+                break;
+        }
+        checkAST();
+    }
 
     public void onPause() {
         super.onPause();

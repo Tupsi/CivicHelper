@@ -11,13 +11,15 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <!-- Customize your theme here.
+        https://material.io/design/material-theming/implementing-your-theme.html#color
+        <item name="colorOnSurface"></item>
+        -->
     </style>
     <style name="Theme.App.Dialog.FullScreen" parent="Theme.MaterialComponents.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsFloating">false</item>
-
     </style>
 
     <style name="DialogAnimation">
