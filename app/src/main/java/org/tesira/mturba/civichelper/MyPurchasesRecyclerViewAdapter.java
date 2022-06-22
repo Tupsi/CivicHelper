@@ -1,19 +1,13 @@
 package org.tesira.mturba.civichelper;
 
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.tesira.mturba.civichelper.databinding.ItemRowBinding;
 import org.tesira.mturba.civichelper.databinding.ItemRowPurchasesBinding;
 import org.tesira.mturba.civichelper.db.Card;
-import org.tesira.mturba.civichelper.db.CivicRepository;
-
 import java.util.List;
 
 /**
@@ -46,13 +40,11 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
         holder.mCurrentPrice.setText(Integer.toString(mValues.get(position).getCurrentPrice()));
 
         if (holder.mItem.getBonus() > 0) {
-//            holder.mFamilyBox.setVisibility(View.VISIBLE);
             holder.mBonus.setVisibility(View.VISIBLE);
             String bonus = "+" + holder.mItem.getBonus() + " to " + holder.mItem.getBonusCard();
             holder.mBonus.setText(bonus);
         }
         else {
-//            holder.mFamilyBox.setVisibility(View.INVISIBLE);
             holder.mBonus.setVisibility(View.INVISIBLE);
         }
 
@@ -65,21 +57,6 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
                 holder.mName.setTextColor(Color.WHITE);
                 break;
         }
-
-//        String bonus = "+" + holder.mItem.getBonus() + " to " + holder.mItem.getBonusCard();
-//        holder.mBonus.setText(bonus);
-
-//        if (mPurchases.contains(holder.mItem.getName())) {
-////            holder.mCardView.setAlpha(1.0F);
-//            holder.mCardView.setBackgroundResource(R.drawable.card_selected);
-//            holder.mPrice.setVisibility(View.GONE);
-//            holder.mFamilyBox.setVisibility(View.GONE);
-//            ViewGroup.LayoutParams params = holder.mCardView.getLayoutParams();
-//            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-//            holder.mCardView.requestLayout();
-//        } else {
-////            holder.mCardView.setAlpha(0.5F);
-//        }
     }
 
     @Override

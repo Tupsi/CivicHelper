@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         savedBonus = this.getSharedPreferences(BONUS, Context.MODE_PRIVATE );
         mCivicViewModel = new ViewModelProvider(this).get(CivicViewModel.class);
+        mCivicViewModel.setCities(savedBonus.getInt("cities", 0));
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         drawerLayout = binding.drawerLayout;
         setContentView(binding.getRoot());
@@ -49,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         mCivicViewModel.setTreasure(prefs.getInt(TREASURE_BOX,0));
         mCivicViewModel.setRemaining(prefs.getInt(TREASURE_BOX,0));
         loadBonus();
+
+        Configuration configuration = this.getResources().getConfiguration();
+        int screenWidthDp = configuration.screenWidthDp; //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
+        int smallestScreenWidthDp = configuration.smallestScreenWidthDp; //The smallest screen size an application will see in normal operation, corresponding to smallest screen width resource qualifier.
+        Log.v("DIMENSION", "" + screenWidthDp + " : " + smallestScreenWidthDp);
     }
 
     @Override
@@ -90,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void newGame() {
         Log.v("MAIN","clearing sharedPrefs from MAIN...");
-
         savedBonus.edit().clear().apply();
         mCivicViewModel.deletePurchases();
     }
@@ -113,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onStop() {
         super.onStop();
+        savedBonus.edit().putInt("cities", mCivicViewModel.getCities()).commit();
 //        saveBonus();
         Log.v("MAIN","---> onStop() <--- ");
     }

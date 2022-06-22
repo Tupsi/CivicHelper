@@ -6,13 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
-
-import javax.xml.XMLConstants;
 
 public class CalamityAdapter extends RecyclerView.Adapter<CalamityAdapter.ViewHolder> {
 
@@ -55,24 +51,21 @@ public class CalamityAdapter extends RecyclerView.Adapter<CalamityAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Log.v("HOLDER", "Position: " + position + " : Name: " + calamityList.get(position).getCalamity() + " : Bonus: " + calamityList.get(position).getBonus() );
+//        Log.v("HOLDER", "Position: " + position + " : Name: " + calamityList.get(position).getCalamity() + " : Bonus: " + calamityList.get(position).getBonus() );
         holder.getCalamity().setText(calamityList.get(position).getCalamity());
         holder.getBonus().setText(calamityList.get(position).getBonus());
         if (Integer.parseInt(calamityList.get(position).getBonus()) > 0) {
             holder.getCalamity().setTextColor(mContext.getResources().getColor(R.color.calamity_red, null));
             holder.bonus.setTextColor(mContext.getResources().getColor(R.color.calamity_red, null));
-            //            holder.getCalamity().setBackgroundResource(R.color.red);
         } else {
             holder.getCalamity().setTextColor(mContext.getResources().getColor(R.color.calamity_green, null));
             holder.bonus.setTextColor(mContext.getResources().getColor(R.color.calamity_green, null));
         }
         if (Integer.parseInt(calamityList.get(position).getBonus()) == -99) {
-            holder.getBonus().setVisibility(View.INVISIBLE);
+            holder.bonus.setText(" ");
         }
-        if (position % 2 == 0) {
             holder.calamity.setBackgroundResource(R.drawable.specials_background);
             holder.bonus.setBackgroundResource(R.drawable.specials_background);
-        }
     }
 
 

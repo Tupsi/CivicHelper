@@ -8,7 +8,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -24,12 +23,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -110,7 +107,7 @@ public class AdvancesFragment extends Fragment
         listCivics = mCivicViewModel.getAllCivics(sortingOrder);
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
-        mRecyclerView = rootView.findViewById(R.id.list);
+        mRecyclerView = rootView.findViewById(R.id.list_advances);
         if (mColumnCount <= 1) {
             mLayout = new LinearLayoutManager(rootView.getContext());
             mRecyclerView.setLayoutManager(mLayout);
@@ -205,7 +202,7 @@ public class AdvancesFragment extends Fragment
                 tracker.clearSelection();
             }
         });
-        myItemKeyProvider = new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, listCivics, mCivicViewModel);
+        myItemKeyProvider = new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, mCivicViewModel);
         tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
                 mRecyclerView,

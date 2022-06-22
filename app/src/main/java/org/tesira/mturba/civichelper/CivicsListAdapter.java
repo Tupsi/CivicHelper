@@ -2,6 +2,7 @@ package org.tesira.mturba.civichelper;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
@@ -59,23 +60,15 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
 
         holder.bindName(name, getItemBackgroundColor(current, res));
         holder.bindPrice(current.getCurrentPrice());
-        holder.bindBonus(current.getBonus());
-        holder.bindBonusCard(current.getBonusCard());
+//        holder.bindBonus(current.getBonus());
+//        holder.bindBonusCard(current.getBonusCard());
         holder.vpItemView.setText(String.valueOf(current.getVp()));
 
         if (tracker.hasSelection()) {
-            Log.v("HOLDER", "inside onBindViewHolder :" + name + " : Position: " + position);
+//            Log.v("HOLDER", "inside onBindViewHolder :" + name + " : Position: " + position);
         }
 
         holder.bindIsActive(isSelected);
-        // not neede because
-//        holder.itemView.setOnClickListener(v -> {
-//            // clicked on single card in list
-//            Log.v("HOLDER", "inside onBindViewHolder onClickListener");
-//            tracker.select(name);
-////            Toast.makeText(v.getContext(), name
-////                    + " clicked. \nYou can select more advances if you have the treasure.",Toast.LENGTH_SHORT).show();
-//        });
         if (!isSelected && price == 0) {
             tracker.select(name);
         } else {
@@ -89,12 +82,33 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
             }
         }
 
+//        if (current.getBonus() > 0) {
+//            holder.mFamilyBox.setVisibility(View.VISIBLE);
+//        }
+//        else {
+//            holder.mFamilyBox.setVisibility(View.INVISIBLE);
+//        }
+
+        switch (current.getGroup1()) {
+            case YELLOW:
+            case GREEN:
+                holder.nameItemView.setTextColor(Color.BLACK);
+                break;
+            default:
+                holder.nameItemView.setTextColor(Color.WHITE);
+                break;
+        }
+
         if (current.getBonus() > 0) {
-            holder.mFamilyBox.setVisibility(View.VISIBLE);
+            holder.bonusItemView.setVisibility(View.VISIBLE);
+            String bonus = "+" + current.getBonus() + " to " + current.getBonusCard();
+            holder.bonusItemView.setText(bonus);
         }
         else {
-            holder.mFamilyBox.setVisibility(View.INVISIBLE);
+            holder.bonusItemView.setVisibility(View.INVISIBLE);
         }
+
+
     }
 
     static class CivicsDiff extends DiffUtil.ItemCallback<Card> {
@@ -175,34 +189,34 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         return ResourcesCompat.getDrawable(res,backgroundColor, null);
     }
 
-    public void checkBuyable(Integer value) {
-        int first = mLayout.findFirstVisibleItemPosition();
-        int last = mLayout.findLastVisibleItemPosition();
-        Log.v("VISIBLE", " first : " + first + " : last : " + last);
-        TextView priceText;
-        for (int i = first; i < last; i++) {
-            View child = mLayout.getChildAt(i);
-            if (child != null) {
-                priceText = mLayout.getChildAt(i).findViewById(R.id.price);
-                int price = Integer.parseInt((String) priceText.getText());
-                if (price > value) {
-                    Log.v("VISIBLE", "needs notifyItemChanged");
-                }
+//    public void checkBuyable(Integer value) {
+//        int first = mLayout.findFirstVisibleItemPosition();
+//        int last = mLayout.findLastVisibleItemPosition();
+//        Log.v("VISIBLE", " first : " + first + " : last : " + last);
+//        TextView priceText;
+//        for (int i = first; i < last; i++) {
+//            View child = mLayout.getChildAt(i);
+//            if (child != null) {
+//                priceText = mLayout.getChildAt(i).findViewById(R.id.price);
+//                int price = Integer.parseInt((String) priceText.getText());
+//                if (price > value) {
+//                    Log.v("VISIBLE", "needs notifyItemChanged");
+//                }
+//
+//            }
+////            notifyItemChanged(i);
+//        }
+//    }
 
-            }
-//            notifyItemChanged(i);
-        }
-    }
-
-    public void checkVisibility(){
-        Log.v("VIS", "getChildCount: " + manager.getChildCount());
-        for (int i=0; i < manager.getChildCount(); i++  ) {
-            if (manager.isViewPartiallyVisible(manager.getChildAt(i),false, true)) {
-                View child = manager.getChildAt(i);
-                Card currentCard = getItem(i);
-                Log.v("VIS", "checkVis :" + currentCard.getName() + " : " + i);
-            }
-        }
-
-    }
+//    public void checkVisibility(){
+//        Log.v("VIS", "getChildCount: " + manager.getChildCount());
+//        for (int i=0; i < manager.getChildCount(); i++  ) {
+//            if (manager.isViewPartiallyVisible(manager.getChildAt(i),false, true)) {
+//                View child = manager.getChildAt(i);
+//                Card currentCard = getItem(i);
+//                Log.v("VIS", "checkVis :" + currentCard.getName() + " : " + i);
+//            }
+//        }
+//
+//    }
 }

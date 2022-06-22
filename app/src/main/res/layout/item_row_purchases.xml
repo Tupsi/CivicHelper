@@ -6,15 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/group"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="0dp"
-        android:background="@drawable/cardbackground"
-        android:textAppearance="?attr/textAppearanceListItem"
-        app:constraint_referenced_ids="familybonus, familyto, familyname">
-    </androidx.constraintlayout.widget.Group>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/card"

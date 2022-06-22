@@ -2,7 +2,5 @@
 <resources>
     <color name="calamity_red">#ef5350</color>
     <color name="calamity_green">#43a047</color>
-
     <color name="item_name">#dddddd</color>
-
 </resources>

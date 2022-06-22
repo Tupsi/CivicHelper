@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 
 /**
- * A fragment representing a list of Items.
+ * Shows all bought civilization advances (cards).
  */
 public class PurchasesFragment extends Fragment {
 

@@ -34,7 +34,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public static CivicHelperDatabase getDatabase(final Context context) {
-        Log.v("DATABASE", "in getDatabase");
+//        Log.v("DATABASE", "in getDatabase");
         if (INSTANCE == null) {
             synchronized (CivicHelperDatabase.class) {
                 if (INSTANCE == null) {
@@ -54,7 +54,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-            Log.v("DATABASE", "in callback onCreate");
+//            Log.v("DATABASE", "in callback onCreate");
             // If you want to keep data through app restarts,
             // comment out the following block
             databaseWriteExecutor.execute(() -> {

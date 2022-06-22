@@ -5,10 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * Adapter for showing a list of Special Abilities or Immunities against on the dashboard.
+ */
 public class SpecialsAdapter extends RecyclerView.Adapter<SpecialsAdapter.ViewHolder> {
 
     private String[] localDataSet;
@@ -53,18 +55,10 @@ public class SpecialsAdapter extends RecyclerView.Adapter<SpecialsAdapter.ViewHo
         return new ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-
-        // Get element from your dataset at this position and replace the
-        // contents of the view with that element
         viewHolder.getTextView().setText(localDataSet[position]);
-        if (position % 2 == 0) {
-            viewHolder.getTextView().setBackgroundResource(R.drawable.specials_background);
-        } else {
-
-        }
+        viewHolder.getTextView().setBackgroundResource(R.drawable.specials_background);
         if (viewHolder.getTextView().getText().toString().startsWith("_")) {
             viewHolder.getTextView().setTypeface(viewHolder.getTextView().getTypeface(), Typeface.BOLD);
         }

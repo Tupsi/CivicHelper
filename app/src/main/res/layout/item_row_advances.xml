@@ -6,15 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/group"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="0dp"
-        android:background="@drawable/cardbackground"
-        android:textAppearance="?attr/textAppearanceListItem"
-        app:constraint_referenced_ids="familybonus, familyto, familyname">
-    </androidx.constraintlayout.widget.Group>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/card"
@@ -24,43 +16,15 @@
         android:layout_marginBottom="2dp"
         android:background="@drawable/item_background">
 
-        <LinearLayout
-            android:id="@+id/familylayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/item_background"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <TextView
-                android:id="@+id/familybonus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="76dp"
-                android:layout_marginTop="68dp"
-                android:layout_marginBottom="26dp"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/familyto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="68dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="26dp"
-                android:text=" to " />
-
-            <TextView
-                android:id="@+id/familyname"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="68dp"
-                android:layout_marginEnd="148dp"
-                android:layout_marginBottom="26dp"
-                android:text="TextView"
-                android:visibility="invisible" />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/familybonus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/price"
+            app:layout_constraintStart_toEndOf="@+id/price"
+            app:layout_constraintTop_toTopOf="@+id/price" />
 
         <TextView
             android:id="@+id/price"

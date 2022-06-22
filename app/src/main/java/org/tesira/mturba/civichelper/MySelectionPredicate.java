@@ -11,6 +11,11 @@ import org.tesira.mturba.civichelper.db.Effect;
 
 import java.util.List;
 
+/**
+ * SelectionPredicate to check if there is still enough treasure to select the clicked row
+ * in the list of the advances fragment.
+ * @param <String> Name of the civilization advance.
+ */
 public class MySelectionPredicate<String> extends SelectionTracker.SelectionPredicate<String> {
 
     private AdvancesFragment fragment;

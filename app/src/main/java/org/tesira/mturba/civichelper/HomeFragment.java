@@ -34,8 +34,9 @@ import org.tesira.mturba.civichelper.db.CivicViewModel;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
+ * Shows the Dashboard where you can check the number of cities,
+ * see your current color bonus and the effects the already bought
+ * cards have on your game.
  */
 public class HomeFragment extends Fragment {
 
@@ -45,7 +46,6 @@ public class HomeFragment extends Fragment {
     private CalamityAdapter calamityAdapter;
     private SpecialsAdapter specialsAdapter;
     private SharedPreferences prefs;
-    private int count=0;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -57,11 +57,6 @@ public class HomeFragment extends Fragment {
 //        binding.startBtn.setOnClickListener(this::onClickButton);
 //        binding.resetBtn.setOnClickListener(this::onClickButton);
         setHasOptionsMenu(true);
-//        mCivicViewModel.getAllPurchases().observeForever(purchases -> {
-//            for (Purchase name: purchases) {
-//                Log.v("BUY", "observer : "+name.getName());
-//            }
-//        });
         View rootView = binding.getRoot();
         RecyclerView mRecyclerView = rootView.findViewById(R.id.listCalamity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
@@ -70,19 +65,9 @@ public class HomeFragment extends Fragment {
         mRecyclerView = rootView.findViewById(R.id.listAbility);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         List<String> specialsList = mCivicViewModel.getSpecialAbilities();
-        count++;
-        Log.v("CALAM", "1:" + count++ + ":" + specialsList.size());
         specialsList.add(0,"___Special Abilities");
-        Log.v("CALAM", "2:" + count++ + ":"+ specialsList.size());
-        if (specialsList.size() % 2 == 0) {
-            specialsList.add(               "___Immunities");
-        } else {
-            specialsList.add(               "");
-            specialsList.add(               "___Immunities");
-        }
-        Log.v("CALAM", "3:" + count++ + ":"+ specialsList.size());
+        specialsList.add(               "___Immunities");
         specialsList.addAll(mCivicViewModel.getImmunities());
-        Log.v("CALAM", "4:" + count++ + ":"+ specialsList.size());
         specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
         mRecyclerView.setAdapter(specialsAdapter);
         binding.tvVp.setText("VP: " + mCivicViewModel.sumVp());
@@ -98,8 +83,45 @@ public class HomeFragment extends Fragment {
         binding.radio7.setOnClickListener(this::onCitiesClicked);
         binding.radio8.setOnClickListener(this::onCitiesClicked);
         binding.radio9.setOnClickListener(this::onCitiesClicked);
+        restoreCityButton(mCivicViewModel.getCities());
         checkAST();
         return rootView;
+    }
+
+    private void restoreCityButton(int cities) {
+        Log.v("CITY", "HOME: "+cities);
+        switch(cities){
+            case 0:
+                binding.radio0.setChecked(true);
+                break;
+            case 1:
+                binding.radio1.setChecked(true);
+                break;
+            case 2:
+                binding.radio2.setChecked(true);
+                break;
+            case 3:
+                binding.radio3.setChecked(true);
+                break;
+            case 4:
+                binding.radio4.setChecked(true);
+                break;
+            case 5:
+                binding.radio5.setChecked(true);
+                break;
+            case 6:
+                binding.radio6.setChecked(true);
+                break;
+            case 7:
+                binding.radio7.setChecked(true);
+                break;
+            case 8:
+                binding.radio8.setChecked(true);
+                break;
+            case 9:
+                binding.radio9.setChecked(true);
+                break;
+        }
     }
 
     /**
@@ -110,10 +132,10 @@ public class HomeFragment extends Fragment {
         int cities = mCivicViewModel.getCities();
         String ast = prefs.getString("ast","basic");
         int vp = mCivicViewModel.sumVp();
-        Log.v("checkAST", ast);
+//        Log.v("checkAST", ast);
         List<Card> allPurchases = mCivicViewModel.getPurchasesAsCard();
-        int size100 = 0, size200 = 0, size;
-        size = allPurchases.size();
+        int size100 = 0, size200 = 0, numberPurchases;
+        numberPurchases = allPurchases.size();
         for (Card card: allPurchases) {
             if (card.getPrice() >= 100) {
                 size100++;
@@ -122,7 +144,7 @@ public class HomeFragment extends Fragment {
                 size200++;
             }
         }
-        Log.v("checkAST","100: " + size100 + " 200: " + size200);
+//        Log.v("checkAST","100: " + size100 + " 200: " + size200);
 
         // reset everything first and then see where we are
         binding.tvMBA.setBackgroundResource(R.color.ast_red);
@@ -134,22 +156,22 @@ public class HomeFragment extends Fragment {
         binding.tvLIA.setBackgroundResource(R.color.ast_red);
         binding.tvLIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onRed));
         if (ast.compareTo("basic") == 0){
-            if (size >= 3 && cities >= 3) {
+            if (numberPurchases >= 3 && cities >= 3) {
                 // MBA needs 3 cities & 3 cards
                 binding.tvMBA.setBackgroundResource(R.color.ast_green);
                 binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
-            if (size >= 3 && size100 >= 3 && cities >= 3) {
+            if (numberPurchases >= 3 && size100 >= 3 && cities >= 3) {
                 // LBA needs 3 cities & 3 cards 100+
                 binding.tvLBA.setBackgroundResource(R.color.ast_green);
                 binding.tvLBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
-            if (size >= 2 && size200 >= 2 && cities >= 4) {
+            if (numberPurchases >= 2 && size200 >= 2 && cities >= 4) {
                 // EIA needs 4 cities & 2 cards 200+
                 binding.tvEIA.setBackgroundResource(R.color.ast_green);
                 binding.tvEIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
-            if (size >= 3 && size200 >= 3 && cities >= 5) {
+            if (numberPurchases >= 3 && size200 >= 3 && cities >= 5) {
                 // LEA needs 5 cities & 3 cards 200+
                 binding.tvLIA.setBackgroundResource(R.color.ast_green);
                 binding.tvLIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
@@ -161,31 +183,31 @@ public class HomeFragment extends Fragment {
                 binding.tvMBA.setBackgroundResource(R.color.ast_green);
                 binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
-            if (size >= 12 && cities >= 4) {
+            if (numberPurchases >= 12 && cities >= 4) {
                 // LBA needs 4 cities & 12 cards
                 binding.tvLBA.setBackgroundResource(R.color.ast_green);
-                binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
+                binding.tvLBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
             if (size100 >= 10 && vp >= 38 && cities >= 5) {
                 // EIA needs 5 cities & 10 cards 100+ & 38 VP
                 binding.tvEIA.setBackgroundResource(R.color.ast_green);
-                binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
+                binding.tvEIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
             if (size100 >= 17 && vp >= 56 && cities >= 6) {
                 // LEA needs 6 cities & 17 cards 100+ & 56 VP
                 binding.tvLIA.setBackgroundResource(R.color.ast_green);
-                binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
+                binding.tvLIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
             }
         }
-        int currentNightMode = getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        switch (currentNightMode) {
-            case Configuration.UI_MODE_NIGHT_NO:
-                // Night mode is not active on device
-                break;
-            case Configuration.UI_MODE_NIGHT_YES:
-                // Night mode is active on device
-                break;
-        }
+//        int currentNightMode = getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+//        switch (currentNightMode) {
+//            case Configuration.UI_MODE_NIGHT_NO:
+//                // Night mode is not active on device
+//                break;
+//            case Configuration.UI_MODE_NIGHT_YES:
+//                // Night mode is active on device
+//                break;
+//        }
     }
 
     @Override
@@ -193,16 +215,16 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    public void onClickButton(View v) {
-        switch (v.getId()) {
-//            case R.id.startBtn:
-//                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_advancesFragment);
-//                break;
-//            case R.id.resetBtn:
-//                resetGame();
-//                break;
-        }
-    }
+//    public void onClickButton(View v) {
+//        switch (v.getId()) {
+////            case R.id.startBtn:
+////                Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_advancesFragment);
+////                break;
+////            case R.id.resetBtn:
+////                resetGame();
+////                break;
+//        }
+//    }
 
     public void recalculateBonus() {
         int specials = mCivicViewModel.recalculateBonus(this.getActivity().getSharedPreferences(BONUS, Context.MODE_PRIVATE ));
@@ -242,6 +264,7 @@ public class HomeFragment extends Fragment {
                         binding.tvEIA.setBackgroundResource(R.color.ast_red);
                         binding.tvLIA.setBackgroundResource(R.color.ast_red);
                         binding.radio0.setChecked(true);
+                        mCivicViewModel.setCities(0);
                         prefs.edit().remove("civilization").apply();
                         binding.tvCivilization.setText("set civic in prefs!");
                         mCivicViewModel.resetDB();
