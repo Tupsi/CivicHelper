@@ -26,5 +26,8 @@
     <color name="transparent">#00ff0000</color>
     <color name="solid">#ffff0000</color>
 
+    <color name="item_name">#222222</color>
+    <color name="item_bright">#000000</color>
+    <color name="item_dark">#ffffff</color>
 
 </resources>

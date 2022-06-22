@@ -1,6 +1,8 @@
 package org.tesira.mturba.civichelper;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,13 +46,28 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
         holder.mCurrentPrice.setText(Integer.toString(mValues.get(position).getCurrentPrice()));
 
         if (holder.mItem.getBonus() > 0) {
-            holder.mFamilyBox.setVisibility(View.VISIBLE);
+//            holder.mFamilyBox.setVisibility(View.VISIBLE);
+            holder.mBonus.setVisibility(View.VISIBLE);
+            String bonus = "+" + holder.mItem.getBonus() + " to " + holder.mItem.getBonusCard();
+            holder.mBonus.setText(bonus);
         }
         else {
-            holder.mFamilyBox.setVisibility(View.INVISIBLE);
+//            holder.mFamilyBox.setVisibility(View.INVISIBLE);
+            holder.mBonus.setVisibility(View.INVISIBLE);
         }
-        String bonus = "+" + holder.mItem.getBonus() + " to " + holder.mItem.getBonusCard();
-        holder.mBonus.setText(bonus);
+
+        switch (mValues.get(position).getGroup1()) {
+            case YELLOW:
+            case GREEN:
+                holder.mName.setTextColor(Color.BLACK);
+                break;
+            default:
+                holder.mName.setTextColor(Color.WHITE);
+                break;
+        }
+
+//        String bonus = "+" + holder.mItem.getBonus() + " to " + holder.mItem.getBonusCard();
+//        holder.mBonus.setText(bonus);
 
 //        if (mPurchases.contains(holder.mItem.getName())) {
 ////            holder.mCardView.setAlpha(1.0F);
@@ -75,7 +92,6 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
         public final TextView mPrice;
         public Card mItem;
         public final View mCardView;
-        public final LinearLayout mFamilyBox;
         public final TextView mBonus;
         public final TextView mVp;
         public final TextView mCurrentPrice;
@@ -86,7 +102,6 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
             mName = binding.name;
             mPrice = binding.price;
             mCardView = binding.card;
-            mFamilyBox = binding.familylayout;
             mBonus = binding.familybonus;
             mVp = binding.vp;
             mCurrentPrice = binding.currentPrice;

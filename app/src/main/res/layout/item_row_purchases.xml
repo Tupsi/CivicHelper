@@ -24,23 +24,15 @@
         android:layout_marginBottom="2dp"
         android:background="@drawable/item_background">
 
-        <LinearLayout
-            android:id="@+id/familylayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:background="@drawable/item_background"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <TextView
-                android:id="@+id/familybonus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="76dp"
-                android:layout_marginTop="68dp"
-                android:layout_marginBottom="26dp"
-                android:text="TextView" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/familybonus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/price"
+            app:layout_constraintStart_toEndOf="@+id/price"
+            app:layout_constraintTop_toTopOf="@+id/price" />
 
         <TextView
             android:id="@+id/price"
@@ -66,7 +58,7 @@
             android:layout_marginBottom="29dp"
             android:foregroundGravity="center"
             android:gravity="center"
-            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="@color/item_name"
             app:layout_constraintBottom_toTopOf="@+id/price"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -94,7 +86,7 @@
             android:id="@+id/currentPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/price_background"
             android:foregroundGravity="center"
             android:gravity="center"
@@ -102,8 +94,6 @@
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@+id/price"
             app:layout_constraintEnd_toStartOf="@+id/vp"
-            app:layout_constraintHorizontal_bias="0.93"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/vp" />
 
 
