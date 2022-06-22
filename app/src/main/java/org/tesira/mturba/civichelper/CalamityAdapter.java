@@ -59,13 +59,19 @@ public class CalamityAdapter extends RecyclerView.Adapter<CalamityAdapter.ViewHo
         holder.getCalamity().setText(calamityList.get(position).getCalamity());
         holder.getBonus().setText(calamityList.get(position).getBonus());
         if (Integer.parseInt(calamityList.get(position).getBonus()) > 0) {
-            holder.getCalamity().setTextColor(mContext.getResources().getColor(R.color.red, null));
-//            holder.getCalamity().setBackgroundResource(R.color.red);
+            holder.getCalamity().setTextColor(mContext.getResources().getColor(R.color.calamity_red, null));
+            holder.bonus.setTextColor(mContext.getResources().getColor(R.color.calamity_red, null));
+            //            holder.getCalamity().setBackgroundResource(R.color.red);
         } else {
-            holder.getCalamity().setTextColor(mContext.getResources().getColor(R.color.green, null));
+            holder.getCalamity().setTextColor(mContext.getResources().getColor(R.color.calamity_green, null));
+            holder.bonus.setTextColor(mContext.getResources().getColor(R.color.calamity_green, null));
         }
         if (Integer.parseInt(calamityList.get(position).getBonus()) == -99) {
             holder.getBonus().setVisibility(View.INVISIBLE);
+        }
+        if (position % 2 == 0) {
+            holder.calamity.setBackgroundResource(R.drawable.specials_background);
+            holder.bonus.setBackgroundResource(R.drawable.specials_background);
         }
     }
 

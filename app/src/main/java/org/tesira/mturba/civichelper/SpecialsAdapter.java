@@ -61,7 +61,7 @@ public class SpecialsAdapter extends RecyclerView.Adapter<SpecialsAdapter.ViewHo
         // contents of the view with that element
         viewHolder.getTextView().setText(localDataSet[position]);
         if (position % 2 == 0) {
-            viewHolder.getTextView().setBackgroundResource(R.drawable.generic_background);
+            viewHolder.getTextView().setBackgroundResource(R.drawable.specials_background);
         } else {
 
         }

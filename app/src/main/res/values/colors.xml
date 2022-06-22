@@ -15,8 +15,8 @@
     <color name="religion">#ffff00</color>
     <color name="grey">#fafafa</color>
     <color name="dark_grey">#88676767</color>
-    <color name="red">#6f0000</color>
-    <color name="green">#136e42</color>
+    <color name="calamity_red">#6f0000</color>
+    <color name="calamity_green">#136e42</color>
 
     <color name="ast_green">#33691e</color>
     <color name="ast_onGreen">#ffffff</color>
