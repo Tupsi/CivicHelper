@@ -1,18 +1,11 @@
 package org.tesira.mturba.civichelper;
 
-import static android.text.Html.FROM_HTML_MODE_LEGACY;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
-
-import android.text.Html;
-import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +86,7 @@ public class TipsFragment extends Fragment {
             }
         });
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-        int civicNumber = Integer.parseInt(prefs.getString("civilization", "Minoa"));
+        int civicNumber = Integer.parseInt(prefs.getString("civilization", "1"));
         binding.tipsSpinner.setSelection(civicNumber-1);
         return rootView;
     }
