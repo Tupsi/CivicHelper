@@ -1,27 +1,22 @@
 package org.tesira.mturba.civichelper;
 
 import static java.lang.Integer.parseInt;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.selection.ItemKeyProvider;
-import androidx.recyclerview.selection.MutableSelection;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,12 +28,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.tesira.mturba.civichelper.databinding.FragmentAdvancesBinding;
 import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 import org.tesira.mturba.civichelper.db.Effect;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,9 +42,7 @@ public class AdvancesFragment extends Fragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TREASURE_BOX = "treasure";
-
     private CivicViewModel mCivicViewModel;
-
     // arraylist of all civilization cards
     private String sortingOrder;
     protected EditText mTreasureInput;
@@ -64,18 +55,13 @@ public class AdvancesFragment extends Fragment
     private MyItemKeyProvider<String> myItemKeyProvider;
     private LinearLayoutManager mLayout;
     private CivicsListAdapter mAdapter;
-    MutableSelection<String> currentSelection = new MutableSelection<>();
-    private Observer<Integer> mObserver;
     private RecyclerView mRecyclerView;
-
-
-
-
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 2;
 
+
+
+
+//    private static final String ARG_COLUMN_COUNT = "column-count";
 //    /**
 //     * Mandatory empty constructor for the fragment manager to instantiate the
 //     * fragment (e.g. upon screen orientation changes).
@@ -99,7 +85,7 @@ public class AdvancesFragment extends Fragment
         mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
         sortingOrder = prefs.getString("sort", "name");
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue());
+//        mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue());
     }
 
     @Override
@@ -123,7 +109,6 @@ public class AdvancesFragment extends Fragment
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
         mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> {
-            Log.v("OBSERVER", "Treasure :" + treasure + " Remaining :" + mCivicViewModel.getRemaining().getValue());
             mTreasureInput.setText(String.valueOf(treasure));
             if (treasure < mCivicViewModel.getRemaining().getValue()) {
                 mCivicViewModel.setRemaining(treasure);
@@ -133,22 +118,12 @@ public class AdvancesFragment extends Fragment
             } else {
                 mCivicViewModel.setRemaining(treasure);
             }
+            // treasure changed, and so does what we might be able to buy.
             mAdapter.notifyDataSetChanged();
             updateViews();
-//            mRecyclerView.setAdapter(mAdapter);
         });
-//        mObserver = remaining -> {
-//            Log.v("OBSERVER", "treasure remaining : " + remaining);
-//            if (AdvancesFragment.this.getContext() != null) {
-//                mRemainingText.setText(String.valueOf(remaining));
-//                if (tracker != null) {
-//                    updateViews();
-//                }
-//            }
-//        };
 
         mCivicViewModel.getRemaining().observe(requireActivity(), remaining -> {
-            Log.v("OBSERVER", "treasure remaining : " + remaining);
             if (AdvancesFragment.this.getContext() != null) {
                 mRemainingText.setText(String.valueOf(remaining));
                 if (tracker != null) {
@@ -156,44 +131,16 @@ public class AdvancesFragment extends Fragment
                 }
             }
         });
-//        mCivicViewModel.getRemaining().observe(requireActivity(), new Observer<Integer>() {
-//            @Override
-//            public void onChanged(Integer remaining) {
-//                Log.v("OBSERVER", "treasure remaining : " + remaining);
-//                if (AdvancesFragment.this.getContext() != null) {
-//                    mRemainingText.setText(String.valueOf(remaining));
-//                    if (tracker != null) {
-////                        mAdapter.notifyDataSetChanged();
-//                        updateAdaper();
-//                    }
-//                }
-//            }
-//        });
 
         // close SoftKeyboard on Enter
         mTreasureInput.setOnEditorActionListener((v, keyCode, event) -> {
             calculateInput(mTreasureInput.getText().toString());
             mCivicViewModel.setTreasure(calculateInput(mTreasureInput.getText().toString()));
-//                mCivicViewModel.setTreasure(Integer.parseInt(mTreasureInput.getText().toString()));
                 // hide virtual keyboard on enter
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mTreasureInput.getWindowToken(), 0);
-//                mCivicViewModel.calculateTotal(currentSelection);
                 return true;
         });
-//        mTreasureInput.setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                // If the event is a key-down event on the "enter" button
-//                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-//                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-//                    // Perform action on key press
-////                    Toast.makeText(v.getContext(), mTreasureInput.getText(), Toast.LENGTH_SHORT).show();
-//                    return false;
-//                }
-//                return false;
-//            }
-//        });
 
         binding.btnBuy.setOnClickListener(v -> {
             buyAdvances();
@@ -220,9 +167,6 @@ public class AdvancesFragment extends Fragment
             public void onItemStateChanged(@NonNull String key, boolean selected) {
                 super.onItemStateChanged(key, selected);
                 // item selection changed, we need to redo total selected cost
-//                Log.v("OBSERVER", "inside onItemStateChanged : " + key + " : " + selected);
-//                mCivicViewModel.calculateTotal(tracker.getSelection());
-//                tracker.copySelection(currentSelection);
                 mCivicViewModel.calculateTotal(tracker.getSelection());
                 if (tracker.getSelection().size() == 0) {
                     mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
@@ -232,70 +176,47 @@ public class AdvancesFragment extends Fragment
             @Override
             public void onSelectionRefresh() {
                 super.onSelectionRefresh();
-//                Log.v("OBSERVER", "inside onSelectionRefresh");
-
             }
 
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
-//                Log.v("OBSERVER", "inside onSelectionChanged");
-//                mCivicViewModel.calculateTotal(currentSelection);
-//                if (currentSelection.size() == 0) {
-//                    mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
-//                }
-//                updateViews();
             }
 
             @Override
             public void onSelectionRestored() {
                 super.onSelectionRestored();
-                Log.v("OBSERVER", "inside onSelectionRestored");
             }
 
         });
         if (savedInstanceState != null) {
-            Log.v("TRACKER", "Tracker restores state");
-            Log.v("TRACKER", "size before restore: " + tracker.getSelection().size());
             tracker.onRestoreInstanceState(savedInstanceState);
-            Log.v("TRACKER", "size after restore: " + tracker.getSelection().size());
-
         }
-
-//        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-//            @Override
-//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-//                View child = rv.findChildViewUnder(e.getX(), e.getY());
-//                Log.v("LONG", ""+child.toString());
-//                return false;
-//            }
-//
-//            @Override
-//            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-//
-//            }
-//
-//            @Override
-//            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-//
-//            }
-//        });
 
         //        setHasOptionsMenu(true);
         return rootView;
     }
 
-    private int calculateInput(String treasureinput) {
-        String [] pieces = treasureinput.trim().split("\\D+");
+    /**
+     * Takes a string and separates it by all chars which are not a number. Calculates the sum
+     * of the pieces, returning the result.
+     * @param treasureInput String with numbers somewhere
+     * @return result.
+     */
+    private int calculateInput(String treasureInput) {
+        String [] pieces = treasureInput.trim().split("\\D+");
         int result = 0;
         for (String number:pieces) {
-            Log.v("NUMBERS", number);
             result += Integer.parseInt(number);
         }
-        Log.v("NUMBERS", "Result: "+ result);
         return result;
     }
 
+    /**
+     * rechecks if the visible items on the screen still can be bought after an item
+     * has been selected as RecyclerView only does not on items not visible which
+     * are created fresh when coming back into view.
+     */
     private void updateViews() {
         LinearLayoutManager lm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
         if (lm != null) {
@@ -324,24 +245,16 @@ public class AdvancesFragment extends Fragment
         }
     }
 
-    private void checkBuyable() {
-        int first = mLayout.findFirstVisibleItemPosition();
-        int last = mLayout.findLastVisibleItemPosition();
-        Log.v("VISIBLE", " first : " + first + " : last : " + last);
-        for (int i = first; i <= last; i++) {
-            Log.v("VISIBLE","card : " + mAdapter.getCurrentList().get(i).getName());
-        }
-//        int i1 = findFirstVisibleItemPosition();
-//        int findFirstCompletelyVisibleItemPosition();
-//        int findLastVisibleItemPosition();
-//        int findLastCompletelyVisibleItemPosition();
-    }
-
+    /**
+     * after user hits the buy button, this adds all selected advances to the purchase list
+     * checks if advances with special bonuses are bought (Written Record, Monument, Anatomy)
+     * and pops up a dialog to ask for needed input if needed.
+     * Checks then if it is ok to return to the dashboard with returnToDashboard.
+     */
     private void buyAdvances() {
         int credits = 0;
         boolean buyAnatomy = false;
         for (String name : tracker.getSelection()) {
-//            Card adv = mCivicViewModel.getAdvanceByName(name);
             List<Effect> effects = mCivicViewModel.getEffect(name,"Credits");
             // add to list of bought cards
             Log.v("BUY", "Adding " + name);
@@ -393,10 +306,7 @@ public class AdvancesFragment extends Fragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        Log.v("TRACKER", "inside onSavedInstanceState");
-        Log.v("TRACKER", " size on save: " + tracker.getSelection().size());
         tracker.onSaveInstanceState(savedInstanceState);
-
         // save stuff
         int money = parseInt(mTreasureInput.getText().toString());
         savedInstanceState.putInt(TREASURE_BOX, money);
@@ -424,21 +334,16 @@ public class AdvancesFragment extends Fragment
 
     public void onDestroy() {
         super.onDestroy();
-//        tracker = null;
+        tracker = null;
         mCivicViewModel.getRemaining().removeObservers(requireActivity());
         mCivicViewModel.getTreasure().removeObservers(requireActivity());
-//        binding = null;
+        binding = null;
         Log.v("ADVANCES","---> onDestroy() <--- ");
     }
 
     public void showToast(String text) {
         if (getContext() != null) Toast.makeText(getContext(), text,Toast.LENGTH_LONG).show();
     }
-
-//    @Override
-//    public void onDialogPositiveClick(DialogFragment dialog) {
-//        NavHostFragment.findNavController(this).popBackStack();
-//    }
 
     /**
      * Returns the application back to the dashboard, but checks first if another dialog
@@ -454,16 +359,11 @@ public class AdvancesFragment extends Fragment
         } else {
             if (numberDialogs == 0) {
                 mCivicViewModel.calculateCurrentPrice();
-                //TODO remove used treasure from field and save new value to pref
-                // works, just uncomment
-                //mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - mCivicViewModel.getTotal().getValue());
-
                 // save bonuses to prefs
                 ((MainActivity) getActivity()).saveBonus();
-//                mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
-                mCivicViewModel.setRemaining(0);
-                mCivicViewModel.setTreasure(0);
                 NavHostFragment.findNavController(this).popBackStack();
+                mCivicViewModel.setTreasure(0);
+                mCivicViewModel.setRemaining(0);
             } else
             {
                 numberDialogs--;
