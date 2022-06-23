@@ -3,10 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/drawable/ic_baseline_favorite_24.xml" value="0.115" />
+        <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/drawable/ic_baseline_help_24.xml" value="0.115" />
+        <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.115" />
         <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/drawable/item_background.xml" value="0.116" />
         <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/drawable/nav_header.xml" value="0.286" />
         <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/layout-night/nav_header.xml" value="0.36730072463768115" />
         <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/layout/activity_main.xml" value="0.36730072463768115" />
+        <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/layout/fragment_about.xml" value="0.3632246376811594" />
+        <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/layout/fragment_home.xml" value="0.3632246376811594" />
+        <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/layout/fragment_purchases.xml" value="0.3632246376811594" />
+        <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/layout/fragment_tips.xml" value="0.3632246376811594" />
         <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/layout/item_row_advances.xml" value="0.4466666666666667" />
         <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/layout/nav_header.xml" value="0.36730072463768115" />
         <entry key="..\:/Users/tupsi/OneDrive/Studium/Projektarbeit/CivicHelper/app/src/main/res/menu/navdrawer_menu.xml" value="0.3984375" />
@@ -22,6 +29,7 @@
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/checkbox_background.xml" value="0.3475" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/engineering_background.xml" value="0.287" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/generic_background.xml" value="0.1685" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/ic_baseline_favorite_24.xml" value="0.121" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.3415" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1945" />
         <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/ic_search_black_24dp.xml" value="0.2885" />

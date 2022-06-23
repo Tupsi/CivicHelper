@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_homeFragment_to_purchasesFragment"
             app:destination="@id/purchasesFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_tipsFragment2"
+            app:destination="@id/tipsFragment" />
     </fragment>
     <fragment
         android:id="@+id/advancesFragment"
@@ -36,6 +39,11 @@
         android:id="@+id/aboutFragment"
         android:name="org.tesira.mturba.civichelper.AboutFragment"
         android:label="@string/item_about"
+        tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/tipsFragment"
+        android:name="org.tesira.mturba.civichelper.TipsFragment"
+        android:label="@string/item_tips"
         tools:layout="@layout/fragment_about" />
     <fragment
         android:id="@+id/settingsFragment"

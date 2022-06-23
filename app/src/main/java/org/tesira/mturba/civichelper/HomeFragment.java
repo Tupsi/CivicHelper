@@ -70,9 +70,9 @@ public class HomeFragment extends Fragment {
         specialsList.addAll(mCivicViewModel.getImmunities());
         specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
         mRecyclerView.setAdapter(specialsAdapter);
-        binding.tvVp.setText("VP: " + mCivicViewModel.sumVp());
+        binding.tvVp.setText(getString(R.string.tv_vp, mCivicViewModel.sumVp()));
         String civicAST = prefs.getString("civilization", "not set");
-        binding.tvCivilization.setText("A.S.T. ranking order: " + civicAST);
+        binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));
         binding.radio0.setOnClickListener(this::onCitiesClicked);
         binding.radio1.setOnClickListener(this::onCitiesClicked);
         binding.radio2.setOnClickListener(this::onCitiesClicked);
@@ -85,6 +85,8 @@ public class HomeFragment extends Fragment {
         binding.radio9.setOnClickListener(this::onCitiesClicked);
         restoreCityButton(mCivicViewModel.getCities());
         checkAST();
+        binding.tvCivilization.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.tipsFragment));
+        binding.tvBoni.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
         return rootView;
     }
 
@@ -227,12 +229,7 @@ public class HomeFragment extends Fragment {
 
     public void recalculateBonus() {
         int specials = mCivicViewModel.recalculateBonus(this.getActivity().getSharedPreferences(BONUS, Context.MODE_PRIVATE ));
-        requireActivity().getSupportFragmentManager().setFragmentResultListener("extraCredits", getViewLifecycleOwner(), new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                loadBonus();
-            }
-        });
+        requireActivity().getSupportFragmentManager().setFragmentResultListener("extraCredits", getViewLifecycleOwner(), (requestKey, result) -> loadBonus());
         if (specials > 0) {
             new ExtraCreditsDialogFragment(mCivicViewModel,null,specials).show(getParentFragmentManager(),"ExtraCredits");
         }
@@ -249,7 +246,7 @@ public class HomeFragment extends Fragment {
                     loadBonus();
                     calamityAdapter.clearData();
                     specialsAdapter.clearData();
-                    binding.tvVp.setText("VP: 0");
+                    binding.tvVp.setText(getString(R.string.tv_vp,0));
                     binding.tvMBA.setBackgroundResource(R.color.ast_red);
                     binding.tvLBA.setBackgroundResource(R.color.ast_red);
                     binding.tvEIA.setBackgroundResource(R.color.ast_red);
@@ -257,7 +254,7 @@ public class HomeFragment extends Fragment {
                     binding.radio0.setChecked(true);
                     mCivicViewModel.setCities(0);
                     prefs.edit().remove("civilization").apply();
-                    binding.tvCivilization.setText("set civic in prefs!");
+                    binding.tvCivilization.setText(R.string.reset_tv_civic);
                     mCivicViewModel.resetDB();
                     break;
 

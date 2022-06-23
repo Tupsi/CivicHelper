@@ -46,5 +46,13 @@
     <string name="item_purchases">Purchases</string>
     <string name="pref_ast">AST Version</string>
     <string name="prefs_chooser_title">What do you want?</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_item_tips">Tips</string>
+    <string name="item_tips">Tips</string>
+    <string name="spinner_select_civilization">Select Civilization</string>
+    <string name="tv_vp">VP: %1$d</string>
+    <string name="tv_ast">A.S.T. ranking order: %1$s</string>
+    <string name="reset_tv_civic">set civic in prefs!</string>
 
 </resources>

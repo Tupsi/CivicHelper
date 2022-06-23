@@ -15,7 +15,6 @@ android {
         targetSdk 31
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -34,6 +33,10 @@ android {
     }
     dataBinding {
         enabled true
+    }
+
+    lintOptions {
+        baseline file("lint-baseline.xml")
     }
 }
 
@@ -56,6 +59,7 @@ dependencies {
 
     // Room components
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
     annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
     androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
 

@@ -103,4 +103,154 @@
         <item>aggression</item>
         <item>defense</item>
     </string-array>
+
+    <string-array name="tips">
+        <item name="Minoa">So Minoa&#8230;first off, one of the more experienced players should take Minoa. It\'s powerful, but harder to play. Your immediate neighbors will be Hellas and Hatti.
+            Try to make some boundaries with them from the start. Probably none of them will be interested in the islands, so don\'t even mention them. You will need to claim the Peloponnese,
+            if possible including Athens. Miletus and Ionia are very nice for you too. You have lots of city sites, but very little farmland. As soon as you have 8 population, you will need
+            to buy the boat. If you sail towards Ionia or the Peleponnese depends on agreement with your neighbors. However, do NOT take only islands. If you do, you will lack for space
+            quickly. If your neighbors are too aggressive, point out to them that you are later in movement order (you had to pay for that boat after all) and could attack them if forced too.
+            However, try not to attack them, unless your people would starve otherwise.\n
+            I recommend NOT building cities on Rhodes, Knossos and Thera. These three spots are your prime farmland. Try not to destroy your boats, you will probably need at least one or two
+            each turn. Good early technologies are Agriculture (really helps when your cities are reduced) and obviously Clothmaking and Astronavigation. Masonry and Calendar (later in the
+            game) are good as well.\n
+            Do not build cities too early, you have one additional turn until you actually need cities to advance on the AST. You can very easily rebuild your cities late in the game, if you
+            use your ships smart. However, Crete can be attacked by almost every player on the Western Map, so try not to make yourself a target. If you have a feeling that you will be attacked
+            soon (to stop you on the AST), get one of these: Military, Diplomacy, Cultural Ascendancy, maybe Naval Warfare. Universal Doctrine is nice to have for you, IF you are in the same
+            AST-row as the best players. You will have first pick on barbarian and pirate cities.
+        </item>
+        <item name="Saba">Your immediate neighbors will be Nubia, Persia and Babylon. In your start territory, there are 7 city regions but almost no farmland. You should definitely push north,
+            towards Ubar. Depending on player count the Persians will have many neighbors and will therefore have little interest in combat. A peaceful relation with the Persians should be good
+            for you too, since they could reach Ubar easily by ship. In the south, make sure you get Opone and Rhapta. Danokil will probably go the Nubians. It\'s next to your start area, but if
+            you build a boat early to get it, this will set you back.\n
+            Early boats are very expensive. Under NO circumstances build a wilderness city in Saba. You absolutely need this 3 space region for population. Your farmland is extremely rare, so you
+            should get Agriculture as your FIRST advance. If you have to trade in something small before you have a good set for Agriculture, get Pottery for the discount and calamity reduction.
+            Later in the game Astronavigation is nice, so that you can take advantage of empty areas in the north. Universal Doctrine is nice to have for you, IF you are in the same AST-row as the
+            best players. You will have first (second in big games) pick on barbarian and pirate cities.
+        </item>
+        <item name="Assyria">If playing in a smaller game (up to 9 players), you have a very comfortable position on the edge of the map. Only two neighbors (Hatti and Egypt), lots of city sites
+            and good farmland. You have a big border with Hatti, so try have a good relationship with them. Big wars or constant border skirmishes will hurt you both considerably. In the beginning,
+            you will need to expand south FAST, to claim the city sites. This means, move one of your two starting tokens to Syria in the first turn. In the second turn, move to Jericho. Now you have
+            established a border with the Egyptians and can negotiate from a position of strength. For starting advances, you can pretty much choose anything you like. If playing the Basic AST, try
+            to focus on one or two colors. If playing Expert, advances which gives you lots of discounts are always great (Empiricism, Literacy, Mathematics).\n
+            An interesting choice is the combination of Monarchy/Coinage and Cartography. This will allow you to buy lots of trade cards. Architecture is always a good choice. Later in the game you
+            might consider Roadbuilding (not if you are playing Basic and you don\'t have lots of orange credits).\
+            If playing in a bigger game (10+ players) you have Babylon on the other side. This makes it harder for you, since now you have two HUGE borders. I would recommend good relations with
+            Babylon as well. If you need to steal some space, try for some of Parthias territory or Salamis.
+        </item>
+        <item name="Maurya">So Maurya&#8230;you are comfortably on the edge of the map and have lots of space, as well as high population areas. But, you don\'t have many city sites. Expand West and
+            South as quickly as possible and try to come to an amiable agreement with Dravidia. Don\'t be afraid of that huge floodplain, the flood will not hit you often. However, try to avoid some
+            other player having units on that floodplain, or their flood might hit you! You will probably have to build cities in that nice 3/4 population limit areas, but try not to build in all of
+            them. They are great for reducing cities, since you get 3-4 population back. Agriculture is a good choice. There are a lot of 1-2 areas in the south and this will be significantly better
+            with Agriculture. Whether you need Engineering depends on how you build on the flood plain. However, since this will probably change quite a bit during the game, your best bet is probably
+            to get it when you can comfortably afford it. You might also want to consider Urbanism, since you will need wilderness cities. Best places to build wilderness cities are areas with \"1\"
+            population limits. Later in the game you should have clothmaking and astronavigation, so that you can comfortably reach depopulated areas or sack a city (stealing trade cards) of someone
+            who will not be able to retaliate (ie does not have astronavigation).</item>
+        <item name="Celt">Well, there\'s a big chunk of the map into play because of you. You do have plenty of farmland, but not many city sites. So make sure you claim as many as you can in the south,
+            without upsetting your neighbors. Also, you should expand east and claim as many regions with "2" or "3" population limits as possible. You are in no rush to claim Britain, just make sure
+            you take it before the Iberian does. You will probably need to build some wilderness cities later, so you might want to consider Urbanism. Wilderness cities are best built into areas with \"1\"
+            population limits. If you find yourself short on space (highly unlikely imo), you could consider Agriculture, but I don\'t think you really need it.\
+            Roadbuilding could be very useful later in the game, since most of your regions are not easily reachable by ship. Otherwise, you can pretty much go for anything that looks interesting. You
+            will have a big border with the Romans, so make sure you two are on the same page.
+        </item>
+        <item name="Babylon">Let\'s hope your civilization fares better than history suggests! If you are playing on the eastern map only (9 or less players), you have a comfortable position. You have
+            great farmland, lots of city sites and big deserts securing your southern border. Basically, you will need to take all the high population areas in your region and as many city sites as
+            possible. Don\'t be afraid of that floodplain, you can build the three threatened cities. Just make sure you get Engineering quickly and try to avoid other players on your floodplain. They
+            might trigger a flood there (not a problem if you have Engineering). Under no circumstances should you build wilderness cities on the \"3\" or \"4\" population areas.\n
+            In a 10+ player game, your position is a bit weaker, since you will have western neighbors. Try to be friends with everyone. You should get Metalworking early, to avoid attacks on yourself.
+            Later in the game Provincial Empire will be good, since you will not lack for neighbors. Diplomacy or Cultural Ascendancy could be worth a look too, depending on how aggressive your
+            neighbors are. If you don\'t know what you need, Enlightenment is awesome.
+        </item>
+        <item name="Carthage">Let\'s destroy Rome! Wait&#8230;don\'t do that. You won\'t succeed. You\'re on the northern border of Africa and despite being near a desert, your regions are actually quite good.
+            A bit short on city sites, but that\'s not going to be a big problem. Start by expanding east. If you can talk the Egyptians into giving you Cyrene, that\'s great! If not, wait for a nice
+            calamity to destroy the city there and try to build there. The more land you can get going west, the better it is.\n\n
+            However, you have to claim most/all of Sicily. Make sure the Roman understands that it\'s not \"roman territory\". Just because it\'s in today\'s Italy does not mean it\'s his. Not at all. It\'s
+            yours! Don\'t get the ship too early though. It\'s expensive. Agriculture is a good starting tech. Later in the game you will definitely need Clothmaking and Astronavigation. After some big
+            calamity turns, there will always be empty places in Italy, Greece or someplace else.\n\n
+            You can reach the entire Mediterranean from Carthage. If possible, avoid building a city in Carthage before you have Agriculture. Later in the game, Carthage would be almost always my first
+            choice to reduce. Border wars don\'t bother you too much, as long as your enemies don\'t have Astronavigation. However, it\'s still probably better to avoid them.
+        </item>
+        <item name="Dravidia">Another \"edge-of-the-map\" nation. Lots of city sites, but almost no farmland. You will start to expand west and north quickly. You can reach Toli at the same time as
+            Maurya, make him understand that you need it. If Indus is not focused, you can try to take either Lothal or Uijjain as well. Indus has a lot of neighbors, so a promise of peace in exchange
+            for one of these might be interesting for him. You can take your time with the island. At some point, you will notice space becoming rare for players, then you should take it ASAP before
+            someone else does.\n\n
+            Do not build a city on the \"3\" population area before you have Agriculture. Oh, and you need to get Agriculture quickly. This will double your farmland and make it possible to rebuild your
+            cities much easier. Architecture is good as well. You probably should be friendly with Maurya. Not so much need for good relations with Indus, he has 4-5 neighbors, so you can try to take
+            some small areas from him when space gets rare. Preferably by diplomacy (not the advance!), if not get metalworking.
+        </item>
+        <item name="Hati">Hatti is a bit harder to play well. You will need to expand southwest into Turkey, to deny Minoa too much space. Also, you need a bit of the territory to the east or you will
+            lack for space. If playing in a 10+ player game, try to get Assyria to move completely east and south. Try to get Western Armenia and all the spaces around the Black Sea. But, peace with
+            Assyria is your best bet. Combat with Minoa is annoying as well, since he could attack most of your coastal regions without any trouble. If Hellas leaves too much space open on his side of
+            the Black Sea, don\'t hesitate to take it. Even co-existing in one of the big areas is a win for you.\n
+            Agriculture + Architecture is a great combination for Hatti.\n\n
+            Later you can go for pretty much whatever you like, this will also depend on your neighbors. You will probably need to be comfortable with using boats, lots of your cities block your movement
+            paths. If there are unclaimed islands at the point when your space gets rare, take them. Be prepared to give away regions as necessary to neighbors (and get some when you need them in return).
+        </item>
+        <item name="Kushan">Kushan is a bit different than the other Nations. It\'s the only one without direct access to water. This has two implications: 1. You cannot build boats and therefore you have
+            to get rid of your treasury in other ways. 2. A lot of calamities are not as harsh for you or don\'t bother you at all. But let’s start with expanding your territory: Basically, you want to expand
+            in all directions at the same time, with a focus on the northwest (lots of city sites). Don\'t be afraid of the volcano, it\'s harmless. Definitely get Habappa. As almost always, Agriculture is
+            nice to have, since you have a lot of \"1\" and \"2\" population areas. Later in the game Monarchy and/or Coinage are great, so you can adjust your tax income. However, you will need to spend all
+            that tax, which is best done with Cartography. Rhetoric will do and Mining is an option as well, but expensive. Be careful that you do not end up with lots of treasury you cannot spend. Unless you
+            win a civil war/tyranny and end up with some coastal cities the following calamities are harmless: Flood, Cyclone, Piracy. If you end up buying a lot of cards from stack nr9, you will need Library.
+            Regression is among the worst calamities. Bactra is a great place NOT to build a city, because you can reach a lot of reduced/destroyed cities from there and therefore quickly rebuild.
+        </item>
+        <item name="Rome">Hail Caesar! You are controlling mighty Rome. However, you are not mighty yet. You will need to expand north, but send one of your tokens south in the 2nd turn. Get Massilia or
+            the Iberians or Celts will take it quickly. Expand north as much as you can without upsetting the Celt. You absolutely must take Pannonia. In the south, try to get a foothold in Sicily.
+            Carthage will be in Sicily too, so it\'s highly unlikely that you can take all of it. But even one region is nice. Corsica and Sardinia should be yours without competition. You do have a LOT
+            of neighbors (depends on player count), so you will have to be very diplomatic. Fighting wars is hurtful for both parties, especially in the beginning. So, take care not to make enemies,
+            especially not the Celts. Despite having two flood plains, you do NOT need engineering to protect yourself. None of those plains will kill more than 10 units, so it only protects you as a
+            secondary victim.\n\n
+            Agriculture and Architecture are good choices. If your many neighbors are aggressive, get Metalworking to protect yourself. Clothmaking is good for you. Don\'t build a city too early in Rubicon.
+        </item>
+        <item name="Persia">I don\'t think there is much to do wrong with Persia. It has a great starting location. You do have a lot of neighbors though, so be careful not to upset them. This means talk
+            to them regularly about regions and borders. Conflict is usually hurtful to both parties, especially in the beginning of the game. Basically, you will need all the \"3\" population areas near
+            you, as well as the city sites. You do have some time to cross the sea, but don\'t wait too long or Babylon and Saba will take too much of the Arabian Peninsula. If you have to reduce/destroy
+            cities later in the game, I would prefer to take the northern cities. These will be easier to rebuild. And avoid building wilderness cities on the \"3\" population areas. You can choose pretty
+            much any tech path you want to. Here are some suggestions, but I don\'t think Persia has any must-haves: Masonry, Calendar and Enlightenment help a lot against calamities (you are vulnerable
+            against the Cyclone and Pirates). Clothmaking, Astronavigation, Metalworking etc. are all nice to have, but there\'s no rush to get them. Architecture, Rhetoric, Mining could be worth a look too.
+        </item>
+        <item name="Iberia">You have a comfortable edge-of-the-map position. Up to three neighbors are manageable as well. You will need to start out north in the first turn. Aquitaine and Aquae Sextiae
+            are very important for you. If there is open space left in the north after you take these two, take it. Try to have peaceful relationships with Romans and Celts (negotiate about regions), but
+            don\'t let either of them take the two regions away from you. Go south to Africa to get some land there, especially if Carthage is slow to do so. Ebusus and the Baleares should be yours too.
+            Build your first cities in Spain, try to avoid building in Aquae Sextiae. The two inland regions in Spain are great for wilderness cities. Agriculture and Urbanism should both help you. Apart
+            from that, you can go for pretty much anything you want. Clothmaking with Astronavigation is always nice, since it will allow you to reach almost all of the Mediterranean. Boats are very
+            helpful to rebuild reduced/destroyed cities on the coast.
+        </item>
+        <item name="Nubia">Haven\'t played Nubia yet, but it sure looks hard. Probably a job for more experienced players. If Eygpt is not in the game (9 players or less) you can start by expanding east,
+            at least until Danokil, preferably further. If Eygpt is in the game as well, you should probably start west in turn1 and send a token east in turn2. Try to get Ptolemais by negotiating with Egypt.
+            You will need Agriculture quickly. Very quickly. As your first buy! (If you have to trade something in before you can afford Agriculture, get Pottery). I think you should avoid building a city in
+            Meroe before you have Agriculture or you won\'t be able to move your tokens. After you got Agriculture you can move through the deserts, so this gets a little better. Clothmaking and Astronavigation
+            are needed later or you won\'t be able to expand your territory to support more cities. Roadbuilding might be good as well. Consider building wilderness cities in \"1\" population areas.
+        </item>
+        <item name="Hellas">Hellas has a great position. If the Romans are not in the game, it\'s even better! Start by moving south and north. Try to get as much of Greece as possible. In the north, you
+            will definitely need the \"4\" and \"3\" region. If Rome is in the game, claim a bit of territory westwards quickly. Byzantinum should be yours too, it\'s a great spot. Do NOT build wilderness
+            cities in the 3 and 4 areas. Keep them for farmland (ie place tokens there). Technology wise you can do pretty much whatever you want. Monarchy/Coinage + Cartography/Rhetoric/Mining is a nice
+            combination, since you can buy additional trade cards. Enlightenment is great as well. If playing the Basic AST, try to focus on one or two colors, for heavy discounts. You have lots of neighbors,
+            so you need to be diplomatic. Early war is very hurtful for both parties.
+        </item>
+        <item name="Indus">The good news is that you have plenty of city sites and good farm land. The bad news is that you have a LOT of neighbors. They floodplain might be annoying as well. In a game
+            without Maurya and Dravidia you can start with an expansion west and north. Just make sure that you get a total of 7 city sites and you will be fine. Claim everything east of the Thar Desert.
+            In a game including Maurya and Dravidia, you will need to expand fast in ALL directions.\n\n
+            Lotha, Poura and Kalibangan are good first targets. Talk to your neighbors to set borders and try to claim everything inside of those cities for yourself. If possible, get more. As you have 5
+            neighbors you should try to be on the good side of as many as possible. Early war hurts both parties (maybe point that out a couple of times if someone feels aggressive). Engineering is a must
+            have for you, but you can build up some green/orange credits first if you want to.\n\n
+            Build last on the \"4\" city site. In a game with 5 neighbors, Provincial Empire might be worth a look later in the game. Metalworking, Diplomacy, Cultural Ascendancy and Military are all
+            possible choices to protect yourself against overly aggressive neighbors. Fundamentalism and Monotheism might be options too, however be careful that you don\'t get a big alliance against you
+            if you get those. If it\'s a peaceful game just take whatever you like and focus on a few heavily discounted colors.
+        </item>
+        <item name="Egypt">Depending on player count you can only have two neighbors or up to 5. In any case, you need to expand quickly. In turn 1, you should move token to Memphis and one to Sinai. In
+            turn 2, you can claim two cities with the Sinai tokens and advance to Cyrene and in a bigger game towards Nubia. You should negotiate with your neighbors, peace is beneficial for both.\n\n
+            In the \"2\" population region on the flood plain you can build a city early, I would probably try to avoid the \"4\" regions until you have no other options. You should get Engineering rather
+            sooner than later, but it does not have to be your first advance. If you build cities on all the floodplain city sites (which I wouldn\'t recommend), you will need Agriculture. If not, it\'s
+            probably OK to buy it late. Apart from that, you can pretty much go for anything you like. Metalworking is nice for border skirmishes and to protect yourself.
+        </item>
+        <item name="Parthia">Another nation with lots of neighbors&#8230;if Kushan and Indus are not in the game, you have a more relaxed start. But, in most cases they will be there. Where you go in your
+            first turn depends on how you negotiate with your neighbors. You want the entire Volcano region (if someone else is there too their calamity might hit you!), as well as some cities in the north
+            and those \"2\" population areas. Nis is nice to have as well. Obviously, you cannot expand into three directions in the first turn, so take the most pressing direction (where you neighbor is
+            the least willing to grant you your land without force) and let one token stay put. In the next turn, you can move into the two other directions.\n\n
+            Agriculture is a good start for you. Urbanism is good and later in the game you might want to consider Roadbuilding. In a 10+ player game Assyria is playing as well, in which case Clothmaking
+            and Astronavigation might be useful. They are pretty much useless for you if Assyria is NOT in the game though! As for the other nations with lots of neighbors these might be useful:
+            Metalworking, Diplomacy, Cultural Ascendancy, Military, Provincial Empire. When constructing wilderness cities, build them in \"1\" population areas and if possible, do not do it coastal.
+        </item>
+    </string-array>
 </resources>
