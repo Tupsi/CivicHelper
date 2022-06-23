@@ -3,37 +3,51 @@
 
     <PreferenceCategory app:title="Main">
         <ListPreference
-            android:title="@string/pref_civilization"
-            app:key="civilization"
-            android:entries="@array/civilizations_entries"
-            app:useSimpleSummaryProvider="true"
-            android:entryValues="@array/civilizations_values"/>
+           android:title="@string/pref_civilization"
+           app:key="civilization"
+           android:entries="@array/civilizations_entries"
+           app:useSimpleSummaryProvider="true"
+           android:entryValues="@array/civilizations_values"
+           />
 
         <ListPreference
-            android:title="@string/pref_ast"
-            app:key="ast"
-            android:entries="@array/ast_entries"
-            app:useSimpleSummaryProvider="true"
-            android:entryValues="@array/ast_values"/>
-
-        <ListPreference
-            app:defaultValue="name"
-            app:entries="@array/sort_entries"
-            app:entryValues="@array/sort_values"
-            app:key="sort"
-            app:title="@string/pref_sorting"
-            app:useSimpleSummaryProvider="true" />
+           android:title="@string/pref_ast"
+           android:entries="@array/ast_entries"
+           android:entryValues="@array/ast_values"
+           app:defaultValue="basic"
+           app:key="ast"
+           app:useSimpleSummaryProvider="true"
+           />
 
     </PreferenceCategory>
-    <PreferenceCategory app:title="@string/layout_header">
 
-        <ListPreference
-            app:defaultValue="1"
-            app:key="columns"
-            app:entries="@array/columns_entries"
-            app:entryValues="@array/columns_values"
-            app:useSimpleSummaryProvider="true"
-            app:title="@string/columns_title" />
+    <PreferenceCategory app:title="@string/layout_header">
+       <ListPreference
+           app:defaultValue="name"
+           app:entries="@array/sort_entries"
+           app:entryValues="@array/sort_values"
+           app:key="sort"
+           app:title="@string/pref_sorting"
+           app:useSimpleSummaryProvider="true"
+           />
+
+       <ListPreference
+           app:defaultValue="1"
+           app:key="columns"
+           app:entries="@array/columns_entries"
+           app:entryValues="@array/columns_values"
+           app:useSimpleSummaryProvider="true"
+           app:title="@string/columns_title"
+           />
+
+       <ListPreference
+           app:defaultValue="custom"
+           app:key="heart"
+           app:entries="@array/heart_entries"
+           app:entryValues="@array/heart_values"
+           app:title="@string/prefs_chooser_title"
+           app:useSimpleSummaryProvider="true"
+           />
 
     </PreferenceCategory>
 

@@ -12,6 +12,7 @@ import androidx.preference.PreferenceManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +24,7 @@ import org.tesira.mturba.civichelper.db.CivicViewModel;
 
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private static final String TREASURE_BOX = "treasure";
     private static final String BONUS = "purchasedAdvancesBonus";
@@ -70,18 +71,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadBonus() {
         int blue, green, orange, red, yellow;
-        Log.v("MAIN", "loadBonus inside Main");
         blue = savedBonus.getInt(CardColor.BLUE.getName(), 0);
         green = savedBonus.getInt(CardColor.GREEN.getName(), 0);
         orange = savedBonus.getInt(CardColor.ORANGE.getName(), 0);
         red = savedBonus.getInt(CardColor.RED.getName(), 0);
         yellow = savedBonus.getInt(CardColor.YELLOW.getName(), 0);
-        Log.v("MAIN"," : " + blue + " : " + green + " : " + orange + " : " + red + " : " + yellow);
         mCivicViewModel.getCardBonus().getValue().put(CardColor.BLUE, blue);
         mCivicViewModel.getCardBonus().getValue().put(CardColor.GREEN, green);
         mCivicViewModel.getCardBonus().getValue().put(CardColor.ORANGE, orange);
         mCivicViewModel.getCardBonus().getValue().put(CardColor.RED, red);
         mCivicViewModel.getCardBonus().getValue().put(CardColor.YELLOW, yellow);
+        mCivicViewModel.setHeart(prefs.getString("heart", "custom"));
     }
 
     public void saveBonus() {
@@ -91,11 +91,9 @@ public class MainActivity extends AppCompatActivity {
             editor.putInt(entry.getKey().getName(), entry.getValue());
         }
         editor.apply();
-        Log.v("MAIN", "saveBonus in Main");
     }
 
     public void newGame() {
-        Log.v("MAIN","clearing sharedPrefs from MAIN...");
         savedBonus.edit().clear().apply();
         mCivicViewModel.deletePurchases();
     }
@@ -108,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void onStart() {
         super.onStart();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(this);
         Log.v("MAIN","---> onStart() <--- ");
     }
 
@@ -118,8 +118,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void onStop() {
         super.onStop();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
         savedBonus.edit().putInt("cities", mCivicViewModel.getCities()).commit();
-//        saveBonus();
         Log.v("MAIN","---> onStop() <--- ");
     }
 
@@ -128,5 +129,25 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         binding = null;
         Log.v("MAIN","---> onDestroy() <--- ");
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.compareTo("heart") == 0) {
+            mCivicViewModel.setHeart(sharedPreferences.getString("heart", "custom"));
+        }
+        // not needed atm
+//        Log.v("PREFS", "changed in Main Activity");
+//        switch (key){
+//            case "sort" :
+//                String sortingOrder = sharedPreferences.getString("sort", "name");
+//                if (sortingOrder.equals("family")) {
+//                    sharedPreferences.edit().putString("columns","3").apply();
+//                }
+//            case "chooser":
+//            case "name" :
+//            default:
+//                break;
+//        }
     }
 }

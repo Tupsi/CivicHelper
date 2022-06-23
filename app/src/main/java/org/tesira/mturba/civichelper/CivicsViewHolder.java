@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.selection.ItemDetailsLookup;
@@ -13,22 +14,19 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
 
     public final TextView nameItemView;
     private final TextView priceItemView;
-//    private final TextView bonusCardItemView;
     public final TextView bonusItemView;
     public final TextView vpItemView;
     public final View mCardView;
-//    public final LinearLayout mFamilyBox;
+    public final ImageView mHeartView;
 
     private CivicsViewHolder(View itemView) {
         super(itemView);
         nameItemView = itemView.findViewById(R.id.name);
         priceItemView = itemView.findViewById(R.id.price);
         vpItemView = itemView.findViewById(R.id.vp);
-//        bonusCardItemView = itemView.findViewById(R.id.familyname);
         bonusItemView = itemView.findViewById(R.id.familybonus);
         mCardView = itemView.findViewById(R.id.card);
-//        mFamilyBox = itemView.findViewById(R.id.familylayout);
-
+        mHeartView = itemView.findViewById(R.id.heart);
     }
 
     public void bindName(String name, Drawable drawable) {
@@ -38,8 +36,6 @@ class CivicsViewHolder extends RecyclerView.ViewHolder {
     public void bindPrice(int price) {
         priceItemView.setText(String.valueOf(price));
     }
-//    public void bindBonusCard(String cardName) {bonusCardItemView.setText(cardName);};
-//    public void bindBonus(int bonus) {bonusItemView.setText(String.valueOf(bonus));}
     public void bindIsActive(boolean isActive) {mCardView.setActivated(isActive);}
 
     static CivicsViewHolder create(ViewGroup parent) {

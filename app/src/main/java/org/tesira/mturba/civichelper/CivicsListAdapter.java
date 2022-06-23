@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 
+import java.util.List;
+
 public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
 
     private SelectionTracker<String> tracker;
@@ -61,13 +63,11 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
 
         holder.bindName(name, getItemBackgroundColor(current, res));
         holder.bindPrice(current.getCurrentPrice());
-//        holder.bindBonus(current.getBonus());
-//        holder.bindBonusCard(current.getBonusCard());
         holder.vpItemView.setText(String.valueOf(current.getVp()));
 
-        if (tracker.hasSelection()) {
+//        if (tracker.hasSelection()) {
 //            Log.v("HOLDER", "inside onBindViewHolder :" + name + " : Position: " + position);
-        }
+//        }
 
         holder.bindIsActive(isSelected);
         if (!isSelected && price == 0) {
@@ -108,8 +108,11 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         else {
             holder.bonusItemView.setVisibility(View.INVISIBLE);
         }
-
-
+        List<String> hearts = mCivicViewModel.getChooserCards();
+        holder.mHeartView.setVisibility(View.INVISIBLE);
+        if (hearts != null && hearts.contains(holder.nameItemView.getText().toString())) {
+            holder.mHeartView.setVisibility(View.VISIBLE);
+        }
     }
 
     static class CivicsDiff extends DiffUtil.ItemCallback<Card> {

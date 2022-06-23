@@ -9,6 +9,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.recyclerview.selection.Selection;
 import org.tesira.mturba.civichelper.Calamity;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,31 @@ public class CivicViewModel extends AndroidViewModel {
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
     private int cities;
     private Application mApplication;
+    public String heart;
+    public final static String[] TREASURY = {"Monarchy", "Coinage", "Trade Routes",
+            "Politics", "Mining"};
+    public final static String[] COMMODITY_CARDS = {"Rhetoric", "Cartography", "Roadbuilding",
+            "Mining", "Trade Empire", "Provincial Empire", "Wonder of the World"};
+    public final static String[] CHEAPER_CIVILIZATION_CARDS = {"Empiricism","Written Record",
+            "Literacy","Monument", "Library", "Mining","Mathematics","Anatomy"};
+    public final static String[] TO_BEND_THE_RULES = {"Coinage", "Universal Doctrine",
+            "Democracy","Wonder of the World"};
+    public final static String[] MORE_TOKEN_ON_THE_MAP = {"Coinage", "Agriculture",
+            "Universal Doctrine", "Democracy","Public Works","Politics","Monotheism", "Diaspora"};
+    public final static String[] TOKEN_MOBILITY = {"Urbanism", "Cloth Making", "Astronavigation",
+            "Agriculture", "Naval Warfare", "Military", "Roadbuilding", "Public Works",
+            "Advanced Military", "Diaspora"};
+    public final static String[] CITIES = {"Urbanism", "Architecture", "Fundamentalism",
+            "Engineering", "Universal Doctrine", "Democracy", "Politics", "Monotheism", "Diaspora"};
+    public final static String[] SEA_POWER = {"Cloth Making", "Masonry", "Astronavigation",
+            "Naval Warfare", "Engineering", "Calendar"};
+    public final static String[] AGGRESSION = {"Metalworking", "Fundamentalism", "Engineering",
+            "Naval Warfare", "Diplomacy", "Military", "Roadbuilding", "Politics",
+            "Advanced Military", "Monotheism", "Diaspora", "Cultural Ascendancy"};
+    public final static String[] DEFENSE = {"Metalworking", "Agriculture", "Fundamentalism",
+            "Engineering", "Diplomacy", "Naval Warfare", "Military", "Roadbuilding", "Philosophy",
+            "Public Works", "Politics", "Monotheism", "Theology", "Provincial Empire", "Diaspora",
+            "Cultural Ascendancy"};
 
     public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
@@ -41,6 +69,14 @@ public class CivicViewModel extends AndroidViewModel {
 
     public void setCities(int cities) {
         this.cities = cities;
+    }
+
+    public String getHeart() {
+        return heart;
+    }
+
+    public void setHeart(String heart) {
+        this.heart = heart;
     }
 
     public void insertPurchase(String purchase) {mRepository.insertPurchase(purchase);}
@@ -190,6 +226,45 @@ public class CivicViewModel extends AndroidViewModel {
         }
         editor.apply();
 //        Log.v("MAIN", "saveBonus in Main");
+    }
+
+    public List<String> getChooserCards() {
+        List<String> list = null;
+        switch (heart) {
+            case "treasury":
+                list = Arrays.asList(TREASURY);
+                break;
+            case "commodities":
+                list = Arrays.asList(COMMODITY_CARDS);
+                break;
+            case "cheaper":
+                list = Arrays.asList(CHEAPER_CIVILIZATION_CARDS);
+                break;
+            case "bend":
+                list = Arrays.asList(TO_BEND_THE_RULES);
+                break;
+            case "more":
+                list = Arrays.asList(MORE_TOKEN_ON_THE_MAP);
+                break;
+            case "mobility":
+                list = Arrays.asList(TOKEN_MOBILITY);
+                break;
+            case "cities":
+                list = Arrays.asList(CITIES);
+                break;
+            case "sea":
+                list = Arrays.asList(SEA_POWER);
+                break;
+            case "aggression":
+                list = Arrays.asList(AGGRESSION);
+                break;
+            case "defense":
+                list = Arrays.asList(DEFENSE);
+                break;
+            case "custom":
+            default:
+        }
+        return list;
     }
 
 }

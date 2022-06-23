@@ -89,7 +89,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void restoreCityButton(int cities) {
-        Log.v("CITY", "HOME: "+cities);
         switch(cities){
             case 0:
                 binding.radio0.setChecked(true);
@@ -228,12 +227,6 @@ public class HomeFragment extends Fragment {
 
     public void recalculateBonus() {
         int specials = mCivicViewModel.recalculateBonus(this.getActivity().getSharedPreferences(BONUS, Context.MODE_PRIVATE ));
-        Log.v("SPECIALS","blue   : " + mCivicViewModel.getCardBonus().getValue().get(CardColor.BLUE));
-        Log.v("SPECIALS","green  : " + mCivicViewModel.getCardBonus().getValue().get(CardColor.GREEN));
-        Log.v("SPECIALS","orange : " + mCivicViewModel.getCardBonus().getValue().get(CardColor.ORANGE));
-        Log.v("SPECIALS","red    : " + mCivicViewModel.getCardBonus().getValue().get(CardColor.RED));
-        Log.v("SPECIALS","yellow : " + mCivicViewModel.getCardBonus().getValue().get(CardColor.ORANGE));
-        Log.v("SPECIALS", "" + specials);
         requireActivity().getSupportFragmentManager().setFragmentResultListener("extraCredits", getViewLifecycleOwner(), new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -248,32 +241,29 @@ public class HomeFragment extends Fragment {
     }
 
     public void resetGame() {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        //Yes button clicked
-                        ((MainActivity) getActivity()).newGame();
-                        loadBonus();
-                        calamityAdapter.clearData();
-                        specialsAdapter.clearData();
-                        binding.tvVp.setText("VP: 0");
-                        binding.tvMBA.setBackgroundResource(R.color.ast_red);
-                        binding.tvLBA.setBackgroundResource(R.color.ast_red);
-                        binding.tvEIA.setBackgroundResource(R.color.ast_red);
-                        binding.tvLIA.setBackgroundResource(R.color.ast_red);
-                        binding.radio0.setChecked(true);
-                        mCivicViewModel.setCities(0);
-                        prefs.edit().remove("civilization").apply();
-                        binding.tvCivilization.setText("set civic in prefs!");
-                        mCivicViewModel.resetDB();
-                        break;
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    //Yes button clicked
+                    ((MainActivity) getActivity()).newGame();
+                    loadBonus();
+                    calamityAdapter.clearData();
+                    specialsAdapter.clearData();
+                    binding.tvVp.setText("VP: 0");
+                    binding.tvMBA.setBackgroundResource(R.color.ast_red);
+                    binding.tvLBA.setBackgroundResource(R.color.ast_red);
+                    binding.tvEIA.setBackgroundResource(R.color.ast_red);
+                    binding.tvLIA.setBackgroundResource(R.color.ast_red);
+                    binding.radio0.setChecked(true);
+                    mCivicViewModel.setCities(0);
+                    prefs.edit().remove("civilization").apply();
+                    binding.tvCivilization.setText("set civic in prefs!");
+                    mCivicViewModel.resetDB();
+                    break;
 
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
-                        break;
-                }
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
             }
         };
 

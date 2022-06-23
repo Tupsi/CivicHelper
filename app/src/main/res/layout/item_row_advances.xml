@@ -74,6 +74,16 @@
             app:layout_constraintTop_toTopOf="@+id/price"
             app:layout_constraintVertical_bias="1.0" />
 
+        <ImageView
+            android:id="@+id/heart"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/vp"
+            app:layout_constraintEnd_toStartOf="@+id/vp"
+            app:layout_constraintTop_toTopOf="@+id/vp"
+            app:srcCompat="@drawable/ic_baseline_favorite_24" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

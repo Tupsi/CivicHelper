@@ -38,8 +38,7 @@ import java.util.List;
 /**
  * A fragment representing a list of Items.
  */
-public class AdvancesFragment extends Fragment
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class AdvancesFragment extends Fragment {
 
     private static final String TREASURE_BOX = "treasure";
     private CivicViewModel mCivicViewModel;
@@ -287,20 +286,6 @@ public class AdvancesFragment extends Fragment
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return NavigationUI.onNavDestinationSelected(item,
                 Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        switch (key){
-            case "sort" :
-                sortingOrder = sharedPreferences.getString("sort", "name");
-                if (sortingOrder.equals("family")) {
-                    sharedPreferences.edit().putString("columns","3").apply();
-                }
-            case "name" :
-            default:
-                break;
-        }
     }
 
     @Override

@@ -77,4 +77,30 @@
         <item>basic</item>
         <item>expert</item>
     </string-array>
+    <string-array name="heart_entries">
+        <item>Custom</item>
+        <item>Treasury</item>
+        <item>Commodity Cards</item>
+        <item>Cheaper Civilization Cards</item>
+        <item>To Bend The Rules</item>
+        <item>More Tokens On The Map</item>
+        <item>Token Mobility</item>
+        <item>Cities</item>
+        <item>Sea Power</item>
+        <item>Aggression</item>
+        <item>Defense</item>
+    </string-array>
+    <string-array name="heart_values">
+        <item>custom</item>
+        <item>treasury</item>
+        <item>commodities</item>
+        <item>cheaper</item>
+        <item>bend</item>
+        <item>more</item>
+        <item>mobility</item>
+        <item>cities</item>
+        <item>sea</item>
+        <item>aggression</item>
+        <item>defense</item>
+    </string-array>
 </resources>
