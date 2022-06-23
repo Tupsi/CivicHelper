@@ -48,8 +48,13 @@ public interface CivicHelperDao {
 
     @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY " +
             "CASE WHEN :sortingOrder = 'name' THEN cards.name END ASC," +
-            "CASE WHEN :sortingOrder = 'currentPrice'THEN cards.currentPrice END ,cards.name ASC," +
-            "CASE WHEN :sortingOrder = 'family' THEN cards.family END ASC")
+            "CASE WHEN :sortingOrder = 'family' THEN cards.family END ASC," +
+            "CASE WHEN :sortingOrder = 'color' THEN cards.group1 END," +
+            "CASE WHEN :sortingOrder = 'color' THEN cards.currentPrice END ASC," +
+            "CASE WHEN :sortingOrder = 'vp' THEN cards.vp END," +
+            "CASE WHEN :sortingOrder = 'vp' THEN cards.currentPrice END ASC," +
+            "CASE WHEN :sortingOrder = 'currentPrice'THEN cards.currentPrice END," +
+            "CASE WHEN :sortingOrder = 'currentPrice'THEN cards.name END ASC")
     List<Card> getAllAdvancesNotBought(String sortingOrder);
 
     @Query("SELECT * FROM cards ORDER BY name ASC")

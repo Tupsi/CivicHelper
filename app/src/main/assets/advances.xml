@@ -10,6 +10,7 @@
         <credit group="BLUE">5</credit>
         <credit group="YELLOW">5</credit>
         <effect name="Superstition">-1</effect>
+        <info>Superstition -1</info>
     </advance>
     <advance>
         <name>Monument</name>
@@ -21,6 +22,7 @@
         <credit group="ORANGE">10</credit>
         <credit group="YELLOW">10</credit>
         <effect name="Credits">20</effect>
+        <info>Gives 20 extra bonus which can be spent on colors.</info>
     </advance>
     <advance>
         <name>Wonder of the World</name>
@@ -32,6 +34,7 @@
         <credit group="BLUE">20</credit>
         <credit group="ORANGE">20</credit>
         <effect name="Corruption">5</effect>
+        <info>You can draw one trade card above your current number of cities and counts as additional city on A.S.T.</info>
     </advance>
     <advance>
         <name>Sculpture</name>

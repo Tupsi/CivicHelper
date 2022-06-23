@@ -3,12 +3,16 @@
         <item>Family</item>
         <item>Names</item>
         <item>Price</item>
+        <item>Color</item>
+        <item>Victory Points</item>
     </string-array>
 
     <string-array name="sort_values">
         <item>family</item>
         <item>name</item>
         <item>currentPrice</item>
+        <item>color</item>
+        <item>vp</item>
     </string-array>
 
     <string-array name="civilizations_entries">

@@ -69,6 +69,8 @@ public class AdvancesFragment extends Fragment
     private RecyclerView mRecyclerView;
 
 
+
+
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
@@ -104,7 +106,7 @@ public class AdvancesFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        listCivics = mCivicViewModel.getAllCivics(sortingOrder);
+        listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
         mRecyclerView = rootView.findViewById(R.id.list_advances);
@@ -259,6 +261,25 @@ public class AdvancesFragment extends Fragment
             Log.v("TRACKER", "size after restore: " + tracker.getSelection().size());
 
         }
+
+//        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+//            @Override
+//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+//                View child = rv.findChildViewUnder(e.getX(), e.getY());
+//                Log.v("LONG", ""+child.toString());
+//                return false;
+//            }
+//
+//            @Override
+//            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+//
+//            }
+//
+//            @Override
+//            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+//
+//            }
+//        });
 
         //        setHasOptionsMenu(true);
         return rootView;

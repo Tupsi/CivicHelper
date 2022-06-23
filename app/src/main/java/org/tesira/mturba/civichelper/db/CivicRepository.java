@@ -55,7 +55,7 @@ public class CivicRepository {
     public List<Effect> getEffect(String advance, String name) {return mCivicDao.getEffect(advance, name);}
     public List<Card> getPurchasesForBonus() {return mCivicDao.getPurchasesForBonus();}
 
-    public List<Card> getAllCivicsSorted(String sortingOrder) {
+    public List<Card> getAllAdvancesNotBought(String sortingOrder) {
         return mCivicDao.getAllAdvancesNotBought(sortingOrder);}
     public List<Calamity> getCalamityBonus() {return mCivicDao.getCalamityBonus();}
     public List<String> getSpecialAbilities() {return mCivicDao.getSpecialAbilities();}

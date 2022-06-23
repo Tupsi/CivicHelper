@@ -50,8 +50,8 @@ public class CivicViewModel extends AndroidViewModel {
         cardBonus.setValue(new HashMap<>());
     }
 
-    public List<Card> getAllCivics( String sortingOrder) {
-        cachedCards = mRepository.getAllCivicsSorted(sortingOrder);
+    public List<Card> getAllAdvancesNotBought(String sortingOrder) {
+        cachedCards = mRepository.getAllAdvancesNotBought(sortingOrder);
         return cachedCards;
     }
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
@@ -88,7 +88,7 @@ public class CivicViewModel extends AndroidViewModel {
      */
     public void calculateCurrentPrice() {
         int newCurrent;
-        List<Card> cachedCards = mRepository.getAllCivicsSorted("name");
+        List<Card> cachedCards = mRepository.getAllAdvancesNotBought("name");
         for (Card adv: cachedCards) {
             if (adv.getGroup2() == null) {
                 newCurrent = adv.getPrice() - cardBonus.getValue().getOrDefault(adv.getGroup1(),0);
