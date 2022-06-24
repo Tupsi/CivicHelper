@@ -1,6 +1,5 @@
 package org.tesira.mturba.civichelper;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -12,11 +11,8 @@ import androidx.preference.PreferenceManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.RadioButton;
 
 import org.tesira.mturba.civichelper.databinding.ActivityMainBinding;
 import org.tesira.mturba.civichelper.db.CardColor;
@@ -26,8 +22,10 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
-    private static final String TREASURE_BOX = "treasure";
-    private static final String BONUS = "purchasedAdvancesBonus";
+    private static final String PREF_TREASURE_BOX = "treasure";
+    private static final String PREF_CITIES = "cities";
+    private static final String PREF_TIME = "time";
+    private static final String PREF_FILE_BONUS = "purchasedAdvancesBonus";
 
     private ActivityMainBinding binding;
     private DrawerLayout drawerLayout;
@@ -39,17 +37,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        savedBonus = this.getSharedPreferences(BONUS, Context.MODE_PRIVATE );
+        savedBonus = this.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
         mCivicViewModel = new ViewModelProvider(this).get(CivicViewModel.class);
-        mCivicViewModel.setCities(savedBonus.getInt("cities", 0));
+        mCivicViewModel.setCities(savedBonus.getInt(PREF_CITIES, 0));
+        mCivicViewModel.setTimeVp(savedBonus.getInt(PREF_TIME,0));
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         drawerLayout = binding.drawerLayout;
         setContentView(binding.getRoot());
         navController = Navigation.findNavController(this, R.id.myNavHostFragment);
         NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
         NavigationUI.setupWithNavController(binding.navView, navController);
-        mCivicViewModel.setTreasure(prefs.getInt(TREASURE_BOX,0));
-        mCivicViewModel.setRemaining(prefs.getInt(TREASURE_BOX,0));
+        mCivicViewModel.setTreasure(prefs.getInt(PREF_TREASURE_BOX,0));
+        mCivicViewModel.setRemaining(prefs.getInt(PREF_TREASURE_BOX,0));
         loadBonus();
 
         Configuration configuration = this.getResources().getConfiguration();
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     public void saveVars() {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(TREASURE_BOX, mCivicViewModel.getTreasure().getValue());
+        editor.putInt(PREF_TREASURE_BOX, mCivicViewModel.getTreasure().getValue());
         editor.apply();
     }
 
@@ -120,7 +120,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onStop();
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(this);
-        savedBonus.edit().putInt("cities", mCivicViewModel.getCities()).commit();
+        SharedPreferences.Editor edit = savedBonus.edit();
+        edit.putInt(PREF_CITIES, mCivicViewModel.getCities());
+        edit.putInt(PREF_TIME, mCivicViewModel.getTimeVp());
+        edit.apply();
         Log.v("MAIN","---> onStop() <--- ");
     }
 

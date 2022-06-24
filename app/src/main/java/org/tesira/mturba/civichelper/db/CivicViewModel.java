@@ -10,7 +10,6 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.recyclerview.selection.Selection;
 import org.tesira.mturba.civichelper.Calamity;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +22,11 @@ public class CivicViewModel extends AndroidViewModel {
     public List<Card> cachedCards;
     private MutableLiveData<Integer> treasure;
     private MutableLiveData<Integer> remaining;
+    private MutableLiveData<Integer> vp;
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
     private int cities;
     private Application mApplication;
+    private int timeVp;
     public String heart;
     public final static String[] TREASURY = {"Monarchy", "Coinage", "Trade Routes",
             "Politics", "Mining"};
@@ -51,6 +52,9 @@ public class CivicViewModel extends AndroidViewModel {
             "Engineering", "Diplomacy", "Naval Warfare", "Military", "Roadbuilding", "Philosophy",
             "Public Works", "Politics", "Monotheism", "Theology", "Provincial Empire", "Diaspora",
             "Cultural Ascendancy"};
+    public final static String[] TIME_TABLE = {"8000 BC", "7000 BC", "6000 BC", "4300 BC", "5000 BC",
+            "3300 BC", "2700 BC", "2000 BC", "1800 BC", "1700 BC", "1500 BC", "1400 BC", "1300 BC",
+            "1200 BC", "800 BC", "0", "400 AD"};
 
     public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
@@ -59,8 +63,10 @@ public class CivicViewModel extends AndroidViewModel {
         cachedCards = mRepository.getAllCards();
         treasure = new MutableLiveData<>();
         remaining = new MutableLiveData<>();
+        vp = new MutableLiveData<>();
         cities = 0;
         mApplication = application;
+        timeVp = 0;
     }
 
     public int getCities() {
@@ -69,6 +75,7 @@ public class CivicViewModel extends AndroidViewModel {
 
     public void setCities(int cities) {
         this.cities = cities;
+        sumVp();
     }
 
     public String getHeart() {
@@ -77,6 +84,15 @@ public class CivicViewModel extends AndroidViewModel {
 
     public void setHeart(String heart) {
         this.heart = heart;
+    }
+
+    public int getTimeVp() {
+        return timeVp;
+    }
+
+    public void setTimeVp(int timeVp) {
+        this.timeVp = timeVp;
+        sumVp();
     }
 
     public void insertPurchase(String purchase) {mRepository.insertPurchase(purchase);}
@@ -97,23 +113,30 @@ public class CivicViewModel extends AndroidViewModel {
     public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
     public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
     public List<String> getImmunities() {return mRepository.getImmunities();}
-    public int sumVp() {return mRepository.sumVp();}
+    public int sumVp() {
+        int newVp = mRepository.sumVp();
+        newVp += cities;
+        newVp += timeVp;
+        this.vp.setValue(newVp);
+        return newVp;
+    }
     public void resetDB() {mRepository.resetDB();}
     public MutableLiveData<Integer> getTreasure() {
         return treasure;
     }
-
     public void setTreasure(int treasure) {
         this.treasure.setValue(treasure);
     }
-
+    public MutableLiveData<Integer> getRemaining() {
+        return remaining;
+    }
     public void setRemaining(int treasure) {
         this.remaining.setValue(treasure);
     }
 
-    public MutableLiveData<Integer> getRemaining() {
-        return remaining;
-    }
+    public MutableLiveData<Integer> getVp() {return vp;}
+    public void setVp(int newVp) {this.vp.setValue(newVp);}
+
     public MutableLiveData<HashMap<CardColor, Integer>> getCardBonus() {
         return cardBonus;
     }

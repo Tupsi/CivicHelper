@@ -99,11 +99,12 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listCalamity"
-        android:layout_width="320dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/guidelineMitte"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvMBA"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tvCalamityBonus"
         app:layout_constraintTop_toBottomOf="@+id/tvCalamityBonus"
@@ -114,12 +115,12 @@
         android:id="@+id/tvVp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="312dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
         android:text="VP"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTime" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineMitte"
@@ -159,9 +160,14 @@
         android:id="@+id/tvMBA"
         android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:gravity="right"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:text="MBA"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvVp"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/tvVp"
         app:layout_constraintTop_toBottomOf="@+id/tvVp" />
 
@@ -169,10 +175,13 @@
         android:id="@+id/tvLBA"
         android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="right"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:text="LBA"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/tvMBA"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tvMBA"
         app:layout_constraintTop_toBottomOf="@+id/tvMBA" />
 
@@ -180,7 +189,9 @@
         android:id="@+id/tvEIA"
         android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="right"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:text="EIA"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/tvLBA"
@@ -191,7 +202,9 @@
         android:id="@+id/tvLIA"
         android:layout_width="@dimen/ast_marker"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="right"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:text="LIA"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/tvEIA"
@@ -328,5 +341,20 @@
             android:minWidth="30dp"
             android:text="9" />
     </RadioGroup>
+
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:gravity="end"
+        android:text="8000BC"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/bonusBlue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/bonusYellow"
+        app:layout_constraintTop_toTopOf="@+id/bonusBlue" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

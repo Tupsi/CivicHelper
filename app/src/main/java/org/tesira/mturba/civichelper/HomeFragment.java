@@ -3,8 +3,6 @@ package org.tesira.mturba.civichelper;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,6 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 
-import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -45,14 +43,14 @@ public class HomeFragment extends Fragment {
     private CivicViewModel mCivicViewModel;
     private CalamityAdapter calamityAdapter;
     private SpecialsAdapter specialsAdapter;
-    private SharedPreferences prefs;
+    private SharedPreferences prefsDefault;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentHomeBinding.inflate(inflater, container,false);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        prefsDefault = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
 //        binding.startBtn.setOnClickListener(this::onClickButton);
 //        binding.resetBtn.setOnClickListener(this::onClickButton);
@@ -70,8 +68,8 @@ public class HomeFragment extends Fragment {
         specialsList.addAll(mCivicViewModel.getImmunities());
         specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
         mRecyclerView.setAdapter(specialsAdapter);
-        binding.tvVp.setText(getString(R.string.tv_vp, mCivicViewModel.sumVp()));
-        String civicAST = prefs.getString("civilization", "not set");
+//        binding.tvVp.setText(getString(R.string.tv_vp, mCivicViewModel.sumVp()));
+        String civicAST = prefsDefault.getString("civilization", "not set");
         binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));
         binding.radio0.setOnClickListener(this::onCitiesClicked);
         binding.radio1.setOnClickListener(this::onCitiesClicked);
@@ -87,6 +85,9 @@ public class HomeFragment extends Fragment {
         checkAST();
         binding.tvCivilization.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.tipsFragment));
         binding.tvBoni.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
+        registerForContextMenu(rootView.findViewById(R.id.tvTime));
+        mCivicViewModel.getVp().observe(getActivity(), integer -> binding.tvVp.setText(getString(R.string.tv_vp, integer)));
+        binding.tvTime.setText(mCivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
         return rootView;
     }
 
@@ -131,7 +132,7 @@ public class HomeFragment extends Fragment {
      */
     public void checkAST() {
         int cities = mCivicViewModel.getCities();
-        String ast = prefs.getString("ast","basic");
+        String ast = prefsDefault.getString("ast","basic");
         int vp = mCivicViewModel.sumVp();
 //        Log.v("checkAST", ast);
         List<Card> allPurchases = mCivicViewModel.getPurchasesAsCard();
@@ -246,18 +247,19 @@ public class HomeFragment extends Fragment {
                     loadBonus();
                     calamityAdapter.clearData();
                     specialsAdapter.clearData();
-                    binding.tvVp.setText(getString(R.string.tv_vp,0));
+//                    binding.tvVp.setText(getString(R.string.tv_vp,0));
                     binding.tvMBA.setBackgroundResource(R.color.ast_red);
                     binding.tvLBA.setBackgroundResource(R.color.ast_red);
                     binding.tvEIA.setBackgroundResource(R.color.ast_red);
                     binding.tvLIA.setBackgroundResource(R.color.ast_red);
                     binding.radio0.setChecked(true);
                     mCivicViewModel.setCities(0);
-                    prefs.edit().remove("civilization").apply();
+                    mCivicViewModel.setTimeVp(0);
+                    binding.tvTime.setText(mCivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
+                    prefsDefault.edit().remove("civilization").apply();
                     binding.tvCivilization.setText(R.string.reset_tv_civic);
                     mCivicViewModel.resetDB();
                     break;
-
                 case DialogInterface.BUTTON_NEGATIVE:
                     //No button clicked
                     break;
@@ -378,8 +380,28 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mCivicViewModel.getVp().removeObservers(getActivity());
         binding = null;
         Log.v("HOME","---> onDestroy() <--- ");
     }
 
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo info) {
+        super.onCreateContextMenu(menu,v,info);
+        for (int i=0; i < CivicViewModel.TIME_TABLE.length; i++) {
+            // lets make the id=vp we get in the end right from the start
+            menu.add(0,(i)*5,0,CivicViewModel.TIME_TABLE[i]);
+        }
+        MenuInflater mi = new MenuInflater(getContext());
+        mi.inflate(R.menu.time_menu, menu);
+    }
+
+    // onOptionsItemSelected() wird ausgeführt, wenn ein Item des Kontextmenus angeklickt wurde.
+    // Dadurch wird, je nach ausgewähltem Menupunkt, zu ActivityAlpha oder ActivityBeta umgeschaltet.
+
+    public boolean onContextItemSelected(MenuItem item) {
+        Log.v("DEMO", "" + item.getItemId());
+        mCivicViewModel.setTimeVp(item.getItemId());
+        binding.tvTime.setText(item.getTitle());
+        return true;
+    }
 }
