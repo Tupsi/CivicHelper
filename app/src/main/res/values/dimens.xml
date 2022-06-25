@@ -3,7 +3,9 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="list_item_height">20dp</dimen>
     <dimen name="margin_medium">5dp</dimen>
-    <dimen name="color_bonus">50dp</dimen>
+    <dimen name="color_bonus">45dp</dimen>
     <dimen name="text_size_bonus">16sp</dimen>
     <dimen name="ast_marker">40dp</dimen>
+    <dimen name="bar_height">20dp</dimen>
+    <dimen name="bar_text_size">12sp</dimen>
 </resources>

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Civic Helper</string>
-    <string name="about_version">Version: 0.012</string>
+    <string name="about_version">Version: 0.50</string>
     <string name="about_text">
         This is a helper app for the board games Mega Civilization,
         Western Empires and Eastern Empires.\n\n
@@ -46,13 +46,18 @@
     <string name="item_purchases">Purchases</string>
     <string name="pref_ast">AST Version</string>
     <string name="prefs_chooser_title">What do you want?</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_item_tips">Tips</string>
     <string name="item_tips">Tips</string>
     <string name="spinner_select_civilization">Select Civilization</string>
     <string name="tv_vp">VP: %1$d</string>
     <string name="tv_ast">A.S.T. ranking order: %1$s</string>
     <string name="reset_tv_civic">set civic in prefs!</string>
+    <string name="no_war_game">\n\n\n
+        General Hints:\n\
+        This is not a wargame. Don\'t attack unless you are sure you gain something from the attack.\n\
+        Try only to turn in complete sets of commodities.\n\n
+        Advancing on the AST is very important. Check out the goals before purchasing advances.\n\n
+        Don\'t be too afraid of calamities! If you can complete a set, it\'s usually worth to do so even if you are reasonably sure you will get a calamity.\n\n
+    </string>
 
 </resources>

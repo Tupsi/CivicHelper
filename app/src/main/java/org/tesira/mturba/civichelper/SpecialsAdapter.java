@@ -8,6 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Arrays;
+
 /**
  * Adapter for showing a list of Special Abilities or Immunities against on the dashboard.
  */
@@ -41,7 +43,8 @@ public class SpecialsAdapter extends RecyclerView.Adapter<SpecialsAdapter.ViewHo
      * by RecyclerView.
      */
     public SpecialsAdapter(String[] dataSet) {
-        localDataSet = dataSet;
+        // remove duplicates as every special has two counters
+        localDataSet = Arrays.stream(dataSet).distinct().toArray(String[]::new);
     }
 
     // Create new views (invoked by the layout manager)

@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
+
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +78,7 @@ public class TipsFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selCivic = (String) parent.getItemAtPosition(position);
-                String out = tips[parent.getSelectedItemPosition()];
+                String out = tips[parent.getSelectedItemPosition()] + getString(R.string.no_war_game);
                 binding.tipsTextView.setText(out);
             }
 
@@ -88,6 +90,7 @@ public class TipsFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         int civicNumber = Integer.parseInt(prefs.getString("civilization", "1"));
         binding.tipsSpinner.setSelection(civicNumber-1);
+        binding.tipsTextView.setMovementMethod(new ScrollingMovementMethod());
         return rootView;
     }
 }

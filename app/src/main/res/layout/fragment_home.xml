@@ -11,7 +11,8 @@
         android:id="@+id/tvBoni"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_margin="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="Colorbonus"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -22,14 +23,13 @@
         android:id="@+id/bonusBlue"
         android:layout_width="@dimen/color_bonus"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:gravity="end"
         android:padding="5dp"
         android:text="B"
         android:textColor="#FFFFFF"
         android:textSize="@dimen/text_size_bonus"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvBoni"
         app:layout_constraintTop_toBottomOf="@+id/tvBoni" />
 
     <TextView
@@ -127,7 +127,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintGuide_percent="0.55" />
 
     <TextView
         android:id="@+id/tvSpecials"
@@ -227,13 +227,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
             android:id="@+id/radio_0"
-            android:layout_width="wrap_content"
+            android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:background="@drawable/checkbox_background"
             android:button="@null"
@@ -244,7 +247,7 @@
 
         <RadioButton
             android:id="@+id/radio_1"
-            android:layout_width="wrap_content"
+            android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:background="@drawable/checkbox_background"
             android:button="@null"
@@ -255,7 +258,7 @@
 
         <RadioButton
             android:id="@+id/radio_2"
-            android:layout_width="wrap_content"
+            android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:background="@drawable/checkbox_background"
             android:button="@null"
@@ -266,7 +269,7 @@
 
         <RadioButton
             android:id="@+id/radio_3"
-            android:layout_width="wrap_content"
+            android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:background="@drawable/checkbox_background"
             android:button="@null"
@@ -277,7 +280,7 @@
 
         <RadioButton
             android:id="@+id/radio_4"
-            android:layout_width="wrap_content"
+            android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:background="@drawable/checkbox_background"
             android:button="@null"
@@ -288,7 +291,7 @@
 
         <RadioButton
             android:id="@+id/radio_5"
-            android:layout_width="wrap_content"
+            android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:background="@drawable/checkbox_background"
             android:button="@null"
@@ -299,7 +302,7 @@
 
         <RadioButton
             android:id="@+id/radio_6"
-            android:layout_width="wrap_content"
+            android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:background="@drawable/checkbox_background"
             android:button="@null"
@@ -310,7 +313,7 @@
 
         <RadioButton
             android:id="@+id/radio_7"
-            android:layout_width="wrap_content"
+            android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:background="@drawable/checkbox_background"
             android:button="@null"
@@ -321,7 +324,7 @@
 
         <RadioButton
             android:id="@+id/radio_8"
-            android:layout_width="wrap_content"
+            android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:background="@drawable/checkbox_background"
             android:button="@null"
@@ -332,7 +335,7 @@
 
         <RadioButton
             android:id="@+id/radio_9"
-            android:layout_width="wrap_content"
+            android:layout_width="33dp"
             android:layout_height="wrap_content"
             android:background="@drawable/checkbox_background"
             android:button="@null"

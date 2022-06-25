@@ -380,16 +380,23 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mCivicViewModel.getVp().removeObservers(getActivity());
+        if (mCivicViewModel != null) {
+            mCivicViewModel.getVp().removeObservers(getActivity());
+        }
         binding = null;
         Log.v("HOME","---> onDestroy() <--- ");
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo info) {
         super.onCreateContextMenu(menu,v,info);
-        for (int i=0; i < CivicViewModel.TIME_TABLE.length; i++) {
+        int timeTableLength = CivicViewModel.TIME_TABLE.length;
+        if (prefsDefault.getString("ast", "basic").compareTo("basic") == 0) {
+            // basic A.S.T. is one step shorter then expert A.S.T.
+            timeTableLength--;
+        }
+        for (int i=0; i < timeTableLength; i++) {
             // lets make the id=vp we get in the end right from the start
-            menu.add(0,(i)*5,0,CivicViewModel.TIME_TABLE[i]);
+            menu.add(0,(i)*5,i,CivicViewModel.TIME_TABLE[i]);
         }
         MenuInflater mi = new MenuInflater(getContext());
         mi.inflate(R.menu.time_menu, menu);
