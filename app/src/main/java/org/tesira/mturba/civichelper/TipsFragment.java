@@ -8,7 +8,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,6 +31,7 @@ public class TipsFragment extends Fragment {
     private FragmentTipsBinding binding;
     private CivicViewModel mCivicViewModel;
     private String[] tips;
+    private ScaleGestureDetector scaleGestureDetector;
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -63,6 +68,7 @@ public class TipsFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         tips = getResources().getStringArray(R.array.tips);
+        scaleGestureDetector = new ScaleGestureDetector(this.getContext(), new PinchToZoomGestureListener() );
     }
 
     @Override
@@ -91,6 +97,34 @@ public class TipsFragment extends Fragment {
         int civicNumber = Integer.parseInt(prefs.getString("civilization", "1"));
         binding.tipsSpinner.setSelection(civicNumber-1);
         binding.tipsTextView.setMovementMethod(new ScrollingMovementMethod());
+        binding.tipsTextView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                scaleGestureDetector.onTouchEvent(event);
+                return v.performClick();
+            }
+        });
         return rootView;
+    }
+
+    public class PinchToZoomGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            float size = binding.tipsTextView.getTextSize();
+            Log.d("TextSizeStart", String.valueOf(size));
+
+            float factor = detector.getScaleFactor();
+            Log.d("Factor", String.valueOf(factor));
+
+            float product = size * factor;
+            Log.d("TextSize", String.valueOf(product));
+            binding.tipsTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, product);
+
+            size = binding.tipsTextView.getTextSize();
+            Log.d("TextSizeEnd", String.valueOf(size));
+            return true;
+//            return super.onScale(detector);
+        }
     }
 }
