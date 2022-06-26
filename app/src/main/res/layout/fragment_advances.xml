@@ -11,19 +11,19 @@
 
     <EditText
         android:id="@+id/treasure"
-        android:layout_width="80dp"
+        android:layout_width="50dp"
         android:layout_height="46dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:ems="3"
         android:hint="@string/money"
         android:inputType="phone"
         android:minHeight="48dp"
         android:selectAllOnFocus="true"
-        app:layout_constraintBottom_toTopOf="@+id/list_advances"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/moneyleft"
@@ -43,15 +43,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/moneyleft"
+        app:layout_constraintTop_toBottomOf="@+id/treasure"
         tools:context=".AdvancesFragment"
         tools:listitem="@layout/item_row_advances" />
 
@@ -59,7 +58,7 @@
         android:id="@+id/btnBuy"
         android:layout_width="75dp"
         android:layout_height="48dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="8dp"
         android:text="Buy"
         app:layout_constraintBottom_toBottomOf="@+id/btnClear"
         app:layout_constraintStart_toEndOf="@+id/btnClear"
@@ -69,11 +68,24 @@
         android:id="@+id/btnClear"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="8dp"
         android:text="Clear"
         app:layout_constraintBottom_toBottomOf="@+id/treasure"
         app:layout_constraintStart_toEndOf="@+id/treasure"
         app:layout_constraintTop_toTopOf="@+id/treasure" />
+
+    <Button
+        android:id="@+id/btnSort"
+        android:layout_width="50dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="S"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/btnBuy"
+        app:layout_constraintStart_toEndOf="@+id/btnBuy"
+        app:layout_constraintTop_toTopOf="@+id/btnBuy" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

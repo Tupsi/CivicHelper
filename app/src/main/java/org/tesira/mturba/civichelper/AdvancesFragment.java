@@ -35,6 +35,7 @@ import org.tesira.mturba.civichelper.db.Card;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 import org.tesira.mturba.civichelper.db.Effect;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -58,6 +59,7 @@ public class AdvancesFragment extends Fragment {
     private CivicsListAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private int mColumnCount = 2;
+    private int sortingIndex;
 
 
 
@@ -152,6 +154,18 @@ public class AdvancesFragment extends Fragment {
                 tracker.clearSelection();
             }
         });
+//        binding.btnSort.setOnClickListener(v -> {
+//            String[] sortingOptions = getResources().getStringArray(R.array.sort_values);
+//            sortingIndex = Arrays.asList(sortingOptions).indexOf(sortingOrder);
+//            if (sortingIndex == sortingOptions.length-1){
+//                sortingOrder = sortingOptions[0];
+//            } else {
+//                sortingOrder = sortingOptions[sortingIndex+1];
+//            }
+//            Log.v("SORTING", ""+sortingOrder+ ":"+ sortingIndex);
+//            listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
+//            mAdapter.changeList(listCivics);
+//        });
         myItemKeyProvider = new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, mCivicViewModel);
         tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",

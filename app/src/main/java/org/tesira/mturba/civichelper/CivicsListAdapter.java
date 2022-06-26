@@ -193,6 +193,12 @@ public class CivicsListAdapter extends ListAdapter<Card, CivicsViewHolder> {
         return ResourcesCompat.getDrawable(res,backgroundColor, null);
     }
 
+    public void changeList(List<Card> sortedList) {
+//        this.submitList(sortedList);
+//        this.changeList(sortedList);
+//        notifyDataSetChanged();
+    }
+
 //    public void checkBuyable(Integer value) {
 //        int first = mLayout.findFirstVisibleItemPosition();
 //        int last = mLayout.findLastVisibleItemPosition();
