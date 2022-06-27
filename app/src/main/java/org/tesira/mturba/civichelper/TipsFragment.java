@@ -1,6 +1,7 @@
 package org.tesira.mturba.civichelper;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
 import org.tesira.mturba.civichelper.databinding.FragmentTipsBinding;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 
@@ -83,9 +86,10 @@ public class TipsFragment extends Fragment {
         binding.tipsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selCivic = (String) parent.getItemAtPosition(position);
+//                String selCivic = (String) parent.getItemAtPosition(position);
                 String out = tips[parent.getSelectedItemPosition()] + getString(R.string.no_war_game);
                 binding.tipsTextView.setText(out);
+                ((TextView) parent.getChildAt(0)).setTextSize(20);
             }
 
             @Override
