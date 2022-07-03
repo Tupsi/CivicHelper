@@ -158,21 +158,12 @@ public class AdvancesFragment extends Fragment {
                 tracker.clearSelection();
             }
         });
-        binding.btnSort.setText(sortingOptionsNames[sortingIndex]);
-        binding.btnSort.setOnClickListener(v -> {
-            // cycle through sorting options, get a new list and notify adapter
-            sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
-            if (sortingIndex == sortingOptionsValues.length-1){
-                sortingOrder = sortingOptionsValues[0];
-                binding.btnSort.setText(sortingOptionsNames[0]);
-            } else {
-                sortingOrder = sortingOptionsValues[sortingIndex+1];
-                binding.btnSort.setText(sortingOptionsNames[sortingIndex+1]);
-            }
-//            Log.v("SORTING", ""+sortingOrder+ ":"+ sortingIndex);
-            listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
-            mAdapter.changeList(listCivics);
-        });
+        String label = String.valueOf(sortingOptionsNames[sortingIndex].charAt(0));
+        if (mCivicViewModel.getScreenWidthDp() <= 400) {
+            label = String.valueOf(label.charAt(0));
+        }
+        binding.btnSort.setText(label);
+        binding.btnSort.setOnClickListener(this::changeSorting);
 
         myItemKeyProvider = new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, mCivicViewModel);
         tracker = new SelectionTracker.Builder<>(
@@ -378,5 +369,21 @@ public class AdvancesFragment extends Fragment {
                 numberDialogs--;
             }
         }
+    }
+
+    private void changeSorting(View v){
+        String label;
+        sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
+        if (sortingIndex == sortingOptionsValues.length-1){
+            sortingOrder = sortingOptionsValues[0];
+            label = String.valueOf(sortingOptionsNames[0].charAt(0));
+        } else {
+            sortingOrder = sortingOptionsValues[sortingIndex+1];
+            label = String.valueOf(sortingOptionsNames[sortingIndex+1].charAt(0));
+        }
+        binding.btnSort.setText(label);
+        //            Log.v("SORTING", ""+sortingOrder+ ":"+ sortingIndex);
+        listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
+        mAdapter.changeList(listCivics);
     }
 }

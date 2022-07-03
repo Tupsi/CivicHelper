@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         Configuration configuration = this.getResources().getConfiguration();
         int screenWidthDp = configuration.screenWidthDp; //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
         int smallestScreenWidthDp = configuration.smallestScreenWidthDp; //The smallest screen size an application will see in normal operation, corresponding to smallest screen width resource qualifier.
+        mCivicViewModel.setScreenWidthDp(screenWidthDp);
         Log.v("DIMENSION", "" + screenWidthDp + " : " + smallestScreenWidthDp);
     }
 

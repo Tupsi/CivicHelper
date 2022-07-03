@@ -76,7 +76,7 @@
 
     <Button
         android:id="@+id/btnSort"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:paddingLeft="5dp"

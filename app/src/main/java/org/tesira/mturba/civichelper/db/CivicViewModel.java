@@ -24,6 +24,7 @@ public class CivicViewModel extends AndroidViewModel {
 
     private CivicRepository mRepository;
     public List<Card> cachedCards;
+    private int screenWidthDp;
     private MutableLiveData<Integer> treasure;
     private MutableLiveData<Integer> remaining;
     private MutableLiveData<Integer> vp;
@@ -80,6 +81,14 @@ public class CivicViewModel extends AndroidViewModel {
     public void setCities(int cities) {
         this.cities = cities;
         sumVp();
+    }
+
+    public int getScreenWidthDp() {
+        return screenWidthDp;
+    }
+
+    public void setScreenWidthDp(int screenWidthDp) {
+        this.screenWidthDp = screenWidthDp;
     }
 
     public String getHeart() {
