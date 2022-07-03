@@ -56,10 +56,11 @@ public class AdvancesFragment extends Fragment {
     private List<Card> listCivics = new ArrayList<>();
     private MyItemKeyProvider<String> myItemKeyProvider;
     private LinearLayoutManager mLayout;
-    private CivicsListAdapter mAdapter;
+    private BuyingListAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private int mColumnCount = 2;
     private int sortingIndex;
+    private String[] sortingOptionsValues, sortingOptionsNames;
 
 
 
@@ -88,7 +89,9 @@ public class AdvancesFragment extends Fragment {
         mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
         sortingOrder = prefs.getString("sort", "name");
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-//        mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue());
+        sortingOptionsValues = getResources().getStringArray(R.array.sort_values);
+        sortingOptionsNames = getResources().getStringArray(R.array.sort_entries);
+        sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
     }
 
     @Override
@@ -106,9 +109,10 @@ public class AdvancesFragment extends Fragment {
             mLayout = new GridLayoutManager(rootView.getContext(), mColumnCount);
             mRecyclerView.setLayoutManager(mLayout);
         }
-        mAdapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff(), mLayout, this);
+//        mAdapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff(), mLayout, this);
+        mAdapter = new BuyingListAdapter(listCivics, mCivicViewModel);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.submitList(listCivics);
+//        mAdapter.submitList(listCivics);
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
         mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> {
@@ -154,18 +158,22 @@ public class AdvancesFragment extends Fragment {
                 tracker.clearSelection();
             }
         });
-//        binding.btnSort.setOnClickListener(v -> {
-//            String[] sortingOptions = getResources().getStringArray(R.array.sort_values);
-//            sortingIndex = Arrays.asList(sortingOptions).indexOf(sortingOrder);
-//            if (sortingIndex == sortingOptions.length-1){
-//                sortingOrder = sortingOptions[0];
-//            } else {
-//                sortingOrder = sortingOptions[sortingIndex+1];
-//            }
+        binding.btnSort.setText(sortingOptionsNames[sortingIndex]);
+        binding.btnSort.setOnClickListener(v -> {
+            // cycle through sorting options, get a new list and notify adapter
+            sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
+            if (sortingIndex == sortingOptionsValues.length-1){
+                sortingOrder = sortingOptionsValues[0];
+                binding.btnSort.setText(sortingOptionsNames[0]);
+            } else {
+                sortingOrder = sortingOptionsValues[sortingIndex+1];
+                binding.btnSort.setText(sortingOptionsNames[sortingIndex+1]);
+            }
 //            Log.v("SORTING", ""+sortingOrder+ ":"+ sortingIndex);
-//            listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
-//            mAdapter.changeList(listCivics);
-//        });
+            listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
+            mAdapter.changeList(listCivics);
+        });
+
         myItemKeyProvider = new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, mCivicViewModel);
         tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
@@ -176,7 +184,7 @@ public class AdvancesFragment extends Fragment {
                     .withSelectionPredicate(new MySelectionPredicate<>(this, mCivicViewModel))
                     .build();
         mAdapter.setSelectionTracker(tracker);
-        mAdapter.setCivicViewModel(mCivicViewModel);
+//        mAdapter.setCivicViewModel(mCivicViewModel);
         tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
             @Override
             public void onItemStateChanged(@NonNull String key, boolean selected) {

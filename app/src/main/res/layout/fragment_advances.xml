@@ -76,13 +76,13 @@
 
     <Button
         android:id="@+id/btnSort"
-        android:layout_width="50dp"
+        android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:text="S"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/btnBuy"
         app:layout_constraintStart_toEndOf="@+id/btnBuy"
         app:layout_constraintTop_toTopOf="@+id/btnBuy" />

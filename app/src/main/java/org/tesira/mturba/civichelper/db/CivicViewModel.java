@@ -2,13 +2,17 @@ package org.tesira.mturba.civichelper.db;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.recyclerview.selection.Selection;
 import org.tesira.mturba.civichelper.Calamity;
+import org.tesira.mturba.civichelper.R;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -290,4 +294,60 @@ public class CivicViewModel extends AndroidViewModel {
         return list;
     }
 
+    public static Drawable getItemBackgroundColor(Card card, Resources res) {
+        int backgroundColor = 0;
+        if (card.getGroup2() == null) {
+            switch (card.getGroup1()) {
+                case ORANGE:
+                    backgroundColor = R.color.crafts;
+                    break;
+                case YELLOW:
+                    backgroundColor = R.color.religion;
+                    break;
+                case RED:
+                    backgroundColor = R.color.civic;
+                    break;
+                case GREEN:
+                    backgroundColor = R.color.science;
+                    break;
+                case BLUE:
+                    backgroundColor = R.color.arts;
+                    break;
+                default:
+                    backgroundColor = R.color.purple_700;
+                    break;
+            }
+        } else {
+            switch (card.getName()) {
+                case "Engineering":
+                    backgroundColor = R.drawable.engineering_background;
+                    break;
+                case "Mathematics":
+                    backgroundColor = R.drawable.mathematics_background;
+                    break;
+                case "Mysticism":
+                    backgroundColor = R.drawable.mysticism_background;
+                    break;
+                case "Written Record":
+                    backgroundColor = R.drawable.written_record_background;
+                    break;
+                case "Theocracy":
+                    backgroundColor = R.drawable.theocracy_background;
+                    break;
+                case "Literacy":
+                    backgroundColor = R.drawable.literacy_background;
+                    break;
+                case "Wonder of the World":
+                    backgroundColor = R.drawable.wonders_of_the_world_background;
+                    break;
+                case "Philosophy":
+                    backgroundColor = R.drawable.philosophy_background;
+                    break;
+                case "Monument":
+                    backgroundColor = R.drawable.monument_background;
+                    break;
+            }
+        }
+        return ResourcesCompat.getDrawable(res,backgroundColor, null);
+    }
 }

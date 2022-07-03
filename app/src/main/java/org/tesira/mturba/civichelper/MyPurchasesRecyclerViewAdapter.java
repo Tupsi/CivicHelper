@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import org.tesira.mturba.civichelper.databinding.ItemRowPurchasesBinding;
 import org.tesira.mturba.civichelper.db.Card;
+import org.tesira.mturba.civichelper.db.CivicViewModel;
+
 import java.util.List;
 
 /**
@@ -34,7 +36,7 @@ public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurch
 
         holder.mItem = mValues.get(position);
         holder.mName.setText(mValues.get(position).getName());
-        holder.mName.setBackground(CivicsListAdapter.getItemBackgroundColor(holder.mItem, holder.itemView.getResources()));
+        holder.mName.setBackground(CivicViewModel.getItemBackgroundColor(holder.mItem, holder.itemView.getResources()));
         holder.mPrice.setText(Integer.toString(mValues.get(position).getPrice()));
         holder.mVp.setText(Integer.toString(mValues.get(position).getVp()));
         holder.mCurrentPrice.setText(Integer.toString(mValues.get(position).getCurrentPrice()));

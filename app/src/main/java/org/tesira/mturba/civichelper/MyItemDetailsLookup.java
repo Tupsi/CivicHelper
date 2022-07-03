@@ -25,8 +25,8 @@ public class MyItemDetailsLookup extends ItemDetailsLookup<String> {
         View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
         if (view != null) {
             RecyclerView.ViewHolder viewHolder = mRecyclerView.getChildViewHolder(view);
-            if (viewHolder instanceof CivicsViewHolder) {
-                return ((CivicsViewHolder) viewHolder).getItemDetails();
+            if (viewHolder instanceof BuyingListAdapter.ViewHolder) {
+                return ((BuyingListAdapter.ViewHolder) viewHolder).getItemDetails();
             }
         }
         return null;
