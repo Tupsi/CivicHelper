@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -39,7 +40,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A fragment representing a list of Items.
+ * Fragment for the buy process. User can input a treasure sum and select up to that value
+ * cards. Pressing the buy button finishes the buying process, adding selected cards to the
+ * purchases list and returns the user back to the dashboard.
  */
 public class AdvancesFragment extends Fragment {
 
@@ -61,26 +64,6 @@ public class AdvancesFragment extends Fragment {
     private int mColumnCount = 2;
     private int sortingIndex;
     private String[] sortingOptionsValues, sortingOptionsNames;
-
-
-
-
-//    private static final String ARG_COLUMN_COUNT = "column-count";
-//    /**
-//     * Mandatory empty constructor for the fragment manager to instantiate the
-//     * fragment (e.g. upon screen orientation changes).
-//     */
-//    public AdvancesFragment() {
-//    }
-//
-//    @SuppressWarnings("unused")
-//    public static AdvancesFragment newInstance(int columnCount) {
-//        AdvancesFragment fragment = new AdvancesFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(ARG_COLUMN_COUNT, columnCount);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,10 +92,8 @@ public class AdvancesFragment extends Fragment {
             mLayout = new GridLayoutManager(rootView.getContext(), mColumnCount);
             mRecyclerView.setLayoutManager(mLayout);
         }
-//        mAdapter = new CivicsListAdapter(new CivicsListAdapter.CivicsDiff(), mLayout, this);
         mAdapter = new BuyingListAdapter(listCivics, mCivicViewModel);
         mRecyclerView.setAdapter(mAdapter);
-//        mAdapter.submitList(listCivics);
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
         mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> {
@@ -149,15 +130,20 @@ public class AdvancesFragment extends Fragment {
                 return true;
         });
 
+        // button which finalizes the buy process
         binding.btnBuy.setOnClickListener(v -> {
             buyAdvances();
 //            Navigation.findNavController(v).popBackStack();
         });
+
+        // button to clear the current selection of cards
         binding.btnClear.setOnClickListener(v -> {
             if (tracker != null) {
                 tracker.clearSelection();
             }
         });
+
+        // sort button
         String label = String.valueOf(sortingOptionsNames[sortingIndex].charAt(0));
         if (mCivicViewModel.getScreenWidthDp() <= 400) {
             label = String.valueOf(label.charAt(0));
@@ -165,6 +151,7 @@ public class AdvancesFragment extends Fragment {
         binding.btnSort.setText(label);
         binding.btnSort.setOnClickListener(this::changeSorting);
 
+        // tracker to hold the selected cards
         myItemKeyProvider = new MyItemKeyProvider<String>(ItemKeyProvider.SCOPE_MAPPED, mCivicViewModel);
         tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
@@ -174,17 +161,16 @@ public class AdvancesFragment extends Fragment {
                     StorageStrategy.createStringStorage())
                     .withSelectionPredicate(new MySelectionPredicate<>(this, mCivicViewModel))
                     .build();
+        if (savedInstanceState != null) {
+            tracker.onRestoreInstanceState(savedInstanceState);
+        }
         mAdapter.setSelectionTracker(tracker);
-//        mAdapter.setCivicViewModel(mCivicViewModel);
         tracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
             @Override
             public void onItemStateChanged(@NonNull String key, boolean selected) {
                 super.onItemStateChanged(key, selected);
                 // item selection changed, we need to redo total selected cost
                 mCivicViewModel.calculateTotal(tracker.getSelection());
-                if (tracker.getSelection().size() == 0) {
-                    mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
-                }
             }
 
             @Override
@@ -193,9 +179,7 @@ public class AdvancesFragment extends Fragment {
             }
 
             @Override
-            public void onSelectionChanged() {
-                super.onSelectionChanged();
-            }
+            public void onSelectionChanged() { super.onSelectionChanged(); }
 
             @Override
             public void onSelectionRestored() {
@@ -203,9 +187,6 @@ public class AdvancesFragment extends Fragment {
             }
 
         });
-        if (savedInstanceState != null) {
-            tracker.onRestoreInstanceState(savedInstanceState);
-        }
 
         //        setHasOptionsMenu(true);
         return rootView;
@@ -271,14 +252,12 @@ public class AdvancesFragment extends Fragment {
         for (String name : tracker.getSelection()) {
             List<Effect> effects = mCivicViewModel.getEffect(name,"Credits");
             // add to list of bought cards
-            Log.v("BUY", "Adding " + name);
             mCivicViewModel.insertPurchase(name);
             mCivicViewModel.addBonus(name);
             if (name.equals("Anatomy")) buyAnatomy = true;
             if (effects.size() == 1) {
                 credits += effects.get(0).getValue();
             }
-            Log.v("CREDITS", "credits beim Kauf : " + name + " : " + credits);
         }
         if ((mCivicViewModel.getAnatomyCards().size() > 0) &&  buyAnatomy) {
             numberDialogs++;
@@ -314,22 +293,22 @@ public class AdvancesFragment extends Fragment {
 
     public void onStart() {
         super.onStart();
-        Log.v("ADVANCES","---> onStart() <--- ");
+//        Log.v("ADVANCES","---> onStart() <--- ");
     }
 
     public void onResume() {
         super.onResume();
-        Log.v("ADVANCES","---> onResume() <--- ");
+//        Log.v("ADVANCES","---> onResume() <--- ");
     }
 
     public void onPause() {
         super.onPause();
-        Log.v("ADVANCES","---> onPause() <--- ");
+//        Log.v("ADVANCES","---> onPause() <--- ");
     }
 
     public void onStop() {
         super.onStop();
-        Log.v("ADVANCES","---> onStop() <--- ");
+//        Log.v("ADVANCES","---> onStop() <--- ");
     }
 
     public void onDestroy() {
@@ -338,7 +317,7 @@ public class AdvancesFragment extends Fragment {
         mCivicViewModel.getRemaining().removeObservers(requireActivity());
         mCivicViewModel.getTreasure().removeObservers(requireActivity());
         binding = null;
-        Log.v("ADVANCES","---> onDestroy() <--- ");
+//        Log.v("ADVANCES","---> onDestroy() <--- ");
     }
 
     public void showToast(String text) {
@@ -371,6 +350,11 @@ public class AdvancesFragment extends Fragment {
         }
     }
 
+    /**
+     * This gets the list of possible sorting options from the preferences array and cycles
+     * through them on each new entry. Gets a new sorted list from the db and updates the adapter.
+     * @param v View
+     */
     private void changeSorting(View v){
         String label;
         sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
@@ -382,7 +366,6 @@ public class AdvancesFragment extends Fragment {
             label = String.valueOf(sortingOptionsNames[sortingIndex+1].charAt(0));
         }
         binding.btnSort.setText(label);
-        //            Log.v("SORTING", ""+sortingOrder+ ":"+ sortingIndex);
         listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
         mAdapter.changeList(listCivics);
     }

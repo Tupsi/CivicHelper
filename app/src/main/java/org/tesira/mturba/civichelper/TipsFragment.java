@@ -1,13 +1,11 @@
 package org.tesira.mturba.civichelper;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
-
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
@@ -19,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import org.tesira.mturba.civichelper.databinding.FragmentTipsBinding;
 import org.tesira.mturba.civichelper.db.CivicViewModel;
 
@@ -80,13 +77,11 @@ public class TipsFragment extends Fragment {
         binding = FragmentTipsBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-//        String[] civics = getResources().getStringArray(R.array.civilizations_entries);
         ArrayAdapter<CharSequence> civicsAdapter = ArrayAdapter.createFromResource(getContext(), R.array.civilizations_entries, android.R.layout.simple_spinner_dropdown_item);
         binding.tipsSpinner.setAdapter(civicsAdapter);
         binding.tipsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                String selCivic = (String) parent.getItemAtPosition(position);
                 String out = tips[parent.getSelectedItemPosition()] + getString(R.string.no_war_game);
                 binding.tipsTextView.setText(out);
                 ((TextView) parent.getChildAt(0)).setTextSize(20);
@@ -101,12 +96,9 @@ public class TipsFragment extends Fragment {
         int civicNumber = Integer.parseInt(prefs.getString("civilization", "1"));
         binding.tipsSpinner.setSelection(civicNumber-1);
         binding.tipsTextView.setMovementMethod(new ScrollingMovementMethod());
-        binding.tipsTextView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                scaleGestureDetector.onTouchEvent(event);
-                return v.performClick();
-            }
+        binding.tipsTextView.setOnTouchListener((v, event) -> {
+            scaleGestureDetector.onTouchEvent(event);
+            return v.performClick();
         });
         return rootView;
     }
@@ -116,17 +108,10 @@ public class TipsFragment extends Fragment {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             float size = binding.tipsTextView.getTextSize();
-            Log.d("TextSizeStart", String.valueOf(size));
-
             float factor = detector.getScaleFactor();
-            Log.d("Factor", String.valueOf(factor));
-
             float product = size * factor;
-            Log.d("TextSize", String.valueOf(product));
             binding.tipsTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, product);
-
             size = binding.tipsTextView.getTextSize();
-            Log.d("TextSizeEnd", String.valueOf(size));
             return true;
 //            return super.onScale(detector);
         }

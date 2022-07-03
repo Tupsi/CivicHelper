@@ -6,6 +6,9 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+/**
+ * This describes a civilization advance also referred to as civic card.
+ */
 @Entity(tableName = "cards", indices = {@Index("name")})
 public class Card {
 

@@ -228,15 +228,15 @@ public class HomeFragment extends Fragment {
 //        }
 //    }
 
-    public void recalculateBonus() {
-        int specials = mCivicViewModel.recalculateBonus(this.getActivity().getSharedPreferences(BONUS, Context.MODE_PRIVATE ));
-        requireActivity().getSupportFragmentManager().setFragmentResultListener("extraCredits", getViewLifecycleOwner(), (requestKey, result) -> loadBonus());
-        if (specials > 0) {
-            new ExtraCreditsDialogFragment(mCivicViewModel,null,specials).show(getParentFragmentManager(),"ExtraCredits");
-        }
-        mCivicViewModel.saveBonus(this.getActivity().getSharedPreferences(BONUS, Context.MODE_PRIVATE ));
-        loadBonus();
-    }
+//    public void recalculateBonus() {
+//        int specials = mCivicViewModel.recalculateBonus(this.getActivity().getSharedPreferences(BONUS, Context.MODE_PRIVATE ));
+//        requireActivity().getSupportFragmentManager().setFragmentResultListener("extraCredits", getViewLifecycleOwner(), (requestKey, result) -> loadBonus());
+//        if (specials > 0) {
+//            new ExtraCreditsDialogFragment(mCivicViewModel,null,specials).show(getParentFragmentManager(),"ExtraCredits");
+//        }
+//        mCivicViewModel.saveBonus(this.getActivity().getSharedPreferences(BONUS, Context.MODE_PRIVATE ));
+//        loadBonus();
+//    }
 
     public void resetGame() {
         DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
@@ -297,9 +297,10 @@ public class HomeFragment extends Fragment {
             case R.id.menu_newGame:
                 resetGame();
                 return true;
-            case R.id.menu_debugRecalBonus:
-                recalculateBonus();
-                return true;
+// debug menu option
+//            case R.id.menu_debugRecalBonus:
+//                recalculateBonus();
+//                return true;
            default:
                 return NavigationUI.onNavDestinationSelected(item, Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
         }

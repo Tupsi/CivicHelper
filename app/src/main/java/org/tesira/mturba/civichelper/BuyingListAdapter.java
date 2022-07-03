@@ -2,6 +2,8 @@ package org.tesira.mturba.civichelper;
 
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.selection.ItemDetailsLookup;
+import androidx.recyclerview.selection.MutableSelection;
+import androidx.recyclerview.selection.Selection;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 import org.tesira.mturba.civichelper.db.Card;
@@ -72,6 +76,11 @@ public class BuyingListAdapter extends RecyclerView.Adapter<BuyingListAdapter.Vi
         String name = current.getName();
         int price = current.getCurrentPrice();
         Resources res = viewHolder.itemView.getResources();
+        Selection<String> allClicked = tracker.getSelection();
+        for (String selected: tracker.getSelection()
+             ) {
+            Log.v("TRACKER", selected);
+        }
         boolean isSelected = tracker.isSelected(name);
         viewHolder.nameItemView.setText(name);
         viewHolder.nameItemView.setBackground(CivicViewModel.getItemBackgroundColor(current, res));
@@ -122,10 +131,18 @@ public class BuyingListAdapter extends RecyclerView.Adapter<BuyingListAdapter.Vi
         return mValues.size();
     }
 
+    /**
+     * This updates the adapter with a new list and restores the already selected cards to the
+     * tracker if any.
+     * @param newList new sorted list of cards.
+     */
     public void changeList(List<Card> newList) {
+        Bundle saveSelection = new Bundle();
+        tracker.onSaveInstanceState(saveSelection);
         mValues.clear();
         mValues.addAll(newList);
         notifyDataSetChanged();
+        tracker.onRestoreInstanceState(saveSelection);
     }
 
 }

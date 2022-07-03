@@ -1,10 +1,8 @@
 package org.tesira.mturba.civichelper.db;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.AndroidViewModel;
@@ -13,11 +11,9 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.recyclerview.selection.Selection;
 import org.tesira.mturba.civichelper.Calamity;
 import org.tesira.mturba.civichelper.R;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class CivicViewModel extends AndroidViewModel {
@@ -170,7 +166,6 @@ public class CivicViewModel extends AndroidViewModel {
                 newCurrent = adv.getPrice() - Math.max(group1, group2);
             }
             if (newCurrent < 0 ) newCurrent = 0;
-            Log.v("CALC", "new Price for " + adv.getName() + " : " + newCurrent);
             mRepository.updateCurrentPrice(adv.getName(), newCurrent);
         }
         // adding special family bonus if predecessor bought
@@ -213,8 +208,8 @@ public class CivicViewModel extends AndroidViewModel {
                 Card adv = getAdvanceByName(name);
                 newTotal += adv.getCurrentPrice();
             }
-            this.remaining.setValue(treasure.getValue() - newTotal);
         }
+        this.remaining.setValue(treasure.getValue() - newTotal);
     }
     /**
      * Adds the bonuses of a bought card to the cardBonus HashSet.
@@ -225,44 +220,42 @@ public class CivicViewModel extends AndroidViewModel {
         updateBonus(adv.getCreditsBlue(), adv.getCreditsGreen(), adv.getCreditsOrange(), adv.getCreditsRed(), adv.getCreditsYellow());
     }
 
-    public int recalculateBonus(SharedPreferences sharedPreferences) {
-        sharedPreferences.edit().clear().commit();
-        List<Card> purchases = mRepository.getPurchasesAsCard();
-        int blue = 0, green = 0, orange = 0, red = 0, yellow = 0, special = 0;
-        for (Card card: purchases
-             ) {
-            blue += card.getCreditsBlue();
-            green += card.getCreditsGreen();
-            orange += card.getCreditsOrange();
-            red += card.getCreditsRed();
-            yellow += card.getCreditsYellow();
-            // check for Written Record or Monument
-            List<Effect> effects = mRepository.getEffect(card.getName(), "Credits");
-            if (effects.size() == 1) {
-                special += effects.get(0).getValue();
-            }
-        }
+//    public int recalculateBonus(SharedPreferences sharedPreferences) {
+//        sharedPreferences.edit().clear().commit();
+//        List<Card> purchases = mRepository.getPurchasesAsCard();
+//        int blue = 0, green = 0, orange = 0, red = 0, yellow = 0, special = 0;
+//        for (Card card: purchases
+//             ) {
+//            blue += card.getCreditsBlue();
+//            green += card.getCreditsGreen();
+//            orange += card.getCreditsOrange();
+//            red += card.getCreditsRed();
+//            yellow += card.getCreditsYellow();
+//            // check for Written Record or Monument
+//            List<Effect> effects = mRepository.getEffect(card.getName(), "Credits");
+//            if (effects.size() == 1) {
+//                special += effects.get(0).getValue();
+//            }
+//        }
+//
+//        cardBonus.getValue().put(CardColor.BLUE, blue);
+//        cardBonus.getValue().put(CardColor.GREEN,green);
+//        cardBonus.getValue().put(CardColor.ORANGE,orange);
+//        cardBonus.getValue().put(CardColor.RED,red);
+//        cardBonus.getValue().put(CardColor.YELLOW, yellow);
+//        saveBonus(sharedPreferences);
+//        return special;
+//    }
 
-//        Log.v("SPECIAL", "insides recalc : " + blue + green + orange + red + yellow);
-
-        cardBonus.getValue().put(CardColor.BLUE, blue);
-        cardBonus.getValue().put(CardColor.GREEN,green);
-        cardBonus.getValue().put(CardColor.ORANGE,orange);
-        cardBonus.getValue().put(CardColor.RED,red);
-        cardBonus.getValue().put(CardColor.YELLOW, yellow);
-        saveBonus(sharedPreferences);
-        return special;
-    }
-
-    public void saveBonus(SharedPreferences savedBonus) {
-        SharedPreferences.Editor editor = savedBonus.edit();
-        // HashMap Save
-        for (Map.Entry<CardColor, Integer> entry: this.getCardBonus().getValue().entrySet()){
-            editor.putInt(entry.getKey().getName(), entry.getValue());
-        }
-        editor.apply();
-//        Log.v("MAIN", "saveBonus in Main");
-    }
+//    public void saveBonus(SharedPreferences savedBonus) {
+//        SharedPreferences.Editor editor = savedBonus.edit();
+//        // HashMap Save
+//        for (Map.Entry<CardColor, Integer> entry: this.getCardBonus().getValue().entrySet()){
+//            editor.putInt(entry.getKey().getName(), entry.getValue());
+//        }
+//        editor.apply();
+////        Log.v("MAIN", "saveBonus in Main");
+//    }
 
     public List<String> getChooserCards() {
         List<String> list = null;
