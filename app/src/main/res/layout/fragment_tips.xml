@@ -5,7 +5,7 @@
     android:id="@+id/tipsFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TipsFragment">
+    tools:context="org.tesira.civic.TipsFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

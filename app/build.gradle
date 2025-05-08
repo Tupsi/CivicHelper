@@ -2,20 +2,15 @@ plugins {
     id 'com.android.application'
 }
 
-//ext {
-//    navigationVersion = '2.4.2'
-//}
-
 android {
-    compileSdk 31
+    compileSdk 35
 
     defaultConfig {
-        applicationId "org.tesira.mturba.civichelper"
+        applicationId 'org.tesira.civic'
         minSdk 27
-        targetSdk 31
+        targetSdk 34
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -24,10 +19,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+
     buildFeatures {
         viewBinding true
     }
@@ -35,35 +27,64 @@ android {
         enabled true
     }
 
-    lintOptions {
-        baseline file("lint-baseline.xml")
+    namespace 'org.tesira.civic'
+
+    lint {
+        baseline file('lint-baseline.xml')
     }
+
 }
 
 dependencies {
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    // Ensure you're using the kotlinVersion from the rootProject's ext block
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion")
+
+    // Exclude older kotlin-stdlib variants from legacy-support-v4
+    implementation('androidx.legacy:legacy-support-v4:1.0.0') {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+    }
+
+    // RecyclerView dependencies - versions are pulled from rootProject.ext
     implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerview"
     implementation "androidx.recyclerview:recyclerview-selection:$rootProject.recyclerviewSelection"
-    implementation 'androidx.databinding:databinding-runtime:7.2.1'
-    implementation 'androidx.preference:preference:1.2.0'
-    implementation 'androidx.gridlayout:gridlayout:1.0.0'
 
-    implementation "androidx.appcompat:appcompat:1.4.2"
+    // databinding-runtime might bring in Kotlin, exclude older versions if needed
+    implementation('androidx.databinding:databinding-runtime:7.2.1') {
+        exclude group: 'org.jetbrains.kotlin' // Exclude all Kotlin modules from databinding-runtime
+    }
 
-    // Navigation components
+    implementation "androidx.preference:preference:$rootProject.preferenceVersion"
+    implementation "androidx.gridlayout:gridlayout:$rootProject.gridLayoutVersion"
+
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+
+    // Navigation components - versions are pulled from rootProject.ext
     implementation "androidx.navigation:navigation-fragment:$rootProject.navigationVersion"
     implementation "androidx.navigation:navigation-ui:$rootProject.navigationVersion"
 
     // Dependencies for working with Architecture components
     // You'll probably have to update the version numbers in build.gradle (Project)
 
-    // Room components
+    // Room components - versions are pulled from rootProject.ext
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
-    annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
-    androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
+    // Exclude older kotlin-stdlib variants from Room runtime if needed
+    implementation('androidx.room:room-runtime:2.4.2') { // Use explicit version or variable if defined in ext
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+    }
 
-    // Lifecycle components
+    // lifecycle-livedata-ktx is a common place for Kotlin dependency
+    implementation('androidx.lifecycle:lifecycle-livedata-ktx:2.8.7') {
+        exclude group: 'org.jetbrains.kotlin' // Exclude all Kotlin modules
+    }
+
+    implementation 'androidx.annotation:annotation:1.8.0'
+
+    // Annotation processor for Room - version is pulled from rootProject.ext
+    annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
+
+    // Lifecycle components - versions are pulled from rootProject.ext
     implementation "androidx.lifecycle:lifecycle-viewmodel:$rootProject.lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata:$rootProject.lifecycleVersion"
@@ -73,11 +94,4 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
     implementation "com.google.android.material:material:1.6.1"
 
-    // Testing
-    testImplementation "junit:junit:$rootProject.junitVersion"
-    androidTestImplementation "androidx.arch.core:core-testing:$rootProject.coreTestingVersion"
-    androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestImplementation "androidx.test.ext:junit:$rootProject.androidxJunitVersion"
 }

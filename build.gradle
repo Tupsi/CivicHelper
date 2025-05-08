@@ -1,26 +1,30 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id 'com.android.application' version '7.2.1' apply false
-    id 'com.android.library' version '7.2.1' apply false
+    id 'com.android.application' version '8.9.2' apply false
+    id 'com.android.library' version '8.9.2' apply false
+    id 'org.jetbrains.kotlin.android' version '1.8.10' apply false
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
+tasks.register('clean', Delete)
 
 ext {
-    appCompatVersion = '1.4.1'
-    constraintLayoutVersion = '2.1.3'
+    // Define your desired Kotlin version here
+    kotlinVersion = '1.8.22' // Change this to your target Kotlin version
+
+    appCompatVersion = '1.4.2' // Updated to match your dependency block
+    constraintLayoutVersion = '2.1.4' // Updated to match your dependency block
     coreTestingVersion = '2.1.0'
-    lifecycleVersion = '2.4.1'
-    materialVersion = '1.5.0'
+    lifecycleVersion = '2.8.7' // Updated to match your dependency block (for ktx version)
+    materialVersion = '1.6.1' // Updated to match your dependency block
     roomVersion = '2.4.2'
     navigationVersion = '2.4.2'
     recyclerview = '1.2.1'
     recyclerviewSelection = '1.1.0'
+    preferenceVersion = '1.2.0'
+    gridLayoutVersion = '1.1.0'
+
     // testing
     junitVersion = '4.13.2'
     espressoVersion = '3.1.0'
     androidxJunitVersion = '1.1.3'
-
 }
