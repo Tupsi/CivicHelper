@@ -30,7 +30,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.tesira.civic.R;
+//import org.tesira.civic.R;
 import org.tesira.civic.databinding.FragmentAdvancesBinding;
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CardColor;
@@ -279,9 +279,6 @@ public class AdvancesFragment extends Fragment {
 
         if (credits > 0) {
             numberDialogs++;
-            Log.v("farbe","---> buyAdvances() <--- ");
-            Log.v("farbe", String.format("%d %d %d %d %d", oldblue, oldgreen, oldorange, oldred, oldyellow));
-
             new ExtraCreditsDialogFragment(mCivicViewModel,this,credits, oldblue, oldgreen, oldorange, oldred, oldyellow).show(getParentFragmentManager(), "ExtraCredits");
         }
         returnToDashboard(false);
@@ -349,8 +346,8 @@ public class AdvancesFragment extends Fragment {
     public void returnToDashboard(boolean tookWrittenRecord) {
         // if the card selected in with Anatomy is Written Record,
         // we have to open the extra Credits Dialog
-        Log.v("farbe","---> returnToDashboard() <--- ");
-        Log.v("farbe", String.format("%d %d %d %d %d", oldblue, oldgreen, oldorange, oldred, oldyellow));
+//        Log.v("farbe","---> returnToDashboard() <--- ");
+//        Log.v("farbe", String.format("%d %d %d %d %d", oldblue, oldgreen, oldorange, oldred, oldyellow));
 
         if (tookWrittenRecord) {
             new ExtraCreditsDialogFragment( mCivicViewModel,this,10, oldblue, oldgreen, oldorange, oldred, oldyellow).show(getParentFragmentManager(), "ExtraCredits");

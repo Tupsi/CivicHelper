@@ -352,4 +352,20 @@ public class CivicViewModel extends AndroidViewModel {
         }
         return ResourcesCompat.getDrawable(res,backgroundColor, null);
     }
+
+    public int getBlue() {
+        return cardBonus.getValue().getOrDefault(CardColor.BLUE,0);
+    }
+    public int getGreen() {
+        return cardBonus.getValue().getOrDefault(CardColor.GREEN,0);
+    }
+    public int getOrange() {
+        return cardBonus.getValue().getOrDefault(CardColor.ORANGE,0);
+    }
+    public int getRed() {
+        return cardBonus.getValue().getOrDefault(CardColor.RED,0);
+    }
+    public int getYellow() {
+        return cardBonus.getValue().getOrDefault(CardColor.YELLOW,0);
+    }
 }

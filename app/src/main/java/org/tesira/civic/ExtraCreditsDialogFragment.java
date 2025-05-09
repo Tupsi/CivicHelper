@@ -84,11 +84,17 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         binding.spinnergreen.setAdapter(spinnerAdapter);
         binding.spinnergreen.setOnItemSelectedListener(new MyOnItemSelectedListener());
         binding.creditsremaining.setText(String.valueOf(credits));
-        binding.bonusblue.setText(String.valueOf(oldblue));
-        binding.bonusgreen.setText(String.valueOf(oldgreen));
-        binding.bonusorange.setText(String.valueOf(oldorange));
-        binding.bonusred.setText(String.valueOf(oldred));
-        binding.bonusyellow.setText(String.valueOf(oldyellow));
+        binding.bonusblue.setText(String.valueOf(mCivicViewModel.getBlue()));
+        binding.bonusgreen.setText(String.valueOf(mCivicViewModel.getGreen()));
+        binding.bonusorange.setText(String.valueOf(mCivicViewModel.getOrange()));
+        binding.bonusred.setText(String.valueOf(mCivicViewModel.getRed()));
+        binding.bonusyellow.setText(String.valueOf(mCivicViewModel.getYellow()));
+
+//        binding.bonusblue.setText(String.valueOf(oldblue));
+//        binding.bonusgreen.setText(String.valueOf(oldgreen));
+//        binding.bonusorange.setText(String.valueOf(oldorange));
+//        binding.bonusred.setText(String.valueOf(oldred));
+//        binding.bonusyellow.setText(String.valueOf(oldyellow));
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

@@ -2,26 +2,36 @@
 plugins {
     id 'com.android.application' version '8.9.2' apply false
     id 'com.android.library' version '8.9.2' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.10' apply false
+//    id 'org.jetbrains.kotlin.android' version '1.8.10' apply false
+    id 'org.jetbrains.kotlin.android' version '2.1.0' apply false
 }
 
 tasks.register('clean', Delete)
 
 ext {
-    // Define your desired Kotlin version here
-    kotlinVersion = '1.8.22' // Change this to your target Kotlin version
-
-    appCompatVersion = '1.4.2' // Updated to match your dependency block
-    constraintLayoutVersion = '2.1.4' // Updated to match your dependency block
+//    annotationVersion = '1.9.0'
+    annotationVersion = '1.9.1'
+//    kotlinVersion = '1.8.22'
+    kotlinVersion = '2.1.0'
+    appCompatVersion = '1.4.2'
+    constraintLayoutVersion = '2.1.4'
     coreTestingVersion = '2.1.0'
-    lifecycleVersion = '2.8.7' // Updated to match your dependency block (for ktx version)
-    materialVersion = '1.6.1' // Updated to match your dependency block
-    roomVersion = '2.4.2'
+    materialVersion = '1.6.1'
+//    roomVersion = '2.4.2'
+    roomVersion = '2.7.1'
     navigationVersion = '2.4.2'
-    recyclerview = '1.2.1'
+//    recyclerview = '1.2.1'
+    recyclerview = '1.4.0'
     recyclerviewSelection = '1.1.0'
-    preferenceVersion = '1.2.0'
+//    preferenceVersion = '1.2.0'
+    preferenceVersion = '1.2.1'
     gridLayoutVersion = '1.1.0'
+
+//    lifecycleVersion = '2.8.7'
+    lifecycleVersion = '2.9.0'
+    lifecycleLivedataVersion = '2.8.7'
+//    databindingRuntimeVersion = '7.2.1'
+    databindingRuntimeVersion = '8.10.0'
 
     // testing
     junitVersion = '4.13.2'
