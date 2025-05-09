@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -39,6 +40,10 @@ import org.tesira.civic.db.Effect;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+// Import the new MenuProvider interface
+import androidx.core.view.MenuProvider;
+import androidx.lifecycle.Lifecycle;
 
 /**
  * Fragment for the buy process. User can input a treasure sum and select up to that value

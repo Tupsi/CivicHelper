@@ -39,9 +39,9 @@ android {
 
 }
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs.add("-Xlint:deprecation")
-}
+//tasks.withType(JavaCompile) {
+//    options.compilerArgs.add("-Xlint:deprecation")
+//}
 
 dependencies {
     // Ensure you're using the kotlinVersion from the rootProject's ext block
