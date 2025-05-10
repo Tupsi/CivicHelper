@@ -1,6 +1,8 @@
 package org.tesira.civic.db;
 
 import android.app.Application;
+import android.util.Log;
+
 import org.tesira.civic.Calamity;
 import java.util.List;
 public class CivicRepository {

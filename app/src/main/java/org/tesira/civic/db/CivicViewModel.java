@@ -1,16 +1,27 @@
 package org.tesira.civic.db;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.recyclerview.selection.Selection;
+import androidx.preference.PreferenceManager;
+
 import org.tesira.civic.Calamity;
 import org.tesira.civic.R;
+import org.tesira.civic.Event;
+import org.tesira.civic.db.Card;
+import org.tesira.civic.db.CardColor;
+import org.tesira.civic.db.CivicRepository;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +40,9 @@ public class CivicViewModel extends AndroidViewModel {
     private Application mApplication;
     private int timeVp;
     public String heart;
+
+    public boolean librarySelected;
+
     public final static String[] TREASURY = {"Monarchy", "Coinage", "Trade Routes",
             "Politics", "Mining"};
     public final static String[] COMMODITY_CARDS = {"Rhetoric", "Cartography", "Roadbuilding",
@@ -57,6 +71,7 @@ public class CivicViewModel extends AndroidViewModel {
             "3300 BC", "2700 BC", "2000 BC", "1800 BC", "1700 BC", "1500 BC", "1400 BC", "1300 BC",
             "1200 BC", "800 BC", "0", "400 AD"};
 
+
     public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
         cardBonus = new MutableLiveData<>(new HashMap<>());
@@ -68,12 +83,12 @@ public class CivicViewModel extends AndroidViewModel {
         cities = 0;
         mApplication = application;
         timeVp = 0;
+        librarySelected = false;
     }
 
     public int getCities() {
         return cities;
     }
-
     public void setCities(int cities) {
         this.cities = cities;
         sumVp();
@@ -82,23 +97,18 @@ public class CivicViewModel extends AndroidViewModel {
     public int getScreenWidthDp() {
         return screenWidthDp;
     }
-
     public void setScreenWidthDp(int screenWidthDp) {
         this.screenWidthDp = screenWidthDp;
     }
-
     public String getHeart() {
         return heart;
     }
-
     public void setHeart(String heart) {
         this.heart = heart;
     }
-
     public int getTimeVp() {
         return timeVp;
     }
-
     public void setTimeVp(int timeVp) {
         this.timeVp = timeVp;
         sumVp();
@@ -129,7 +139,6 @@ public class CivicViewModel extends AndroidViewModel {
         this.vp.setValue(newVp);
         return newVp;
     }
-    public void resetDB() {mRepository.resetDB();}
     public MutableLiveData<Integer> getTreasure() {
         return treasure;
     }
@@ -149,6 +158,58 @@ public class CivicViewModel extends AndroidViewModel {
     public MutableLiveData<HashMap<CardColor, Integer>> getCardBonus() {
         return cardBonus;
     }
+
+    // This LiveData signals that a new game reset has been INITIATED or completed.
+    // It will be used to trigger UI updates.
+    private final MutableLiveData<Event<Boolean>> _newGameResetCompletedEvent = new MutableLiveData<>();
+    public final LiveData<Event<Boolean>> getNewGameResetCompletedEvent() {
+        return _newGameResetCompletedEvent;
+    }
+
+    /**
+     * Signals that a new game process should be initiated by the ViewModel.
+     * This is called from the UI.
+     */
+    public void requestNewGame() {
+        Log.d("CivicViewModel", "requestNewGame() called. Initiating startNewGameProcess.");
+        startNewGameProcess(); // ViewModel handles the actual reset logic
+    }
+
+    /**
+     * Performs the core logic for starting a new game.
+     * This includes resetting persistent data and ViewModel state.
+     */
+    public void startNewGameProcess() {
+        Log.d("CivicViewModel", "startNewGameProcess: Starting new game process"); // Add this log
+        SharedPreferences savedBonus = mApplication.getSharedPreferences("purchasedAdvancesBonus", Application.MODE_PRIVATE );
+        savedBonus.edit().clear().apply();
+
+        mRepository.deletePurchases();
+        mRepository.resetCurrentPrice();
+        mRepository.resetDB();
+        treasure.setValue(0);
+        remaining.setValue(0);
+        cities = 0;
+        timeVp = 0;
+        vp.setValue(0);
+        cardBonus.setValue(new HashMap<>());
+
+        // If you have other SharedPreferences managed by the ViewModel, reset them here too.
+        // For the main preferences accessed via PreferenceManager, you might need a way to signal the UI
+        // or handle them here if the ViewModel is responsible for their initial state.
+        // For example, if "treasure" and "heart" preferences are managed here:
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
+        prefs.edit().putInt("treasure", 0).apply();
+        prefs.edit().putString("heart", "custom").apply(); // Or your default value
+        prefs.edit().remove("civilization").apply();
+
+        // Signal that the new game process has completed (including data reset)
+        // This will trigger observers in the UI.
+        _newGameResetCompletedEvent.setValue(new Event<>(true)); // Signal completion
+        Log.d("CivicViewModel", "startNewGameProcess: Signaled new game reset completed event.");
+    }
+    // --- END: New method for New Game Reset Logic ---
+
 
     /**
      * Updates the card price, checking for best color if the card is in two groups and for
@@ -219,43 +280,6 @@ public class CivicViewModel extends AndroidViewModel {
         Card adv = getAdvanceByName(name);
         updateBonus(adv.getCreditsBlue(), adv.getCreditsGreen(), adv.getCreditsOrange(), adv.getCreditsRed(), adv.getCreditsYellow());
     }
-
-//    public int recalculateBonus(SharedPreferences sharedPreferences) {
-//        sharedPreferences.edit().clear().commit();
-//        List<Card> purchases = mRepository.getPurchasesAsCard();
-//        int blue = 0, green = 0, orange = 0, red = 0, yellow = 0, special = 0;
-//        for (Card card: purchases
-//             ) {
-//            blue += card.getCreditsBlue();
-//            green += card.getCreditsGreen();
-//            orange += card.getCreditsOrange();
-//            red += card.getCreditsRed();
-//            yellow += card.getCreditsYellow();
-//            // check for Written Record or Monument
-//            List<Effect> effects = mRepository.getEffect(card.getName(), "Credits");
-//            if (effects.size() == 1) {
-//                special += effects.get(0).getValue();
-//            }
-//        }
-//
-//        cardBonus.getValue().put(CardColor.BLUE, blue);
-//        cardBonus.getValue().put(CardColor.GREEN,green);
-//        cardBonus.getValue().put(CardColor.ORANGE,orange);
-//        cardBonus.getValue().put(CardColor.RED,red);
-//        cardBonus.getValue().put(CardColor.YELLOW, yellow);
-//        saveBonus(sharedPreferences);
-//        return special;
-//    }
-
-//    public void saveBonus(SharedPreferences savedBonus) {
-//        SharedPreferences.Editor editor = savedBonus.edit();
-//        // HashMap Save
-//        for (Map.Entry<CardColor, Integer> entry: this.getCardBonus().getValue().entrySet()){
-//            editor.putInt(entry.getKey().getName(), entry.getValue());
-//        }
-//        editor.apply();
-////        Log.v("MAIN", "saveBonus in Main");
-//    }
 
     public List<String> getChooserCards() {
         List<String> list = null;

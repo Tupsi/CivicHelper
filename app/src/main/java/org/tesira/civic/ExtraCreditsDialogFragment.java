@@ -31,17 +31,12 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
     private CivicViewModel mCivicViewModel;
     private AdvancesFragment fragment;
 
-    public ExtraCreditsDialogFragment(CivicViewModel mCivicViewModel, AdvancesFragment fragment,  int credits, int oldblue, int oldgreen, int oldorange, int oldred, int oldyellow) {
+    public ExtraCreditsDialogFragment(CivicViewModel mCivicViewModel, AdvancesFragment fragment,  int credits) {
         super(R.layout.dialog_credits);
         setCancelable(false);
         this.mCivicViewModel = mCivicViewModel;
         this.fragment = fragment;
         this.credits = credits;
-        this.oldblue = oldblue;
-        this.oldgreen = oldgreen;
-        this.oldorange = oldorange;
-        this.oldred = oldred;
-        this.oldyellow = oldyellow;
 
         switch (credits) {
             case 10 :

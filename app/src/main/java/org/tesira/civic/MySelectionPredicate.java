@@ -40,18 +40,10 @@ public class MySelectionPredicate<String> extends SelectionTracker.SelectionPred
         // check for library effect which gives you +40 treasure this round
         List<Effect> effect = mCivicViewModel.getEffect(adv.getName(), "CreditsOnce");
         if (!nextState) {
-            if (effect.size() == 1) {
-                mCivicViewModel.setTreasure(treasure -= 40);
-                fragment.showToast( " deselected, removing the temporary 40 treasure.");
-            }
             return true;
         }
 
         if (treasure >= total + current) {
-            if (effect.size() == 1) {
-                mCivicViewModel.setTreasure(treasure += 40);
-                fragment.showToast(key + " selected, temporary adding 40 treasure.");
-            }
             return true;
         }
         return false;
