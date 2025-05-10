@@ -2,9 +2,12 @@ package org.tesira.civic;
 
 import static java.lang.Integer.parseInt;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -71,8 +74,6 @@ public class AdvancesFragment extends Fragment {
     private int sortingIndex;
     private String[] sortingOptionsValues, sortingOptionsNames;
 
-    private int oldblue, oldgreen, oldorange, oldred, oldyellow;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,14 +106,6 @@ public class AdvancesFragment extends Fragment {
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
 
-        // store current card bonuses in case someone buys written record
-        oldblue = mCivicViewModel.getCardBonus().getValue().getOrDefault(CardColor.BLUE,0);
-        oldgreen = mCivicViewModel.getCardBonus().getValue().getOrDefault(CardColor.GREEN,0);
-        oldorange = mCivicViewModel.getCardBonus().getValue().getOrDefault(CardColor.ORANGE,0);
-        oldred = mCivicViewModel.getCardBonus().getValue().getOrDefault(CardColor.RED,0);
-        oldyellow = mCivicViewModel.getCardBonus().getValue().getOrDefault(CardColor.YELLOW,0);
-        Log.v("farbe","---> onCreate() <--- ");
-        Log.v("farbe", String.format("%d %d %d %d %d", oldblue, oldgreen, oldorange, oldred, oldyellow));
         mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> {
             mTreasureInput.setText(String.valueOf(treasure));
             if (treasure < mCivicViewModel.getRemaining().getValue()) {
@@ -150,13 +143,16 @@ public class AdvancesFragment extends Fragment {
         // button which finalizes the buy process
         binding.btnBuy.setOnClickListener(v -> {
             buyAdvances();
-//            Navigation.findNavController(v).popBackStack();
         });
 
         // button to clear the current selection of cards
         binding.btnClear.setOnClickListener(v -> {
             if (tracker != null) {
                 tracker.clearSelection();
+                if (mCivicViewModel.librarySelected){
+                    mCivicViewModel.librarySelected = false;
+                    mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - 40);
+                }
             }
         });
 
@@ -188,6 +184,32 @@ public class AdvancesFragment extends Fragment {
                 super.onItemStateChanged(key, selected);
                 // item selection changed, we need to redo total selected cost
                 mCivicViewModel.calculateTotal(tracker.getSelection());
+                Log.v("MODEL", key + " wurde: " + selected);
+
+                // --- START: Simplified Logic for Library Effect in Observer (Single Library Card) ---
+                Card adv = mCivicViewModel.getAdvanceByName(key);
+                if (key.equals("Library")) {
+                    if (selected) {
+                        // Library was just selected
+                        if (!mCivicViewModel.librarySelected) { // Only add if it wasn't already selected
+                            mCivicViewModel.librarySelected = true;
+                            // Add the temporary treasure bonus
+                            mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() + 40);
+                            showToast(key + " selected, temporary adding 40 treasure.");
+                            Log.v("MODEL", key + " selected, temporary adding 40 treasure."); // Add log
+                        }
+                    } else {
+                        // Library was just deselected
+                        if (mCivicViewModel.librarySelected) { // Only remove if it was previously selected
+                            mCivicViewModel.librarySelected = false; // Reset the flag
+                            // Remove the temporary treasure bonus
+                            mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - 40);
+                            showToast(key + " deselected, removing the temporary 40 treasure.");
+                            Log.v("MODEL", key + " deselected, removing the temporary 40 treasure."); // Add log
+                        }
+                    }
+                }
+                // --- END: Simplified Logic for Library Effect in Observer ---
             }
 
             @Override
@@ -196,17 +218,87 @@ public class AdvancesFragment extends Fragment {
             }
 
             @Override
-            public void onSelectionChanged() { super.onSelectionChanged(); }
+            public void onSelectionChanged() {
+                super.onSelectionChanged();
+                // You are already calculating total in onItemStateChanged,
+                // so this might be redundant or could be used for other updates.
+                // Consider if you need calculateTotal here as well.
+            }
 
             @Override
             public void onSelectionRestored() {
                 super.onSelectionRestored();
+                Log.d("MODEL", "onSelectionRestored");
+                // When selection is restored, recalculate the total based on the restored selection.
+                mCivicViewModel.calculateTotal(tracker.getSelection());
+
+                // Re-evaluate if the Library card is among the restored selection
+                boolean libraryIsSelected = false;
+                for (String selectedKey : tracker.getSelection()) {
+                    if (selectedKey.equals("Library")) { // Directly check for "Library" name
+                        libraryIsSelected = true;
+                        break;
+                    }
+                }
+                mCivicViewModel.librarySelected = libraryIsSelected; // Set the flag based on restored selection
             }
 
         });
-
-        //        setHasOptionsMenu(true);
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Set the treasure value to zero each time the fragment is entered.
+        mCivicViewModel.setTreasure(0);
+        mCivicViewModel.setRemaining(0); // Also reset the remaining value
+
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                // Inflate the menu here
+                menuInflater.inflate(R.menu.options_menu, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                // Check for the "New Game" menu item
+                if (menuItem.getItemId() == R.id.menu_newGame) {
+                    // Show the confirmation dialog before starting a new game
+                    DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                // Yes button clicked, trigger the reset process in the ViewModel
+                                mCivicViewModel.requestNewGame();
+                                // The UI update will be handled by the resetEvent observer
+
+                                // --- START: Add Navigation Back to HomeFragment ---
+                                // Navigate back to the HomeFragment ONLY when initiating New Game from AdvancesFragment
+                                Navigation.findNavController(requireView()).navigate(R.id.homeFragment); // Assuming 'homeFragment' is the ID of your HomeFragment destination in the navigation graph
+                                // --- END: Add Navigation Back to HomeFragment ---
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                // No button clicked
+                                break;
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext()); // Use requireContext()
+                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+                    return true;
+                }
+
+                // Let the NavigationUI handle navigation destinations.
+                // This is important for "settingsFragment" and "aboutFragment"
+                // if those IDs match destinations in your navigation graph.
+                // If NavigationUI handles the item, it returns true.
+                return NavigationUI.onNavDestinationSelected(menuItem,
+                        Navigation.findNavController(requireView()));
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED); // Register the MenuProvider with the Fragment's lifecycle
     }
 
     /**
@@ -284,20 +376,9 @@ public class AdvancesFragment extends Fragment {
 
         if (credits > 0) {
             numberDialogs++;
-            new ExtraCreditsDialogFragment(mCivicViewModel,this,credits, oldblue, oldgreen, oldorange, oldred, oldyellow).show(getParentFragmentManager(), "ExtraCredits");
+            new ExtraCreditsDialogFragment(mCivicViewModel,this,credits).show(getParentFragmentManager(), "ExtraCredits");
         }
         returnToDashboard(false);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.options_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return NavigationUI.onNavDestinationSelected(item,
-                Navigation.findNavController(requireView())) || super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -311,22 +392,18 @@ public class AdvancesFragment extends Fragment {
 
     public void onStart() {
         super.onStart();
-//        Log.v("ADVANCES","---> onStart() <--- ");
     }
 
     public void onResume() {
         super.onResume();
-//        Log.v("ADVANCES","---> onResume() <--- ");
     }
 
     public void onPause() {
         super.onPause();
-//        Log.v("ADVANCES","---> onPause() <--- ");
     }
 
     public void onStop() {
         super.onStop();
-//        Log.v("ADVANCES","---> onStop() <--- ");
     }
 
     public void onDestroy() {
@@ -335,7 +412,6 @@ public class AdvancesFragment extends Fragment {
         mCivicViewModel.getRemaining().removeObservers(requireActivity());
         mCivicViewModel.getTreasure().removeObservers(requireActivity());
         binding = null;
-//        Log.v("ADVANCES","---> onDestroy() <--- ");
     }
 
     public void showToast(String text) {
@@ -351,11 +427,9 @@ public class AdvancesFragment extends Fragment {
     public void returnToDashboard(boolean tookWrittenRecord) {
         // if the card selected in with Anatomy is Written Record,
         // we have to open the extra Credits Dialog
-//        Log.v("farbe","---> returnToDashboard() <--- ");
-//        Log.v("farbe", String.format("%d %d %d %d %d", oldblue, oldgreen, oldorange, oldred, oldyellow));
 
         if (tookWrittenRecord) {
-            new ExtraCreditsDialogFragment( mCivicViewModel,this,10, oldblue, oldgreen, oldorange, oldred, oldyellow).show(getParentFragmentManager(), "ExtraCredits");
+            new ExtraCreditsDialogFragment( mCivicViewModel,this,10).show(getParentFragmentManager(), "ExtraCredits");
         } else {
             if (numberDialogs == 0) {
                 mCivicViewModel.calculateCurrentPrice();

@@ -2,6 +2,7 @@ package org.tesira.civic;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -12,7 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Toast;
 
 import org.tesira.civic.R;
 import org.tesira.civic.databinding.ActivityMainBinding;
@@ -40,6 +41,28 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         savedBonus = this.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
         mCivicViewModel = new ViewModelProvider(this).get(CivicViewModel.class);
+
+        mCivicViewModel.getNewGameResetCompletedEvent().observe(this, new Observer<Event<Boolean>>() {
+            @Override
+            public void onChanged(Event<Boolean> resetCompletedEvent) {
+                // Use peekContent() here if you want to show the Toast every time the event is signaled,
+                // even if another observer has already handled the data content.
+                // Or, use getContentIfNotHandled() if you only want the Toast to show
+                // the very first time the event is received by *any* observer.
+                // Given your requirement to keep the Toast, peekContent() is likely what you want
+                // so the Toast shows regardless of whether HomeFragment's observer fires first.
+                Boolean resetCompleted = resetCompletedEvent.peekContent(); // Use peekContent()
+
+                if (resetCompleted != null && resetCompleted) {
+                    // Keep purely Activity-related UI actions here
+                    Toast.makeText(MainActivity.this, "Starting a New Game!", Toast.LENGTH_SHORT).show();
+                    if (drawerLayout != null && drawerLayout.isDrawerOpen(binding.navView)) {
+                        drawerLayout.closeDrawer(binding.navView);
+                    }
+                }
+            }
+        });
+
         mCivicViewModel.setCities(savedBonus.getInt(PREF_CITIES, 0));
         mCivicViewModel.setTimeVp(savedBonus.getInt(PREF_TIME,0));
 
@@ -57,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         int screenWidthDp = configuration.screenWidthDp; //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
         int smallestScreenWidthDp = configuration.smallestScreenWidthDp; //The smallest screen size an application will see in normal operation, corresponding to smallest screen width resource qualifier.
         mCivicViewModel.setScreenWidthDp(screenWidthDp);
-        Log.v("DIMENSION", "" + screenWidthDp + " : " + smallestScreenWidthDp);
     }
 
     @Override
@@ -95,14 +117,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         editor.apply();
     }
 
-    public void newGame() {
-        savedBonus.edit().clear().apply();
-        mCivicViewModel.deletePurchases();
-    }
-
     public void onPause() {
         super.onPause();
-        Log.v("MAIN","---> onPause() <--- ");
         saveVars();
     }
 
@@ -110,12 +126,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onStart();
         PreferenceManager.getDefaultSharedPreferences(this)
                 .registerOnSharedPreferenceChangeListener(this);
-        Log.v("MAIN","---> onStart() <--- ");
     }
 
     public void onResume() {
         super.onResume();
-        Log.v("MAIN","---> onResume() <--- ");
     }
 
     public void onStop() {
@@ -126,14 +140,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         edit.putInt(PREF_CITIES, mCivicViewModel.getCities());
         edit.putInt(PREF_TIME, mCivicViewModel.getTimeVp());
         edit.apply();
-        Log.v("MAIN","---> onStop() <--- ");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         binding = null;
-        Log.v("MAIN","---> onDestroy() <--- ");
     }
 
     @Override
@@ -141,18 +153,5 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (key.compareTo("heart") == 0) {
             mCivicViewModel.setHeart(sharedPreferences.getString("heart", "custom"));
         }
-        // not needed atm
-//        Log.v("PREFS", "changed in Main Activity");
-//        switch (key){
-//            case "sort" :
-//                String sortingOrder = sharedPreferences.getString("sort", "name");
-//                if (sortingOrder.equals("family")) {
-//                    sharedPreferences.edit().putString("columns","3").apply();
-//                }
-//            case "chooser":
-//            case "name" :
-//            default:
-//                break;
-//        }
     }
 }
