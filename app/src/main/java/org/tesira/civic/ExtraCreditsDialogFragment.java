@@ -3,8 +3,8 @@ package org.tesira.civic;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log; // Import für android.util.Log
-import android.view.LayoutInflater; // Hinzugefügt, falls für binding.inflate benötigt
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,7 +27,7 @@ import org.tesira.civic.db.CivicViewModel;
  */
 public class ExtraCreditsDialogFragment extends DialogFragment {
 
-    private static final String ARG_CREDITS = "arg_credits"; // Schlüssel für das Argument
+    private static final String ARG_CREDITS = "arg_credits";
     private static final String REQUEST_KEY = "extraCreditsDialogResult";
 
     private DialogCreditsBinding binding;
@@ -83,8 +83,6 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
             return;
         }
 
-        // Initialisiere 'items' basierend auf 'initialCredits'
-        // Diese Logik war vorher im Konstruktor
         switch (initialCredits) {
             case 10:
                 items = new String[]{"0", "5", "10"};
@@ -107,9 +105,8 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        Dialog currentDialog = getDialog(); // Lokale Variable verwenden
+        Dialog currentDialog = getDialog();
         if (currentDialog != null && currentDialog.getWindow() != null) {
-            // Verwende WRAP_CONTENT für Höhe, es sei denn, MATCH_PARENT ist wirklich gewollt
             currentDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
     }

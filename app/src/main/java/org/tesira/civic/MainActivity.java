@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.tesira.civic.R;
@@ -45,19 +46,18 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mCivicViewModel.getNewGameResetCompletedEvent().observe(this, new Observer<Event<Boolean>>() {
             @Override
             public void onChanged(Event<Boolean> resetCompletedEvent) {
-                // Use peekContent() here if you want to show the Toast every time the event is signaled,
-                // even if another observer has already handled the data content.
-                // Or, use getContentIfNotHandled() if you only want the Toast to show
-                // the very first time the event is received by *any* observer.
-                // Given your requirement to keep the Toast, peekContent() is likely what you want
-                // so the Toast shows regardless of whether HomeFragment's observer fires first.
-                Boolean resetCompleted = resetCompletedEvent.peekContent(); // Use peekContent()
+                if (resetCompletedEvent != null) {
+                    Boolean resetCompleted = resetCompletedEvent.getContentIfNotHandled(); // JETZT KORREKT!
 
-                if (resetCompleted != null && resetCompleted) {
-                    // Keep purely Activity-related UI actions here
-                    Toast.makeText(MainActivity.this, "Starting a New Game!", Toast.LENGTH_SHORT).show();
-                    if (drawerLayout != null && drawerLayout.isDrawerOpen(binding.navView)) {
-                        drawerLayout.closeDrawer(binding.navView);
+                    if (resetCompleted != null && resetCompleted) {
+                        // Keep purely Activity-related UI actions here
+                        Toast.makeText(MainActivity.this, "Starting a New Game!", Toast.LENGTH_SHORT).show();
+                        Log.d("MainActivity", "New Game Toast SHOWN."); // Fürs Debugging
+                        if (drawerLayout != null && drawerLayout.isDrawerOpen(binding.navView)) {
+                            drawerLayout.closeDrawer(binding.navView);
+                        }
+                    } else {
+                        Log.d("MainActivity", "New Game Toast NOT shown (already handled or null)."); // Fürs Debugging
                     }
                 }
             }
