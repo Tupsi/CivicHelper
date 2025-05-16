@@ -78,6 +78,7 @@ public class AdvancesFragment extends Fragment {
     private int mColumnCount = 2;
     private int sortingIndex;
     private String[] sortingOptionsValues, sortingOptionsNames;
+    private Bundle savedSelectionState = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,7 +124,6 @@ public class AdvancesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-//        listCivics = mCivicViewModel.getAllAdvancesNotBought(sortingOrder);
         binding = FragmentAdvancesBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
         mRecyclerView = rootView.findViewById(R.id.list_advances);
@@ -141,17 +141,20 @@ public class AdvancesFragment extends Fragment {
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
 
-        mCivicViewModel.getAllAdvancesNotBought().observe(getViewLifecycleOwner(), new Observer<List<Card>>() {
-            @Override
-            public void onChanged(List<Card> cards) {
-                Log.d("AdvancesFragment", "Observer: Received new list of advances, size: " + (cards != null ? cards.size() : 0));
-                if (cards != null) {
-                    mAdapter.changeList(cards);
-                    updateViews();
+        mCivicViewModel.getAllAdvancesNotBought().observe(getViewLifecycleOwner(), cards -> {
+            if (cards != null) {
+                mAdapter.changeList(cards);
+                if (savedSelectionState != null) {
+                    tracker.onRestoreInstanceState(savedSelectionState);
+                    savedSelectionState = null; // Nur einmal ausführen
                 }
+                updateViews();
             }
         });
 
+        if (savedInstanceState != null) {
+            savedSelectionState = savedInstanceState;
+        }
 
         // close SoftKeyboard on Enter
         mTreasureInput.setOnEditorActionListener((v, keyCode, event) -> {
