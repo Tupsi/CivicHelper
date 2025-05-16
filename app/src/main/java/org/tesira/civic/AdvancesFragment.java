@@ -201,21 +201,21 @@ public class AdvancesFragment extends Fragment {
         mCivicViewModel.setRemaining(0); // Also reset the remaining value
 
         mCivicViewModel.getShowAnatomyDialogEvent().observe(getViewLifecycleOwner(), event -> {
-            List<String> anatomyCards = event.getContentIfNotHandled();
-            if (anatomyCards != null && !anatomyCards.isEmpty()) {
-                Log.d("AdvancesFragment", "Observed Anatomy Dialog Event. Showing dialog.");
-                numberDialogs++; // Zähle den Anatomy Dialog
-                // Verwende newInstance oder den angepassten Konstruktor
-                new AnatomyDialogFragment(mCivicViewModel, anatomyCards).show(getParentFragmentManager(), "Anatomy");
+            List<String> anatomyCardsToShow = event.getContentIfNotHandled(); // Das ist deine List<String>
+            if (anatomyCardsToShow != null && !anatomyCardsToShow.isEmpty()) {
+                Log.d("AdvancesFragment", "Observed Anatomy Dialog Event. Showing dialog with cards: " + anatomyCardsToShow);
+                numberDialogs++;
+                AnatomyDialogFragment.newInstance(anatomyCardsToShow) // Korrekter Aufruf
+                        .show(getParentFragmentManager(), "Anatomy");
             }
         });
         mCivicViewModel.getShowExtraCreditsDialogEvent().observe(getViewLifecycleOwner(), event -> {
             Integer extraCredits = event.getContentIfNotHandled();
             if (extraCredits != null && extraCredits > 0) {
                 Log.d("AdvancesFragment", "Observed Extra Credits Dialog Event. Showing dialog with " + extraCredits + " credits.");
-                numberDialogs++; // Zähle den Extra Credits Dialog
-                // Verwende den angepassten Konstruktor
-                new ExtraCreditsDialogFragment(mCivicViewModel, extraCredits).show(getParentFragmentManager(), "ExtraCredits");
+                numberDialogs++;
+                ExtraCreditsDialogFragment.newInstance(extraCredits) // Korrekter Aufruf mit newInstance
+                        .show(getParentFragmentManager(), "ExtraCredits");
             }
         });
 
