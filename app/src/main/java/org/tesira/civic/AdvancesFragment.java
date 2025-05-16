@@ -57,8 +57,8 @@ import androidx.lifecycle.ViewModelProvider;
  * purchases list and returns the user back to the dashboard.
  */
 public class AdvancesFragment extends Fragment {
-    private static final String EXTRA_CREDITS_REQUEST_KEY = "extraCreditsDialogResult"; // Muss mit dem in ExtraCreditsDialogFragment übereinstimmen
-    private static final String ANATOMY_REQUEST_KEY = "anatomySelectionResult"; // Ein Schlüssel für das Anatomy Dialog Ergebnis
+    private static final String EXTRA_CREDITS_REQUEST_KEY = "extraCreditsDialogResult";
+    private static final String ANATOMY_REQUEST_KEY = "anatomySelectionResult";
 
     private static final String TREASURE_BOX = "treasure";
     private CivicViewModel mCivicViewModel;
