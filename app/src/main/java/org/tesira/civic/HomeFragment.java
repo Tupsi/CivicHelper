@@ -36,6 +36,8 @@ import org.tesira.civic.databinding.FragmentHomeBinding;
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CardColor;
 import org.tesira.civic.db.CivicViewModel;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,6 +53,10 @@ public class HomeFragment extends Fragment {
     private CalamityAdapter calamityAdapter;
     private SpecialsAdapter specialsAdapter;
     private SharedPreferences prefsDefault;
+    private final List<Integer> cityIds = Arrays.asList(
+            R.id.radio_0, R.id.radio_1, R.id.radio_2, R.id.radio_3, R.id.radio_4,
+            R.id.radio_5, R.id.radio_6, R.id.radio_7, R.id.radio_8, R.id.radio_9
+    );
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -286,31 +292,12 @@ public class HomeFragment extends Fragment {
     }
 
     public void onCitiesClicked(View view) {
-        // Is the button now checked?
         boolean checked = ((RadioButton) view).isChecked();
-        // Check which radio button was clicked
         if (!checked) return;
-        int id = view.getId();
-        if (id == R.id.radio_0) {
-            mCivicViewModel.setCities(0);
-        } else if (id == R.id.radio_1) {
-            mCivicViewModel.setCities(1);
-        } else if (id == R.id.radio_2) {
-            mCivicViewModel.setCities(2);
-        } else if (id == R.id.radio_3) {
-            mCivicViewModel.setCities(3);
-        } else if (id == R.id.radio_4) {
-            mCivicViewModel.setCities(4);
-        } else if (id == R.id.radio_5) {
-            mCivicViewModel.setCities(5);
-        } else if (id == R.id.radio_6) {
-            mCivicViewModel.setCities(6);
-        } else if (id == R.id.radio_7) {
-            mCivicViewModel.setCities(7);
-        } else if (id == R.id.radio_8) {
-            mCivicViewModel.setCities(8);
-        } else if (id == R.id.radio_9) {
-            mCivicViewModel.setCities(9);
+
+        int index = cityIds.indexOf(view.getId());
+        if (index != -1) {
+            mCivicViewModel.setCities(index);
         }
         checkAST();
     }
