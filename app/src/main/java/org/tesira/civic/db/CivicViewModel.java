@@ -1,6 +1,7 @@
 package org.tesira.civic.db;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -12,12 +13,14 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
+import androidx.lifecycle.Transformations;
 import androidx.recyclerview.selection.Selection;
 import androidx.preference.PreferenceManager;
 
 import org.tesira.civic.Calamity;
 import org.tesira.civic.R;
 import org.tesira.civic.Event;
+import org.tesira.civic.db.Effect;
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CardColor;
 import org.tesira.civic.db.CivicRepository;
@@ -25,12 +28,13 @@ import org.tesira.civic.db.CivicRepository;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
 
 public class CivicViewModel extends AndroidViewModel {
 
     private CivicRepository mRepository;
-    public List<Card> cachedCards;
     private int screenWidthDp;
     private MutableLiveData<Integer> treasure;
     private MutableLiveData<Integer> remaining;
@@ -71,12 +75,26 @@ public class CivicViewModel extends AndroidViewModel {
             "3300 BC", "2700 BC", "2000 BC", "1800 BC", "1700 BC", "1500 BC", "1400 BC", "1300 BC",
             "1200 BC", "800 BC", "0", "400 AD"};
 
+    private final MutableLiveData<String> currentSortingOrder = new MutableLiveData<>();
+    private final LiveData<List<Card>> allAdvancesNotBought;
+    // LiveData für Dialog-Events
+
+    private final MutableLiveData<Event<List<String>>> _showAnatomyDialogEvent = new MutableLiveData<>();
+    public LiveData<Event<List<String>>> getShowAnatomyDialogEvent() {
+        return _showAnatomyDialogEvent;
+    }
+
+    private final MutableLiveData<Event<Integer>> _showExtraCreditsDialogEvent = new MutableLiveData<>();
+    public LiveData<Event<Integer>> getShowExtraCreditsDialogEvent() {
+        return _showExtraCreditsDialogEvent;
+    }
+    private SharedPreferences prefs, savedBonus;
+    private static final String PREF_FILE_BONUS = "purchasedAdvancesBonus";
 
     public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
         cardBonus = new MutableLiveData<>(new HashMap<>());
         mRepository = new CivicRepository(application);
-        cachedCards = mRepository.getAllCards();
         treasure = new MutableLiveData<>();
         remaining = new MutableLiveData<>();
         vp = new MutableLiveData<>();
@@ -84,6 +102,25 @@ public class CivicViewModel extends AndroidViewModel {
         mApplication = application;
         timeVp = 0;
         librarySelected = false;
+        prefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
+        savedBonus = mApplication.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
+
+
+        // --- NEU: Sortierreihenfolge aus SharedPreferences lesen ---
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(application);
+        String initialSortingOrder = prefs.getString("sort", "name"); // "name" als Standard
+        currentSortingOrder.setValue(initialSortingOrder); // Setze den Anfangswert
+
+
+        // --- NEU: Initialisiere die LiveData mit Transformations.switchMap ---
+        // allAdvancesNotBought = Transformations.switchMap(currentSortingOrder,
+        //         order -> mRepository.getAllAdvancesNotBoughtLiveData(order)); // Nutze die LiveData-Version des Repository
+
+        // Annahme: Deine Repository-Methode ist jetzt getAllAdvancesNotBoughtLiveData
+        allAdvancesNotBought = Transformations.switchMap(currentSortingOrder,
+                order -> mRepository.getAllAdvancesNotBoughtLiveData(order));
+
+        Log.d("CivicViewModel", "ViewModel constructed. Initial sorting order: " + initialSortingOrder);
     }
 
     public int getCities() {
@@ -93,7 +130,17 @@ public class CivicViewModel extends AndroidViewModel {
         this.cities = cities;
         sumVp();
     }
-
+    public void requestPriceRecalculation() {
+        Log.d("CivicViewModel", "requestPriceRecalculation() called. Asking Repository to recalculate prices.");
+        mRepository.recalculateCurrentPricesAsync(cardBonus.getValue()); // Neues asynchrones Methode im Repository
+    }
+    public void addBonusAndUpdatePrices(String cardName) {
+        Log.d("CivicViewModel", "addBonusAndUpdatePrices() called for card: " + cardName);
+        // Lass das Repository den Bonus hinzufügen und die Preise neu berechnen
+        mRepository.addBonusAndUpdatePricesAsync(cardName);
+        // Der Observer im Fragment, der allAdvancesNotBought beobachtet, wird aktualisiert,
+        // wenn das Repository die Preise in der Datenbank ändert.
+    }
     public int getScreenWidthDp() {
         return screenWidthDp;
     }
@@ -115,16 +162,25 @@ public class CivicViewModel extends AndroidViewModel {
     }
 
     public void insertPurchase(String purchase) {mRepository.insertPurchase(purchase);}
+    public void recalculateCurrentPrices() {mRepository.recalculateCurrentPricesAsync(cardBonus.getValue());}
     public void deletePurchases() {
         mRepository.deletePurchases();
         mRepository.resetCurrentPrice();
         cardBonus.setValue(new HashMap<>());
     }
 
-    public List<Card> getAllAdvancesNotBought(String sortingOrder) {
-        cachedCards = mRepository.getAllAdvancesNotBought(sortingOrder);
-        return cachedCards;
+    public void setSortingOrder(String order) {
+        if (!order.equals(currentSortingOrder.getValue())) {
+            currentSortingOrder.setValue(order);
+            Log.d("CivicViewModel", "Sorting order set to: " + order);
+            // Die LiveData allAdvancesNotBought wird automatisch aktualisiert
+        }
     }
+
+    public LiveData<List<Card>> getAllAdvancesNotBought() {
+        return allAdvancesNotBought;
+    }
+
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
     public List<Card> getAllAdvancesSortedByName() {return mRepository.getAllAdvancesSortedByName();}
     public List<String> getPurchasesAsString() {return mRepository.getPurchasesAsString();}
@@ -164,6 +220,10 @@ public class CivicViewModel extends AndroidViewModel {
     private final MutableLiveData<Event<Boolean>> _newGameResetCompletedEvent = new MutableLiveData<>();
     public final LiveData<Event<Boolean>> getNewGameResetCompletedEvent() {
         return _newGameResetCompletedEvent;
+    }
+    private final MutableLiveData<Event<Boolean>> _navigateToDashboardEvent = new MutableLiveData<>();
+    public LiveData<Event<Boolean>> getNavigateToDashboardEvent() {
+        return _navigateToDashboardEvent;
     }
 
     /**
@@ -215,6 +275,7 @@ public class CivicViewModel extends AndroidViewModel {
      * Updates the card price, checking for best color if the card is in two groups and for
      * the special family/row bonus.
      */
+    // alte funktionierende Methode zur Aktualisierung der Preise
     public void calculateCurrentPrice() {
         int newCurrent;
         List<Card> cachedCards = mRepository.getAllAdvancesNotBought("name");
@@ -391,5 +452,81 @@ public class CivicViewModel extends AndroidViewModel {
     }
     public int getYellow() {
         return cardBonus.getValue().getOrDefault(CardColor.YELLOW,0);
+    }
+
+
+    /**
+     * Orchestrates the purchase process. Delegates the database operations to the Repository
+     * and handles the UI responses (dialogs) based on the results.
+     * This method is called from the Fragment.
+     * @param selectedCardNames The names of the cards selected for purchase.
+     */
+    public void processPurchases(List<String> selectedCardNames) {
+        Log.d("CivicViewModel", "processPurchases() called from Fragment with " + selectedCardNames.size() + " cards.");
+        // Rufe die asynchrone Methode im Repository auf
+        mRepository.processPurchasesAndRecalculatePricesAsync(selectedCardNames, cardBonus,
+                new PurchaseCompletionCallback() {
+                    @Override
+                    public void onPurchaseCompleted(int totalExtraCredits, List<String> anatomyCardsToChoose) {
+                        Log.d("CivicViewModel", "PurchaseCompletionCallback: onPurchaseCompleted. Extra Credits: " + totalExtraCredits + ", Anatomy Cards: " + anatomyCardsToChoose.size());
+                        // Diese Methode wird im Hintergrund-Thread aufgerufen.
+                        // Aktualisiere LiveData im ViewModel auf dem Haupt-Thread mit postValue
+                        if (!anatomyCardsToChoose.isEmpty()) {
+                            _showAnatomyDialogEvent.postValue(new Event<>(anatomyCardsToChoose));
+                        }
+                        if (totalExtraCredits > 0) {
+                            _showExtraCreditsDialogEvent.postValue(new Event<>(totalExtraCredits));
+                        }
+
+                        // Optional: LiveData Event auslösen, um Navigation zu signalisieren, falls keine Dialoge nötig sind
+                        if (anatomyCardsToChoose.isEmpty() && totalExtraCredits == 0) {
+                            _navigateToDashboardEvent.postValue(new Event<>(true));
+                        }
+                    }
+
+                    @Override
+                    public void onPurchaseFailed(String errorMessage) {
+                        Log.e("CivicViewModel", "PurchaseCompletionCallback: onPurchaseFailed. Error: " + errorMessage);
+                        // Handle error, maybe show a Toast via another LiveData event
+                        // _showErrorToastEvent.postValue(new Event<>(errorMessage));
+                    }
+                });
+    }
+
+    public void saveBonus() {
+        SharedPreferences.Editor editor = savedBonus.edit();
+        // HashMap Save
+        for (Map.Entry<CardColor, Integer> entry: getCardBonus().getValue().entrySet()){
+            editor.putInt(entry.getKey().getName(), entry.getValue());
+        }
+        editor.apply();
+    }
+
+    /**
+     * Triggers the event to show the Extra Credits Dialog.
+     * The observing Fragment will react to this event.
+     *
+     * @param credits The number of extra credits to offer.
+     */
+    public void triggerExtraCreditsDialog(int credits) {
+        // Posten Sie einen neuen Event mit der Anzahl der Credits
+        _showExtraCreditsDialogEvent.postValue(new Event<>(credits));
+    }
+
+    /**
+     * Triggers the event to show the Anatomy Dialog.
+     * The observing Fragment will react to this event.
+     *
+     * @param greenCards The list of green cards to choose from.
+     */
+    public void triggerAnatomyDialog(List<String> greenCards) {
+        // Posten Sie einen neuen Event mit der Liste der grünen Karten
+        _showAnatomyDialogEvent.postValue(new Event<>(greenCards));
+    }
+
+    // Schnittstelle für die Callback vom Repository
+    public interface PurchaseCompletionCallback {
+        void onPurchaseCompleted(int totalExtraCredits, List<String> anatomyCardsToChoose);
+        void onPurchaseFailed(String errorMessage); // Optional: Fehlerbehandlung
     }
 }

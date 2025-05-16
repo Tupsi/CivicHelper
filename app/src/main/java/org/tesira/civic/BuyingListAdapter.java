@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.selection.Selection;
 import androidx.recyclerview.selection.SelectionTracker;
@@ -139,11 +140,23 @@ public class BuyingListAdapter extends RecyclerView.Adapter<BuyingListAdapter.Vi
      */
     public void changeList(List<Card> newList) {
         Bundle saveSelection = new Bundle();
-        tracker.onSaveInstanceState(saveSelection);
+        if (tracker != null) {
+            tracker.onSaveInstanceState(saveSelection);
+        }
         mValues.clear();
         mValues.addAll(newList);
         notifyDataSetChanged();
-        tracker.onRestoreInstanceState(saveSelection);
+        if (tracker != null) {
+            tracker.onRestoreInstanceState(saveSelection);
+        }
     }
 
+    /**
+     * Returns the current list of cards displayed by the adapter.
+     * This is needed by MyItemKeyProvider.
+     * @return The current list of Card objects.
+     */
+    public List<Card> getItems() {
+        return mValues;
+    }
 }

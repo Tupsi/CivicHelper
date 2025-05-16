@@ -1,6 +1,7 @@
 package org.tesira.civic;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,19 +24,18 @@ import org.tesira.civic.db.CivicViewModel;
  */
 public class ExtraCreditsDialogFragment extends DialogFragment {
 
+    private static final String REQUEST_KEY = "extraCreditsDialogResult";
     private DialogCreditsBinding binding;
     String[] items;
     private int credits, blue, green, orange, red, yellow;
     private int oldblue, oldgreen, oldorange, oldred, oldyellow;
     private AlertDialog dialog;
     private CivicViewModel mCivicViewModel;
-    private AdvancesFragment fragment;
 
-    public ExtraCreditsDialogFragment(CivicViewModel mCivicViewModel, AdvancesFragment fragment,  int credits) {
+    public ExtraCreditsDialogFragment(CivicViewModel mCivicViewModel, int credits) {
         super(R.layout.dialog_credits);
         setCancelable(false);
         this.mCivicViewModel = mCivicViewModel;
-        this.fragment = fragment;
         this.credits = credits;
 
         switch (credits) {
@@ -50,6 +50,13 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
                 break;
         }
     }
+    public static ExtraCreditsDialogFragment newInstance(CivicViewModel viewModel, int credits) {
+        // Sie können Argumente hier übergeben, aber da Sie das ViewModel und die Credits
+        // direkt im Konstruktor setzen, belassen wir es für dieses Beispiel so.
+        // Eine bessere Methode wäre, Argumente über setArguments zu übergeben
+        // und ViewModel über shared ViewModel oder Injektion zu erhalten.
+        return new ExtraCreditsDialogFragment(viewModel, credits);
+    }
 
     @Override
     public void onStart() {
@@ -57,7 +64,6 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog != null) {
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }
 
@@ -85,12 +91,6 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         binding.bonusred.setText(String.valueOf(mCivicViewModel.getRed()));
         binding.bonusyellow.setText(String.valueOf(mCivicViewModel.getYellow()));
 
-//        binding.bonusblue.setText(String.valueOf(oldblue));
-//        binding.bonusgreen.setText(String.valueOf(oldgreen));
-//        binding.bonusorange.setText(String.valueOf(oldorange));
-//        binding.bonusred.setText(String.valueOf(oldred));
-//        binding.bonusyellow.setText(String.valueOf(oldyellow));
-
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.dialog_extra_credits);
@@ -98,19 +98,26 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
         builder.setView(spinnerView);
         builder.setPositiveButton(R.string.ok, (dialog, id) -> {
             mCivicViewModel.updateBonus(blue, green, orange, red, yellow);
-            // save to prefs
-            ((MainActivity) getActivity()).saveBonus();
-            if (fragment != null) {
-                fragment.returnToDashboard(false);
-            } else {
-                requireActivity().getSupportFragmentManager().setFragmentResult("extraCredits", new Bundle());
-            }
+            mCivicViewModel.saveBonus();
+            mCivicViewModel.requestPriceRecalculation();
+            // Sende ein Ergebnis an das aufrufende Fragment (AdvancesFragment)
+            Bundle result = new Bundle();
+            // Du könntest spezifische Ergebnisse senden, aber um nur anzuzeigen, dass der Dialog abgeschlossen ist, reicht ein leeres Bundle
+            getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
+
+            // Schließe den Dialog
+            dismiss(); // Manuelles Schließen nach dem Senden des Ergebnisses
         });
+
         // Create the AlertDialog object and return it
         dialog = builder.create();
         dialog.getWindow().setWindowAnimations(R.style.DialogAnimation);
-//        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return dialog;
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
     }
 
     private class MyOnItemSelectedListener implements android.widget.AdapterView.OnItemSelectedListener {
