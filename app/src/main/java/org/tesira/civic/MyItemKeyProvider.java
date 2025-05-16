@@ -8,38 +8,32 @@ import org.tesira.civic.db.CivicViewModel;
 
 import java.util.List;
 
-public class MyItemKeyProvider<S> extends ItemKeyProvider<String> {
+public class MyItemKeyProvider extends ItemKeyProvider<String> {
+    private BuyingListAdapter adapter;
 
-    private List<Card> itemList;
-    private final CivicViewModel mCivicViewModel;
-
-    public MyItemKeyProvider(int scope, CivicViewModel model) {
+    public MyItemKeyProvider(int scope, BuyingListAdapter adapter) {
         super(scope);
-        this.mCivicViewModel = model;
-        itemList = model.cachedCards;
+        this.adapter = adapter;
     }
 
     @Nullable
     @Override
     public String getKey(int position) {
-        return itemList.get(position).getName();
+        List<Card> itemList = adapter.getItems();
+        if (position >= 0 && position < itemList.size()) {
+            return itemList.get(position).getName();
+        }
+        return null;
     }
 
     @Override
     public int getPosition(@NonNull String key) {
-        int pos = 0;
-        for (Card adv : itemList) {
-            if (key.equals(adv.getName())) {
-                return pos;
-            }
-            else {
-                pos++;
+        List<Card> itemList = adapter.getItems(); // Greife auf die Liste vom Adapter zu
+        for (int i = 0; i < itemList.size(); i++) {
+            if (key.equals(itemList.get(i).getName())) {
+                return i;
             }
         }
         return -1;
-    }
-
-    public void setItemList(List<Card> itemList) {
-        this.itemList = itemList;
     }
 }

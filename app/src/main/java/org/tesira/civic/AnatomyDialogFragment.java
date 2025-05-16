@@ -20,44 +20,59 @@ import java.util.List;
  */
 public class AnatomyDialogFragment extends DialogFragment {
 
-        private AdvancesFragment fragment;
-        private String[] greenCards;
-        private CivicViewModel mCivicViewModel;
+    private static final String ARG_GREEN_CARDS_LIST = "arg_green_cards_list";
+    private static final String REQUEST_KEY = "anatomySelectionResult";
+    private String[] greenCards;
+    private CivicViewModel mCivicViewModel;
+    private String[] greenCardsArray;
 
-        public AnatomyDialogFragment(CivicViewModel model,AdvancesFragment fragment, List<String> greenCards) {
+    public AnatomyDialogFragment() {
+    }
+    public AnatomyDialogFragment(CivicViewModel model, List<String> greenCards) {
             setCancelable(false);
             this.mCivicViewModel = model;
-            this.fragment = fragment;
             this.greenCards = greenCards.toArray(new String[0]);
-        }
+    }
+    // Factory-Methode (empfohlen)
+    public static AnatomyDialogFragment newInstance(CivicViewModel viewModel, List<String> greenCards) {
+        // Eine bessere Methode wäre, Argumente über setArguments zu übergeben
+        // und ViewModel über shared ViewModel oder Injektion zu erhalten.
+        return new AnatomyDialogFragment(viewModel, greenCards);
+    }
 
-        @Override
-        public void onStart() {
-            super.onStart();
-            Dialog dialog = getDialog();
-            if (dialog != null) {
-                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    //            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            }
+    @Override
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         }
+    }
 
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.dialog_anatomy);
-            builder.setItems(greenCards, (dialog, which) -> {
-                mCivicViewModel.insertPurchase(greenCards[which]);
-                mCivicViewModel.addBonus(greenCards[which]);
-//                fragment.addAnatomyFreeCard(greenCards[which]);
-                fragment.returnToDashboard(greenCards[which].equals("Written Record"));
-            });
-            Dialog dialog = builder.create();
-            dialog.getWindow().setWindowAnimations(R.style.DialogAnimation);
-//            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-            return dialog;
-        }
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.dialog_anatomy);
+        builder.setItems(greenCards, (dialogInterface, which) -> { // Ändere den Parameternamen, um Verwirrung zu vermeiden
+            String selectedGreenCard = greenCards[which]; // Die vom Benutzer ausgewählte Karte
+
+            // Führe die ViewModel-Logik für den Kauf und Bonus aus
+            mCivicViewModel.addBonus(selectedGreenCard);
+            mCivicViewModel.saveBonus();
+            mCivicViewModel.insertPurchase(selectedGreenCard);
+            mCivicViewModel.requestPriceRecalculation();
+            // Sende das Ergebnis zurück an das aufrufende Fragment (AdvancesFragment)
+            Bundle result = new Bundle();
+            result.putString("selected_card_name", selectedGreenCard); // Sende den Namen der ausgewählten Karte
+            getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
+            dismiss();
+        });
+        Dialog dialog = builder.create();
+        dialog.getWindow().setWindowAnimations(R.style.DialogAnimation);
+        return dialog;
+    }
 
 }

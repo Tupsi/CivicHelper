@@ -39,7 +39,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic_helper.db")
                             .addCallback(sRoomDatabaseCallback)
-                            .fallbackToDestructiveMigration()
+//                            .fallbackToDestructiveMigration()
                             .allowMainThreadQueries()
                             .build();
                     ASSET_CONTEXT = context.getApplicationContext();
@@ -70,16 +70,16 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
         @Override
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
-            databaseWriteExecutor.execute(() -> {
+//            databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
                 // DEBUGGING: remove later!
-                CivicHelperDao dao = INSTANCE.civicDao();
-                dao.deleteAllCards();
-                dao.deleteAllEffects();
-                dao.deleteAllSpecials();
-                dao.deleteAllImmunities();
-                importCivicsFromXML();
-            });
+//                CivicHelperDao dao = INSTANCE.civicDao();
+//                dao.deleteAllCards();
+//                dao.deleteAllEffects();
+//                dao.deleteAllSpecials();
+//                dao.deleteAllImmunities();
+//                importCivicsFromXML();
+//            });
         }
     };
 
