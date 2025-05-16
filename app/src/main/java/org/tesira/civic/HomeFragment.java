@@ -240,15 +240,7 @@ public class HomeFragment extends Fragment {
                         builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
                                 .setNegativeButton("No", dialogClickListener).show();
                         return true;
-                    // debug menu option
-                    //            case R.id.menu_debugRecalBonus:
-                    //                recalculateBonus();
-                    //                return true;
                     default:
-                        // Let the NavigationUI handle navigation destinations.
-                        // This is important for other menu items like "settingsFragment" and "aboutFragment"
-                        // if those IDs match destinations in your navigation graph.
-                        // If NavigationUI handles the item, it returns true.
                         return NavigationUI.onNavDestinationSelected(menuItem, Navigation.findNavController(requireView()));
                 }
             }
@@ -256,11 +248,9 @@ public class HomeFragment extends Fragment {
 
         mCivicViewModel.getNewGameResetCompletedEvent().observe(getViewLifecycleOwner(), newGameEvent -> {
             Log.d("HomeFragment", "New Game Reset Completed Event received in observer");
-            // Use getContentIfNotHandled() to ensure the event is processed only once
             Boolean resetTriggered = newGameEvent.getContentIfNotHandled();
             if (resetTriggered != null && resetTriggered) {
                 // Update UI elements that need resetting in HomeFragment
-                loadBonus(); // Update bonuses displayed on the dashboard
                 calamityAdapter.clearData(); // Clear calamity data in the adapter
                 specialsAdapter.clearData(); // Clear special abilities/immunities data in the adapter
 
@@ -275,68 +265,52 @@ public class HomeFragment extends Fragment {
                 // The ViewModel's LiveData for civilization preference will update tvCivilization if it's observed.
                 // If tvCivilization is not updated by an observer, you might need to update it directly here:
                 binding.tvCivilization.setText(R.string.reset_tv_civic);
-                binding.tvTime.setText(mCivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
+                binding.tvTime.setText(CivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
             }
         });
-    }
-    public void loadBonus() {
-        binding.bonusBlue.setText(String.valueOf(mCivicViewModel.getCardBonus().getValue().getOrDefault(CardColor.BLUE,0)));
-        binding.bonusBlue.setBackgroundResource(R.color.arts);
-        binding.bonusGreen.setText(String.valueOf(mCivicViewModel.getCardBonus().getValue().getOrDefault(CardColor.GREEN,0)));
-        binding.bonusGreen.setBackgroundResource(R.color.science);
-        binding.bonusOrange.setText(String.valueOf(mCivicViewModel.getCardBonus().getValue().getOrDefault(CardColor.ORANGE,0)));
-        binding.bonusOrange.setBackgroundResource(R.color.crafts);
-        binding.bonusRed.setText(String.valueOf(mCivicViewModel.getCardBonus().getValue().getOrDefault(CardColor.RED,0)));
-        binding.bonusRed.setBackgroundResource(R.color.civic);
-        binding.bonusYellow.setText(String.valueOf(mCivicViewModel.getCardBonus().getValue().getOrDefault(CardColor.YELLOW,0)));
-        binding.bonusYellow.setBackgroundResource(R.color.religion);
+
+        mCivicViewModel.getCardBonus().observe(getViewLifecycleOwner(), cardBonusMap -> {
+            if (cardBonusMap == null) return;
+            binding.bonusBlue.setText(String.valueOf(cardBonusMap.getOrDefault(CardColor.BLUE, 0)));
+            binding.bonusBlue.setBackgroundResource(R.color.arts);
+            binding.bonusGreen.setText(String.valueOf(cardBonusMap.getOrDefault(CardColor.GREEN, 0)));
+            binding.bonusGreen.setBackgroundResource(R.color.science);
+            binding.bonusOrange.setText(String.valueOf(cardBonusMap.getOrDefault(CardColor.ORANGE, 0)));
+            binding.bonusOrange.setBackgroundResource(R.color.crafts);
+            binding.bonusRed.setText(String.valueOf(cardBonusMap.getOrDefault(CardColor.RED, 0)));
+            binding.bonusRed.setBackgroundResource(R.color.civic);
+            binding.bonusYellow.setText(String.valueOf(cardBonusMap.getOrDefault(CardColor.YELLOW, 0)));
+            binding.bonusYellow.setBackgroundResource(R.color.religion);
+        });
+
     }
 
     public void onCitiesClicked(View view) {
         // Is the button now checked?
         boolean checked = ((RadioButton) view).isChecked();
         // Check which radio button was clicked
-        switch(view.getId()) {
-            case R.id.radio_0:
-                if (checked)
-                    mCivicViewModel.setCities(0);
-                break;
-            case R.id.radio_1:
-                if (checked)
-                    mCivicViewModel.setCities(1);
-                break;
-            case R.id.radio_2:
-                if (checked)
-                    mCivicViewModel.setCities(2);
-                break;
-            case R.id.radio_3:
-                if (checked)
-                    mCivicViewModel.setCities(3);
-                break;
-            case R.id.radio_4:
-                if (checked)
-                    mCivicViewModel.setCities(4);
-                break;
-            case R.id.radio_5:
-                if (checked)
-                    mCivicViewModel.setCities(5);
-                break;
-            case R.id.radio_6:
-                if (checked)
-                    mCivicViewModel.setCities(6);
-                break;
-            case R.id.radio_7:
-                if (checked)
-                    mCivicViewModel.setCities(7);
-                break;
-            case R.id.radio_8:
-                if (checked)
-                    mCivicViewModel.setCities(8);
-                break;
-            case R.id.radio_9:
-                if (checked)
-                    mCivicViewModel.setCities(9);
-                break;
+        if (!checked) return;
+        int id = view.getId();
+        if (id == R.id.radio_0) {
+            mCivicViewModel.setCities(0);
+        } else if (id == R.id.radio_1) {
+            mCivicViewModel.setCities(1);
+        } else if (id == R.id.radio_2) {
+            mCivicViewModel.setCities(2);
+        } else if (id == R.id.radio_3) {
+            mCivicViewModel.setCities(3);
+        } else if (id == R.id.radio_4) {
+            mCivicViewModel.setCities(4);
+        } else if (id == R.id.radio_5) {
+            mCivicViewModel.setCities(5);
+        } else if (id == R.id.radio_6) {
+            mCivicViewModel.setCities(6);
+        } else if (id == R.id.radio_7) {
+            mCivicViewModel.setCities(7);
+        } else if (id == R.id.radio_8) {
+            mCivicViewModel.setCities(8);
+        } else if (id == R.id.radio_9) {
+            mCivicViewModel.setCities(9);
         }
         checkAST();
     }
@@ -354,7 +328,7 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.v("HOME","---> onResume() <--- ");
-        loadBonus();
+//        loadBonus();
     }
 
     public void onStop() {
