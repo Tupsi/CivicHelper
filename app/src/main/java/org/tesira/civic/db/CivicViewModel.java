@@ -20,10 +20,10 @@ import androidx.preference.PreferenceManager;
 import org.tesira.civic.Calamity;
 import org.tesira.civic.R;
 import org.tesira.civic.Event;
-import org.tesira.civic.db.Effect;
-import org.tesira.civic.db.Card;
-import org.tesira.civic.db.CardColor;
-import org.tesira.civic.db.CivicRepository;
+//import org.tesira.civic.db.Effect;
+//import org.tesira.civic.db.Card;
+//import org.tesira.civic.db.CardColor;
+//import org.tesira.civic.db.CivicRepository;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,11 +36,12 @@ public class CivicViewModel extends AndroidViewModel {
 
     private CivicRepository mRepository;
     private int screenWidthDp;
-    private MutableLiveData<Integer> treasure;
-    private MutableLiveData<Integer> remaining;
-    private MutableLiveData<Integer> vp;
+    private final MutableLiveData<Integer> treasure  = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> remaining = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> vp = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> civilization = new MutableLiveData<>(0);
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
-    private int cities;
+    private final MutableLiveData<Integer> cities = new MutableLiveData<>(0);
     private Application mApplication;
     private int timeVp;
     public String heart;
@@ -91,14 +92,16 @@ public class CivicViewModel extends AndroidViewModel {
     private SharedPreferences prefs, savedBonus;
     private static final String PREF_FILE_BONUS = "purchasedAdvancesBonus";
 
+
+
     public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
         cardBonus = new MutableLiveData<>(new HashMap<>());
         mRepository = new CivicRepository(application);
-        treasure = new MutableLiveData<>();
-        remaining = new MutableLiveData<>();
-        vp = new MutableLiveData<>();
-        cities = 0;
+//        treasure = new MutableLiveData<>();
+//        remaining = new MutableLiveData<>();
+//        vp = new MutableLiveData<>();
+//        cities = 0;
         mApplication = application;
         timeVp = 0;
         librarySelected = false;
@@ -124,10 +127,14 @@ public class CivicViewModel extends AndroidViewModel {
     }
 
     public int getCities() {
+        return cities.getValue();
+    }
+    public LiveData<Integer> getCitiesLive() {
         return cities;
     }
-    public void setCities(int cities) {
-        this.cities = cities;
+
+    public void setCities(int value) {
+        cities.setValue(value);
         sumVp();
     }
     public void requestPriceRecalculation() {
@@ -190,7 +197,7 @@ public class CivicViewModel extends AndroidViewModel {
     public List<String> getImmunities() {return mRepository.getImmunities();}
     public int sumVp() {
         int newVp = mRepository.sumVp();
-        newVp += cities;
+        newVp += cities.getValue();
         newVp += timeVp;
         this.vp.setValue(newVp);
         return newVp;
@@ -249,7 +256,7 @@ public class CivicViewModel extends AndroidViewModel {
         mRepository.resetDB();
         treasure.setValue(0);
         remaining.setValue(0);
-        cities = 0;
+        cities.setValue(0);
         timeVp = 0;
         vp.setValue(0);
         cardBonus.setValue(new HashMap<>());
