@@ -95,33 +95,8 @@ public class HomeFragment extends Fragment {
         String civicAST = prefsDefault.getString("civilization", "not set");
         binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));
         binding.tvCivilization.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.tipsFragment));
-        binding.tvCivilization.setOnLongClickListener(v -> {
-            Context context = requireContext();
-            String[] entries = context.getResources().getStringArray(R.array.civilizations_entries);
-            String[] values = context.getResources().getStringArray(R.array.civilizations_values);
+        registerForContextMenu(binding.tvCivilization);
 
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            String currentValue = prefs.getString("civilization", "");
-            int currentIndex = Arrays.asList(values).indexOf(currentValue);
-
-            new AlertDialog.Builder(context)
-                    .setTitle(R.string.pref_civilization)
-                    .setSingleChoiceItems(entries, currentIndex, (dialog, which) -> {
-                        String selectedValue = values[which];
-                        prefs.edit().putString("civilization", selectedValue).apply();
-
-                        // TextView aktualisieren mit Template-Text
-                        binding.tvCivilization.setText(getString(R.string.tv_ast, selectedValue));
-
-                        dialog.dismiss();
-                    })
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show();
-
-            return true; // Signalisiert, dass der LongClick behandelt wurde
-        });
-
-//        registerForContextMenu(binding.tvCivilization);
         // shortcuts to purchase
         binding.tvBoni.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
         binding.bonusBlue.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
@@ -133,10 +108,12 @@ public class HomeFragment extends Fragment {
         // shortcut to advances/buy fragment
         binding.tvSpecials.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.advancesFragment));
 
-        registerForContextMenu(rootView.findViewById(R.id.tvTime));
+
         mCivicViewModel.getVp().observe(getViewLifecycleOwner(), integer -> binding.tvVp.setText(getString(R.string.tv_vp, integer)));
 
         binding.tvTime.setText(CivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
+        registerForContextMenu(binding.tvTime);
+
         return rootView;
     }
 
@@ -372,6 +349,50 @@ public class HomeFragment extends Fragment {
         Log.v("HOME","---> onDestroy() <--- ");
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId() == R.id.tvTime) {
+            int timeTableLength = CivicViewModel.TIME_TABLE.length;
+            if ("basic".equals(prefsDefault.getString("ast", "basic"))) {
+                timeTableLength--;
+            }
+            for (int i = 0; i < timeTableLength; i++) {
+                menu.add(0, i * 5, i, CivicViewModel.TIME_TABLE[i]);
+            }
+        } else if (v.getId() == R.id.tvCivilization) {
+            Context context = requireContext();
+            String[] entries = context.getResources().getStringArray(R.array.civilizations_entries);
+            String[] values = context.getResources().getStringArray(R.array.civilizations_values);
+            String currentValue = prefsDefault.getString("civilization", "");
+            int currentIndex = Arrays.asList(values).indexOf(currentValue);
+            for (int i = 0; i < values.length; i++) {
+                menu.add(1, i, i, entries[i]);  // Group 1 = Civilization
+            }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (item.getGroupId() == 0) {
+            // Time Menu
+            mCivicViewModel.setTimeVp(item.getItemId());
+            binding.tvTime.setText(item.getTitle());
+            return true;
+        } else if (item.getGroupId() == 1) {
+            // Civilization Menu
+            String[] values = getResources().getStringArray(R.array.civilizations_values);
+            if (item.getItemId() < values.length) {
+                String selectedValue = values[item.getItemId()];
+                prefsDefault.edit().putString("civilization", selectedValue).apply();
+                binding.tvCivilization.setText(getString(R.string.tv_ast, selectedValue));
+                return true;
+            }
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    /**
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo info) {
         super.onCreateContextMenu(menu,v,info);
         int timeTableLength = CivicViewModel.TIME_TABLE.length;
@@ -393,4 +414,6 @@ public class HomeFragment extends Fragment {
         binding.tvTime.setText(item.getTitle());
         return true;
     }
+    */
+
 }
