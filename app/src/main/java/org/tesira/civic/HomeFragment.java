@@ -19,9 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -29,10 +30,10 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.tesira.civic.CalamityAdapter;
-import org.tesira.civic.MainActivity;
-import org.tesira.civic.R;
-import org.tesira.civic.SpecialsAdapter;
+//import org.tesira.civic.CalamityAdapter;
+//import org.tesira.civic.MainActivity;
+//import org.tesira.civic.R;
+//import org.tesira.civic.SpecialsAdapter;
 import org.tesira.civic.databinding.FragmentHomeBinding;
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CardColor;
@@ -48,7 +49,7 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment {
 
-    private static final String BONUS = "purchasedAdvancesBonus";
+//    private static final String BONUS = "purchasedAdvancesBonus";
     private FragmentHomeBinding binding;
     private CivicViewModel mCivicViewModel;
     private CalamityAdapter calamityAdapter;
@@ -118,37 +119,11 @@ public class HomeFragment extends Fragment {
     }
 
     private void restoreCityButton(int cities) {
-        switch(cities){
-            case 0:
-                binding.radio0.setChecked(true);
-                break;
-            case 1:
-                binding.radio1.setChecked(true);
-                break;
-            case 2:
-                binding.radio2.setChecked(true);
-                break;
-            case 3:
-                binding.radio3.setChecked(true);
-                break;
-            case 4:
-                binding.radio4.setChecked(true);
-                break;
-            case 5:
-                binding.radio5.setChecked(true);
-                break;
-            case 6:
-                binding.radio6.setChecked(true);
-                break;
-            case 7:
-                binding.radio7.setChecked(true);
-                break;
-            case 8:
-                binding.radio8.setChecked(true);
-                break;
-            case 9:
-                binding.radio9.setChecked(true);
-                break;
+        if (cities >= 0 && cities < cityIds.size()) {
+            RadioButton button = binding.getRoot().findViewById(cityIds.get(cities));
+            if (button != null) {
+                button.setChecked(true);
+            }
         }
     }
 
@@ -304,7 +279,13 @@ public class HomeFragment extends Fragment {
             binding.bonusYellow.setText(String.valueOf(cardBonusMap.getOrDefault(CardColor.YELLOW, 0)));
             binding.bonusYellow.setBackgroundResource(R.color.religion);
         });
-
+        // Observer für Cities
+        mCivicViewModel.getCitiesLive().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer value) {
+                restoreCityButton(value);
+            }
+        });
     }
 
     public void onCitiesClicked(View view) {
@@ -365,7 +346,7 @@ public class HomeFragment extends Fragment {
             String[] entries = context.getResources().getStringArray(R.array.civilizations_entries);
             String[] values = context.getResources().getStringArray(R.array.civilizations_values);
             String currentValue = prefsDefault.getString("civilization", "");
-            int currentIndex = Arrays.asList(values).indexOf(currentValue);
+//            int currentIndex = Arrays.asList(values).indexOf(currentValue);
             for (int i = 0; i < values.length; i++) {
                 menu.add(1, i, i, entries[i]);  // Group 1 = Civilization
             }
@@ -391,29 +372,4 @@ public class HomeFragment extends Fragment {
         }
         return super.onContextItemSelected(item);
     }
-
-    /**
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo info) {
-        super.onCreateContextMenu(menu,v,info);
-        int timeTableLength = CivicViewModel.TIME_TABLE.length;
-        if (prefsDefault.getString("ast", "basic").compareTo("basic") == 0) {
-            // basic A.S.T. is one step shorter then expert A.S.T.
-            timeTableLength--;
-        }
-        for (int i=0; i < timeTableLength; i++) {
-            // lets make the id=vp we get in the end right from the start
-            menu.add(0,(i)*5,i,CivicViewModel.TIME_TABLE[i]);
-        }
-        MenuInflater mi = new MenuInflater(getContext());
-        mi.inflate(R.menu.time_menu, menu);
-    }
-
-    public boolean onContextItemSelected(MenuItem item) {
-        Log.v("DEMO", "" + item.getItemId());
-        mCivicViewModel.setTimeVp(item.getItemId());
-        binding.tvTime.setText(item.getTitle());
-        return true;
-    }
-    */
-
 }
