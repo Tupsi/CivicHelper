@@ -228,6 +228,12 @@ public class CivicViewModel extends AndroidViewModel {
 
     // This LiveData signals that a new game reset has been INITIATED or completed.
     // It will be used to trigger UI updates.
+
+    private final MutableLiveData<Event<Boolean>> newGameStartedEvent = new MutableLiveData<>();
+    public LiveData<Event<Boolean>> getNewGameStartedEvent() {
+        return newGameStartedEvent;
+    }
+
     private final MutableLiveData<Event<Boolean>> _newGameResetCompletedEvent = new MutableLiveData<>();
     public final LiveData<Event<Boolean>> getNewGameResetCompletedEvent() {
         return _newGameResetCompletedEvent;
@@ -243,7 +249,7 @@ public class CivicViewModel extends AndroidViewModel {
      */
     public void requestNewGame() {
         Log.d("CivicViewModel", "requestNewGame() called. Initiating startNewGameProcess.");
-        startNewGameProcess(); // ViewModel handles the actual reset logic
+        startNewGameProcess();
     }
 
     /**
@@ -276,7 +282,8 @@ public class CivicViewModel extends AndroidViewModel {
 
         // Signal that the new game process has completed (including data reset)
         // This will trigger observers in the UI.
-        _newGameResetCompletedEvent.setValue(new Event<>(true)); // Signal completion
+        newGameStartedEvent.setValue(new Event<>(true));
+        _newGameResetCompletedEvent.setValue(new Event<>(true));
         Log.d("CivicViewModel", "startNewGameProcess: Signaled new game reset completed event.");
     }
     // --- END: New method for New Game Reset Logic ---

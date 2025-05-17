@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         savedBonus = this.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
         mCivicViewModel = new ViewModelProvider(this).get(CivicViewModel.class);
 
-        mCivicViewModel.getNewGameResetCompletedEvent().observe(this, new Observer<Event<Boolean>>() {
+        mCivicViewModel.getNewGameStartedEvent().observe(this, new Observer<Event<Boolean>>() {
             @Override
             public void onChanged(Event<Boolean> resetCompletedEvent) {
                 if (resetCompletedEvent != null) {
@@ -52,12 +52,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     if (resetCompleted != null && resetCompleted) {
                         // Keep purely Activity-related UI actions here
                         Toast.makeText(MainActivity.this, "Starting a New Game!", Toast.LENGTH_SHORT).show();
-                        Log.d("MainActivity", "New Game Toast SHOWN."); // Fürs Debugging
                         if (drawerLayout != null && drawerLayout.isDrawerOpen(binding.navView)) {
                             drawerLayout.closeDrawer(binding.navView);
                         }
-                    } else {
-                        Log.d("MainActivity", "New Game Toast NOT shown (already handled or null)."); // Fürs Debugging
                     }
                 }
             }
