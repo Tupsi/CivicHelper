@@ -43,7 +43,7 @@ public class CivicViewModel extends AndroidViewModel {
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
     private final MutableLiveData<Integer> cities = new MutableLiveData<>(0);
     private Application mApplication;
-    private int timeVp;
+    private final MutableLiveData<Integer> timeVp = new MutableLiveData<>(0);
     public String heart;
 
     public boolean librarySelected;
@@ -103,7 +103,7 @@ public class CivicViewModel extends AndroidViewModel {
 //        vp = new MutableLiveData<>();
 //        cities = 0;
         mApplication = application;
-        timeVp = 0;
+//        timeVp = 0;
         librarySelected = false;
         prefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
         savedBonus = mApplication.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
@@ -161,10 +161,14 @@ public class CivicViewModel extends AndroidViewModel {
         this.heart = heart;
     }
     public int getTimeVp() {
+        return timeVp.getValue();
+    }
+    public LiveData<Integer> getTimeVpLive() {
         return timeVp;
     }
-    public void setTimeVp(int timeVp) {
-        this.timeVp = timeVp;
+
+    public void setTimeVp(int value) {
+        timeVp.setValue(value);
         sumVp();
     }
 
@@ -198,7 +202,7 @@ public class CivicViewModel extends AndroidViewModel {
     public int sumVp() {
         int newVp = mRepository.sumVp();
         newVp += cities.getValue();
-        newVp += timeVp;
+        newVp += timeVp.getValue();
         this.vp.setValue(newVp);
         return newVp;
     }
@@ -257,7 +261,7 @@ public class CivicViewModel extends AndroidViewModel {
         treasure.setValue(0);
         remaining.setValue(0);
         cities.setValue(0);
-        timeVp = 0;
+        timeVp.setValue(0);
         vp.setValue(0);
         cardBonus.setValue(new HashMap<>());
 
