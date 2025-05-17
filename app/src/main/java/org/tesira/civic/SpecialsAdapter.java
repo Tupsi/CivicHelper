@@ -9,8 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.tesira.civic.R;
+import org.tesira.civic.db.CivicViewModel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Adapter for showing a list of Special Abilities or Immunities against on the dashboard.
@@ -18,6 +21,7 @@ import java.util.Arrays;
 public class SpecialsAdapter extends RecyclerView.Adapter<SpecialsAdapter.ViewHolder> {
 
     private String[] localDataSet;
+    private final CivicViewModel viewModel;
 
     /**
      * Provide a reference to the type of views that you are using
@@ -38,15 +42,9 @@ public class SpecialsAdapter extends RecyclerView.Adapter<SpecialsAdapter.ViewHo
         }
     }
 
-    /**
-     * Initialize the dataset of the Adapter.
-     *
-     * @param dataSet String[] containing the data to populate views to be used
-     * by RecyclerView.
-     */
-    public SpecialsAdapter(String[] dataSet) {
-        // remove duplicates as every special has two counters
-        localDataSet = Arrays.stream(dataSet).distinct().toArray(String[]::new);
+    public SpecialsAdapter(CivicViewModel viewModel) {
+        this.viewModel = viewModel;
+        this.localDataSet = new String[0]; // initial leer
     }
 
     // Create new views (invoked by the layout manager)
@@ -77,6 +75,16 @@ public class SpecialsAdapter extends RecyclerView.Adapter<SpecialsAdapter.ViewHo
 
     public void clearData() {
         localDataSet = new String[0];
+        notifyDataSetChanged();
+    }
+
+    public void updateData() {
+        List<String> combinedList = new ArrayList<>();
+        combinedList.add("___Special Abilities");
+        combinedList.addAll(viewModel.getSpecialAbilities());
+        combinedList.add("___Immunities");
+        combinedList.addAll(viewModel.getImmunities());
+        localDataSet = combinedList.stream().distinct().toArray(String[]::new);
         notifyDataSetChanged();
     }
 }

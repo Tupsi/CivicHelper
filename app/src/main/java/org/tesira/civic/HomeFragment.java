@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
-//import android.widget.Toast;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
@@ -30,10 +29,6 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-//import org.tesira.civic.CalamityAdapter;
-//import org.tesira.civic.MainActivity;
-//import org.tesira.civic.R;
-//import org.tesira.civic.SpecialsAdapter;
 import org.tesira.civic.databinding.FragmentHomeBinding;
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CardColor;
@@ -49,7 +44,6 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment {
 
-//    private static final String BONUS = "purchasedAdvancesBonus";
     private FragmentHomeBinding binding;
     private CivicViewModel mCivicViewModel;
     private CalamityAdapter calamityAdapter;
@@ -68,18 +62,21 @@ public class HomeFragment extends Fragment {
         prefsDefault = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
         View rootView = binding.getRoot();
+
+        // 1st Recyclerview
         RecyclerView mRecyclerView = rootView.findViewById(R.id.listCalamity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        calamityAdapter = new CalamityAdapter(mCivicViewModel.getCalamityBonus(), this.getContext());
+        calamityAdapter = new CalamityAdapter(mCivicViewModel, this.getContext());
         mRecyclerView.setAdapter(calamityAdapter);
+        calamityAdapter.updateData();
+
+        // 2nd RecyclerView
         mRecyclerView = rootView.findViewById(R.id.listAbility);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        List<String> specialsList = mCivicViewModel.getSpecialAbilities();
-        specialsList.add(0,"___Special Abilities");
-        specialsList.add(               "___Immunities");
-        specialsList.addAll(mCivicViewModel.getImmunities());
-        specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
+        specialsAdapter = new SpecialsAdapter(mCivicViewModel);
         mRecyclerView.setAdapter(specialsAdapter);
+        specialsAdapter.updateData();
+
         binding.radio0.setOnClickListener(this::onCitiesClicked);
         binding.radio1.setOnClickListener(this::onCitiesClicked);
         binding.radio2.setOnClickListener(this::onCitiesClicked);
@@ -108,7 +105,6 @@ public class HomeFragment extends Fragment {
 
         // shortcut to advances/buy fragment
         binding.tvSpecials.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.advancesFragment));
-
 
         mCivicViewModel.getVp().observe(getViewLifecycleOwner(), integer -> binding.tvVp.setText(getString(R.string.tv_vp, integer)));
 
@@ -244,25 +240,14 @@ public class HomeFragment extends Fragment {
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         mCivicViewModel.getNewGameResetCompletedEvent().observe(getViewLifecycleOwner(), newGameEvent -> {
-            Log.d("HomeFragment", "New Game Reset Completed Event received in observer");
             Boolean resetTriggered = newGameEvent.getContentIfNotHandled();
             if (resetTriggered != null && resetTriggered) {
                 // Update UI elements that need resetting in HomeFragment
-                calamityAdapter.clearData(); // Clear calamity data in the adapter
-                specialsAdapter.clearData(); // Clear special abilities/immunities data in the adapter
-
-                // Reset the AST indicators to red (or their default state)
-                binding.tvMBA.setBackgroundResource(R.color.ast_red);
-                binding.tvLBA.setBackgroundResource(R.color.ast_red);
-                binding.tvEIA.setBackgroundResource(R.color.ast_red);
-                binding.tvLIA.setBackgroundResource(R.color.ast_red);
-
-                // Set the cities radio button to 0
-                binding.radio0.setChecked(true);
-                // The ViewModel's LiveData for civilization preference will update tvCivilization if it's observed.
-                // If tvCivilization is not updated by an observer, you might need to update it directly here:
-                binding.tvCivilization.setText(R.string.reset_tv_civic);
-                binding.tvTime.setText(CivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
+                specialsAdapter.updateData(); // Update special abilities/immunities data in the adapter
+                calamityAdapter.updateData(); // Update calamity data in the adapter
+                checkAST();
+                String civicAST = prefsDefault.getString("civilization", "not set");
+                binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));
             }
         });
 

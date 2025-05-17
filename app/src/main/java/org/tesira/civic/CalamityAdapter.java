@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.tesira.civic.Calamity;
 import org.tesira.civic.R;
+import org.tesira.civic.db.CivicViewModel;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class CalamityAdapter extends RecyclerView.Adapter<CalamityAdapter.ViewHo
 
     private List<Calamity> calamityList;
     private Context mContext;
+    private final CivicViewModel viewModel;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
@@ -35,11 +37,10 @@ public class CalamityAdapter extends RecyclerView.Adapter<CalamityAdapter.ViewHo
         public TextView getBonus() { return bonus;}
     }
 
-    public CalamityAdapter(List<Calamity> data, Context context) {
-        calamityList = data;
-        mContext = context;
+    public CalamityAdapter(CivicViewModel viewModel, Context context) {
+        this.viewModel = viewModel;
+        this.mContext = context;
     }
-
     public void clearData() {
         calamityList.clear();
         notifyDataSetChanged();
@@ -75,6 +76,11 @@ public class CalamityAdapter extends RecyclerView.Adapter<CalamityAdapter.ViewHo
     @Override
     public int getItemCount() {
         return calamityList.size();
+    }
+
+    public void updateData() {
+        calamityList = viewModel.getCalamityBonus();
+        notifyDataSetChanged();
     }
 
 }
