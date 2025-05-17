@@ -1,5 +1,6 @@
 package org.tesira.civic;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -78,8 +79,6 @@ public class HomeFragment extends Fragment {
         specialsList.addAll(mCivicViewModel.getImmunities());
         specialsAdapter = new SpecialsAdapter(specialsList.toArray(new String[0]));
         mRecyclerView.setAdapter(specialsAdapter);
-        String civicAST = prefsDefault.getString("civilization", "not set");
-        binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));
         binding.radio0.setOnClickListener(this::onCitiesClicked);
         binding.radio1.setOnClickListener(this::onCitiesClicked);
         binding.radio2.setOnClickListener(this::onCitiesClicked);
@@ -92,12 +91,52 @@ public class HomeFragment extends Fragment {
         binding.radio9.setOnClickListener(this::onCitiesClicked);
         restoreCityButton(mCivicViewModel.getCities());
         checkAST();
+
+        String civicAST = prefsDefault.getString("civilization", "not set");
+        binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));
         binding.tvCivilization.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.tipsFragment));
+        binding.tvCivilization.setOnLongClickListener(v -> {
+            Context context = requireContext();
+            String[] entries = context.getResources().getStringArray(R.array.civilizations_entries);
+            String[] values = context.getResources().getStringArray(R.array.civilizations_values);
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            String currentValue = prefs.getString("civilization", "");
+            int currentIndex = Arrays.asList(values).indexOf(currentValue);
+
+            new AlertDialog.Builder(context)
+                    .setTitle(R.string.pref_civilization)
+                    .setSingleChoiceItems(entries, currentIndex, (dialog, which) -> {
+                        String selectedValue = values[which];
+                        prefs.edit().putString("civilization", selectedValue).apply();
+
+                        // TextView aktualisieren mit Template-Text
+                        binding.tvCivilization.setText(getString(R.string.tv_ast, selectedValue));
+
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+
+            return true; // Signalisiert, dass der LongClick behandelt wurde
+        });
+
+//        registerForContextMenu(binding.tvCivilization);
+        // shortcuts to purchase
         binding.tvBoni.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
+        binding.bonusBlue.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
+        binding.bonusGreen.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
+        binding.bonusOrange.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
+        binding.bonusRed.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
+        binding.bonusYellow.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
+
+        // shortcut to advances/buy fragment
+        binding.tvSpecials.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.advancesFragment));
+
         registerForContextMenu(rootView.findViewById(R.id.tvTime));
         mCivicViewModel.getVp().observe(getViewLifecycleOwner(), integer -> binding.tvVp.setText(getString(R.string.tv_vp, integer)));
 
-        binding.tvTime.setText(mCivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
+        binding.tvTime.setText(CivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
         return rootView;
     }
 

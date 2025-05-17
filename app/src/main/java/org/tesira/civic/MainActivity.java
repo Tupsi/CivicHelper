@@ -154,4 +154,5 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mCivicViewModel.setHeart(sharedPreferences.getString("heart", "custom"));
         }
     }
+
 }
