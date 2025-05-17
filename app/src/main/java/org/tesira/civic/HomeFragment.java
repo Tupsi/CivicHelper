@@ -286,6 +286,14 @@ public class HomeFragment extends Fragment {
                 restoreCityButton(value);
             }
         });
+
+        // Observer für Time
+        mCivicViewModel.getTimeVpLive().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer value) {
+                binding.tvTime.setText(CivicViewModel.TIME_TABLE[value/5]);
+            }
+        });
     }
 
     public void onCitiesClicked(View view) {
