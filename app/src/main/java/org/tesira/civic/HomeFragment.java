@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
@@ -92,7 +93,14 @@ public class HomeFragment extends Fragment {
 
         String civicAST = prefsDefault.getString("civilization", "not set");
         binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));
-        binding.tvCivilization.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.tipsFragment));
+        binding.tvCivilization.setOnClickListener(v -> {
+            String civ = prefsDefault.getString("civilization", "not set");
+            if (!civ.equals("not set")) {
+                Navigation.findNavController(v).navigate(R.id.tipsFragment);
+            } else {
+                Toast.makeText(getActivity(), "You need to set a civilization first.\nLong-Press the text again.", Toast.LENGTH_SHORT).show();
+            }
+        });
         registerForContextMenu(binding.tvCivilization);
 
         // shortcuts to purchase
