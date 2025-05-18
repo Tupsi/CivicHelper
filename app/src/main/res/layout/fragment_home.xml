@@ -7,95 +7,186 @@
     android:layout_height="match_parent"
     tools:context="org.tesira.civic.HomeFragment">
 
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <RadioButton
+            android:id="@+id/radio_0"
+            style="@style/RadioButtonStyle"
+            android:text="0" />
+
+        <RadioButton
+            android:id="@+id/radio_1"
+            style="@style/RadioButtonStyle"
+            android:text="1" />
+
+        <RadioButton
+            android:id="@+id/radio_2"
+            style="@style/RadioButtonStyle"
+            android:text="2" />
+
+        <RadioButton
+            android:id="@+id/radio_3"
+            style="@style/RadioButtonStyle"
+            android:text="3" />
+
+        <RadioButton
+            android:id="@+id/radio_4"
+            style="@style/RadioButtonStyle"
+            android:text="4" />
+
+        <RadioButton
+            android:id="@+id/radio_5"
+            style="@style/RadioButtonStyle"
+            android:text="5" />
+
+        <RadioButton
+            android:id="@+id/radio_6"
+            style="@style/RadioButtonStyle"
+            android:text="6" />
+
+        <RadioButton
+            android:id="@+id/radio_7"
+            style="@style/RadioButtonStyle"
+            android:text="7" />
+
+        <RadioButton
+            android:id="@+id/radio_8"
+            style="@style/RadioButtonStyle"
+            android:text="8" />
+
+        <RadioButton
+            android:id="@+id/radio_9"
+            style="@style/RadioButtonStyle"
+            android:text="9" />
+    </RadioGroup>
+
     <TextView
         android:id="@+id/tvBoni"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Colorbonus"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toBottomOf="@id/radioGroup" />
 
-    <TextView
-        android:id="@+id/bonusBlue"
-        android:layout_width="@dimen/color_bonus"
-        android:layout_height="0dp"
-        android:gravity="end"
-        android:padding="5dp"
-        android:text="B"
-        android:textColor="#FFFFFF"
-        android:textSize="@dimen/text_size_bonus"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/tvBoni"
-        app:layout_constraintTop_toBottomOf="@+id/tvBoni" />
-
-    <TextView
-        android:id="@+id/bonusGreen"
-        android:layout_width="@dimen/color_bonus"
+    <LinearLayout
+        android:id="@+id/bonusContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="end"
-        android:padding="5dp"
-        android:text="G"
-        android:textColor="#000000"
-        android:textColorHighlight="#F8F5F5"
-        android:textSize="@dimen/text_size_bonus"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/bonusBlue"
-        app:layout_constraintTop_toTopOf="@+id/bonusBlue" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@id/tvBoni"
+        app:layout_constraintTop_toBottomOf="@id/tvBoni"
+        app:layout_constraintEnd_toStartOf="@id/tvTime">
+
+        <TextView
+            android:id="@+id/bonusBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="B"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="#0000FF" />
+
+        <TextView
+            android:id="@+id/bonusGreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:padding="5dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="G"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="#00FF00" />
+
+        <TextView
+            android:id="@+id/bonusOrange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:padding="5dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="O"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="#FFA500" />
+
+        <TextView
+            android:id="@+id/bonusRed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:padding="5dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="R"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="#FF0000" />
+
+        <TextView
+            android:id="@+id/bonusYellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:padding="5dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="Y"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="#FFFF00" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/bonusOrange"
-        android:layout_width="@dimen/color_bonus"
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:gravity="end"
-        android:padding="5dp"
-        android:text="O"
-        android:textColor="#ffffff"
-        android:textSize="@dimen/text_size_bonus"
+        android:text="8000BC"
+        android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/bonusGreen"
-        app:layout_constraintTop_toTopOf="@+id/bonusGreen" />
-
-    <TextView
-        android:id="@+id/bonusRed"
-        android:layout_width="@dimen/color_bonus"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:padding="5dp"
-        android:text="R"
-        android:textColor="#FFFFFF"
-        android:textSize="@dimen/text_size_bonus"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/bonusOrange"
-        app:layout_constraintTop_toTopOf="@+id/bonusOrange" />
-
-    <TextView
-        android:id="@+id/bonusYellow"
-        android:layout_width="@dimen/color_bonus"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:padding="5dp"
-        android:text="Y"
-        android:textColor="#000000"
-        android:textSize="@dimen/text_size_bonus"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/bonusRed"
-        app:layout_constraintTop_toTopOf="@+id/bonusRed" />
+        app:layout_constraintTop_toBottomOf="@id/radioGroup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@id/tvCivilization" />
 
     <TextView
         android:id="@+id/tvCalamityBonus"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="Calamity Effects Overview"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bonusBlue" />
+        app:layout_constraintTop_toBottomOf="@id/bonusContainer" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listCalamity"
@@ -103,13 +194,10 @@
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         app:layoutManager="LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineMitte"
-        app:layout_constraintEnd_toStartOf="@+id/tvMBA"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tvCalamityBonus"
-        app:layout_constraintTop_toBottomOf="@+id/tvCalamityBonus"
-        app:layout_constraintVertical_bias="0.0"
-        tools:listitem="@layout/item_row_calamity" />
+        app:layout_constraintTop_toBottomOf="@id/tvCalamityBonus"
+        app:layout_constraintBottom_toTopOf="@id/guidelineMitte"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tvMBA" />
 
     <TextView
         android:id="@+id/tvVp"
@@ -119,8 +207,41 @@
         android:layout_marginEnd="8dp"
         android:text="VP"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTime" />
+        app:layout_constraintTop_toBottomOf="@id/tvTime"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvMBA"
+        style="@style/AstMarkerTextView"
+        android:text="MBA"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvVp"
+        app:layout_constraintEnd_toEndOf="@id/tvVp" />
+
+    <TextView
+        android:id="@+id/tvLBA"
+        style="@style/AstMarkerTextView"
+        android:text="LBA"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvMBA"
+        app:layout_constraintEnd_toEndOf="@id/tvMBA" />
+
+    <TextView
+        android:id="@+id/tvEIA"
+        style="@style/AstMarkerTextView"
+        android:text="EIA"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvLBA"
+        app:layout_constraintEnd_toEndOf="@id/tvLBA" />
+
+    <TextView
+        android:id="@+id/tvLIA"
+        style="@style/AstMarkerTextView"
+        android:text="LIA"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvEIA"
+        app:layout_constraintEnd_toEndOf="@id/tvEIA" />
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineMitte"
@@ -139,7 +260,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guidelineMitte" />
+        app:layout_constraintTop_toTopOf="@id/guidelineMitte" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listAbility"
@@ -148,216 +269,22 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         app:layoutManager="LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/tvSpecials"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tvSpecials"
-        app:layout_constraintTop_toBottomOf="@+id/tvSpecials"
-        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/item_row_specials" />
-
-    <TextView
-        android:id="@+id/tvMBA"
-        android:layout_width="@dimen/ast_marker"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="right"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:text="MBA"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/tvVp"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/tvVp"
-        app:layout_constraintTop_toBottomOf="@+id/tvVp" />
-
-    <TextView
-        android:id="@+id/tvLBA"
-        android:layout_width="@dimen/ast_marker"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:text="LBA"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/tvMBA"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tvMBA"
-        app:layout_constraintTop_toBottomOf="@+id/tvMBA" />
-
-    <TextView
-        android:id="@+id/tvEIA"
-        android:layout_width="@dimen/ast_marker"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:text="EIA"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/tvLBA"
-        app:layout_constraintStart_toStartOf="@+id/tvLBA"
-        app:layout_constraintTop_toBottomOf="@+id/tvLBA" />
-
-    <TextView
-        android:id="@+id/tvLIA"
-        android:layout_width="@dimen/ast_marker"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:text="LIA"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/tvEIA"
-        app:layout_constraintStart_toStartOf="@+id/tvEIA"
-        app:layout_constraintTop_toBottomOf="@+id/tvEIA" />
 
     <TextView
         android:id="@+id/tvCivilization"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
+        android:paddingStart="14dp"
+        android:textSize="14sp"
         android:text="ast rank order"
         android:textStyle="bold|italic"
-        app:layout_constraintBottom_toBottomOf="@+id/tvBoni"
-        app:layout_constraintStart_toEndOf="@+id/tvBoni"
-        app:layout_constraintTop_toTopOf="@+id/tvBoni" />
-
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <RadioButton
-            android:id="@+id/radio_0"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
-            android:gravity="center"
-            android:maxWidth="48dp"
-            android:minWidth="30dp"
-            android:text="0" />
-
-        <RadioButton
-            android:id="@+id/radio_1"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
-            android:gravity="center"
-            android:maxWidth="48dp"
-            android:minWidth="30dp"
-            android:text="1" />
-
-        <RadioButton
-            android:id="@+id/radio_2"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
-            android:gravity="center"
-            android:maxWidth="48dp"
-            android:minWidth="30dp"
-            android:text="2" />
-
-        <RadioButton
-            android:id="@+id/radio_3"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
-            android:gravity="center"
-            android:maxWidth="48dp"
-            android:minWidth="30dp"
-            android:text="3" />
-
-        <RadioButton
-            android:id="@+id/radio_4"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
-            android:gravity="center"
-            android:maxWidth="48dp"
-            android:minWidth="30dp"
-            android:text="4" />
-
-        <RadioButton
-            android:id="@+id/radio_5"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
-            android:gravity="center"
-            android:maxWidth="48dp"
-            android:minWidth="30dp"
-            android:text="5" />
-
-        <RadioButton
-            android:id="@+id/radio_6"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
-            android:gravity="center"
-            android:maxWidth="48dp"
-            android:minWidth="30dp"
-            android:text="6" />
-
-        <RadioButton
-            android:id="@+id/radio_7"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
-            android:gravity="center"
-            android:maxWidth="48dp"
-            android:minWidth="30dp"
-            android:text="7" />
-
-        <RadioButton
-            android:id="@+id/radio_8"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
-            android:gravity="center"
-            android:maxWidth="48dp"
-            android:minWidth="30dp"
-            android:text="8" />
-
-        <RadioButton
-            android:id="@+id/radio_9"
-            android:layout_width="33dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
-            android:gravity="center"
-            android:maxWidth="48dp"
-            android:minWidth="30dp"
-            android:text="9" />
-    </RadioGroup>
-
-    <TextView
-        android:id="@+id/tvTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:gravity="end"
-        android:text="8000BC"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/bonusBlue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/bonusYellow"
-        app:layout_constraintTop_toTopOf="@+id/bonusBlue" />
+        app:layout_constraintTop_toTopOf="@id/tvBoni"
+        app:layout_constraintBottom_toBottomOf="@id/tvBoni"
+        app:layout_constraintStart_toEndOf="@id/tvBoni" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
