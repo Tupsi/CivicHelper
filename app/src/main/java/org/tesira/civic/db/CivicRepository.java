@@ -349,14 +349,17 @@ public class CivicRepository {
 
                     if (name.equals("Anatomy")) {
                         boughtAnatomy = true;
-                        anatomyCardsToChoose = mCivicDao.getAnatomyCards();
+
                     }
                 }
-
                 // 3. Preise neu berechnen nach den Käufen und Boni
                 // Boni basieren auf den aktuell in der Datenbank befindlichen Käufen
                 recalculateCurrentPricesBasedOnPurchases(currentBonus.getValue());
 
+                // 4. Wenn Anatomy gekauft wurde, alle grünen gratis Karten holen
+                if (boughtAnatomy) {
+                    anatomyCardsToChoose = mCivicDao.getAnatomyCards();
+                }
                 // 4. Callback aufrufen, um das ViewModel zu benachrichtigen
                 callback.onPurchaseCompleted(totalExtraCredits, anatomyCardsToChoose);
 
