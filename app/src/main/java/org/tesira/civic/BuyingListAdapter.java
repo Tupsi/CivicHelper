@@ -76,11 +76,6 @@ public class BuyingListAdapter extends RecyclerView.Adapter<BuyingListAdapter.Vi
         String name = current.getName();
         int price = current.getCurrentPrice();
         Resources res = viewHolder.itemView.getResources();
-        Selection<String> allClicked = tracker.getSelection();
-        for (String selected: tracker.getSelection()
-             ) {
-            Log.v("TRACKER", selected);
-        }
         boolean isSelected = tracker.isSelected(name);
         viewHolder.nameItemView.setText(name);
         viewHolder.nameItemView.setBackground(CivicViewModel.getItemBackgroundColor(current, res));
