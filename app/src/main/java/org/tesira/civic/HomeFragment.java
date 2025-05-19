@@ -47,8 +47,8 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private CivicViewModel mCivicViewModel;
-    private CalamityAdapter calamityAdapter;
-    private SpecialsAdapter specialsAdapter;
+    private HomeCalamityAdapter mHomeCalamityAdapter;
+    private HomeSpecialsAdapter mHomeSpecialsAdapter;
     private SharedPreferences prefsDefault;
     private final List<Integer> cityIds = Arrays.asList(
             R.id.radio_0, R.id.radio_1, R.id.radio_2, R.id.radio_3, R.id.radio_4,
@@ -67,16 +67,16 @@ public class HomeFragment extends Fragment {
         // 1st Recyclerview
         RecyclerView mRecyclerView = rootView.findViewById(R.id.listCalamity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        calamityAdapter = new CalamityAdapter(mCivicViewModel, this.getContext());
-        mRecyclerView.setAdapter(calamityAdapter);
-        calamityAdapter.updateData();
+        mHomeCalamityAdapter = new HomeCalamityAdapter(mCivicViewModel, this.getContext());
+        mRecyclerView.setAdapter(mHomeCalamityAdapter);
+        mHomeCalamityAdapter.updateData();
 
         // 2nd RecyclerView
         mRecyclerView = rootView.findViewById(R.id.listAbility);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        specialsAdapter = new SpecialsAdapter(mCivicViewModel);
-        mRecyclerView.setAdapter(specialsAdapter);
-        specialsAdapter.updateData();
+        mHomeSpecialsAdapter = new HomeSpecialsAdapter(mCivicViewModel);
+        mRecyclerView.setAdapter(mHomeSpecialsAdapter);
+        mHomeSpecialsAdapter.updateData();
 
         binding.radio0.setOnClickListener(this::onCitiesClicked);
         binding.radio1.setOnClickListener(this::onCitiesClicked);
@@ -251,8 +251,8 @@ public class HomeFragment extends Fragment {
             Boolean resetTriggered = newGameEvent.getContentIfNotHandled();
             if (resetTriggered != null && resetTriggered) {
                 // Update UI elements that need resetting in HomeFragment
-                specialsAdapter.updateData(); // Update special abilities/immunities data in the adapter
-                calamityAdapter.updateData(); // Update calamity data in the adapter
+                mHomeSpecialsAdapter.updateData(); // Update special abilities/immunities data in the adapter
+                mHomeCalamityAdapter.updateData(); // Update calamity data in the adapter
                 checkAST();
                 String civicAST = prefsDefault.getString("civilization", "not set");
                 binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));

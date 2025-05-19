@@ -6,12 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 
-public class MyItemDetails extends ItemDetailsLookup.ItemDetails<String> {
+public class BuyingItemDetails extends ItemDetailsLookup.ItemDetails<String> {
 
     private final int adapterPosition;
     private final String itemId;
 
-    public MyItemDetails(int adapterPosition, String itemId) {
+    public BuyingItemDetails(int adapterPosition, String itemId) {
         this.adapterPosition = adapterPosition;
         this.itemId = itemId;
     }

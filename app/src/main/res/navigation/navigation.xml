@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/advancesFragment"
-        android:name="org.tesira.civic.AdvancesFragment"
+        android:name="org.tesira.civic.BuyingFragment"
         android:label="@string/item_advances"
         tools:layout="@layout/fragment_advances" >
         <action

@@ -8,11 +8,11 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MyItemDetailsLookup extends ItemDetailsLookup<String> {
+public class BuyingItemDetailsLookup extends ItemDetailsLookup<String> {
 
     private final RecyclerView mRecyclerView;
 
-    public MyItemDetailsLookup(RecyclerView mRecyclerView) {
+    public BuyingItemDetailsLookup(RecyclerView mRecyclerView) {
         this.mRecyclerView = mRecyclerView;
     }
 

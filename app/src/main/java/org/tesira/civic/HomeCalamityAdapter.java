@@ -8,13 +8,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.tesira.civic.Calamity;
-import org.tesira.civic.R;
 import org.tesira.civic.db.CivicViewModel;
 
 import java.util.List;
 
-public class CalamityAdapter extends RecyclerView.Adapter<CalamityAdapter.ViewHolder> {
+public class HomeCalamityAdapter extends RecyclerView.Adapter<HomeCalamityAdapter.ViewHolder> {
 
     private List<Calamity> calamityList;
     private Context mContext;
@@ -37,7 +35,7 @@ public class CalamityAdapter extends RecyclerView.Adapter<CalamityAdapter.ViewHo
         public TextView getBonus() { return bonus;}
     }
 
-    public CalamityAdapter(CivicViewModel viewModel, Context context) {
+    public HomeCalamityAdapter(CivicViewModel viewModel, Context context) {
         this.viewModel = viewModel;
         this.mContext = context;
     }

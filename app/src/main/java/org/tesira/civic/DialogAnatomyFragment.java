@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.tesira.civic.R;
 import org.tesira.civic.db.CivicViewModel;
 
 import java.util.ArrayList;
@@ -22,18 +21,18 @@ import java.util.List;
  * Call the ExtraCreditsDialog if one chooses Written Record
  * https://developer.android.com/guide/topics/ui/dialogs
  */
-public class AnatomyDialogFragment extends DialogFragment {
+public class DialogAnatomyFragment extends DialogFragment {
 
     private static final String ARG_GREEN_CARDS_LIST = "arg_green_cards_list";
     private static final String REQUEST_KEY = "anatomySelectionResult";
     private CivicViewModel mCivicViewModel;
     private String[] greenCardsArray;
 
-    public AnatomyDialogFragment() {
+    public DialogAnatomyFragment() {
     }
 
-    public static AnatomyDialogFragment newInstance(List<String> greenCardNames) {
-        AnatomyDialogFragment fragment = new AnatomyDialogFragment();
+    public static DialogAnatomyFragment newInstance(List<String> greenCardNames) {
+        DialogAnatomyFragment fragment = new DialogAnatomyFragment();
         Bundle args = new Bundle();
         // Wichtig: Übergebe eine ArrayList<String>, da Bundle dies direkt unterstützt
         args.putStringArrayList(ARG_GREEN_CARDS_LIST, new ArrayList<>(greenCardNames));

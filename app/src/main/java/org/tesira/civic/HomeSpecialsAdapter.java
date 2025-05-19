@@ -8,17 +8,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.tesira.civic.R;
 import org.tesira.civic.db.CivicViewModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Adapter for showing a list of Special Abilities or Immunities against on the dashboard.
  */
-public class SpecialsAdapter extends RecyclerView.Adapter<SpecialsAdapter.ViewHolder> {
+public class HomeSpecialsAdapter extends RecyclerView.Adapter<HomeSpecialsAdapter.ViewHolder> {
 
     private String[] localDataSet;
     private final CivicViewModel viewModel;
@@ -42,7 +40,7 @@ public class SpecialsAdapter extends RecyclerView.Adapter<SpecialsAdapter.ViewHo
         }
     }
 
-    public SpecialsAdapter(CivicViewModel viewModel) {
+    public HomeSpecialsAdapter(CivicViewModel viewModel) {
         this.viewModel = viewModel;
         this.localDataSet = new String[0]; // initial leer
     }
