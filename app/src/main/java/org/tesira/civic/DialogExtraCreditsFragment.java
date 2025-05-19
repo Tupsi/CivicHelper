@@ -1,7 +1,6 @@
 package org.tesira.civic;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +24,7 @@ import org.tesira.civic.db.CivicViewModel;
  *
  * https://developer.android.com/guide/topics/ui/dialogs
  */
-public class ExtraCreditsDialogFragment extends DialogFragment {
+public class DialogExtraCreditsFragment extends DialogFragment {
 
     private static final String ARG_CREDITS = "arg_credits";
     private static final String REQUEST_KEY = "extraCreditsDialogResult";
@@ -40,13 +39,13 @@ public class ExtraCreditsDialogFragment extends DialogFragment {
     private CivicViewModel mCivicViewModel;
 
     // WICHTIG: Parameterloser Konstruktor
-    public ExtraCreditsDialogFragment() {
+    public DialogExtraCreditsFragment() {
         // super(R.layout.dialog_credits); // Nicht hier, da das Layout in onCreateDialog über Binding geladen wird
     }
 
     // Factory-Methode
-    public static ExtraCreditsDialogFragment newInstance(int creditsAmount) {
-        ExtraCreditsDialogFragment fragment = new ExtraCreditsDialogFragment();
+    public static DialogExtraCreditsFragment newInstance(int creditsAmount) {
+        DialogExtraCreditsFragment fragment = new DialogExtraCreditsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_CREDITS, creditsAmount);
         fragment.setArguments(args);

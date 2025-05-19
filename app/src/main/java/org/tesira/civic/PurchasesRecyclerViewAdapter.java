@@ -16,11 +16,11 @@ import java.util.List;
  * {@link RecyclerView.Adapter} that can display a {@link Card}.
  * Shows all Civilization Advances and highlights already purchases ones.
  */
-public class MyPurchasesRecyclerViewAdapter extends RecyclerView.Adapter<MyPurchasesRecyclerViewAdapter.ViewHolder> {
+public class PurchasesRecyclerViewAdapter extends RecyclerView.Adapter<PurchasesRecyclerViewAdapter.ViewHolder> {
 
     private final List<Card> mValues;
 
-    public MyPurchasesRecyclerViewAdapter(List<Card> items) {
+    public PurchasesRecyclerViewAdapter(List<Card> items) {
         mValues = items;
     }
 

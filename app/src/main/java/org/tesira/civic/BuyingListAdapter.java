@@ -10,13 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.selection.Selection;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.tesira.civic.R;
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CivicViewModel;
 import java.util.List;
@@ -51,7 +49,7 @@ public class BuyingListAdapter extends RecyclerView.Adapter<BuyingListAdapter.Vi
             mHeartView = itemView.findViewById(R.id.heart);
         }
         public ItemDetailsLookup.ItemDetails<String> getItemDetails() {
-            return new MyItemDetails(getBindingAdapterPosition(), nameItemView.getText().toString());
+            return new BuyingItemDetails(getBindingAdapterPosition(), nameItemView.getText().toString());
         }
     }
 

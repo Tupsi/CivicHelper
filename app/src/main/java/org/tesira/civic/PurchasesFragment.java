@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.tesira.civic.R;
 import org.tesira.civic.db.CivicViewModel;
 
 /**
@@ -67,7 +66,7 @@ public class PurchasesFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyPurchasesRecyclerViewAdapter(mCivicViewModel.getPurchasesAsCard()));
+            recyclerView.setAdapter(new PurchasesRecyclerViewAdapter(mCivicViewModel.getPurchasesAsCard()));
         }
         return view;
     }

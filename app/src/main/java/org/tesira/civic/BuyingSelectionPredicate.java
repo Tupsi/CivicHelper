@@ -7,7 +7,6 @@ import androidx.recyclerview.selection.SelectionTracker;
 
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CivicViewModel;
-import org.tesira.civic.db.Effect;
 
 import java.util.List;
 
@@ -16,11 +15,11 @@ import java.util.List;
  * in the list of the advances fragment.
  * @param <String> Name of the civilization advance.
  */
-public class MySelectionPredicate<String> extends SelectionTracker.SelectionPredicate<String> {
+public class BuyingSelectionPredicate<String> extends SelectionTracker.SelectionPredicate<String> {
     private BuyingListAdapter adapter;
     private CivicViewModel mCivicViewModel;
 
-    public MySelectionPredicate(BuyingListAdapter adapter, CivicViewModel model) {
+    public BuyingSelectionPredicate(BuyingListAdapter adapter, CivicViewModel model) {
         super();
         this.adapter = adapter;
         this.mCivicViewModel = model;
@@ -40,11 +39,11 @@ public class MySelectionPredicate<String> extends SelectionTracker.SelectionPred
         }
 
         if (adv == null) {
-            Log.w("MODEL", "Card not found for key: " + key);
+            Log.w("Buying", "Card not found for key: " + key);
             return false; // Kann den Zustand für eine unbekannte Karte nicht setzen
         }
 
-        Log.v("MODEL", " Test if possible to select for key :" + key + " : State: " + nextState);
+        Log.v("Buying", " Test if possible to select for key :" + key + " : State: " + nextState);
         int currentPrice = adv.getCurrentPrice();
         Integer treasureValue = mCivicViewModel.getTreasure().getValue();
         Integer remainingValue = mCivicViewModel.getRemaining().getValue();

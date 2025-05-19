@@ -4,14 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.ItemKeyProvider;
 import org.tesira.civic.db.Card;
-import org.tesira.civic.db.CivicViewModel;
 
 import java.util.List;
 
-public class MyItemKeyProvider extends ItemKeyProvider<String> {
+public class BuyingItemKeyProvider extends ItemKeyProvider<String> {
     private BuyingListAdapter adapter;
 
-    public MyItemKeyProvider(int scope, BuyingListAdapter adapter) {
+    public BuyingItemKeyProvider(int scope, BuyingListAdapter adapter) {
         super(scope);
         this.adapter = adapter;
     }
