@@ -4,6 +4,7 @@ import static java.lang.Integer.parseInt;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -71,6 +73,7 @@ public class BuyingFragment extends Fragment {
     private int sortingIndex;
     private String[] sortingOptionsValues, sortingOptionsNames;
     private Bundle savedSelectionState = null;
+    private ViewTreeObserver.OnGlobalLayoutListener keyboardListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,7 +136,7 @@ public class BuyingFragment extends Fragment {
                     tracker.onRestoreInstanceState(savedSelectionState);
                     savedSelectionState = null;
                 }
-                updateViews();
+//                updateViews();
             }
         });
 
@@ -145,10 +148,10 @@ public class BuyingFragment extends Fragment {
         mTreasureInput.setOnEditorActionListener((v, keyCode, event) -> {
             calculateInput(mTreasureInput.getText().toString());
             mCivicViewModel.setTreasure(calculateInput(mTreasureInput.getText().toString()));
-                // hide virtual keyboard on enter
-                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mTreasureInput.getWindowToken(), 0);
-                return true;
+            // hide virtual keyboard on enter
+            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mTreasureInput.getWindowToken(), 0);
+            return true;
         });
 
         // button which finalizes the buy process
@@ -279,7 +282,7 @@ public class BuyingFragment extends Fragment {
             }
         });
 
-        mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> {
+        mCivicViewModel.getTreasure().observe(getViewLifecycleOwner(), treasure -> {
             mTreasureInput.setText(String.valueOf(treasure));
             if (treasure < mCivicViewModel.getRemaining().getValue()) {
                 mCivicViewModel.setRemaining(treasure);
@@ -289,16 +292,13 @@ public class BuyingFragment extends Fragment {
             } else {
                 mCivicViewModel.setRemaining(treasure);
             }
-            updateViews();
         });
 
-        mCivicViewModel.getRemaining().observe(requireActivity(), remaining -> {
-            if (BuyingFragment.this.getContext() != null) {
+        mCivicViewModel.getRemaining().observe(getViewLifecycleOwner(), remaining -> {
                 mRemainingText.setText(String.valueOf(remaining));
                 if (tracker != null) {
                     updateViews();
                 }
-            }
         });
 
         requireActivity().addMenuProvider(new MenuProvider() {
@@ -341,6 +341,29 @@ public class BuyingFragment extends Fragment {
                         Navigation.findNavController(requireView()));
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED); // Register the MenuProvider with the Fragment's lifecycle
+
+        View rootView = requireActivity().getWindow().getDecorView().getRootView();
+        keyboardListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+            private int previousHeight = 0;
+
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                rootView.getWindowVisibleDisplayFrame(r);
+                int visibleHeight = r.height();
+
+                if (previousHeight != 0) {
+                    int heightDiff = previousHeight - visibleHeight;
+
+                    if (heightDiff < -150) {  // Tastatur wurde geschlossen
+                        updateViews();
+                    }
+                }
+                previousHeight = visibleHeight;
+            }
+        };
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(keyboardListener);
+
     }
 
     /**
@@ -381,7 +404,7 @@ public class BuyingFragment extends Fragment {
                     View mCardView = visibleView.findViewById(R.id.card);
                     if (!isSelected) {
                         if (price > mCivicViewModel.getRemaining().getValue()) {
-                            mCardView.setAlpha(0.5F);
+                            mCardView.setAlpha(0.25F);
                         } else {
                             mCardView.setAlpha(1.0F);
                         }
@@ -447,10 +470,17 @@ public class BuyingFragment extends Fragment {
 
     public void onDestroy() {
         super.onDestroy();
-//        tracker = null;
-//        mCivicViewModel.getRemaining().removeObservers(requireActivity());
-//        mCivicViewModel.getTreasure().removeObservers(requireActivity());
-//        binding = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        View rootView = requireActivity().getWindow().getDecorView().getRootView();
+        if (keyboardListener != null) {
+            rootView.getViewTreeObserver().removeOnGlobalLayoutListener(keyboardListener);
+            keyboardListener = null;
+        }
     }
 
     public void showToast(String text) {
