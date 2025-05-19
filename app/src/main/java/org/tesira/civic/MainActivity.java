@@ -13,15 +13,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
-import org.tesira.civic.R;
 import org.tesira.civic.databinding.ActivityMainBinding;
 import org.tesira.civic.db.CardColor;
 import org.tesira.civic.db.CivicViewModel;
-
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -105,15 +101,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mCivicViewModel.setHeart(prefs.getString("heart", "custom"));
     }
 
-    public void saveBonus() {
-        SharedPreferences.Editor editor = savedBonus.edit();
-        // HashMap Save
-        for (Map.Entry<CardColor, Integer> entry: mCivicViewModel.getCardBonus().getValue().entrySet()){
-            editor.putInt(entry.getKey().getName(), entry.getValue());
-        }
-        editor.apply();
-    }
-
     public void onPause() {
         super.onPause();
         saveVars();
@@ -151,5 +138,4 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mCivicViewModel.setHeart(sharedPreferences.getString("heart", "custom"));
         }
     }
-
 }

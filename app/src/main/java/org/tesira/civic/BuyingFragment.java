@@ -34,7 +34,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import org.tesira.civic.R;
 import org.tesira.civic.databinding.FragmentBuyingBinding;
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CivicViewModel;
@@ -55,10 +54,8 @@ import androidx.lifecycle.Lifecycle;
 public class BuyingFragment extends Fragment {
     private static final String EXTRA_CREDITS_REQUEST_KEY = "extraCreditsDialogResult";
     private static final String ANATOMY_REQUEST_KEY = "anatomySelectionResult";
-
     private static final String TREASURE_BOX = "treasure";
     private CivicViewModel mCivicViewModel;
-    // arraylist of all civilization cards
     private String sortingOrder;
     protected EditText mTreasureInput;
     protected TextView mRemainingText;
@@ -66,7 +63,6 @@ public class BuyingFragment extends Fragment {
     private SharedPreferences prefs;
     private FragmentBuyingBinding binding;
     private int numberDialogs = 0;
-    private List<Card> listCivics = new ArrayList<>();
     private BuyingItemKeyProvider mBuyingItemKeyProvider;
     private LinearLayoutManager mLayout;
     private BuyingListAdapter mAdapter;
@@ -90,26 +86,20 @@ public class BuyingFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener(EXTRA_CREDITS_REQUEST_KEY, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                Log.d("BuyingFragment", "Received result from Extra Credits Dialog.");
                 numberDialogs--;
                 returnToDashboard();
             }
         });
 
-        // Listener für das Ergebnis vom Anatomy Dialog
-        // Auch hier verwenden Sie getParentFragmentManager()
         getParentFragmentManager().setFragmentResultListener(ANATOMY_REQUEST_KEY, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                Log.d("BuyingFragment", "Received result from Anatomy Dialog.");
                 numberDialogs--;
 
                 String selectedAnatomyCard = result.getString("selected_card_name");
                 if ("Written Record".equals(selectedAnatomyCard)) {
-                    Log.d("BuyingFragment", "Anatomy Result: Written Record selected. Showing Extra Credits Dialog.");
                     mCivicViewModel.triggerExtraCreditsDialog(10);
                 } else {
-                    Log.d("BuyingFragment", "Anatomy Result: Other card selected.");
                     returnToDashboard();
                 }
             }
@@ -133,7 +123,6 @@ public class BuyingFragment extends Fragment {
 
         mAdapter = new BuyingListAdapter(new ArrayList<>(), mCivicViewModel);
         mRecyclerView.setAdapter(mAdapter);
-
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
 
@@ -142,7 +131,7 @@ public class BuyingFragment extends Fragment {
                 mAdapter.changeList(cards);
                 if (savedSelectionState != null) {
                     tracker.onRestoreInstanceState(savedSelectionState);
-                    savedSelectionState = null; // Nur einmal ausführen
+                    savedSelectionState = null;
                 }
                 updateViews();
             }
@@ -185,9 +174,6 @@ public class BuyingFragment extends Fragment {
         }
         binding.btnSort.setText(label);
         binding.btnSort.setOnClickListener(this::changeSorting);
-
-
-
         return rootView;
     }
 
@@ -195,25 +181,22 @@ public class BuyingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Set the treasure value to zero each time the fragment is entered.
         mCivicViewModel.setTreasure(0);
-        mCivicViewModel.setRemaining(0); // Also reset the remaining value
+        mCivicViewModel.setRemaining(0);
 
         mCivicViewModel.getShowAnatomyDialogEvent().observe(getViewLifecycleOwner(), event -> {
-            List<String> anatomyCardsToShow = event.getContentIfNotHandled(); // Das ist deine List<String>
+            List<String> anatomyCardsToShow = event.getContentIfNotHandled();
             if (anatomyCardsToShow != null && !anatomyCardsToShow.isEmpty()) {
-                Log.d("BuyingFragment", "Observed Anatomy Dialog Event. Showing dialog with cards: " + anatomyCardsToShow);
                 numberDialogs++;
-                DialogAnatomyFragment.newInstance(anatomyCardsToShow) // Korrekter Aufruf
+                DialogAnatomyFragment.newInstance(anatomyCardsToShow)
                         .show(getParentFragmentManager(), "Anatomy");
             }
         });
         mCivicViewModel.getShowExtraCreditsDialogEvent().observe(getViewLifecycleOwner(), event -> {
             Integer extraCredits = event.getContentIfNotHandled();
             if (extraCredits != null && extraCredits > 0) {
-                Log.d("BuyingFragment", "Observed Extra Credits Dialog Event. Showing dialog with " + extraCredits + " credits.");
                 numberDialogs++;
-                DialogExtraCreditsFragment.newInstance(extraCredits) // Korrekter Aufruf mit newInstance
+                DialogExtraCreditsFragment.newInstance(extraCredits)
                         .show(getParentFragmentManager(), "ExtraCredits");
             }
         });
@@ -221,13 +204,10 @@ public class BuyingFragment extends Fragment {
         mCivicViewModel.getNavigateToDashboardEvent().observe(getViewLifecycleOwner(), event -> {
             Boolean shouldNavigate = event.getContentIfNotHandled();
             if (shouldNavigate != null && shouldNavigate) {
-                Log.d("BuyingFragment", "ViewModel signaled navigation (purchase complete, no dialogs).");
-                // Da keine Dialoge ausgelöst wurden, sollte numberDialogs bereits 0 sein.
-                // returnToDashboard wird dies bestätigen und dann navigieren.
                 returnToDashboard();
             }
         });
-        // tracker to hold the selected cards
+
         mBuyingItemKeyProvider = new BuyingItemKeyProvider(ItemKeyProvider.SCOPE_MAPPED, mAdapter);
         tracker = new SelectionTracker.Builder<>(
                 "my-selection-id",
@@ -248,7 +228,6 @@ public class BuyingFragment extends Fragment {
                 super.onItemStateChanged(key, selected);
                 // item selection changed, we need to redo total selected cost
                 mCivicViewModel.calculateTotal(tracker.getSelection());
-                Log.v("BuyingFragment", key + " wurde: " + selected);
 
                 if (key.equals("Library")) {
                     if (selected) {
@@ -258,7 +237,6 @@ public class BuyingFragment extends Fragment {
                             // Add the temporary treasure bonus
                             mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() + 40);
                             showToast(key + " selected, temporary adding 40 treasure.");
-                            Log.v("BuyingFragment", key + " selected, temporary adding 40 treasure."); // Add log
                         }
                     } else {
                         // Library was just deselected
@@ -267,7 +245,6 @@ public class BuyingFragment extends Fragment {
                             // Remove the temporary treasure bonus
                             mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - 40);
                             showToast(key + " deselected, removing the temporary 40 treasure.");
-                            Log.v("BuyingFragment", key + " deselected, removing the temporary 40 treasure."); // Add log
                         }
                     }
                 }
@@ -281,9 +258,6 @@ public class BuyingFragment extends Fragment {
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
-                // You are already calculating total in onItemStateChanged,
-                // so this might be redundant or could be used for other updates.
-                // Consider if you need calculateTotal here as well.
             }
 
             @Override
@@ -296,14 +270,13 @@ public class BuyingFragment extends Fragment {
                 // Re-evaluate if the Library card is among the restored selection
                 boolean libraryIsSelected = false;
                 for (String selectedKey : tracker.getSelection()) {
-                    if (selectedKey.equals("Library")) { // Directly check for "Library" name
+                    if (selectedKey.equals("Library")) {
                         libraryIsSelected = true;
                         break;
                     }
                 }
-                mCivicViewModel.librarySelected = libraryIsSelected; // Set the flag based on restored selection
+                mCivicViewModel.librarySelected = libraryIsSelected;
             }
-
         });
 
         mCivicViewModel.getTreasure().observe(requireActivity(), treasure -> {
@@ -316,8 +289,6 @@ public class BuyingFragment extends Fragment {
             } else {
                 mCivicViewModel.setRemaining(treasure);
             }
-            // treasure changed, and so does what we might be able to buy.
-            mAdapter.notifyDataSetChanged();
             updateViews();
         });
 
@@ -333,7 +304,6 @@ public class BuyingFragment extends Fragment {
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                // Inflate the menu here
                 menuInflater.inflate(R.menu.options_menu, menu);
             }
 
@@ -348,11 +318,8 @@ public class BuyingFragment extends Fragment {
                                 // Yes button clicked, trigger the reset process in the ViewModel
                                 mCivicViewModel.requestNewGame();
                                 // The UI update will be handled by the resetEvent observer
-
-                                // --- START: Add Navigation Back to HomeFragment ---
                                 // Navigate back to the HomeFragment ONLY when initiating New Game from AdvancesFragment
-                                Navigation.findNavController(requireView()).navigate(R.id.homeFragment); // Assuming 'homeFragment' is the ID of your HomeFragment destination in the navigation graph
-                                // --- END: Add Navigation Back to HomeFragment ---
+                                Navigation.findNavController(requireView()).navigate(R.id.homeFragment);
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
                                 // No button clicked
@@ -480,10 +447,10 @@ public class BuyingFragment extends Fragment {
 
     public void onDestroy() {
         super.onDestroy();
-        tracker = null;
-        mCivicViewModel.getRemaining().removeObservers(requireActivity());
-        mCivicViewModel.getTreasure().removeObservers(requireActivity());
-        binding = null;
+//        tracker = null;
+//        mCivicViewModel.getRemaining().removeObservers(requireActivity());
+//        mCivicViewModel.getTreasure().removeObservers(requireActivity());
+//        binding = null;
     }
 
     public void showToast(String text) {
@@ -494,20 +461,13 @@ public class BuyingFragment extends Fragment {
      * Returns the application back to the dashboard, but checks first if another dialog
      * must be presented because special cards where bought.
      */
-    public void returnToDashboard() { // Kein Parameter mehr
-        Log.d("BuyingFragment", "returnToDashboard() called. Number of open dialogs: " + numberDialogs);
-
+    public void returnToDashboard() {
         // Nur zum Dashboard zurückkehren, wenn keine Dialoge mehr offen sind
-        if (numberDialogs <= 0) { // Benutze <= 0 für den Fall, dass der Zähler negativ wird
-            Log.d("BuyingFragment", "returnToDashboard: No open dialogs, navigating back.");
-            // mCivicViewModel.calculateCurrentPrice(); // Überprüfen, ob dies noch nötig ist
-            // save bonuses to prefs
-            ((MainActivity) getActivity()).saveBonus(); // Vielleicht sollte dies im ViewModel sein
+        if (numberDialogs <= 0) {
+            mCivicViewModel.saveBonus();
             NavHostFragment.findNavController(this).popBackStack();
             mCivicViewModel.setTreasure(0);
             mCivicViewModel.setRemaining(0);
-        } else {
-            Log.d("BuyingFragment", "returnToDashboard: " + numberDialogs + " dialog(s) still open.");
         }
     }
     /**
