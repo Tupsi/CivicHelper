@@ -35,7 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 //import org.tesira.civic.R;
-import org.tesira.civic.databinding.FragmentAdvancesBinding;
+import org.tesira.civic.databinding.FragmentBuyingBinding;
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CivicViewModel;
 
@@ -64,7 +64,7 @@ public class BuyingFragment extends Fragment {
     protected TextView mRemainingText;
     private SelectionTracker<String> tracker;
     private SharedPreferences prefs;
-    private FragmentAdvancesBinding binding;
+    private FragmentBuyingBinding binding;
     private int numberDialogs = 0;
     private List<Card> listCivics = new ArrayList<>();
     private BuyingItemKeyProvider mBuyingItemKeyProvider;
@@ -120,7 +120,7 @@ public class BuyingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        binding = FragmentAdvancesBinding.inflate(inflater, container,false);
+        binding = FragmentBuyingBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
         mRecyclerView = rootView.findViewById(R.id.list_advances);
         if (mColumnCount <= 1) {

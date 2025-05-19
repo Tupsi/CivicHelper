@@ -29,7 +29,7 @@
         android:id="@+id/advancesFragment"
         android:name="org.tesira.civic.BuyingFragment"
         android:label="@string/item_advances"
-        tools:layout="@layout/fragment_advances" >
+        tools:layout="@layout/fragment_buying" >
         <action
             android:id="@+id/action_advancesFragment_to_settingsFragment"
             app:destination="@id/settingsFragment"
