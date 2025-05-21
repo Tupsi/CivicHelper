@@ -1,5 +1,6 @@
 package org.tesira.civic;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -26,9 +27,9 @@ import java.util.List;
  */
 public class BuyingListAdapter extends RecyclerView.Adapter<BuyingListAdapter.ViewHolder> {
 
-    private List<Card> mValues;
+    private final  List<Card> mValues;
     private SelectionTracker<String> tracker;
-    private CivicViewModel mCivicViewModel;
+    private final CivicViewModel mCivicViewModel;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -131,6 +132,7 @@ public class BuyingListAdapter extends RecyclerView.Adapter<BuyingListAdapter.Vi
      * tracker if any.
      * @param newList new sorted list of cards.
      */
+    @SuppressLint("NotifyDataSetChanged")
     public void changeList(List<Card> newList) {
         Bundle saveSelection = new Bundle();
         if (tracker != null) {
