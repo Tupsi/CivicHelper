@@ -160,7 +160,19 @@ public class BuyingFragment extends Fragment {
 
         // button which finalizes the buy process
         binding.btnBuy.setOnClickListener(v -> {
-            buyAdvances();
+            if (tracker.getSelection().isEmpty()){
+                showToast("Keine Karten ausgewählt.");
+                return;
+            }
+            List<String> selectedCardNames = new ArrayList<>();
+            for (String name : tracker.getSelection()) {
+                selectedCardNames.add(name);
+            }
+            for (String name : selectedCardNames) {
+                mCivicViewModel.addBonus(name);
+            }
+            mCivicViewModel.saveBonus();
+            mCivicViewModel.processPurchases(selectedCardNames);
         });
 
         // button to clear the current selection of cards
@@ -415,35 +427,6 @@ public class BuyingFragment extends Fragment {
             }
         }
     }
-
-    /**
-     * after user hits the buy button, this adds all selected advances to the purchase list
-     * checks if advances with special bonuses are bought (Written Record, Monument, Anatomy)
-     * and pops up a dialog to ask for needed input if needed.
-     * Checks then if it is ok to return to the dashboard with returnToDashboard.
-     */
-    private void buyAdvances() {
-        Log.d("BuyingFragment", "buyAdvances() called.");
-        // Sammle die Namen der ausgewählten Karten
-        List<String> selectedCardNames = new ArrayList<>();
-        for (String name : tracker.getSelection()) {
-            selectedCardNames.add(name);
-        }
-
-        if (selectedCardNames.isEmpty()) {
-            showToast("Keine Karten ausgewählt."); // Optional
-            Log.d("BuyingFragment", "No cards selected for purchase.");
-            return;
-        }
-
-        for (String name : selectedCardNames) {
-            mCivicViewModel.addBonus(name);
-            Log.d("BuyingFragment", "Processing purchase for: " + name);
-        }
-        mCivicViewModel.saveBonus();
-        mCivicViewModel.processPurchases(selectedCardNames);
-    }
-
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
