@@ -37,7 +37,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.tesira.civic.databinding.FragmentBuyingBinding;
-import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CivicViewModel;
 
 import java.util.ArrayList;
@@ -70,7 +69,6 @@ public class BuyingFragment extends Fragment {
     private BuyingListAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private int mColumnCount = 2;
-    private int sortingIndex;
     private String[] sortingOptionsValues, sortingOptionsNames;
     private Bundle savedSelectionState = null;
     private ViewTreeObserver.OnGlobalLayoutListener keyboardListener;
@@ -84,7 +82,6 @@ public class BuyingFragment extends Fragment {
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
         sortingOptionsValues = getResources().getStringArray(R.array.sort_values);
         sortingOptionsNames = getResources().getStringArray(R.array.sort_entries);
-        sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
 
         getParentFragmentManager().setFragmentResultListener(EXTRA_CREDITS_REQUEST_KEY, this, new FragmentResultListener() {
             @Override
@@ -136,8 +133,16 @@ public class BuyingFragment extends Fragment {
                     tracker.onRestoreInstanceState(savedSelectionState);
                     savedSelectionState = null;
                 }
-//                updateViews();
             }
+        });
+
+        mCivicViewModel.getCurrentSortingOrder().observe(getViewLifecycleOwner(), order -> {
+            // if sorting order got changed in prefs we need to change the button text
+            int sortingIndex;
+            sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(order);
+            String label = String.valueOf(sortingOptionsNames[sortingIndex].charAt(0));
+            label = String.valueOf(label.charAt(0));
+            binding.btnSort.setText(label);
         });
 
         if (savedInstanceState != null) {
@@ -146,7 +151,6 @@ public class BuyingFragment extends Fragment {
 
         // close SoftKeyboard on Enter
         mTreasureInput.setOnEditorActionListener((v, keyCode, event) -> {
-            calculateInput(mTreasureInput.getText().toString());
             mCivicViewModel.setTreasure(calculateInput(mTreasureInput.getText().toString()));
             // hide virtual keyboard on enter
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -171,6 +175,7 @@ public class BuyingFragment extends Fragment {
         });
 
         // sort button
+        int sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
         String label = String.valueOf(sortingOptionsNames[sortingIndex].charAt(0));
         if (mCivicViewModel.getScreenWidthDp() <= 400) {
             label = String.valueOf(label.charAt(0));
@@ -183,9 +188,6 @@ public class BuyingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        mCivicViewModel.setTreasure(0);
-        mCivicViewModel.setRemaining(0);
 
         mCivicViewModel.getShowAnatomyDialogEvent().observe(getViewLifecycleOwner(), event -> {
             List<String> anatomyCardsToShow = event.getContentIfNotHandled();
@@ -502,12 +504,14 @@ public class BuyingFragment extends Fragment {
     }
     /**
      * This gets the list of possible sorting options from the preferences array and cycles
-     * through them on each new entry. Gets a new sorted list from the db and updates the adapter.
+     * through them on each new entry.
      * @param v View
      */
     private void changeSorting(View v){
         String label;
-        sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
+        String sortingOrder = mCivicViewModel.getCurrentSortingOrder().getValue();
+        int sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
+        Log.d("BuyingFragment", "sortingIndex: " + sortingIndex + " sorting oder :" + sortingOrder);
         if (sortingIndex == sortingOptionsValues.length - 1){
             sortingOrder = sortingOptionsValues[0];
             label = String.valueOf(sortingOptionsNames[0].charAt(0));

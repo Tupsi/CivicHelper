@@ -78,54 +78,59 @@ public class CivicViewModel extends AndroidViewModel {
 
     private final MutableLiveData<String> currentSortingOrder = new MutableLiveData<>();
     private final LiveData<List<Card>> allAdvancesNotBought;
+
     // LiveData für Dialog-Events
+    private final MutableLiveData<Event<List<String>>> showAnatomyDialogEvent = new MutableLiveData<>();
+    private int mColumnCount;
 
-    private final MutableLiveData<Event<List<String>>> _showAnatomyDialogEvent = new MutableLiveData<>();
+
     public LiveData<Event<List<String>>> getShowAnatomyDialogEvent() {
-        return _showAnatomyDialogEvent;
+        return showAnatomyDialogEvent;
     }
-
     private final MutableLiveData<Event<Integer>> _showExtraCreditsDialogEvent = new MutableLiveData<>();
     public LiveData<Event<Integer>> getShowExtraCreditsDialogEvent() {
         return _showExtraCreditsDialogEvent;
     }
-    private SharedPreferences prefs, savedBonus;
+    private SharedPreferences defaultPrefs, sharedPrefs;
     private static final String PREF_FILE_BONUS = "purchasedAdvancesBonus";
-
+    private static final String PREF_CITIES = "cities";
+    private static final String PREF_TIME = "time";
 
 
     public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
         cardBonus = new MutableLiveData<>(new HashMap<>());
         mRepository = new CivicRepository(application);
-//        treasure = new MutableLiveData<>();
-//        remaining = new MutableLiveData<>();
-//        vp = new MutableLiveData<>();
-//        cities = 0;
         mApplication = application;
-//        timeVp = 0;
         librarySelected = false;
-        prefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
-        savedBonus = mApplication.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
+        defaultPrefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
+        sharedPrefs = mApplication.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
 
-
-        // --- NEU: Sortierreihenfolge aus SharedPreferences lesen ---
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(application);
-        String initialSortingOrder = prefs.getString("sort", "name"); // "name" als Standard
-        currentSortingOrder.setValue(initialSortingOrder); // Setze den Anfangswert
-
-
-        // --- NEU: Initialisiere die LiveData mit Transformations.switchMap ---
-        // allAdvancesNotBought = Transformations.switchMap(currentSortingOrder,
-        //         order -> mRepository.getAllAdvancesNotBoughtLiveData(order)); // Nutze die LiveData-Version des Repository
-
-        // Annahme: Deine Repository-Methode ist jetzt getAllAdvancesNotBoughtLiveData
         allAdvancesNotBought = Transformations.switchMap(currentSortingOrder,
                 order -> mRepository.getAllAdvancesNotBoughtLiveData(order));
+        loadData();
 
-        Log.d("CivicViewModel", "ViewModel constructed. Initial sorting order: " + initialSortingOrder);
     }
 
+
+    public void loadData() {
+        int blue, green, orange, red, yellow;
+        blue = sharedPrefs.getInt(CardColor.BLUE.getName(), 0);
+        green = sharedPrefs.getInt(CardColor.GREEN.getName(), 0);
+        orange = sharedPrefs.getInt(CardColor.ORANGE.getName(), 0);
+        red = sharedPrefs.getInt(CardColor.RED.getName(), 0);
+        yellow = sharedPrefs.getInt(CardColor.YELLOW.getName(), 0);
+        getCardBonus().getValue().put(CardColor.BLUE, blue);
+        getCardBonus().getValue().put(CardColor.GREEN, green);
+        getCardBonus().getValue().put(CardColor.ORANGE, orange);
+        getCardBonus().getValue().put(CardColor.RED, red);
+        getCardBonus().getValue().put(CardColor.YELLOW, yellow);
+        setHeart(defaultPrefs.getString("heart", "custom"));
+        setCities(sharedPrefs.getInt(PREF_CITIES, 0));
+        setTimeVp(sharedPrefs.getInt(PREF_TIME,0));
+        mColumnCount = Integer.parseInt(defaultPrefs.getString("columns", "1"));
+        currentSortingOrder.setValue(defaultPrefs.getString("sort", "name"));
+    }
     public int getCities() {
         return cities.getValue();
     }
@@ -138,15 +143,10 @@ public class CivicViewModel extends AndroidViewModel {
         sumVp();
     }
     public void requestPriceRecalculation() {
-        Log.d("CivicViewModel", "requestPriceRecalculation() called. Asking Repository to recalculate prices.");
-        mRepository.recalculateCurrentPricesAsync(cardBonus.getValue()); // Neues asynchrones Methode im Repository
+        mRepository.recalculateCurrentPricesAsync(cardBonus.getValue());
     }
     public void addBonusAndUpdatePrices(String cardName) {
-        Log.d("CivicViewModel", "addBonusAndUpdatePrices() called for card: " + cardName);
-        // Lass das Repository den Bonus hinzufügen und die Preise neu berechnen
         mRepository.addBonusAndUpdatePricesAsync(cardName);
-        // Der Observer im Fragment, der allAdvancesNotBought beobachtet, wird aktualisiert,
-        // wenn das Repository die Preise in der Datenbank ändert.
     }
     public int getScreenWidthDp() {
         return screenWidthDp;
@@ -183,9 +183,10 @@ public class CivicViewModel extends AndroidViewModel {
     public void setSortingOrder(String order) {
         if (!order.equals(currentSortingOrder.getValue())) {
             currentSortingOrder.setValue(order);
-            Log.d("CivicViewModel", "Sorting order set to: " + order);
-            // Die LiveData allAdvancesNotBought wird automatisch aktualisiert
         }
+    }
+    public LiveData<String> getCurrentSortingOrder() {
+        return currentSortingOrder;
     }
 
     public LiveData<List<Card>> getAllAdvancesNotBought() {
@@ -234,9 +235,9 @@ public class CivicViewModel extends AndroidViewModel {
         return newGameStartedEvent;
     }
 
-    private final MutableLiveData<Event<Boolean>> _newGameResetCompletedEvent = new MutableLiveData<>();
+    private final MutableLiveData<Event<Boolean>> newGameResetCompletedEvent = new MutableLiveData<>();
     public final LiveData<Event<Boolean>> getNewGameResetCompletedEvent() {
-        return _newGameResetCompletedEvent;
+        return newGameResetCompletedEvent;
     }
     private final MutableLiveData<Event<Boolean>> _navigateToDashboardEvent = new MutableLiveData<>();
     public LiveData<Event<Boolean>> getNavigateToDashboardEvent() {
@@ -257,10 +258,7 @@ public class CivicViewModel extends AndroidViewModel {
      * This includes resetting persistent data and ViewModel state.
      */
     public void startNewGameProcess() {
-        Log.d("CivicViewModel", "startNewGameProcess: Starting new game process"); // Add this log
-        SharedPreferences savedBonus = mApplication.getSharedPreferences("purchasedAdvancesBonus", Application.MODE_PRIVATE );
-        savedBonus.edit().clear().apply();
-
+        sharedPrefs.edit().clear().apply();
         mRepository.deletePurchases();
         mRepository.resetCurrentPrice();
         mRepository.resetDB();
@@ -271,23 +269,13 @@ public class CivicViewModel extends AndroidViewModel {
         vp.setValue(0);
         cardBonus.setValue(new HashMap<>());
 
-        // If you have other SharedPreferences managed by the ViewModel, reset them here too.
-        // For the main preferences accessed via PreferenceManager, you might need a way to signal the UI
-        // or handle them here if the ViewModel is responsible for their initial state.
-        // For example, if "treasure" and "heart" preferences are managed here:
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
-        prefs.edit().putInt("treasure", 0).apply();
-        prefs.edit().putString("heart", "custom").apply(); // Or your default value
-        prefs.edit().remove("civilization").apply();
+        defaultPrefs.edit().putInt("treasure", 0).apply();
+        defaultPrefs.edit().putString("heart", "custom").apply(); // Or your default value
+        defaultPrefs.edit().remove("civilization").apply();
 
-        // Signal that the new game process has completed (including data reset)
-        // This will trigger observers in the UI.
         newGameStartedEvent.setValue(new Event<>(true));
-        _newGameResetCompletedEvent.setValue(new Event<>(true));
-        Log.d("CivicViewModel", "startNewGameProcess: Signaled new game reset completed event.");
+        newGameResetCompletedEvent.setValue(new Event<>(true));
     }
-    // --- END: New method for New Game Reset Logic ---
-
 
     /**
      * Updates the card price, checking for best color if the card is in two groups and for
@@ -490,7 +478,7 @@ public class CivicViewModel extends AndroidViewModel {
                         // Diese Methode wird im Hintergrund-Thread aufgerufen.
                         // Aktualisiere LiveData im ViewModel auf dem Haupt-Thread mit postValue
                         if (!anatomyCardsToChoose.isEmpty()) {
-                            _showAnatomyDialogEvent.postValue(new Event<>(anatomyCardsToChoose));
+                            showAnatomyDialogEvent.postValue(new Event<>(anatomyCardsToChoose));
                         }
                         if (totalExtraCredits > 0) {
                             _showExtraCreditsDialogEvent.postValue(new Event<>(totalExtraCredits));
@@ -512,12 +500,19 @@ public class CivicViewModel extends AndroidViewModel {
     }
 
     public void saveBonus() {
-        SharedPreferences.Editor editor = savedBonus.edit();
+        SharedPreferences.Editor editor = sharedPrefs.edit();
         // HashMap Save
         for (Map.Entry<CardColor, Integer> entry: getCardBonus().getValue().entrySet()){
             editor.putInt(entry.getKey().getName(), entry.getValue());
         }
         editor.apply();
+    }
+
+    public void saveData() {
+        SharedPreferences.Editor edit = sharedPrefs.edit();
+        edit.putInt(PREF_CITIES, getCities());
+        edit.putInt(PREF_TIME, getTimeVp());
+        edit.apply();
     }
 
     /**
@@ -539,8 +534,17 @@ public class CivicViewModel extends AndroidViewModel {
      */
     public void triggerAnatomyDialog(List<String> greenCards) {
         // Posten Sie einen neuen Event mit der Liste der grünen Karten
-        _showAnatomyDialogEvent.postValue(new Event<>(greenCards));
+        showAnatomyDialogEvent.postValue(new Event<>(greenCards));
     }
+
+    public int getmColumnCount() {
+        return mColumnCount;
+    }
+
+    public void setmColumnCount(int mColumnCount) {
+        this.mColumnCount = mColumnCount;
+    }
+
 
     // Schnittstelle für die Callback vom Repository
     public interface PurchaseCompletionCallback {
