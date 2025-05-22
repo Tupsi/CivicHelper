@@ -1,15 +1,19 @@
 package org.tesira.civic;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.tesira.civic.databinding.ActivityMainBinding;
@@ -18,6 +22,7 @@ import org.tesira.civic.db.CivicViewModel;
 public class MainActivity extends AppCompatActivity{
 
     private ActivityMainBinding binding;
+    private AppBarConfiguration appBarConfiguration;
     private DrawerLayout drawerLayout;
     private NavController navController;
     private CivicViewModel mCivicViewModel;
@@ -25,7 +30,39 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        Toolbar toolbar = binding.toolbar;
+        setSupportActionBar(toolbar);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.myNavHostFragment);
+
         mCivicViewModel = new ViewModelProvider(this).get(CivicViewModel.class);
+
+        if (navHostFragment != null) {
+            navController = navHostFragment.getNavController();
+
+            drawerLayout = binding.drawerLayout;
+
+            appBarConfiguration = new AppBarConfiguration.Builder(
+                    R.id.homeFragment, R.id.advancesFragment, R.id.purchasesFragment, R.id.settingsFragment, R.id.tipsFragment, R.id.aboutFragment)
+                    .setOpenableLayout(drawerLayout)
+                    .build();
+
+            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+            NavigationUI.setupWithNavController(binding.navView, navController);
+        } else {
+            // Handle den Fall, dass der navHostFragment nicht gefunden wurde (sollte nicht passieren, wenn die ID korrekt ist)
+            Log.e("MainActivity", "NavHostFragment nicht gefunden!");
+            // Ggf. Fehler anzeigen oder App beenden
+        }
+//        NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
+
+        Configuration configuration = this.getResources().getConfiguration();
+        int screenWidthDp = configuration.screenWidthDp; //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
+        int smallestScreenWidthDp = configuration.smallestScreenWidthDp; //The smallest screen size an application will see in normal operation, corresponding to smallest screen width resource qualifier.
+        mCivicViewModel.setScreenWidthDp(screenWidthDp);
 
         mCivicViewModel.getNewGameStartedEvent().observe(this, new Observer<Event<Boolean>>() {
             @Override
@@ -43,23 +80,13 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         });
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        drawerLayout = binding.drawerLayout;
-        setContentView(binding.getRoot());
-        navController = Navigation.findNavController(this, R.id.myNavHostFragment);
-        NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
-        NavigationUI.setupWithNavController(binding.navView, navController);
-
-        Configuration configuration = this.getResources().getConfiguration();
-        int screenWidthDp = configuration.screenWidthDp; //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
-        int smallestScreenWidthDp = configuration.smallestScreenWidthDp; //The smallest screen size an application will see in normal operation, corresponding to smallest screen width resource qualifier.
-        mCivicViewModel.setScreenWidthDp(screenWidthDp);
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(navController, drawerLayout);
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                || super.onSupportNavigateUp();
+//        return NavigationUI.navigateUp(navController, drawerLayout);
     }
 
     public void onPause() {
