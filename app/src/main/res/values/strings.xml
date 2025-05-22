@@ -50,6 +50,8 @@
     <string name="pref_ast">AST Version</string>
     <string name="prefs_chooser_title">What do you want?</string>
     <string name="menu_item_tips">Tips</string>
+    <string name="menu_item_about">About</string>
+    <string name="menu_item_home">Home</string>
     <string name="item_tips">Tips</string>
     <string name="spinner_select_civilization">Select Civilization</string>
     <string name="tv_vp">VP: %1$d</string>
