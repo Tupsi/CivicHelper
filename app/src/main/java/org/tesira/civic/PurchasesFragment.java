@@ -1,9 +1,11 @@
 package org.tesira.civic;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,17 +15,17 @@ import android.view.ViewGroup;
 
 import org.tesira.civic.db.CivicViewModel;
 
+import java.util.ArrayList;
+
 /**
  * Shows all bought civilization advances (cards).
  */
 public class PurchasesFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private CivicViewModel mCivicViewModel;
-
+    private PurchasesRecyclerViewAdapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -32,7 +34,6 @@ public class PurchasesFragment extends Fragment {
     public PurchasesFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static PurchasesFragment newInstance(int columnCount) {
         PurchasesFragment fragment = new PurchasesFragment();
@@ -45,10 +46,12 @@ public class PurchasesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
 
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+//        if (getArguments() != null) {
+//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+//        }
     }
 
     @Override
@@ -66,7 +69,17 @@ public class PurchasesFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new PurchasesRecyclerViewAdapter(mCivicViewModel.getPurchasesAsCard()));
+            adapter = new PurchasesRecyclerViewAdapter();
+            recyclerView.setAdapter(adapter);
+
+            // LiveData beobachten und Adapter aktualisieren
+            mCivicViewModel.getPurchasesAsCardLiveData().observe(getViewLifecycleOwner(), purchasedCards -> {
+                if (purchasedCards != null) {
+                    adapter.submitList(purchasedCards);
+                } else {
+                    adapter.submitList(new ArrayList<>());
+                }
+            });
         }
         return view;
     }
