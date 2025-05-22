@@ -17,20 +17,19 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.Transformations;
 import androidx.recyclerview.selection.Selection;
 import androidx.preference.PreferenceManager;
+import androidx.lifecycle.Observer;
 
 import org.tesira.civic.Calamity;
 import org.tesira.civic.R;
 import org.tesira.civic.Event;
-//import org.tesira.civic.db.Effect;
-//import org.tesira.civic.db.Card;
-//import org.tesira.civic.db.CardColor;
-//import org.tesira.civic.db.CivicRepository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 
 public class CivicViewModel extends AndroidViewModel {
@@ -83,6 +82,12 @@ public class CivicViewModel extends AndroidViewModel {
     private final MutableLiveData<Event<List<String>>> showAnatomyDialogEvent = new MutableLiveData<>();
     private int mColumnCount;
     private final MutableLiveData<Event<Boolean>> newGameStartedEvent = new MutableLiveData<>();
+    private final LiveData<List<Calamity>> calamityBonusListLiveData;
+
+    private final LiveData<List<String>> specialAbilitiesRawLiveData;
+    private final LiveData<List<String>> immunitiesRawLiveData;
+    private final MediatorLiveData<List<String>> combinedSpecialsAndImmunitiesLiveData = new MediatorLiveData<>();
+
 
     public LiveData<Event<List<String>>> getShowAnatomyDialogEvent() {
         return showAnatomyDialogEvent;
@@ -102,6 +107,9 @@ public class CivicViewModel extends AndroidViewModel {
         super(application);
         cardBonus = new MutableLiveData<>(new HashMap<>());
         mRepository = new CivicRepository(application);
+        calamityBonusListLiveData = mRepository.getCalamityBonusLiveData();
+        specialAbilitiesRawLiveData = mRepository.getSpecialAbilitiesLiveData();
+        immunitiesRawLiveData = mRepository.getImmunitiesLiveData();
         mApplication = application;
         librarySelected = false;
         defaultPrefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
@@ -111,9 +119,53 @@ public class CivicViewModel extends AndroidViewModel {
         allAdvancesNotBought = Transformations.switchMap(currentSortingOrder,
                 order -> mRepository.getAllAdvancesNotBoughtLiveData(order));
         loadData();
-
+        setupCombinedSpecialsLiveData();
     }
 
+    private void setupCombinedSpecialsLiveData() {
+        // Optional: Setze einen initialen leeren Wert, um NullPointerExceptions in der UI zu vermeiden,
+        // bis die ersten Daten von den Quellen eintreffen.
+        // combinedSpecialsAndImmunitiesLiveData.setValue(new ArrayList<>());
+
+        // Der Observer für Änderungen in specialAbilitiesRawLiveData
+        Observer<List<String>> abilitiesObserver = abilities -> {
+            List<String> currentImmunities = immunitiesRawLiveData.getValue(); // Hole den aktuellen Wert der anderen Quelle
+            combineAndSetData(abilities, currentImmunities);
+        };
+
+        // Der Observer für Änderungen in immunitiesRawLiveData
+        Observer<List<String>> immunitiesObserver = immunities -> {
+            List<String> currentAbilities = specialAbilitiesRawLiveData.getValue(); // Hole den aktuellen Wert der anderen Quelle
+            combineAndSetData(currentAbilities, immunities);
+        };
+
+        combinedSpecialsAndImmunitiesLiveData.addSource(specialAbilitiesRawLiveData, abilitiesObserver);
+        combinedSpecialsAndImmunitiesLiveData.addSource(immunitiesRawLiveData, immunitiesObserver);
+    }
+
+    private void combineAndSetData(List<String> abilities, List<String> immunities) {
+        List<String> combinedList = new ArrayList<>();
+        combinedList.add("___Special Abilities"); // Dein Header
+        if (abilities != null) {
+            combinedList.addAll(abilities);
+        }
+        combinedList.add("___Immunities"); // Dein Header
+        if (immunities != null) {
+            combinedList.addAll(immunities);
+        }
+
+        // Deine Logik zum Entfernen von Duplikaten
+        // Beachte: Wenn die Header selbst Duplikate sein könnten oder in den Listen vorkommen,
+        // müsstest du die Logik hier ggf. anpassen oder die Header erst nach dem distinct() hinzufügen.
+        // Für den Moment gehe ich davon aus, dass die Header eindeutig bleiben sollen.
+        List<String> distinctList = combinedList.stream().distinct().collect(Collectors.toList());
+
+        combinedSpecialsAndImmunitiesLiveData.setValue(distinctList);
+    }
+
+    public LiveData<List<String>> getCombinedSpecialsAndImmunitiesLiveData() {
+        return combinedSpecialsAndImmunitiesLiveData;
+    }
     private void setupTotalVpMediator() {
         totalVp.setValue(0); // Initialwert
 
@@ -216,7 +268,9 @@ public class CivicViewModel extends AndroidViewModel {
     public LiveData<List<Card>> getAllAdvancesNotBought() {
         return allAdvancesNotBought;
     }
-
+    public LiveData<List<Calamity>> getCalamityBonusListLiveData() {
+        return calamityBonusListLiveData;
+    }
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
     public List<Card> getPurchasesAsCard() {return mRepository.getPurchasesAsCard();}
     public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
