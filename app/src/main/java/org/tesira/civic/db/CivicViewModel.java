@@ -102,6 +102,10 @@ public class CivicViewModel extends AndroidViewModel {
     private static final String PREF_TIME = "time";
     private final LiveData<Integer> cardsVpFromDao;
     private final MediatorLiveData<Integer> totalVp = new MediatorLiveData<>();
+    private final Map<String, Card> buyableCardMap = new HashMap<>();
+    private final MutableLiveData<Boolean> areBuyableCardsReady = new MutableLiveData<>(false);
+    private Observer<List<Card>> buyableCardsMapObserver;
+
 
     public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
@@ -120,8 +124,25 @@ public class CivicViewModel extends AndroidViewModel {
                 order -> mRepository.getAllAdvancesNotBoughtLiveData(order));
         loadData();
         setupCombinedSpecialsLiveData();
+        setupBuyableCardsObserver();
     }
 
+
+    private void setupBuyableCardsObserver() {
+        buyableCardsMapObserver = cards -> {
+            buyableCardMap.clear();
+            if (cards != null) {
+                for (Card card : cards) {
+                    buyableCardMap.put(card.getName(), card);
+                }
+                areBuyableCardsReady.setValue(true);
+                Log.d("CivicViewModel", "Buyable cards map updated. Size: " + buyableCardMap.size());
+            } else {
+                areBuyableCardsReady.setValue(false);
+            }
+        };
+        allAdvancesNotBought.observeForever(buyableCardsMapObserver);
+    }
     private void setupCombinedSpecialsLiveData() {
         // Optional: Setze einen initialen leeren Wert, um NullPointerExceptions in der UI zu vermeiden,
         // bis die ersten Daten von den Quellen eintreffen.
@@ -204,6 +225,9 @@ public class CivicViewModel extends AndroidViewModel {
         return cardsVpFromDao.getValue() != null ? cardsVpFromDao.getValue() : 0;
     }
 
+    public LiveData<Integer> getCardsVpLiveData() {
+        return cardsVpFromDao;
+    }
     public void loadData() {
         int blue, green, orange, red, yellow;
         blue = sharedPrefs.getInt(CardColor.BLUE.getName(), 0);
@@ -272,7 +296,9 @@ public class CivicViewModel extends AndroidViewModel {
         return calamityBonusListLiveData;
     }
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
+    public LiveData<Card> getAdvanceByNameToCardLiveData(String name) {return mRepository.getAdvanceByNameToCardLiveData(name);}
     public List<Card> getPurchasesAsCard() {return mRepository.getPurchasesAsCard();}
+    public LiveData<List<Card>> getPurchasesAsCardLiveData() {return mRepository.getPurchasesAsCardLiveData();}
     public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
     public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
     public List<String> getImmunities() {return mRepository.getImmunities();}
@@ -386,12 +412,56 @@ public class CivicViewModel extends AndroidViewModel {
         cardBonus.getValue().compute(CardColor.YELLOW, (k,v) ->(v==null)? yellow :v+yellow);
     }
 
+
+
+    public LiveData<Boolean> getAreBuyableCardsReady() {
+        return areBuyableCardsReady;
+    }
+
+    private Card getBuyableAdvanceByNameFromMap(String name) {
+        if (Boolean.TRUE.equals(areBuyableCardsReady.getValue())) {
+            return buyableCardMap.get(name);
+        }
+        Log.w("CivicViewModel", "Attempted to get card '" + name + "' from map, but cards not ready.");
+        return null;
+    }
+
     /**
      * Calculates the sum of all currently selected advances during the buy process and
      * updates remaining treasure.
      * @param selection Currently selected cards from the View.
      */
     public void calculateTotal(Selection<String> selection) {
+        if (!Boolean.TRUE.equals(areBuyableCardsReady.getValue())) {
+            Log.w("CivicViewModel", "calculateTotal called, but buyable cards are not ready.");
+            int currentTreasure = (treasure.getValue() != null) ? treasure.getValue() : 0;
+            this.remaining.setValue(currentTreasure); // Keine Kosten abziehen, wenn Karten nicht bereit
+            return;
+        }
+
+        int newTotal = 0;
+        if (selection != null && selection.size() > 0) {
+            for (String name : selection) {
+                Card adv = getBuyableAdvanceByNameFromMap(name);
+                if (adv != null) {
+                    // HIER WICHTIG: adv.getCurrentPrice() muss den Preis *nach* Anwendung
+                    // aller Boni usw. widerspiegeln. Wenn die Karte in der Map
+                    // nur den Basispreis hat, musst du hier evtl.
+                    // adv.calculateCurrentPrice(cardBonus.getValue(), librarySelected);
+                    // oder eine ähnliche Logik aufrufen, bevor du den Preis addierst.
+                    // Oder stelle sicher, dass die Objekte in der Map bereits die korrekten
+                    // aktuellen Preise haben, falls sie an anderer Stelle im ViewModel aktualisiert werden.
+                    newTotal += adv.getCurrentPrice();
+                } else {
+                    Log.e("CivicViewModel", "Card with name '" + name + "' not found in buyableCardMap during calculateTotal.");
+                }
+            }
+        }
+        int currentTreasure = (treasure.getValue() != null) ? treasure.getValue() : 0;
+        this.remaining.setValue(currentTreasure - newTotal);
+    }
+
+/*    public void calculateTotal(Selection<String> selection) {
         int newTotal = 0;
         if (selection.size() > 0) {
             for (String name : selection) {
@@ -400,7 +470,9 @@ public class CivicViewModel extends AndroidViewModel {
             }
         }
         this.remaining.setValue(treasure.getValue() - newTotal);
-    }
+    }*/
+
+
     /**
      * Adds the bonuses of a bought card to the cardBonus HashSet.
      * @param name The name of the bought card.
@@ -595,6 +667,15 @@ public class CivicViewModel extends AndroidViewModel {
     public void triggerAnatomyDialog(List<String> greenCards) {
         // Posten Sie einen neuen Event mit der Liste der grünen Karten
         showAnatomyDialogEvent.postValue(new Event<>(greenCards));
+    }
+
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (buyableCardsMapObserver != null) {
+            allAdvancesNotBought.removeObserver(buyableCardsMapObserver);
+        }
     }
 
     // Schnittstelle für die Callback vom Repository
