@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class HomeSpecialsAdapter extends RecyclerView.Adapter<HomeSpecialsAdapter.ViewHolder> {
 
-    private String[] localDataSet;
+    private String[] localDataSet = new String[0];
     private final CivicViewModel viewModel;
 
     /**
@@ -85,4 +85,14 @@ public class HomeSpecialsAdapter extends RecyclerView.Adapter<HomeSpecialsAdapte
         localDataSet = combinedList.stream().distinct().toArray(String[]::new);
         notifyDataSetChanged();
     }
+
+    public void submitSpecialsList(List<String> newSpecialsAndImmunities) {
+        if (newSpecialsAndImmunities != null) {
+            this.localDataSet = newSpecialsAndImmunities.toArray(new String[0]);
+        } else {
+            this.localDataSet = new String[0];
+        }
+        notifyDataSetChanged();
+    }
+
 }

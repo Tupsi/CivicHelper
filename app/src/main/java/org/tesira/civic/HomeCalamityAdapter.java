@@ -10,11 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.tesira.civic.db.CivicViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeCalamityAdapter extends RecyclerView.Adapter<HomeCalamityAdapter.ViewHolder> {
 
-    private List<Calamity> calamityList;
+    private List<Calamity> calamityList = new ArrayList<>();
     private Context mContext;
     private final CivicViewModel viewModel;
 
@@ -80,5 +81,11 @@ public class HomeCalamityAdapter extends RecyclerView.Adapter<HomeCalamityAdapte
         calamityList = viewModel.getCalamityBonus();
         notifyDataSetChanged();
     }
-
+    public void submitCalamityList(List<Calamity> newCalamities) {
+        this.calamityList.clear();
+        if (newCalamities != null) {
+            this.calamityList.addAll(newCalamities);
+        }
+        notifyDataSetChanged();
+    }
 }

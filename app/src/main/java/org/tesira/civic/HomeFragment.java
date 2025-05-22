@@ -69,14 +69,14 @@ public class HomeFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         mHomeCalamityAdapter = new HomeCalamityAdapter(mCivicViewModel, this.getContext());
         mRecyclerView.setAdapter(mHomeCalamityAdapter);
-        mHomeCalamityAdapter.updateData();
+//        mHomeCalamityAdapter.updateData();
 
         // RecyclerView Special Abilities
         mRecyclerView = rootView.findViewById(R.id.listAbility);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         mHomeSpecialsAdapter = new HomeSpecialsAdapter(mCivicViewModel);
         mRecyclerView.setAdapter(mHomeSpecialsAdapter);
-        mHomeSpecialsAdapter.updateData();
+//        mHomeSpecialsAdapter.updateData();
 
         binding.radio0.setOnClickListener(this::onCitiesClicked);
         binding.radio1.setOnClickListener(this::onCitiesClicked);
@@ -261,6 +261,18 @@ public class HomeFragment extends Fragment {
                 checkAST();
                 String civicAST = prefsDefault.getString("civilization", "not set");
                 binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));
+            }
+        });
+        mCivicViewModel.getCalamityBonusListLiveData().observe(getViewLifecycleOwner(), calamities -> {
+            // 'calamities' ist hier die List<Calamity> aus der Datenbank (über LiveData)
+            if (calamities != null) {
+                mHomeCalamityAdapter.submitCalamityList(calamities);
+            }
+        });
+
+        mCivicViewModel.getCombinedSpecialsAndImmunitiesLiveData().observe(getViewLifecycleOwner(), combinedList -> {
+            if (combinedList != null) {
+                mHomeSpecialsAdapter.submitSpecialsList(combinedList);
             }
         });
 
