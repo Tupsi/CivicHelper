@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.Transformations;
@@ -39,7 +40,6 @@ public class CivicViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> treasure  = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> remaining = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> vp = new MutableLiveData<>(0);
-    private final MutableLiveData<Integer> civilization = new MutableLiveData<>(0);
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
     private final MutableLiveData<Integer> cities = new MutableLiveData<>(0);
     private Application mApplication;
@@ -82,7 +82,7 @@ public class CivicViewModel extends AndroidViewModel {
     // LiveData für Dialog-Events
     private final MutableLiveData<Event<List<String>>> showAnatomyDialogEvent = new MutableLiveData<>();
     private int mColumnCount;
-
+    private final MutableLiveData<Event<Boolean>> newGameStartedEvent = new MutableLiveData<>();
 
     public LiveData<Event<List<String>>> getShowAnatomyDialogEvent() {
         return showAnatomyDialogEvent;
@@ -95,7 +95,8 @@ public class CivicViewModel extends AndroidViewModel {
     private static final String PREF_FILE_BONUS = "purchasedAdvancesBonus";
     private static final String PREF_CITIES = "cities";
     private static final String PREF_TIME = "time";
-
+    private final LiveData<Integer> cardsVpFromDao;
+    private final MediatorLiveData<Integer> totalVp = new MediatorLiveData<>();
 
     public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
@@ -105,13 +106,51 @@ public class CivicViewModel extends AndroidViewModel {
         librarySelected = false;
         defaultPrefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
         sharedPrefs = mApplication.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
-
+        cardsVpFromDao = mRepository.getCardsVp();
+        setupTotalVpMediator();
         allAdvancesNotBought = Transformations.switchMap(currentSortingOrder,
                 order -> mRepository.getAllAdvancesNotBoughtLiveData(order));
         loadData();
 
     }
 
+    private void setupTotalVpMediator() {
+        totalVp.setValue(0); // Initialwert
+
+        // Quelle 1: cardsVpFromDao
+        totalVp.addSource(cardsVpFromDao, cardsVal -> { // Parameter umbenannt zur Klarheit
+            Integer currentCardsVp = (cardsVal != null) ? cardsVal : 0;
+            Integer currentCitiesVp = (cities.getValue() != null) ? cities.getValue() : 0;
+            Integer currentTimeVp = (timeVp.getValue() != null) ? timeVp.getValue() : 0;
+            totalVp.setValue(currentCardsVp + currentCitiesVp + currentTimeVp);
+            Log.d("CivicViewModel", "TotalVP updated due to cardsVp change. New Total: " + totalVp.getValue());
+        });
+
+        // Quelle 2: cities LiveData
+        totalVp.addSource(cities, cityVal -> { // Parameter umbenannt zur Klarheit
+            Integer currentCardsVp = (cardsVpFromDao.getValue() != null) ? cardsVpFromDao.getValue() : 0;
+            Integer currentCitiesVp = (cityVal != null) ? cityVal : 0;
+            Integer currentTimeVp = (timeVp.getValue() != null) ? timeVp.getValue() : 0;
+            totalVp.setValue(currentCardsVp + currentCitiesVp + currentTimeVp);
+            Log.d("CivicViewModel", "TotalVP updated due to cities change. New Total: " + totalVp.getValue());
+        });
+
+        // Quelle 3: timeVp LiveData
+        totalVp.addSource(timeVp, timeVal -> { // Parameter umbenannt zur Klarheit
+            Integer currentCardsVp = (cardsVpFromDao.getValue() != null) ? cardsVpFromDao.getValue() : 0;
+            Integer currentCitiesVp = (cities.getValue() != null) ? cities.getValue() : 0;
+            Integer currentTimeVp = (timeVal != null) ? timeVal : 0;
+            totalVp.setValue(currentCardsVp + currentCitiesVp + currentTimeVp);
+            Log.d("CivicViewModel", "TotalVP updated due to timeVp change. New Total: " + totalVp.getValue());
+        });
+    }
+    public LiveData<Integer> getTotalVp() {
+        return totalVp;
+    }
+
+    public int getCardsVp() {
+        return cardsVpFromDao.getValue() != null ? cardsVpFromDao.getValue() : 0;
+    }
 
     public void loadData() {
         int blue, green, orange, red, yellow;
@@ -120,11 +159,13 @@ public class CivicViewModel extends AndroidViewModel {
         orange = sharedPrefs.getInt(CardColor.ORANGE.getName(), 0);
         red = sharedPrefs.getInt(CardColor.RED.getName(), 0);
         yellow = sharedPrefs.getInt(CardColor.YELLOW.getName(), 0);
-        getCardBonus().getValue().put(CardColor.BLUE, blue);
-        getCardBonus().getValue().put(CardColor.GREEN, green);
-        getCardBonus().getValue().put(CardColor.ORANGE, orange);
-        getCardBonus().getValue().put(CardColor.RED, red);
-        getCardBonus().getValue().put(CardColor.YELLOW, yellow);
+        if (cardBonus.getValue() != null) {
+            cardBonus.getValue().put(CardColor.BLUE, blue);
+            cardBonus.getValue().put(CardColor.GREEN, green);
+            cardBonus.getValue().put(CardColor.ORANGE, orange);
+            cardBonus.getValue().put(CardColor.RED, red);
+            cardBonus.getValue().put(CardColor.YELLOW, yellow);
+        }
         setHeart(defaultPrefs.getString("heart", "custom"));
         setCities(sharedPrefs.getInt(PREF_CITIES, 0));
         setTimeVp(sharedPrefs.getInt(PREF_TIME,0));
@@ -132,7 +173,7 @@ public class CivicViewModel extends AndroidViewModel {
         currentSortingOrder.setValue(defaultPrefs.getString("sort", "name"));
     }
     public int getCities() {
-        return cities.getValue();
+        return cities.getValue() != null ? cities.getValue() : 0;
     }
     public LiveData<Integer> getCitiesLive() {
         return cities;
@@ -140,22 +181,15 @@ public class CivicViewModel extends AndroidViewModel {
 
     public void setCities(int value) {
         cities.setValue(value);
-        sumVp();
     }
     public void requestPriceRecalculation() {
         mRepository.recalculateCurrentPricesAsync(cardBonus.getValue());
-    }
-    public void addBonusAndUpdatePrices(String cardName) {
-        mRepository.addBonusAndUpdatePricesAsync(cardName);
     }
     public int getScreenWidthDp() {
         return screenWidthDp;
     }
     public void setScreenWidthDp(int screenWidthDp) {
         this.screenWidthDp = screenWidthDp;
-    }
-    public String getHeart() {
-        return heart;
     }
     public void setHeart(String heart) {
         this.heart = heart;
@@ -166,20 +200,10 @@ public class CivicViewModel extends AndroidViewModel {
     public LiveData<Integer> getTimeVpLive() {
         return timeVp;
     }
-
     public void setTimeVp(int value) {
         timeVp.setValue(value);
-        sumVp();
     }
-
     public void insertPurchase(String purchase) {mRepository.insertPurchase(purchase);}
-    public void recalculateCurrentPrices() {mRepository.recalculateCurrentPricesAsync(cardBonus.getValue());}
-    public void deletePurchases() {
-        mRepository.deletePurchases();
-        mRepository.resetCurrentPrice();
-        cardBonus.setValue(new HashMap<>());
-    }
-
     public void setSortingOrder(String order) {
         if (!order.equals(currentSortingOrder.getValue())) {
             currentSortingOrder.setValue(order);
@@ -194,19 +218,10 @@ public class CivicViewModel extends AndroidViewModel {
     }
 
     public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
-    public List<Card> getAllAdvancesSortedByName() {return mRepository.getAllAdvancesSortedByName();}
-    public List<String> getPurchasesAsString() {return mRepository.getPurchasesAsString();}
     public List<Card> getPurchasesAsCard() {return mRepository.getPurchasesAsCard();}
     public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
     public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
     public List<String> getImmunities() {return mRepository.getImmunities();}
-    public int sumVp() {
-        int newVp = mRepository.sumVp();
-        newVp += cities.getValue();
-        newVp += timeVp.getValue();
-        this.vp.setValue(newVp);
-        return newVp;
-    }
     public MutableLiveData<Integer> getTreasure() {
         return treasure;
     }
@@ -219,18 +234,11 @@ public class CivicViewModel extends AndroidViewModel {
     public void setRemaining(int treasure) {
         this.remaining.setValue(treasure);
     }
-
-    public MutableLiveData<Integer> getVp() {return vp;}
-    public void setVp(int newVp) {this.vp.setValue(newVp);}
-
     public MutableLiveData<HashMap<CardColor, Integer>> getCardBonus() {
         return cardBonus;
     }
 
-    // This LiveData signals that a new game reset has been INITIATED or completed.
-    // It will be used to trigger UI updates.
 
-    private final MutableLiveData<Event<Boolean>> newGameStartedEvent = new MutableLiveData<>();
     public LiveData<Event<Boolean>> getNewGameStartedEvent() {
         return newGameStartedEvent;
     }
@@ -460,7 +468,6 @@ public class CivicViewModel extends AndroidViewModel {
         return cardBonus.getValue().getOrDefault(CardColor.YELLOW,0);
     }
 
-
     /**
      * Orchestrates the purchase process. Delegates the database operations to the Repository
      * and handles the UI responses (dialogs) based on the results.
@@ -522,7 +529,6 @@ public class CivicViewModel extends AndroidViewModel {
      * @param credits The number of extra credits to offer.
      */
     public void triggerExtraCreditsDialog(int credits) {
-        // Posten Sie einen neuen Event mit der Anzahl der Credits
         _showExtraCreditsDialogEvent.postValue(new Event<>(credits));
     }
 
@@ -536,15 +542,6 @@ public class CivicViewModel extends AndroidViewModel {
         // Posten Sie einen neuen Event mit der Liste der grünen Karten
         showAnatomyDialogEvent.postValue(new Event<>(greenCards));
     }
-
-    public int getmColumnCount() {
-        return mColumnCount;
-    }
-
-    public void setmColumnCount(int mColumnCount) {
-        this.mColumnCount = mColumnCount;
-    }
-
 
     // Schnittstelle für die Callback vom Repository
     public interface PurchaseCompletionCallback {
