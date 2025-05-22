@@ -478,7 +478,9 @@ public class CivicViewModel extends AndroidViewModel {
      * @param name The name of the bought card.
      */
     public void addBonus(String name) {
-        Card adv = getAdvanceByName(name);
+        Card adv = getBuyableAdvanceByNameFromMap(name);
+        Log.d("CivicViewModel", "Adding bonus for card: " + name);
+//        Card adv = getAdvanceByName(name);
         updateBonus(adv.getCreditsBlue(), adv.getCreditsGreen(), adv.getCreditsOrange(), adv.getCreditsRed(), adv.getCreditsYellow());
     }
 
