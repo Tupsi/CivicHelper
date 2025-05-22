@@ -40,7 +40,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic_helper.db")
                             .addCallback(sRoomDatabaseCallback)
 //                            .fallbackToDestructiveMigration()
-                            .allowMainThreadQueries()
+//                            .allowMainThreadQueries()
                             .build();
                     ASSET_CONTEXT = context.getApplicationContext();
                 }
