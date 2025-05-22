@@ -143,6 +143,7 @@ public interface CivicHelperDao {
 
     @Query("SELECT SUM(cards.vp) AS sum FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL")
     int sumVp();
+    // victory points of all bought cards in the database
     @Query("SELECT SUM(cards.vp) AS sum FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL")
-    LiveData<Integer> sumVpCardsLiveData();
+    LiveData<Integer> cardsVp();
 }

@@ -20,16 +20,6 @@ public class CivicRepository {
 
     private CivicHelperDao mCivicDao;
 
-    // Füge LiveData-Variablen für die LiveData-Methoden der DAO hinzu
-    // (Hier werden wir uns auf die Methoden konzentrieren, die du in deinem Original-Repo verwendet hast,
-    // und die neuen LiveData-Methoden, die wir in der DAO hinzugefügt haben)
-
-    // Beispiele für LiveData-Variablen, die du später im ViewModel nutzen könntest
-    // private LiveData<List<Card>> mAllAdvancesNotBoughtLiveData;
-    // private LiveData<Integer> mVpLiveData;
-    // private LiveData<List<Card>> mAllPurchasesAsCardLiveData;
-
-
     // Definiere einen ExecutorService für Hintergrundaufgaben (schreibende Operationen)
     private static final int NUMBER_OF_THREADS = 4; // Beispiel: Anzahl der Threads
     private final ExecutorService repositoryExecutor =
@@ -39,7 +29,6 @@ public class CivicRepository {
     public CivicRepository(Application application) {
         CivicHelperDatabase db = CivicHelperDatabase.getDatabase(application);
         mCivicDao = db.civicDao();
-
         // Hier könntest du LiveData-Variablen initialisieren, falls du sie im Repository vorhalten willst.
         // Z.B.:
         // mAllAdvancesNotBoughtLiveData = mCivicDao.getAllAdvancesNotBoughtLiveData("name"); // Beispiel
@@ -53,14 +42,6 @@ public class CivicRepository {
     public void deletePurchases() {
         repositoryExecutor.execute(() -> mCivicDao.deleteAllPurchases());
     }
-
-    // Deine ursprüngliche Methode, jetzt mit Executor
-    // Beachte: Deine DAO-Methode insertPurchase erwartet ein Purchase-Objekt.
-    // Die Methode im Repository sollte auch ein Purchase-Objekt entgegennehmen.
-    // Falls du nur den Namen einfügen möchtest, musst du in dieser Methode ein Purchase-Objekt erstellen.
-//    public void insertPurchase(Purchase purchase) {
-//        repositoryExecutor.execute(() -> mCivicDao.insertPurchase(purchase));
-//    }
 
     // Methode zum Einfügen eines Kaufs nur mit Namen (wird nur für den extra Anatomy Kauf verwendet)
     public void insertPurchase(String name) {
@@ -249,8 +230,8 @@ public class CivicRepository {
     /**
      * Returns the victory points of all bought cards in the database.
      */
-    public LiveData<Integer> sumVpCardsLiveData() {
-        return mCivicDao.sumVpCardsLiveData();
+    public LiveData<Integer> getCardsVp() {
+        return mCivicDao.cardsVp();
     }
 
     // Die asynchronen/Thread-Methoden, die in deinem Original auskommentiert waren,

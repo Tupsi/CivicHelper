@@ -64,14 +64,14 @@ public class HomeFragment extends Fragment {
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
         View rootView = binding.getRoot();
 
-        // 1st Recyclerview
+        // RecylerView Calamity Effects
         RecyclerView mRecyclerView = rootView.findViewById(R.id.listCalamity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         mHomeCalamityAdapter = new HomeCalamityAdapter(mCivicViewModel, this.getContext());
         mRecyclerView.setAdapter(mHomeCalamityAdapter);
         mHomeCalamityAdapter.updateData();
 
-        // 2nd RecyclerView
+        // RecyclerView Special Abilities
         mRecyclerView = rootView.findViewById(R.id.listAbility);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         mHomeSpecialsAdapter = new HomeSpecialsAdapter(mCivicViewModel);
@@ -114,8 +114,13 @@ public class HomeFragment extends Fragment {
         // shortcut to advances/buy fragment
         binding.tvSpecials.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.advancesFragment));
 
-        mCivicViewModel.getVp().observe(getViewLifecycleOwner(), integer -> binding.tvVp.setText(getString(R.string.tv_vp, integer)));
-
+        mCivicViewModel.getTotalVp().observe(getViewLifecycleOwner(), newTotalVp -> {
+            if (newTotalVp != null) { // Null-Check, falls LiveData initial noch keinen Wert hat
+                binding.tvVp.setText(getString(R.string.tv_vp, newTotalVp));
+            } else {
+                binding.tvVp.setText(getString(R.string.tv_vp, 0));
+            }
+        });
         binding.tvTime.setText(CivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
         registerForContextMenu(binding.tvTime);
 
@@ -138,7 +143,7 @@ public class HomeFragment extends Fragment {
     public void checkAST() {
         int cities = mCivicViewModel.getCities();
         String ast = prefsDefault.getString("ast","basic");
-        int vp = mCivicViewModel.sumVp();
+        int vp = mCivicViewModel.getCardsVp();
         List<Card> allPurchases = mCivicViewModel.getPurchasesAsCard();
         int size100 = 0, size200 = 0, numberPurchases;
         numberPurchases = allPurchases.size();
@@ -302,33 +307,23 @@ public class HomeFragment extends Fragment {
 
     public void onPause() {
         super.onPause();
-        Log.v("HOME","---> onPause() <--- ");
     }
 
     public void onStart() {
         super.onStart();
-        Log.v("HOME","---> onStart() <--- ");
     }
 
     public void onResume() {
         super.onResume();
-        Log.v("HOME","---> onResume() <--- ");
-//        loadBonus();
     }
 
     public void onStop() {
         super.onStop();
-        Log.v("HOME","---> onStop() <--- ");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mCivicViewModel != null) {
-            mCivicViewModel.getVp().removeObservers(getActivity());
-        }
-        binding = null;
-        Log.v("HOME","---> onDestroy() <--- ");
     }
 
     @Override
