@@ -1,13 +1,17 @@
 package org.tesira.civic;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -16,6 +20,7 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.widget.Toast;
 import android.view.MenuItem;
 
@@ -34,12 +39,31 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        EdgeToEdge.enable(this);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
+
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
+            Insets systemBarsInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Log.d("ToolbarInsets", "Toolbar Padding - Left: " + v.getPaddingLeft() +
+                    ", Top (before): " + v.getPaddingTop() + // Padding vor deiner Änderung
+                    ", Right: " + v.getPaddingRight() +
+                    ", Bottom: " + v.getPaddingBottom());
+            Log.d("ToolbarInsets", "systemBarsInsets.top: " + systemBarsInsets.top);
+            Log.d("ToolbarInsets", "Toolbar Height (before padding change): " + v.getHeight());
+
+            v.setPadding(v.getPaddingLeft(), systemBarsInsets.top, v.getPaddingRight(), v.getPaddingBottom());
+            ViewGroup.LayoutParams params = v.getLayoutParams();
+            Log.d("ToolbarInsets", "Toolbar LayoutParams Height: " + params.height);
+
+            return WindowInsetsCompat.CONSUMED;
+        });
+
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.myNavHostFragment);
 

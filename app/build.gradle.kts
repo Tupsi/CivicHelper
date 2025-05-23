@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("com.google.devtools.ksp") version "2.1.21-2.0.1"  //https://github.com/google/ksp/releases
 }
 
 android {
@@ -10,8 +12,8 @@ android {
         applicationId = "org.tesira.civic"
         minSdk = 28
         targetSdk = 35
-        versionCode = 8
-        versionName = "1.2.1"
+        versionCode = 9
+        versionName = "1.2.5"
     }
 
     buildTypes {
@@ -23,6 +25,9 @@ android {
             )
         }
     }
+//    tasks.withType<JavaCompile>().configureEach {
+//        options.compilerArgs.add("-Xlint:deprecation")
+//    }
 
     buildFeatures {
         viewBinding = true
@@ -46,32 +51,32 @@ android {
 }
 
 dependencies {
-    val versions: Map<String, String> by rootProject.extra
-
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${versions["kotlin"]}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.21")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
 
-    implementation("androidx.recyclerview:recyclerview:${versions["recyclerview"]}")
-    implementation("androidx.recyclerview:recyclerview-selection:${versions["recyclerviewSelection"]}")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation("androidx.recyclerview:recyclerview-selection:1.2.0")
 
-    implementation("androidx.databinding:databinding-runtime:${versions["databindingRuntime"]}")
+    implementation("androidx.databinding:databinding-runtime:8.10.0")
 
-    implementation("androidx.preference:preference-ktx:${versions["preference"]}")
-    implementation("androidx.gridlayout:gridlayout:${versions["gridLayout"]}")
+    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("androidx.gridlayout:gridlayout:1.1.0")
 
-    implementation("androidx.appcompat:appcompat:${versions["appCompat"]}")
+    implementation("androidx.appcompat:appcompat:1.7.0")
 
-    implementation("androidx.navigation:navigation-fragment-ktx:${versions["navigation"]}")
-    implementation("androidx.navigation:navigation-ui-ktx:${versions["navigation"]}")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.9.0")
+    implementation("androidx.navigation:navigation-ui-ktx:2.9.0")
 
-    implementation("androidx.room:room-runtime:${versions["room"]}")
-    annotationProcessor("androidx.room:room-compiler:${versions["room"]}")
+    implementation("androidx.room:room-runtime:2.7.1")
+    ksp("androidx.room:room-compiler:2.7.1")
 
-    implementation("androidx.annotation:annotation:${versions["annotation"]}")
+    implementation("androidx.annotation:annotation:1.9.1")
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${versions["lifecycle"]}")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:${versions["lifecycle"]}")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.0")
 
-    implementation("androidx.constraintlayout:constraintlayout:${versions["constraintLayout"]}")
-    implementation("com.google.android.material:material:${versions["material"]}")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation("com.google.android.material:material:1.12.0")
+
+    implementation("androidx.core:core-ktx:1.16.0")
 }

@@ -50,6 +50,7 @@ public class DialogExtraCreditsFragment extends DialogFragment {
         args.putInt(ARG_CREDITS, creditsAmount);
         fragment.setArguments(args);
         fragment.setCancelable(false);
+        fragment.setStyle(STYLE_NORMAL, R.style.Theme_App_Dialog_FullScreen);
         return fragment;
     }
 
@@ -106,7 +107,7 @@ public class DialogExtraCreditsFragment extends DialogFragment {
         super.onStart();
         Dialog currentDialog = getDialog();
         if (currentDialog != null && currentDialog.getWindow() != null) {
-            currentDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            currentDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         }
     }
 

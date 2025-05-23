@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navHeader"
     android:layout_width="match_parent"
-    android:layout_height="135dp"
-    android:background="?attr/colorPrimaryDark"
+    android:layout_height="192dp"
+    android:background="?attr/colorPrimary"
     android:padding="0dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:theme="@style/ThemeOverlay.AppCompat.Light">
 
     <ImageView
         android:id="@+id/navHeaderImage"
