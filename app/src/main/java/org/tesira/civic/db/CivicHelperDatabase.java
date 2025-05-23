@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
+import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -18,7 +20,8 @@ import java.util.concurrent.Executors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-@Database(entities = {Card.class, Purchase.class, Effect.class, SpecialAbility.class, Immunity.class}, version = 1, exportSchema = false)
+@Database(entities = {Card.class, Purchase.class, Effect.class, SpecialAbility.class, Immunity.class}, version = 2, exportSchema = true)
+@TypeConverters({Converters.class})
 public abstract class CivicHelperDatabase extends RoomDatabase {
 
     public abstract CivicHelperDao civicDao();
@@ -39,7 +42,8 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic_helper.db")
                             .addCallback(sRoomDatabaseCallback)
-//                            .fallbackToDestructiveMigration()
+//                            .addMigrations(MIGRATION_1_2)
+                            .fallbackToDestructiveMigration()
 //                            .allowMainThreadQueries()
                             .build();
                     ASSET_CONTEXT = context.getApplicationContext();
@@ -54,8 +58,6 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
 //            Log.v("DATABASE", "in callback onCreate");
-            // If you want to keep data through app restarts,
-            // comment out the following block
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
                 importCivicsFromXML();
@@ -171,4 +173,19 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             dao.updateBonus(cards.get(1).getName(),20);
         }
     }
+
+
+    // NEU: Definiere die Migration von Version 1 zu 2
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            // Da die Schemaänderungen wahrscheinlich durch KSP/Kotlin-Umstellung
+            // und nicht durch tatsächliche Strukturänderungen der Tabellen entstanden sind,
+            // bleibt dieser Block vorerst leer.
+            // Room braucht nur die Bestätigung, dass du die Migration bedacht hast.
+            // Falls spezifische ALTER TABLE Befehle nötig wären, kämen sie hier rein.
+            // Beispiel:
+            // database.execSQL("ALTER TABLE Card ADD COLUMN new_column_name INTEGER");
+        }
+    };
 }
