@@ -315,47 +315,6 @@ public class BuyingFragment extends Fragment {
                 }
         });
 
-        requireActivity().addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.options_menu, menu);
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                // Check for the "New Game" menu item
-                if (menuItem.getItemId() == R.id.menu_newGame) {
-                    // Show the confirmation dialog before starting a new game
-                    DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-                        switch (which){
-                            case DialogInterface.BUTTON_POSITIVE:
-                                // Yes button clicked, trigger the reset process in the ViewModel
-                                mCivicViewModel.requestNewGame();
-                                // The UI update will be handled by the resetEvent observer
-                                // Navigate back to the HomeFragment ONLY when initiating New Game from AdvancesFragment
-                                Navigation.findNavController(requireView()).navigate(R.id.homeFragment);
-                                break;
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                // No button clicked
-                                break;
-                        }
-                    };
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext()); // Use requireContext()
-                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                            .setNegativeButton("No", dialogClickListener).show();
-                    return true;
-                }
-
-                // Let the NavigationUI handle navigation destinations.
-                // This is important for "settingsFragment" and "aboutFragment"
-                // if those IDs match destinations in your navigation graph.
-                // If NavigationUI handles the item, it returns true.
-                return NavigationUI.onNavDestinationSelected(menuItem,
-                        Navigation.findNavController(requireView()));
-            }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED); // Register the MenuProvider with the Fragment's lifecycle
-
         View rootView = requireActivity().getWindow().getDecorView().getRootView();
         keyboardListener = new ViewTreeObserver.OnGlobalLayoutListener() {
             private int previousHeight = 0;

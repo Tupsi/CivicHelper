@@ -145,43 +145,6 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        requireActivity().addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                // Inflate the menu here
-                menuInflater.inflate(R.menu.options_menu, menu);
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                // Handle the menu item selection here
-                switch (menuItem.getItemId()) {
-                    case R.id.menu_newGame:
-
-                        // Show the confirmation dialog before starting a new game
-                        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-                            switch (which){
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    // Yes button clicked, trigger the reset process in the ViewModel
-                                    mCivicViewModel.requestNewGame();
-                                    // The UI update will be handled by the resetEvent observer
-                                    break;
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    // No button clicked
-                                    break;
-                            }
-                        };
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext()); // Use requireContext()
-                        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                                .setNegativeButton("No", dialogClickListener).show();
-                        return true;
-                    default:
-                        return NavigationUI.onNavDestinationSelected(menuItem, Navigation.findNavController(requireView()));
-                }
-            }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
-
         mCivicViewModel.getNewGameResetCompletedEvent().observe(getViewLifecycleOwner(), newGameEvent -> {
             Boolean resetTriggered = newGameEvent.getContentIfNotHandled();
             if (resetTriggered != null && resetTriggered) {

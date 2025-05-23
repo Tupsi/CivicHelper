@@ -1,5 +1,6 @@
 package org.tesira.civic;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -11,10 +12,14 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import android.view.MenuItem;
+
+import com.google.android.material.navigation.NavigationView;
 
 import org.tesira.civic.databinding.ActivityMainBinding;
 import org.tesira.civic.db.CivicViewModel;
@@ -51,7 +56,48 @@ public class MainActivity extends AppCompatActivity{
                     .build();
 
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-            NavigationUI.setupWithNavController(binding.navView, navController);
+            //NavigationUI.setupWithNavController(binding.navView, navController);
+            binding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    int id = menuItem.getItemId();
+
+                    if (id == R.id.menu_newGame) {
+                        if (drawerLayout != null) {
+                            drawerLayout.closeDrawer(binding.navView);
+                        }
+                        // Show the confirmation dialog before starting a new game
+                        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    // Yes button clicked, trigger the reset process in the ViewModel
+                                    mCivicViewModel.requestNewGame();
+                                    // The UI update will be handled by the resetEvent observer
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    // No button clicked
+                                    break;
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+
+                        return true; // Event als behandelt markieren
+                    } else {
+                        // Für alle anderen Menü-Items, die Standard-Navigation von NavigationUI verwenden
+                        boolean handled = NavigationUI.onNavDestinationSelected(menuItem, navController);
+                        if (handled) {
+                            if (drawerLayout != null) {
+                                drawerLayout.closeDrawer(binding.navView);
+                            }
+                        }
+                        return handled;
+                    }
+                }
+            });
+
         } else {
             Log.e("MainActivity", "NavHostFragment nicht gefunden!");
         }
@@ -78,6 +124,7 @@ public class MainActivity extends AppCompatActivity{
                         if (drawerLayout != null && drawerLayout.isDrawerOpen(binding.navView)) {
                             drawerLayout.closeDrawer(binding.navView);
                         }
+                        navController.navigate(R.id.homeFragment);
                     }
                 }
             }
