@@ -25,6 +25,11 @@
         android:icon="@android:drawable/ic_menu_help"
         android:title="@string/item_tips" />
     <item
+        android:id="@+id/menu_newGame"
+        android:icon="@drawable/rounded_fiber_new_24"
+        android:title="@string/new_game"/>
+
+    <item
         android:id="@+id/aboutFragment"
         android:icon="@android:drawable/ic_dialog_info"
         android:title="@string/item_about" />

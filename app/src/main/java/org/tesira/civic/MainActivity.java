@@ -53,15 +53,17 @@ public class MainActivity extends AppCompatActivity{
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
             NavigationUI.setupWithNavController(binding.navView, navController);
         } else {
-            // Handle den Fall, dass der navHostFragment nicht gefunden wurde (sollte nicht passieren, wenn die ID korrekt ist)
             Log.e("MainActivity", "NavHostFragment nicht gefunden!");
-            // Ggf. Fehler anzeigen oder App beenden
         }
 //        NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
 
         Configuration configuration = this.getResources().getConfiguration();
         int screenWidthDp = configuration.screenWidthDp; //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
+        Log.d("ScreenDetails", "screenWidthDp: " + screenWidthDp);
+        mCivicViewModel.setScreenWidthDp(screenWidthDp);
+
         int smallestScreenWidthDp = configuration.smallestScreenWidthDp; //The smallest screen size an application will see in normal operation, corresponding to smallest screen width resource qualifier.
+        Log.d("ScreenDetails", "smallestScreenWidthDp: " + smallestScreenWidthDp);
         mCivicViewModel.setScreenWidthDp(screenWidthDp);
 
         mCivicViewModel.getNewGameStartedEvent().observe(this, new Observer<Event<Boolean>>() {
