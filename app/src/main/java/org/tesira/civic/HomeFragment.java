@@ -1,31 +1,24 @@
 package org.tesira.civic;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import android.util.Log;
+
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -114,7 +107,7 @@ public class HomeFragment extends Fragment {
         binding.bonusYellow.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
 
         // shortcut to advances/buy fragment
-        binding.tvSpecials.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.advancesFragment));
+        binding.tvSpecials.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.buyingFragment));
 
         mCivicViewModel.getTotalVp().observe(getViewLifecycleOwner(), newTotalVp -> {
             if (newTotalVp != null) { // Null-Check, falls LiveData initial noch keinen Wert hat

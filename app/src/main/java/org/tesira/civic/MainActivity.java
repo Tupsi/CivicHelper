@@ -22,9 +22,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import android.view.MenuItem;
-
-import com.google.android.material.navigation.NavigationView;
 
 import org.tesira.civic.databinding.ActivityMainBinding;
 import org.tesira.civic.db.CivicViewModel;
@@ -50,17 +47,8 @@ public class MainActivity extends AppCompatActivity{
 
         ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, windowInsets) -> {
             Insets systemBarsInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            Log.d("ToolbarInsets", "Toolbar Padding - Left: " + v.getPaddingLeft() +
-                    ", Top (before): " + v.getPaddingTop() + // Padding vor deiner Änderung
-                    ", Right: " + v.getPaddingRight() +
-                    ", Bottom: " + v.getPaddingBottom());
-            Log.d("ToolbarInsets", "systemBarsInsets.top: " + systemBarsInsets.top);
-            Log.d("ToolbarInsets", "Toolbar Height (before padding change): " + v.getHeight());
-
             v.setPadding(v.getPaddingLeft(), systemBarsInsets.top, v.getPaddingRight(), v.getPaddingBottom());
             ViewGroup.LayoutParams params = v.getLayoutParams();
-            Log.d("ToolbarInsets", "Toolbar LayoutParams Height: " + params.height);
-
             return WindowInsetsCompat.CONSUMED;
         });
 
@@ -75,50 +63,45 @@ public class MainActivity extends AppCompatActivity{
             drawerLayout = binding.drawerLayout;
 
             appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.homeFragment, R.id.advancesFragment, R.id.purchasesFragment, R.id.tipsFragment)
+                    R.id.homeFragment, R.id.buyingFragment, R.id.purchasesFragment, R.id.tipsFragment)
                     .setOpenableLayout(drawerLayout)
                     .build();
 
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-            //NavigationUI.setupWithNavController(binding.navView, navController);
-            binding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(MenuItem menuItem) {
-                    int id = menuItem.getItemId();
+            binding.navView.setNavigationItemSelectedListener(menuItem -> {
+                int id = menuItem.getItemId();
+                if (id == R.id.menu_newGame) {
+                    if (drawerLayout != null) {
+                        drawerLayout.closeDrawer(binding.navView);
+                    }
+                    // Show the confirmation dialog before starting a new game
+                    DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                // Yes button clicked, trigger the reset process in the ViewModel
+                                mCivicViewModel.requestNewGame();
+                                // The UI update will be handled by the resetEvent observer
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                // No button clicked
+                                break;
+                        }
+                    };
 
-                    if (id == R.id.menu_newGame) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+
+                    return true;
+                } else {
+                    // Für alle anderen Menü-Items, die Standard-Navigation von NavigationUI verwenden
+                    boolean handled = NavigationUI.onNavDestinationSelected(menuItem, navController);
+                    if (handled) {
                         if (drawerLayout != null) {
                             drawerLayout.closeDrawer(binding.navView);
                         }
-                        // Show the confirmation dialog before starting a new game
-                        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-                            switch (which){
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    // Yes button clicked, trigger the reset process in the ViewModel
-                                    mCivicViewModel.requestNewGame();
-                                    // The UI update will be handled by the resetEvent observer
-                                    break;
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    // No button clicked
-                                    break;
-                            }
-                        };
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                                .setNegativeButton("No", dialogClickListener).show();
-
-                        return true; // Event als behandelt markieren
-                    } else {
-                        // Für alle anderen Menü-Items, die Standard-Navigation von NavigationUI verwenden
-                        boolean handled = NavigationUI.onNavDestinationSelected(menuItem, navController);
-                        if (handled) {
-                            if (drawerLayout != null) {
-                                drawerLayout.closeDrawer(binding.navView);
-                            }
-                        }
-                        return handled;
                     }
+                    return handled;
                 }
             });
 
@@ -159,7 +142,6 @@ public class MainActivity extends AppCompatActivity{
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
-//        return NavigationUI.navigateUp(navController, drawerLayout);
     }
 
     public void onPause() {
