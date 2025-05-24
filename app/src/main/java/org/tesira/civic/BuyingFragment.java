@@ -137,13 +137,20 @@ public class BuyingFragment extends Fragment {
         });
 
         mCivicViewModel.getCurrentSortingOrder().observe(getViewLifecycleOwner(), order -> {
-            // if sorting order got changed in prefs we need to change the button text
-            int sortingIndex;
-            sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(order);
-            String label = String.valueOf(sortingOptionsNames[sortingIndex].charAt(0));
-            label = String.valueOf(label.charAt(0));
-            binding.btnSort.setText(label);
+            if (order != null) {
+                updateSortButtonText(order); // Diese Methode setzt den Button-Text
+            }
         });
+
+        String initialOrder = mCivicViewModel.getCurrentSortingOrder().getValue();
+        if (initialOrder != null) {
+            updateSortButtonText(initialOrder);
+        } else {
+            // Fallback, wenn initial noch nichts gesetzt ist, z.B. erster Start
+            // Hole den Standardwert aus den SharedPreferences oder definiere einen festen Startwert
+            String defaultSortOrder = prefs.getString("sort", sortingOptionsValues[0]); // Beispiel: aus Prefs
+            updateSortButtonText(defaultSortOrder);
+        }
 
         if (savedInstanceState != null) {
             savedSelectionState = savedInstanceState;
@@ -179,20 +186,16 @@ public class BuyingFragment extends Fragment {
         binding.btnClear.setOnClickListener(v -> {
             if (tracker != null) {
                 tracker.clearSelection();
-                if (mCivicViewModel.librarySelected){
-                    mCivicViewModel.librarySelected = false;
-                    mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - 40);
+                if (mCivicViewModel.getTreasure().getValue() != null) {
+                    if (mCivicViewModel.librarySelected) {
+                        mCivicViewModel.librarySelected = false;
+                        mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - 40);
+                    }
                 }
             }
         });
 
         // sort button
-        int sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
-        String label = String.valueOf(sortingOptionsNames[sortingIndex].charAt(0));
-        if (mCivicViewModel.getScreenWidthDp() <= 400) {
-            label = String.valueOf(label.charAt(0));
-        }
-        binding.btnSort.setText(label);
         binding.btnSort.setOnClickListener(this::changeSorting);
         return rootView;
     }
@@ -292,6 +295,7 @@ public class BuyingFragment extends Fragment {
                         break;
                     }
                 }
+                Log.w("BuyingFragment", "Library selected: " + libraryIsSelected);
                 mCivicViewModel.librarySelected = libraryIsSelected;
             }
         });
@@ -390,10 +394,9 @@ public class BuyingFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        tracker.onSaveInstanceState(savedInstanceState);
-        // save stuff
-        int money = parseInt(mTreasureInput.getText().toString());
-        savedInstanceState.putInt(TREASURE_BOX, money);
+        if (tracker != null) {
+            tracker.onSaveInstanceState(savedInstanceState);
+        }
     }
 
     public void onStart() {
@@ -449,19 +452,41 @@ public class BuyingFragment extends Fragment {
      * through them on each new entry.
      * @param v View
      */
-    private void changeSorting(View v){
-        String label;
-        String sortingOrder = mCivicViewModel.getCurrentSortingOrder().getValue();
-        int sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(sortingOrder);
-        Log.d("BuyingFragment", "sortingIndex: " + sortingIndex + " sorting oder :" + sortingOrder);
-        if (sortingIndex == sortingOptionsValues.length - 1){
-            sortingOrder = sortingOptionsValues[0];
-            label = String.valueOf(sortingOptionsNames[0].charAt(0));
-        } else {
-            sortingOrder = sortingOptionsValues[sortingIndex + 1];
-            label = String.valueOf(sortingOptionsNames[sortingIndex + 1].charAt(0));
+    private void changeSorting(View v) {
+        String currentSortingOrderValue = mCivicViewModel.getCurrentSortingOrder().getValue();
+        if (currentSortingOrderValue == null) {
+            // Fallback, falls der Wert aus dem ViewModel noch nicht verfügbar ist
+            currentSortingOrderValue = sortingOptionsValues[0];
         }
-        binding.btnSort.setText(label);
-        mCivicViewModel.setSortingOrder(sortingOrder);
+
+        int currentSortingIndex = Arrays.asList(sortingOptionsValues).indexOf(currentSortingOrderValue);
+        if (currentSortingIndex == -1) {
+            currentSortingIndex = 0;
+        }
+
+        int nextSortingIndex;
+        if (currentSortingIndex == sortingOptionsValues.length - 1) {
+            nextSortingIndex = 0;
+        } else {
+            nextSortingIndex = currentSortingIndex + 1;
+        }
+
+        String nextSortingOrderValue = sortingOptionsValues[nextSortingIndex];
+        mCivicViewModel.setSortingOrder(nextSortingOrderValue);
     }
+
+    private void updateSortButtonText(String currentOrderValue) {
+        int sortingIndex = Arrays.asList(sortingOptionsValues).indexOf(currentOrderValue);
+        if (sortingIndex == -1) {
+            sortingIndex = 0;
+        }
+        String labelToShow = sortingOptionsNames[sortingIndex];
+        // falls nicht genug Platz
+        //   if (mCivicViewModel.getScreenWidthDp() <= 400) {
+        //      labelToShow = String.valueOf(label.charAt(0));
+        //   }
+
+        binding.btnSort.setText(labelToShow);
+    }
+
 }

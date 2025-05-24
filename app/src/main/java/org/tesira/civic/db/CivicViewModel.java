@@ -120,9 +120,10 @@ public class CivicViewModel extends AndroidViewModel {
         sharedPrefs = mApplication.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
         cardsVpFromDao = mRepository.getCardsVp();
         setupTotalVpMediator();
+        // get stuff from sharedPrefs and initialize ViewModel Variables
+        loadData();
         allAdvancesNotBought = Transformations.switchMap(currentSortingOrder,
                 order -> mRepository.getAllAdvancesNotBoughtLiveData(order));
-        loadData();
         setupCombinedSpecialsLiveData();
         setupBuyableCardsObserver();
     }
