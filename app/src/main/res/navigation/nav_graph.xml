@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_advancesFragment"
-            app:destination="@id/advancesFragment"
+            app:destination="@id/buyingFragment"
             app:popUpTo="@id/homeFragment" />
         <action
             android:id="@+id/action_homeFragment_to_settingsFragment"
@@ -26,14 +26,14 @@
             app:destination="@id/tipsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/advancesFragment"
+        android:id="@+id/buyingFragment"
         android:name="org.tesira.civic.BuyingFragment"
         android:label="@string/item_advances"
         tools:layout="@layout/fragment_buying" >
         <action
             android:id="@+id/action_advancesFragment_to_settingsFragment"
             app:destination="@id/settingsFragment"
-            app:popUpTo="@id/advancesFragment" />
+            app:popUpTo="@id/buyingFragment" />
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"

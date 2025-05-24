@@ -7,7 +7,7 @@
         android:title="@string/menu_item_home" />
 
     <item
-        android:id="@+id/advancesFragment"
+        android:id="@+id/buyingFragment"
         android:icon="@drawable/ic_baseline_add_shopping_cart_24"
         android:title="@string/item_advances" />
     <item
