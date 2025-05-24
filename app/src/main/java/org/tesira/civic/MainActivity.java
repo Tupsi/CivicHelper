@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity{
             drawerLayout = binding.drawerLayout;
 
             appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.homeFragment, R.id.advancesFragment, R.id.purchasesFragment, R.id.settingsFragment, R.id.tipsFragment, R.id.aboutFragment)
+                    R.id.homeFragment, R.id.advancesFragment, R.id.purchasesFragment, R.id.tipsFragment)
                     .setOpenableLayout(drawerLayout)
                     .build();
 

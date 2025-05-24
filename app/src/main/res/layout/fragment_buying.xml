@@ -1,92 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout"
+    android:id="@+id/constraintLayoutRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="3dp">
 
-
-    <EditText
-        android:id="@+id/treasure"
-        android:layout_width="50dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:ems="3"
-        android:hint="@string/money"
-        android:inputType="phone"
-        android:minHeight="48dp"
-        android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/moneyleft"
-        android:layout_width="wrap_content"
+    <!-- Horizontales LinearLayout für die obere Steuerung -->
+    <!-- Füllt die Breite des ConstraintLayout -->
+    <LinearLayout
+        android:id="@+id/top_controls_layout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="000"
-        android:textSize="18sp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/list_advances"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp">
+
+        <EditText
+            android:id="@+id/treasure"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:ems="3"
+            android:hint="@string/money"
+            android:inputType="phone"
+            android:textSize="14sp"
+            android:minHeight="48dp"
+            android:gravity="end|center_vertical"
+            android:selectAllOnFocus="true"
+            android:importantForAutofill="no" />
+
+        <Button
+            android:id="@+id/btnClear"
+            android:text="Clear"
+            style="@style/BuyButton"/>
+
+        <Button
+            android:id="@+id/btnBuy"
+            android:text="Buy"
+            style="@style/BuyButton"/>
+
+        <Button
+            android:id="@+id/btnSort"
+            android:text="Family"
+            style="@style/BuyButton"/>
+
+        <TextView
+            android:id="@+id/moneyleft"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:text="000"
+            android:textSize="14sp"
+            android:gravity="end|center_vertical"
+            android:layout_marginStart="8dp"
+            android:minHeight="48dp"/>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_advances"
         android:name="org.tesira.civic.AdvancesFragment"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/treasure"
+        app:layout_constraintTop_toBottomOf="@+id/top_controls_layout"
         tools:context="org.tesira.civic.BuyingFragment"
-        tools:listitem="@layout/item_row_advances" />
-
-    <Button
-        android:id="@+id/btnBuy"
-        android:layout_width="75dp"
-        android:layout_height="48dp"
+        tools:listitem="@layout/item_row_advances"
         android:layout_marginStart="8dp"
-        android:text="Buy"
-        app:layout_constraintBottom_toBottomOf="@+id/btnClear"
-        app:layout_constraintStart_toEndOf="@+id/btnClear"
-        app:layout_constraintTop_toTopOf="@+id/btnClear" />
-
-    <Button
-        android:id="@+id/btnClear"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:text="Clear"
-        app:layout_constraintBottom_toBottomOf="@+id/treasure"
-        app:layout_constraintStart_toEndOf="@+id/treasure"
-        app:layout_constraintTop_toTopOf="@+id/treasure" />
-
-    <Button
-        android:id="@+id/btnSort"
-        android:layout_width="50dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:text="S"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/btnBuy"
-        app:layout_constraintStart_toEndOf="@+id/btnBuy"
-        app:layout_constraintTop_toTopOf="@+id/btnBuy" />
-
+        android:layout_marginEnd="8dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
-
