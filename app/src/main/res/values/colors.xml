@@ -33,4 +33,15 @@
     <color name="drawer_header">#f6eefd</color>
     <color name="bar_text_color">#447788</color>
 
+    <color name="toolbar_background">#EEEEEE</color> <!-- Hell -->
+    <color name="toolbar_elements">#111111</color>   <!-- Dunkel -->
+
+    <color name="md_theme_surface">#FFFFFF</color>
+    <color name="md_theme_onSurface">#000000</color>
+
+    <color name="md_theme_primary">#6200EE</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_secondary">#03DAC5</color>
+    <color name="md_theme_onSecondary">#000000</color>
+
 </resources>
