@@ -13,8 +13,8 @@ android {
         applicationId = "org.tesira.civic"
         minSdk = 28
         targetSdk = 35
-        versionCode = 10
-        versionName = "1.2.6"
+        versionCode = 11
+        versionName = "1.2.7"
     }
 
     buildTypes {
@@ -82,4 +82,5 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
 
     implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.activity:activity-ktx:1.10.1")
 }
