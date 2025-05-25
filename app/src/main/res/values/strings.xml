@@ -21,12 +21,15 @@
     <string name="layout_title">Layout</string>
     <string name="columns_title">Number of columns</string>
     <!-- Menu Names -->
-    <string name="item_preferences">Preferences</string>
-    <string name="item_about">About</string>
-    <string name="item_advances">Buy Advances</string>
+    <string name="menu_item_settings">Settings</string>
+    <string name="menu_item_buying">Buy Advances</string>
     <string name="item_search">Search</string>
+    <string name="menu_new_game">New Game</string>
+    <string name="menu_item_tips">Tips</string>
+    <string name="menu_item_about">About</string>
+    <string name="menu_item_home">Home</string>
 
-    <!-- Buying Advances Fragment-->
+    <!-- Buying Fragment-->
     <string name="remaining_treasure">remaining :</string>
 
     <!-- Credits Dialog -->
@@ -41,29 +44,25 @@
     <string name="yellow">Yellow</string>
     <string name="green">Green</string>
     <string name="remaining_credits">Remaining Credits : </string>
+
     <!-- Anatomy Dialog -->
     <string name="dialog_anatomy">You bought the Anatomy Advance, pick the extra science card.</string>
     <string name="element_text">special ability</string>
     <string name="calamitytext">Calamitytext</string>
     <string name="value">value</string>
-    <string name="item_purchases">Purchases</string>
+    <string name="menu_item_purchases">Purchases</string>
     <string name="pref_ast">AST Version</string>
     <string name="prefs_chooser_title">What do you want?</string>
-    <string name="menu_item_tips">Tips</string>
-    <string name="menu_item_about">About</string>
-    <string name="menu_item_home">Home</string>
-    <string name="item_tips">Tips</string>
     <string name="spinner_select_civilization">Select Civilization</string>
     <string name="tv_vp">VP: %1$d</string>
     <string name="tv_ast">A.S.T. order: %1$s</string>
     <string name="reset_tv_civic">set civic in prefs!</string>
     <string name="no_war_game">\n\n\n
-        General Hints:\n\
-        This is not a wargame. Don\'t attack unless you are sure you gain something from the attack.\n\
+        General Hints:\n\n
+        This is not a wargame. Don\'t attack unless you are sure you gain something from the attack.\n\n
         Try only to turn in complete sets of commodities.\n\n
         Advancing on the AST is very important. Check out the goals before purchasing advances.\n\n
         Don\'t be too afraid of calamities! If you can complete a set, it\'s usually worth to do so even if you are reasonably sure you will get a calamity.\n\n
     </string>
-    <string name="new_game">New Game</string>
 
 </resources>

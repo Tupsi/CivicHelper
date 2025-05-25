@@ -2,56 +2,56 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation"
+    android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/homeFragment"
         android:name="org.tesira.civic.HomeFragment"
-        android:label="@string/app_name"
-        tools:layout="@layout/fragment_home" >
+        android:label="@string/menu_item_home"
+        tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_homeFragment_to_advancesFragment"
-            app:destination="@id/buyingFragment"
-            app:popUpTo="@id/homeFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment"
-            app:popUpTo="@id/homeFragment" />
+            android:id="@+id/action_homeFragment_to_buyingFragment"
+            app:destination="@id/buyingFragment" />
         <action
             android:id="@+id/action_homeFragment_to_purchasesFragment"
             app:destination="@id/purchasesFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_tipsFragment2"
+            android:id="@+id/action_homeFragment_to_tipsFragment"
             app:destination="@id/tipsFragment" />
+    <!-- Wenn du von Home auch zu Settings/About/Tips direkt navigieren könntest, hier Aktionen hinzufügen -->
     </fragment>
+
     <fragment
         android:id="@+id/buyingFragment"
         android:name="org.tesira.civic.BuyingFragment"
-        android:label="@string/item_advances"
-        tools:layout="@layout/fragment_buying" >
-        <action
-            android:id="@+id/action_advancesFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment"
-            app:popUpTo="@id/buyingFragment" />
+        android:label="@string/menu_item_buying"
+        tools:layout="@layout/fragment_buying">
+        <!-- Keine direkten Aktionen von hier zu anderen Fragmenten laut deiner Beschreibung -->
+        <!-- Navigation zu anderen Zielen erfolgt über den Drawer -->
     </fragment>
-    <fragment
-        android:id="@+id/aboutFragment"
-        android:name="org.tesira.civic.AboutFragment"
-        android:label="@string/item_about"
-        tools:layout="@layout/fragment_about" />
-    <fragment
-        android:id="@+id/tipsFragment"
-        android:name="org.tesira.civic.TipsFragment"
-        android:label="@string/item_tips"
-        tools:layout="@layout/fragment_about" />
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="org.tesira.civic.SettingsFragment"
-        android:label="@string/item_preferences" />
+
     <fragment
         android:id="@+id/purchasesFragment"
         android:name="org.tesira.civic.PurchasesFragment"
-        android:label="Purchases"
+        android:label="@string/menu_item_purchases"
         tools:layout="@layout/fragment_purchases" />
+
+    <fragment
+        android:id="@+id/tipsFragment"
+        android:name="org.tesira.civic.TipsFragment"
+        android:label="@string/menu_item_tips"
+        tools:layout="@layout/fragment_tips" />
+
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="org.tesira.civic.AboutFragment"
+        android:label="@string/menu_item_about"
+        tools:layout="@layout/fragment_about" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="org.tesira.civic.SettingsFragment"
+        android:label="@string/menu_item_settings" />
+
 </navigation>
