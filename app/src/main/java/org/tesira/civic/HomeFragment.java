@@ -82,7 +82,7 @@ public class HomeFragment extends Fragment {
             // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
             v.setPadding(
                     initialPaddingLeft + systemBarInsets.left,
-                    initialPaddingTop + systemBarInsets.top,
+                    initialPaddingTop,
                     initialPaddingRight + systemBarInsets.right,
                     initialPaddingBottom + systemBarInsets.bottom
             );

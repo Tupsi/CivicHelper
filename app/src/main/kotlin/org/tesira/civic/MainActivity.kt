@@ -1,6 +1,7 @@
 package org.tesira.civic
 
 import android.content.DialogInterface
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -49,19 +50,31 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         val initialPaddingLeft = toolbar.paddingLeft
-        val initialPaddingTop = toolbar.paddingTop
+        val initialPaddingTopFromXml = toolbar.paddingTop // Hole das ursprüngliche Top-Padding aus der XML
         val initialPaddingRight = toolbar.paddingRight
         val initialPaddingBottom = toolbar.paddingBottom
+
+        Log.d("ToolbarInsets", "Initial XML paddingTop: $initialPaddingTopFromXml")
+
         ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view, windowInsets ->
             val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            // Wende Insets als Padding an, ausgehend von den GESPEICHERTEN ursprünglichen Werten
+            Log.d("ToolbarInsets", "systemBars.top: ${systemBars.top}")
+            Log.d("ToolbarInsets", "Current view.paddingTop before setPadding: ${view.paddingTop}")
+
+            val newPaddingTop = systemBars.top // Standardmäßig nur die Insets für oben
+            // Wenn du das ursprüngliche XML-Padding *zusätzlich* zu den Insets haben willst (selten für Toolbar oben):
+            // val newPaddingTop = initialPaddingTopFromXml + systemBars.top
+
+            Log.d("ToolbarInsets", "Calculated newPaddingTop: $newPaddingTop")
+
             view.setPadding(
-                initialPaddingLeft + systemBars.left,   // Ursprüngliches Padding + linke Insets
-                initialPaddingTop + systemBars.top,    // Ursprüngliches Padding + obere Insets (für Toolbar oft besser: nur systemBars.top)
-                initialPaddingRight + systemBars.right, // Ursprüngliches Padding + rechte Insets
-                initialPaddingBottom + systemBars.bottom  // Ursprüngliches Padding + untere Insets (für Toolbar oft besser: nur initialPaddingBottom)
+                initialPaddingLeft + systemBars.left,
+                newPaddingTop,
+                initialPaddingRight + systemBars.right,
+                initialPaddingBottom
             )
+            Log.d("ToolbarInsets", "Final view.paddingTop after setPadding: ${view.paddingTop}")
             windowInsets
         }
         ViewCompat.requestApplyInsets(toolbar)
