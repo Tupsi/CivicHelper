@@ -10,6 +10,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
@@ -115,7 +118,36 @@ public class BuyingFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentBuyingBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
-        mRecyclerView = rootView.findViewById(R.id.list_advances);
+        mRecyclerView = binding.listAdvances;
+
+        // Speichere die ursprünglichen Padding-Werte der View, auf die die Insets angewendet werden
+        final int initialPaddingLeft = rootView.getPaddingLeft();
+        final int initialPaddingTop = rootView.getPaddingTop();
+        final int initialPaddingRight = rootView.getPaddingRight();
+        final int initialPaddingBottom = rootView.getPaddingBottom();
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+            Insets systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            // Insets für die Tastatur, falls du auch darauf reagieren möchtest (hier nicht primär im Fokus)
+            // Insets imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
+
+            // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
+            v.setPadding(
+                    initialPaddingLeft + systemBarInsets.left,
+                    initialPaddingTop + systemBarInsets.top,
+                    initialPaddingRight + systemBarInsets.right,
+                    initialPaddingBottom + systemBarInsets.bottom
+            );
+
+            // Es ist wichtig, die WindowInsets (ggf. modifiziert) zurückzugeben,
+            // damit Kind-Views sie auch konsumieren können.
+            // Wenn du hier nichts an den windowInsets selbst änderst, gib sie einfach weiter.
+            return windowInsets;
+        });
+
+        ViewCompat.requestApplyInsets(rootView);
+
         int actualColumnCount = calculateColumnCount(rootView.getContext());
         Log.w("BuyingFragment", "Effective column count: " + actualColumnCount);
         Log.w("BuyingFragment", "User preference for columns: " + mColumnCountPreference);

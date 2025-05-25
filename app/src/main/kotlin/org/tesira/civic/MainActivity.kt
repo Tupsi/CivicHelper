@@ -48,11 +48,23 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = binding!!.toolbar
         setSupportActionBar(toolbar)
 
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
-            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(v.paddingLeft, systemBarsInsets.top, v.paddingRight, v.paddingBottom)
-            WindowInsetsCompat.CONSUMED
+        val initialPaddingLeft = toolbar.paddingLeft
+        val initialPaddingTop = toolbar.paddingTop
+        val initialPaddingRight = toolbar.paddingRight
+        val initialPaddingBottom = toolbar.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view, windowInsets ->
+            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Wende Insets als Padding an, ausgehend von den GESPEICHERTEN ursprünglichen Werten
+            view.setPadding(
+                initialPaddingLeft + systemBars.left,   // Ursprüngliches Padding + linke Insets
+                initialPaddingTop + systemBars.top,    // Ursprüngliches Padding + obere Insets (für Toolbar oft besser: nur systemBars.top)
+                initialPaddingRight + systemBars.right, // Ursprüngliches Padding + rechte Insets
+                initialPaddingBottom + systemBars.bottom  // Ursprüngliches Padding + untere Insets (für Toolbar oft besser: nur initialPaddingBottom)
+            )
+            windowInsets
         }
+        ViewCompat.requestApplyInsets(toolbar)
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.myNavHostFragment) as? NavHostFragment

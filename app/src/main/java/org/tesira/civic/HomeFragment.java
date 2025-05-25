@@ -6,6 +6,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.ContextMenu;
@@ -63,6 +66,32 @@ public class HomeFragment extends Fragment {
         prefsDefault = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
         View rootView = binding.getRoot();
+
+        // Speichere die ursprünglichen Padding-Werte der View, auf die die Insets angewendet werden
+        final int initialPaddingLeft = rootView.getPaddingLeft();
+        final int initialPaddingTop = rootView.getPaddingTop();
+        final int initialPaddingRight = rootView.getPaddingRight();
+        final int initialPaddingBottom = rootView.getPaddingBottom();
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+            Insets systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            // Insets für die Tastatur, falls du auch darauf reagieren möchtest (hier nicht primär im Fokus)
+            // Insets imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
+
+            // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
+            v.setPadding(
+                    initialPaddingLeft + systemBarInsets.left,
+                    initialPaddingTop + systemBarInsets.top,
+                    initialPaddingRight + systemBarInsets.right,
+                    initialPaddingBottom + systemBarInsets.bottom
+            );
+
+            // Es ist wichtig, die WindowInsets (ggf. modifiziert) zurückzugeben,
+            // damit Kind-Views sie auch konsumieren können.
+            // Wenn du hier nichts an den windowInsets selbst änderst, gib sie einfach weiter.
+            return windowInsets;
+        });
 
         // RecylerView Calamity Effects
         RecyclerView mRecyclerView = rootView.findViewById(R.id.listCalamity);
