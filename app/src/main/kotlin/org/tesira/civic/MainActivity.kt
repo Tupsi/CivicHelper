@@ -95,133 +95,104 @@ class MainActivity : AppCompatActivity() {
                 // Oder einen Fehler signalisieren.
             }
 
-            binding?.navView?.setNavigationItemSelectedListener { menuItem: MenuItem ->
+            binding?.navView?.setNavigationItemSelectedListener { menuItem ->
                 val id = menuItem.itemId
-                // ----- Logging -----
-                Log.d(
-                    "NavDrawer",
-                    "Item selected: " + menuItem.title + ", Item ID: " + id + " (Hex: " + Integer.toHexString(
-                        id
-                    ) + ")"
-                )
+                Log.d("NavDrawer_Kotlin", "Item selected: ${menuItem.title}, ID: $id (Hex: ${Integer.toHexString(id)})")
 
-                val currentDestination = navController!!.currentDestination
+                val currentDestination = navController.currentDestination // navController sollte hier non-null sein
                 val currentDestinationId = currentDestination?.id ?: 0
-                if (id == R.id.menu_newGame) {
-                    if (drawerLayout != null && drawerLayout!!.isDrawerOpen(binding!!.navView)) {
-                        drawerLayout!!.closeDrawer(binding!!.navView)
+
+                // Der when-Ausdruck ersetzt die if-else if-Kette.
+                // Der Wert des ausgewählten when-Zweigs wird zum Rückgabewert des Lambdas.
+                when (id) {
+                    R.id.menu_newGame -> {
+                        if (drawerLayout?.isDrawerOpen(binding!!.navView) == true) { // Sicherer Zugriff auf drawerLayout
+                            drawerLayout?.closeDrawer(binding!!.navView)
+                        }
+                        val dialogClickListener =
+                            DialogInterface.OnClickListener { dialog: DialogInterface?, which: Int ->
+                                when (which) {
+                                    DialogInterface.BUTTON_POSITIVE -> mCivicViewModel.requestNewGame()
+                                    DialogInterface.BUTTON_NEGATIVE -> { /* No button clicked - tu nichts */ }
+                                }
+                            }
+                        AlertDialog.Builder(this@MainActivity) // Explizit this@MainActivity für den Kontext
+                            .setMessage("Are you sure you want to start a new game? All progress will be lost.")
+                            .setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener)
+                            .show()
+                        true // Rückgabewert für diesen Zweig
                     }
-                    val dialogClickListener =
-                        DialogInterface.OnClickListener { dialog: DialogInterface?, which: Int ->
-                            when (which) {
-                                DialogInterface.BUTTON_POSITIVE -> mCivicViewModel!!.requestNewGame() // ViewModel kümmert sich um Reset und Navigation via Observer
-                                DialogInterface.BUTTON_NEGATIVE -> {}
+
+                    R.id.homeFragment -> {
+                        Log.i("NavDrawer_Home_Kotlin", "Manually navigating to HomeFragment.")
+                        val navOptions = NavOptions.Builder()
+                            .setPopUpTo(navController.graph.startDestinationId, false, true) // navController.graph statt getGraph()
+                            .setLaunchSingleTop(true)
+                            .build()
+                        try {
+                            navController.navigate(R.id.homeFragment, null, navOptions)
+                        } catch (e: IllegalArgumentException) {
+                            Log.w("NavDrawer_Home_Kotlin", "Already at Home or cannot pop to Home: ${e.message}")
+                            if (navController.currentDestination == null || navController.currentDestination?.id != R.id.homeFragment) {
+                                navController.navigate(R.id.homeFragment) // Fallback
                             }
                         }
-                    val builder =
-                        AlertDialog.Builder(this@MainActivity)
-                    builder.setMessage("Are you sure you want to start a new game? All progress will be lost.")
-                        .setPositiveButton("Yes", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show()
-                    return@setNavigationItemSelectedListener true // Wichtig: Du behandelst menu_newGame hier
-                } else if (id == R.id.homeFragment) {
-                    // SPEZIALFALL: Navigation zum HomeFragment.
-                    // Wir wollen immer zum HomeFragment navigieren und den Backstack darüber bereinigen.
-                    Log.i("NavDrawer_Home", "Manually navigating to HomeFragment.")
-
-                    val navOptions = NavOptions.Builder()
-                        .setPopUpTo(navController!!.graph.startDestinationId, false, true)
-                        .setLaunchSingleTop(true)
-                        .build()
-                    try {
-                        navController!!.navigate(R.id.homeFragment, null, navOptions)
-                    } catch (e: IllegalArgumentException) {
-                        Log.w(
-                            "NavDrawer_Home",
-                            "Already at Home or cannot pop to Home: " + e.message
-                        )
-                        if (navController!!.currentDestination == null || navController!!.currentDestination!!.id != R.id.homeFragment) {
-                            navController!!.navigate(R.id.homeFragment) // Fallback
+                        if (drawerLayout?.isDrawerOpen(binding!!.navView) == true) {
+                            drawerLayout?.closeDrawer(binding!!.navView)
+                            Log.d("NavDrawer_Home_Kotlin", "Drawer closed for Home navigation.")
                         }
+                        true // Rückgabewert
                     }
 
-                    if (drawerLayout != null && drawerLayout!!.isDrawerOpen(binding!!.navView)) {
-                        drawerLayout!!.closeDrawer(binding!!.navView)
-                        Log.d("NavDrawer_Home", "Drawer closed for Home navigation.")
-                    }
-                    return@setNavigationItemSelectedListener true // Wichtig: true zurückgeben
-                } else if (currentDestinationId == R.id.buyingFragment &&
-                    (id == R.id.purchasesFragment || id == R.id.tipsFragment || id == R.id.aboutFragment || id == R.id.settingsFragment)
-                ) {
-                    // SPEZIALFALL: Navigation von BuyingFragment zu Purchases, Tips, About oder Settings.
-                    // Wir navigieren manuell, um sicherzustellen, dass BuyingFragment im Backstack bleibt.
-                    Log.i(
-                        "NavDrawer_SpecialCase",
-                        "Manually navigating from BuyingFragment to " + menuItem.title
-                    )
-                    navController!!.navigate(id) // Navigiere zur ID des angeklickten Menü-Items
+                    // Für die kombinierten Fälle brauchen wir eine etwas andere Struktur im when,
+                    // oder wir behandeln sie innerhalb eines 'else'-Zweiges des when(id)
+                    // oder wir prüfen 'id' und 'currentDestinationId' zusammen.
+                    // Hier eine Möglichkeit, es im 'else' zu verschachteln oder als separate Bedingung danach:
 
-                    if (drawerLayout != null && drawerLayout!!.isDrawerOpen(binding!!.navView)) {
-                        drawerLayout!!.closeDrawer(binding!!.navView)
-                        Log.d(
-                            "NavDrawer_SpecialCase",
-                            "Drawer closed for " + menuItem.title + " from BuyingFragment."
-                        )
-                    }
-                    return@setNavigationItemSelectedListener true // Wichtig: true zurückgeben
-                } else {
-                    // Für alle anderen Menü-Items oder wenn nicht im BuyingFragment oder nicht Home,
-                    // die Standard-Navigation von NavigationUI verwenden
-                    val handled = onNavDestinationSelected(menuItem, navController!!)
-                    Log.d(
-                        "NavDrawer",
-                        "NavigationUI.onNavDestinationSelected for " + menuItem.title + " handled: " + handled
-                    )
+                    // Hier würde normalerweise der nächste case für 'id' kommen.
+                    // Da die Bedingung aber auch 'currentDestinationId' beinhaltet,
+                    // passt es nicht direkt in das 'when (id)'
+                    // Wir können es so machen:
+                    else -> { // Dieser else-Zweig behandelt alle anderen IDs
+                        if (currentDestinationId == R.id.buyingFragment &&
+                            (id == R.id.purchasesFragment || id == R.id.tipsFragment || id == R.id.aboutFragment || id == R.id.settingsFragment)) {
+                            // SPEZIALFALL von BuyingFragment
+                            Log.i("NavDrawer_Special_Kotlin", "Manually navigating from BuyingFragment to ${menuItem.title}")
+                            navController.navigate(id)
 
-                    if (handled) {
-                        if (navController!!.currentDestination != null) {
-                            // Verwende deine getLabelOrId Methode, wenn du sie hast, ansonsten menuItem.getTitle() oder die ID
-                            Log.d(
-                                "NavDrawer", "Navigated to destination: " + getLabelOrId(
-                                    navController!!.currentDestination!!
-                                ) + " (ID: " + navController!!.currentDestination!!.id + ")"
-                            )
+                            if (drawerLayout?.isDrawerOpen(binding!!.navView) == true) {
+                                drawerLayout?.closeDrawer(binding!!.navView)
+                                Log.d("NavDrawer_Special_Kotlin", "Drawer closed for ${menuItem.title} from BuyingFragment.")
+                            }
+                            true // Rückgabewert für diesen Spezialfall
                         } else {
-                            Log.d(
-                                "NavDrawer",
-                                "Navigated, but current destination is null."
-                            )
-                        }
-                    } else {
-                        Log.w(
-                            "NavDrawer",
-                            "Item '" + menuItem.title + "' (ID: " + id + ") NOT handled by NavigationUI. Current NavController graph: " + (if (navController!!.graph != null) Integer.toHexString(
-                                navController!!.graph.id
-                            ) else "null")
-                        )
-                    }
+                            // STANDARD NavigationUI Verhalten
+                            val handled = onNavDestinationSelected(menuItem, navController)
+                            Log.d("NavDrawer_Kotlin", "NavigationUI.onNavDestinationSelected for ${menuItem.title} handled: $handled")
 
-                    // Drawer schließen, basierend auf 'handled' für diesen allgemeinen Fall
-                    if (drawerLayout != null && drawerLayout!!.isDrawerOpen(binding!!.navView)) {
-                        if (handled) { // Schließe nur, wenn NavigationUI es gehandhabt hat und es kein Spezialfall oben war
-                            drawerLayout!!.closeDrawer(binding!!.navView)
-                            Log.d(
-                                "NavDrawer",
-                                "Drawer closed for handled item: " + menuItem.title
-                            )
-                        } else {
-                            // Drawer NICHT schließen, wenn das Item nicht von NavigationUI behandelt wurde
-                            // UND es keiner unserer manuellen Fälle war.
-                            // Dieses Verhalten ist konsistent mit dem vorherigen Stand.
-                            Log.w(
-                                "NavDrawer",
-                                "Drawer NOT closed for unhandled item: " + menuItem.title
-                            )
+                            if (handled) {
+                                navController.currentDestination?.let { dest ->
+                                    Log.d("NavDrawer_Kotlin", "Navigated to destination: ${getLabelOrId(dest)} (ID: ${Integer.toHexString(dest.id)})")
+                                } ?: Log.d("NavDrawer_Kotlin", "Navigated, but current destination is null.")
+                            } else {
+                                val graphIdHex = navController.graph?.id?.let { Integer.toHexString(it) } ?: "null"
+                                Log.w("NavDrawer_Kotlin", "Item '${menuItem.title}' (ID: $id) NOT handled by NavigationUI. Current NavController graph: $graphIdHex")
+                            }
+
+                            if (drawerLayout?.isDrawerOpen(binding!!.navView) == true) {
+                                if (handled) {
+                                    drawerLayout?.closeDrawer(binding!!.navView)
+                                    Log.d("NavDrawer_Kotlin", "Drawer closed for handled item: ${menuItem.title}")
+                                } else {
+                                    Log.w("NavDrawer_Kotlin", "Drawer NOT closed for unhandled item: ${menuItem.title}")
+                                }
+                            }
+                            handled // Rückgabewert für den Standardfall
                         }
                     }
-                    return@setNavigationItemSelectedListener handled
                 }
-            }
+            } ?: Log.e("MainActivity_Kotlin", "NavView oder Binding ist null, Listener nicht gesetzt.")
         }
 
         //        NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
