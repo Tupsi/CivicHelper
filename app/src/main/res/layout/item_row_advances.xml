@@ -4,34 +4,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
     android:layout_width="match_parent"
-    android:layout_height="113dp"
+    android:layout_height="100dp"
     android:layout_marginTop="2dp"
     android:layout_marginBottom="2dp"
     android:background="@drawable/item_background">
-
-    <TextView
-        android:id="@+id/familybonus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/price"
-        app:layout_constraintStart_toEndOf="@+id/price"
-        app:layout_constraintTop_toTopOf="@+id/price" />
 
     <TextView
         android:id="@+id/price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="3dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/price_background"
         android:gravity="center"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="235" />
+
+    <TextView
+        android:id="@+id/familybonus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@+id/price"
+        app:layout_constraintEnd_toStartOf="@+id/vp"
+        app:layout_constraintBottom_toBottomOf="@+id/price"
+        app:layout_constraintTop_toTopOf="@+id/price"
+        android:maxLines="3"
+        android:ellipsize="end"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeMaxTextSize="14sp"
+        app:autoSizeStepGranularity="1sp"
+        tools:text="+20 to Cultural Ascendancy" />
+
 
     <TextView
         android:id="@+id/name"
@@ -39,11 +50,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/text_margin"
         android:layout_marginEnd="@dimen/text_margin"
-        android:layout_marginTop="23dp"
-        android:layout_marginBottom="29dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:textAppearance="?attr/textAppearanceListItem"
-        app:layout_constraintBottom_toTopOf="@+id/price"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -55,24 +64,24 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/ic_shield"
         android:gravity="center"
-        android:text="VP"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/price"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/price"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="VP"/>
 
     <ImageView
         android:id="@+id/heart"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/vp"
-        app:layout_constraintEnd_toStartOf="@+id/vp"
-        app:layout_constraintTop_toTopOf="@+id/vp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name"
         app:srcCompat="@drawable/ic_baseline_favorite_24"
-        android:contentDescription="Favorite" /> <!-- contentDescription hinzugefügt -->
+        android:contentDescription="@string/favorite" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
