@@ -3,7 +3,6 @@ package org.tesira.civic
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -14,7 +13,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
@@ -34,11 +32,10 @@ class MainActivity : AppCompatActivity() {
     private val mCivicViewModel: CivicViewModel by viewModels()
 
     private fun getLabelOrId(destination: NavDestination): String {
-        if (destination.label != null && !destination.label.toString().isEmpty()) {
+        if (destination.label != null && destination.label.toString().isNotEmpty()) {
             return destination.label.toString()
         }
-        // Fallback zur Ressourcen-ID als Hex-String, wenn kein Label vorhanden
-        return "ID:0x" + Integer.toHexString(destination.id)
+        return "ID:0x${Integer.toHexString(destination.id)}"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,13 +63,10 @@ class MainActivity : AppCompatActivity() {
             navController = navHostFragment.navController
 
             navController.addOnDestinationChangedListener { controller, destination, arguments ->
-                // Dein Logging Code bleibt hier logisch gleich.
-                // Kotlin String Templates können es etwas lesbarer machen:
                 Log.d("Nav_DEST_CHANGED", "----------------------------------------------------")
-                val destLabelOrId = getLabelOrId(destination) // Annahme: getLabelOrId ist eine Methode in dieser Klasse
+                val destLabelOrId = getLabelOrId(destination)
                 val destIdHex = Integer.toHexString(destination.id)
                 Log.d("Nav_DEST_CHANGED", "Navigated TO: $destLabelOrId (ID: 0x$destIdHex)")
-                // ... restlicher Listener-Code ...
                 Log.d("Nav_DEST_CHANGED", "----------------------------------------------------")
             }
 
@@ -127,7 +121,11 @@ class MainActivity : AppCompatActivity() {
                     R.id.homeFragment -> {
                         Log.i("NavDrawer_Home_Kotlin", "Manually navigating to HomeFragment.")
                         val navOptions = NavOptions.Builder()
-                            .setPopUpTo(navController.graph.startDestinationId, false, true) // navController.graph statt getGraph()
+                            .setPopUpTo(
+                                destinationId = navController.graph.startDestinationId,
+                                inclusive = false,
+                                saveState = true
+                            )
                             .setLaunchSingleTop(true)
                             .build()
                         try {
@@ -176,7 +174,7 @@ class MainActivity : AppCompatActivity() {
                                     Log.d("NavDrawer_Kotlin", "Navigated to destination: ${getLabelOrId(dest)} (ID: ${Integer.toHexString(dest.id)})")
                                 } ?: Log.d("NavDrawer_Kotlin", "Navigated, but current destination is null.")
                             } else {
-                                val graphIdHex = navController.graph?.id?.let { Integer.toHexString(it) } ?: "null"
+                                val graphIdHex = navController.graph.id.let { Integer.toHexString(it) } ?: "null"
                                 Log.w("NavDrawer_Kotlin", "Item '${menuItem.title}' (ID: $id) NOT handled by NavigationUI. Current NavController graph: $graphIdHex")
                             }
 
@@ -195,62 +193,35 @@ class MainActivity : AppCompatActivity() {
             } ?: Log.e("MainActivity_Kotlin", "NavView oder Binding ist null, Listener nicht gesetzt.")
         }
 
-        //        NavigationUI.setupActionBarWithNavController(this,navController,drawerLayout);
         val configuration = this.resources.configuration
-        val screenWidthDp =
-            configuration.screenWidthDp //The current width of the available screen space, in dp units, corresponding to screen width resource qualifier.
+        val screenWidthDp = configuration.screenWidthDp
         Log.d("ScreenDetails", "screenWidthDp: $screenWidthDp")
-        mCivicViewModel!!.screenWidthDp = screenWidthDp
-
-        val smallestScreenWidthDp =
-            configuration.smallestScreenWidthDp //The smallest screen size an application will see in normal operation, corresponding to smallest screen width resource qualifier.
+        mCivicViewModel.screenWidthDp = screenWidthDp
+        val smallestScreenWidthDp = configuration.smallestScreenWidthDp
         Log.d("ScreenDetails", "smallestScreenWidthDp: $smallestScreenWidthDp")
-        mCivicViewModel!!.screenWidthDp = screenWidthDp
+        mCivicViewModel.smallestScreenWidthDp = smallestScreenWidthDp
 
-        mCivicViewModel!!.newGameStartedEvent.observe(this,
-            Observer<Event<Boolean?>?> { resetCompletedEvent -> // Hier den Lambda-Parameter benennen
-                if (resetCompletedEvent != null) {
-                    val resetCompleted = resetCompletedEvent.getContentIfNotHandled()
-
-                    if (resetCompleted != null && resetCompleted) {
-                        // Keep purely Activity-related UI actions here
-                        Toast.makeText(
-                            this@MainActivity,
-                            "Starting a New Game!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        if (drawerLayout != null && drawerLayout!!.isDrawerOpen(binding!!.navView)) {
-                            drawerLayout!!.closeDrawer(binding!!.navView)
-                        }
-                        navController!!.navigate(R.id.homeFragment)
-                    }
+        mCivicViewModel.newGameStartedEvent.observe(this) { event ->
+            event?.getContentIfNotHandled()?.let { resetCompleted ->
+                if (resetCompleted) {
+                    Toast.makeText(this@MainActivity, "Starting a New Game!", Toast.LENGTH_SHORT).show()
+                    drawerLayout?.closeDrawer(binding!!.navView)
+                    navController.navigate(R.id.homeFragment)
                 }
-            })
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navigateUp(navController!!, appBarConfiguration!!)
-                || super.onSupportNavigateUp()
+        return navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    public override fun onPause() {
-        super.onPause()
-    }
-
-    public override fun onStart() {
-        super.onStart()
-    }
-
-    public override fun onResume() {
-        super.onResume()
-    }
-
-    public override fun onStop() {
+    override fun onStop() {
         super.onStop()
-        mCivicViewModel!!.saveData()
+        mCivicViewModel.saveData()
     }
 
-    public override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         binding = null
     }

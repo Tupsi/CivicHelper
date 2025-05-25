@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class CivicViewModel extends AndroidViewModel {
 
     private CivicRepository mRepository;
-    private int screenWidthDp;
+    private int screenWidthDp, smallestScreenWidthDp;
     private final MutableLiveData<Integer> treasure  = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> remaining = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> vp = new MutableLiveData<>(0);
@@ -268,6 +268,11 @@ public class CivicViewModel extends AndroidViewModel {
     public void setScreenWidthDp(int screenWidthDp) {
         this.screenWidthDp = screenWidthDp;
     }
+    public int getSmallestScreenWidthDp(){return smallestScreenWidthDp;}
+    public void setSmallestScreenWidthDp(int smallestScreenWidthDp) {
+        this.smallestScreenWidthDp = smallestScreenWidthDp;
+    };
+
     public void setHeart(String heart) {
         this.heart = heart;
     }
