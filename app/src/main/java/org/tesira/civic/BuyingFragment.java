@@ -77,6 +77,7 @@ public class BuyingFragment extends Fragment {
     private String[] sortingOptionsValues, sortingOptionsNames;
     private Bundle savedSelectionState = null;
     private ViewTreeObserver.OnGlobalLayoutListener keyboardListener;
+    private int currentSpanCount;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,7 +136,7 @@ public class BuyingFragment extends Fragment {
             // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
             v.setPadding(
                     initialPaddingLeft + systemBarInsets.left,
-                    initialPaddingTop + systemBarInsets.top,
+                    initialPaddingTop,
                     initialPaddingRight + systemBarInsets.right,
                     initialPaddingBottom + systemBarInsets.bottom
             );
@@ -469,47 +470,7 @@ public class BuyingFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
 
-        int newActualColumnCount = calculateColumnCount(requireContext());
-        Log.w("BuyingFragment", "onConfigurationChanged - New effective column count: " + newActualColumnCount);
-
-        RecyclerView.LayoutManager currentLayoutManager = mRecyclerView.getLayoutManager();
-        if (currentLayoutManager == null) {
-            Log.e("BuyingFragment", "CurrentLayoutManager is null, cannot proceed.");
-            return;
-        }
-        Log.w("BuyingFragment", "Current LayoutManager is: " + currentLayoutManager.getClass().getSimpleName());
-
-        // Fall 1: Ziel ist LinearLayout (1 Spalte)
-        if (newActualColumnCount <= 1) {
-            // Muss es ein LinearLayoutManager werden und ist es nicht schon EINER (kann auch Grid sein, was als Linear gilt)?
-            // Wir brauchen hier einen ECHTEN LinearLayoutManager, keinen GridLayoutManager.
-            if (!(currentLayoutManager.getClass().equals(LinearLayoutManager.class))) {
-                Log.w("BuyingFragment", "Switching to actual LinearLayoutManager.");
-                mLayout = new LinearLayoutManager(getContext());
-                mRecyclerView.setLayoutManager(mLayout);
-            } else {
-                Log.w("BuyingFragment", "Already an actual LinearLayoutManager. No change needed.");
-            }
-        }
-        // Fall 2: Ziel ist GridLayout (>1 Spalte)
-        else {
-            if (currentLayoutManager instanceof GridLayoutManager) {
-                // Bereits ein GridLayoutManager, nur SpanCount anpassen
-                Log.w("BuyingFragment", "Already GridLayoutManager, updating spanCount to: " + newActualColumnCount);
-                ((GridLayoutManager) currentLayoutManager).setSpanCount(newActualColumnCount);
-                mLayout = currentLayoutManager;
-            } else {
-                // Muss ein GridLayoutManager werden (war vorher z.B. ein echter LinearLayoutManager)
-                Log.w("BuyingFragment", "Switching to GridLayoutManager with span: " + newActualColumnCount);
-                mLayout = new GridLayoutManager(getContext(), newActualColumnCount);
-                mRecyclerView.setLayoutManager(mLayout);
-            }
-        }
-    }
 
     public void showToast(String text) {
         if (getContext() != null) Toast.makeText(getContext(), text,Toast.LENGTH_LONG).show();
@@ -615,5 +576,4 @@ public class BuyingFragment extends Fragment {
         }
         */
     }
-
 }
