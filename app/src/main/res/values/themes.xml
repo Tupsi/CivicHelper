@@ -1,9 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.CivicHelper" parent="Theme.Material3.DayNight">
+
+    <style name="Theme.CivicHelper" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Generelle Window-Einstellungen -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
+        <item name="colorPrimary">@color/md_theme_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="colorSurface">@color/md_theme_surface</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface</item>
+        <item name="colorControlNormal">@color/toolbar_elements</item>
+
+        <item name="appToolbarTitleColor">@color/toolbar_elements</item>
+        <item name="appToolbarBackgroundColor">@color/toolbar_background</item>
+        <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
+
+
     </style>
 
+    <!-- 2. Ein einfacher Toolbar-Style, der die Theme-Attribute nutzt -->
+    <style name="Widget.App.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
+        <item name="titleTextColor">?attr/appToolbarTitleColor</item>
+        <item name="android:background">?attr/appToolbarBackgroundColor</item>
+    </style>
+
+    <!-- Stile für Dialoge etc. können hier bleiben -->
     <style name="Theme.App.Dialog.FullScreen" parent="Theme.MaterialComponents.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
@@ -11,11 +32,8 @@
     </style>
 
     <style name="DialogAnimation">
-        <item name="android:windowEnterAnimation">
-            @anim/enter_slide_up
-        </item>
-        <item name="android:windowExitAnimation">
-            @anim/exit_slide_down
-        </item>
+        <item name="android:windowEnterAnimation">@anim/enter_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/exit_slide_down</item>
     </style>
+
 </resources>

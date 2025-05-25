@@ -1,20 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.CivicHelper" parent="Theme.Material3.DayNight">
+
+    <style name="Theme.CivicHelper" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style>
-    <style name="Theme.App.Dialog.FullScreen" parent="Theme.MaterialComponents.Dialog">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowIsFloating">false</item>
+
+        <item name="colorPrimary">@color/md_theme_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="colorSurface">@color/md_theme_surface</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface</item>
+        <item name="colorControlNormal">@color/toolbar_elements</item>
+        <item name="appToolbarTitleColor">@color/toolbar_elements</item>
     </style>
 
-    <style name="DialogAnimation">
-        <item name="android:windowEnterAnimation">
-            @anim/enter_slide_up
-        </item>
-        <item name="android:windowExitAnimation">
-            @anim/exit_slide_down
-        </item>
-    </style>
 </resources>
