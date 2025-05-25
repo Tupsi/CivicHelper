@@ -10,6 +10,7 @@
         android:theme="@style/Theme.CivicHelper">
         <activity
             android:name="org.tesira.civic.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|uiMode"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

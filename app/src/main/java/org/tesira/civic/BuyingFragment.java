@@ -4,6 +4,7 @@ import static java.lang.Integer.parseInt;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -65,10 +66,11 @@ public class BuyingFragment extends Fragment {
     private FragmentBuyingBinding binding;
     private int numberDialogs = 0;
     private BuyingItemKeyProvider mBuyingItemKeyProvider;
-    private LinearLayoutManager mLayout;
+    private RecyclerView.LayoutManager mLayout;
     private BuyingListAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private int mColumnCount = 2;
+    private int mColumnCountPreference;
     private String[] sortingOptionsValues, sortingOptionsNames;
     private Bundle savedSelectionState = null;
     private ViewTreeObserver.OnGlobalLayoutListener keyboardListener;
@@ -77,7 +79,8 @@ public class BuyingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
+//        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
+        mColumnCountPreference = Integer.parseInt(prefs.getString("columns", "1"));
         sortingOrder = prefs.getString("sort", "name");
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
         sortingOptionsValues = getResources().getStringArray(R.array.sort_values);
@@ -113,11 +116,15 @@ public class BuyingFragment extends Fragment {
         binding = FragmentBuyingBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
         mRecyclerView = rootView.findViewById(R.id.list_advances);
-        if (mColumnCount <= 1) {
+        int actualColumnCount = calculateColumnCount(rootView.getContext());
+        Log.w("BuyingFragment", "Effective column count: " + actualColumnCount);
+        Log.w("BuyingFragment", "User preference for columns: " + mColumnCountPreference);
+
+        if (actualColumnCount <= 1) {
             mLayout = new LinearLayoutManager(rootView.getContext());
             mRecyclerView.setLayoutManager(mLayout);
         } else {
-            mLayout = new GridLayoutManager(rootView.getContext(), mColumnCount);
+            mLayout = new GridLayoutManager(rootView.getContext(), actualColumnCount);
             mRecyclerView.setLayoutManager(mLayout);
         }
 
@@ -430,6 +437,48 @@ public class BuyingFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        int newActualColumnCount = calculateColumnCount(requireContext());
+        Log.w("BuyingFragment", "onConfigurationChanged - New effective column count: " + newActualColumnCount);
+
+        RecyclerView.LayoutManager currentLayoutManager = mRecyclerView.getLayoutManager();
+        if (currentLayoutManager == null) {
+            Log.e("BuyingFragment", "CurrentLayoutManager is null, cannot proceed.");
+            return;
+        }
+        Log.w("BuyingFragment", "Current LayoutManager is: " + currentLayoutManager.getClass().getSimpleName());
+
+        // Fall 1: Ziel ist LinearLayout (1 Spalte)
+        if (newActualColumnCount <= 1) {
+            // Muss es ein LinearLayoutManager werden und ist es nicht schon EINER (kann auch Grid sein, was als Linear gilt)?
+            // Wir brauchen hier einen ECHTEN LinearLayoutManager, keinen GridLayoutManager.
+            if (!(currentLayoutManager.getClass().equals(LinearLayoutManager.class))) {
+                Log.w("BuyingFragment", "Switching to actual LinearLayoutManager.");
+                mLayout = new LinearLayoutManager(getContext());
+                mRecyclerView.setLayoutManager(mLayout);
+            } else {
+                Log.w("BuyingFragment", "Already an actual LinearLayoutManager. No change needed.");
+            }
+        }
+        // Fall 2: Ziel ist GridLayout (>1 Spalte)
+        else {
+            if (currentLayoutManager instanceof GridLayoutManager) {
+                // Bereits ein GridLayoutManager, nur SpanCount anpassen
+                Log.w("BuyingFragment", "Already GridLayoutManager, updating spanCount to: " + newActualColumnCount);
+                ((GridLayoutManager) currentLayoutManager).setSpanCount(newActualColumnCount);
+                mLayout = currentLayoutManager;
+            } else {
+                // Muss ein GridLayoutManager werden (war vorher z.B. ein echter LinearLayoutManager)
+                Log.w("BuyingFragment", "Switching to GridLayoutManager with span: " + newActualColumnCount);
+                mLayout = new GridLayoutManager(getContext(), newActualColumnCount);
+                mRecyclerView.setLayoutManager(mLayout);
+            }
+        }
+    }
+
     public void showToast(String text) {
         if (getContext() != null) Toast.makeText(getContext(), text,Toast.LENGTH_LONG).show();
     }
@@ -487,6 +536,52 @@ public class BuyingFragment extends Fragment {
         //   }
 
         binding.btnSort.setText(labelToShow);
+    }
+
+
+    private int calculateColumnCount(Context context) {
+        // 1. Hole die aktuelle Gerätekonfiguration
+        Configuration configuration = context.getResources().getConfiguration();
+        int screenWidthDp = configuration.screenWidthDp; // Aktuelle Bildschirmbreite in dp
+        int orientation = configuration.orientation;     // Aktuelle Orientierung
+
+        // Logge die erkannten Werte
+        Log.d("BuyingFragment", "calculateColumnCount - ScreenWidthDp: " + screenWidthDp + ", Orientation: " + (orientation == Configuration.ORIENTATION_LANDSCAPE ? "Landscape" : "Portrait"));
+        Log.d("BuyingFragment", "calculateColumnCount - User preference: " + mColumnCountPreference);
+
+        // 2. Deine Logik zur Bestimmung der Spaltenanzahl
+        // Beispiel: Wenn im Querformat und die Benutzereinstellung 1 ist, setze auf 2 Spalten.
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (mColumnCountPreference <= 1) {
+                Log.d("BuyingFragment", "Landscape mode and user preference is 1, forcing 2 columns.");
+                return 2; // Immer 2 Spalten im Querformat, wenn User 1 wollte
+            } else {
+                // Wenn User schon 2 oder mehr Spalten wollte, behalte das bei
+                // oder erhöhe ggf. weiter, falls genug Platz ist (z.B. auf Tablets)
+                // Für den Anfang behalten wir die Benutzereinstellung, wenn sie > 1 ist.
+                Log.d("BuyingFragment", "Landscape mode, user preference is > 1, using: " + mColumnCountPreference);
+                return mColumnCountPreference;
+            }
+        } else { // Portrait-Modus
+            // Im Portrait-Modus, verwende die Benutzereinstellung
+            Log.d("BuyingFragment", "Portrait mode, using user preference: " + mColumnCountPreference);
+            return mColumnCountPreference;
+        }
+
+        // Alternative oder erweiterte Logik basierend auf screenWidthDp:
+        // (Diese kannst du mit der obigen Orientierungslogik kombinieren oder stattdessen verwenden)
+        /*
+        if (screenWidthDp >= 600) { // Beispiel: typische Tablet-Breite oder sehr breites Querformat
+            if (mColumnCountPreference < 2) return 2; // Mindestens 2 Spalten
+            if (mColumnCountPreference < 3 && screenWidthDp >= 800) return 3; // Mindestens 3 Spalten auf sehr breiten Screens
+            return mColumnCountPreference; // Ansonsten Benutzereinstellung
+        } else if (screenWidthDp >= 480) { // Breiteres Smartphone im Querformat
+             if (mColumnCountPreference <= 1) return 2; // Mindestens 2 Spalten
+             return mColumnCountPreference;
+        } else { // Schmaleres Smartphone
+            return mColumnCountPreference; // Im Hochformat oder schmal, die Benutzereinstellung
+        }
+        */
     }
 
 }
