@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -91,7 +92,8 @@ public class HomeFragment extends Fragment {
         binding.tvCivilization.setOnClickListener(v -> {
             String civ = prefsDefault.getString("civilization", "not set");
             if (!civ.equals("not set")) {
-                Navigation.findNavController(v).navigate(R.id.tipsFragment);
+                NavHostFragment.findNavController(HomeFragment.this)
+                        .navigate(R.id.action_homeFragment_to_tipsFragment);
             } else {
                 Toast.makeText(getActivity(), "You need to set a civilization first.\nLong-Press the text again.", Toast.LENGTH_SHORT).show();
             }
@@ -99,15 +101,22 @@ public class HomeFragment extends Fragment {
         registerForContextMenu(binding.tvCivilization);
 
         // shortcuts to purchase
-        binding.tvBoni.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
-        binding.bonusBlue.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
-        binding.bonusGreen.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
-        binding.bonusOrange.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
-        binding.bonusRed.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
-        binding.bonusYellow.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.purchasesFragment));
+        binding.tvBoni.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+        binding.bonusBlue.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+        binding.bonusGreen.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+        binding.bonusOrange.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+        binding.bonusRed.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+        binding.bonusYellow.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_purchasesFragment));
 
         // shortcut to advances/buy fragment
-        binding.tvSpecials.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.buyingFragment));
+        binding.tvSpecials.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_buyingFragment));
 
         mCivicViewModel.getTotalVp().observe(getViewLifecycleOwner(), newTotalVp -> {
             if (newTotalVp != null) { // Null-Check, falls LiveData initial noch keinen Wert hat

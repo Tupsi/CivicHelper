@@ -9,28 +9,28 @@
     <item
         android:id="@+id/buyingFragment"
         android:icon="@drawable/ic_baseline_add_shopping_cart_24"
-        android:title="@string/item_advances" />
+        android:title="@string/menu_item_buying" />
     <item
         android:id="@+id/purchasesFragment"
         android:icon="@drawable/ic_baseline_currency_bitcoin_24"
-        android:title="@string/item_purchases" />
+        android:title="@string/menu_item_purchases" />
 
-    <item
-        android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_baseline_settings_24"
-        android:title="@string/item_preferences"
-        />
     <item
         android:id="@+id/tipsFragment"
         android:icon="@android:drawable/ic_menu_help"
-        android:title="@string/item_tips" />
+        android:title="@string/menu_item_tips" />
     <item
         android:id="@+id/menu_newGame"
         android:icon="@drawable/rounded_fiber_new_24"
-        android:title="@string/new_game"/>
+        android:title="@string/menu_new_game"/>
 
     <item
         android:id="@+id/aboutFragment"
         android:icon="@android:drawable/ic_dialog_info"
-        android:title="@string/item_about" />
+        android:title="@string/menu_item_about" />
+    <item
+        android:id="@+id/settingsFragment"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/menu_item_settings"
+        />
 </menu>
