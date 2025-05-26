@@ -25,9 +25,13 @@ import org.tesira.civic.Event;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -145,19 +149,15 @@ public class CivicViewModel extends AndroidViewModel {
         allAdvancesNotBought.observeForever(buyableCardsMapObserver);
     }
     private void setupCombinedSpecialsLiveData() {
-        // Optional: Setze einen initialen leeren Wert, um NullPointerExceptions in der UI zu vermeiden,
-        // bis die ersten Daten von den Quellen eintreffen.
-        // combinedSpecialsAndImmunitiesLiveData.setValue(new ArrayList<>());
-
         // Der Observer für Änderungen in specialAbilitiesRawLiveData
         Observer<List<String>> abilitiesObserver = abilities -> {
-            List<String> currentImmunities = immunitiesRawLiveData.getValue(); // Hole den aktuellen Wert der anderen Quelle
+            List<String> currentImmunities = immunitiesRawLiveData.getValue();
             combineAndSetData(abilities, currentImmunities);
         };
 
         // Der Observer für Änderungen in immunitiesRawLiveData
         Observer<List<String>> immunitiesObserver = immunities -> {
-            List<String> currentAbilities = specialAbilitiesRawLiveData.getValue(); // Hole den aktuellen Wert der anderen Quelle
+            List<String> currentAbilities = specialAbilitiesRawLiveData.getValue();
             combineAndSetData(currentAbilities, immunities);
         };
 
@@ -167,21 +167,16 @@ public class CivicViewModel extends AndroidViewModel {
 
     private void combineAndSetData(List<String> abilities, List<String> immunities) {
         List<String> combinedList = new ArrayList<>();
-        combinedList.add("___Special Abilities"); // Dein Header
+        combinedList.add("___Special Abilities");
         if (abilities != null) {
             combinedList.addAll(abilities);
         }
-        combinedList.add("___Immunities"); // Dein Header
+        combinedList.add("___Immunities");
         if (immunities != null) {
             combinedList.addAll(immunities);
         }
 
-        // Deine Logik zum Entfernen von Duplikaten
-        // Beachte: Wenn die Header selbst Duplikate sein könnten oder in den Listen vorkommen,
-        // müsstest du die Logik hier ggf. anpassen oder die Header erst nach dem distinct() hinzufügen.
-        // Für den Moment gehe ich davon aus, dass die Header eindeutig bleiben sollen.
         List<String> distinctList = combinedList.stream().distinct().collect(Collectors.toList());
-
         combinedSpecialsAndImmunitiesLiveData.setValue(distinctList);
     }
 
@@ -189,7 +184,7 @@ public class CivicViewModel extends AndroidViewModel {
         return combinedSpecialsAndImmunitiesLiveData;
     }
     private void setupTotalVpMediator() {
-        totalVp.setValue(0); // Initialwert
+        totalVp.setValue(0);
 
         // Quelle 1: cardsVpFromDao
         totalVp.addSource(cardsVpFromDao, cardsVal -> { // Parameter umbenannt zur Klarheit
@@ -301,9 +296,7 @@ public class CivicViewModel extends AndroidViewModel {
     public LiveData<List<Calamity>> getCalamityBonusListLiveData() {
         return calamityBonusListLiveData;
     }
-    public Card getAdvanceByName(String name) { return mRepository.getAdvanceByNameToCard(name);}
     public LiveData<Card> getAdvanceByNameToCardLiveData(String name) {return mRepository.getAdvanceByNameToCardLiveData(name);}
-    public List<Card> getPurchasesAsCard() {return mRepository.getPurchasesAsCard();}
     public LiveData<List<Card>> getPurchasesAsCardLiveData() {return mRepository.getPurchasesAsCardLiveData();}
     public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
     public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
@@ -364,43 +357,12 @@ public class CivicViewModel extends AndroidViewModel {
         cardBonus.setValue(new HashMap<>());
 
         defaultPrefs.edit().putInt("treasure", 0).apply();
-        defaultPrefs.edit().putString("heart", "custom").apply(); // Or your default value
+        defaultPrefs.edit().putString("heart", "custom").apply();
         defaultPrefs.edit().remove("civilization").apply();
 
         newGameStartedEvent.setValue(new Event<>(true));
         newGameResetCompletedEvent.setValue(new Event<>(true));
     }
-
-    /**
-     * Updates the card price, checking for best color if the card is in two groups and for
-     * the special family/row bonus.
-     */
-    // alte funktionierende Methode zur Aktualisierung der Preise
-    public void calculateCurrentPrice() {
-        int newCurrent;
-        List<Card> cachedCards = mRepository.getAllAdvancesNotBought("name");
-        for (Card adv: cachedCards) {
-            if (adv.getGroup2() == null) {
-                newCurrent = adv.getPrice() - cardBonus.getValue().getOrDefault(adv.getGroup1(),0);
-            } else {
-                int group1 = cardBonus.getValue().getOrDefault(adv.getGroup1(),0);
-                int group2 = cardBonus.getValue().getOrDefault(adv.getGroup2(),0);
-                newCurrent = adv.getPrice() - Math.max(group1, group2);
-            }
-            if (newCurrent < 0 ) newCurrent = 0;
-            mRepository.updateCurrentPrice(adv.getName(), newCurrent);
-        }
-        // adding special family bonus if predecessor bought
-        for (Card adv: mRepository.getPurchasesForBonus()) {
-            Card bonusTo = mRepository.getAdvanceByNameToCard(adv.getBonusCard());
-            newCurrent = bonusTo.getCurrentPrice() - adv.getBonus();
-            if (newCurrent < 0 ) newCurrent = 0;
-            mRepository.updateCurrentPrice(adv.getBonusCard(), newCurrent);
-        }
-    }
-
-    public List<String> getAnatomyCards(){return mRepository.getAnatomyCards();}
-    public List<Effect> getEffect(String advance, String name){return mRepository.getEffect(advance, name);}
 
     /**
      * Updates the Bonus for all colors by adding the respective fields to cardBonus HashSet.
@@ -418,12 +380,6 @@ public class CivicViewModel extends AndroidViewModel {
         cardBonus.getValue().compute(CardColor.YELLOW, (k,v) ->(v==null)? yellow :v+yellow);
     }
 
-
-
-    public LiveData<Boolean> getAreBuyableCardsReady() {
-        return areBuyableCardsReady;
-    }
-
     private Card getBuyableAdvanceByNameFromMap(String name) {
         if (Boolean.TRUE.equals(areBuyableCardsReady.getValue())) {
             return buyableCardMap.get(name);
@@ -435,48 +391,33 @@ public class CivicViewModel extends AndroidViewModel {
     /**
      * Calculates the sum of all currently selected advances during the buy process and
      * updates remaining treasure.
-     * @param selection Currently selected cards from the View.
+     * @param selection Currently selected cards from the View.  <-- PARAMETER TYP ANGEPASST
      */
-    public void calculateTotal(Selection<String> selection) {
+    public void calculateTotal(Iterable<String> selection) { // Parameter-Typ von Selection<String> zu Iterable<String>
         if (!Boolean.TRUE.equals(areBuyableCardsReady.getValue())) {
             Log.w("CivicViewModel", "calculateTotal called, but buyable cards are not ready.");
             int currentTreasure = (treasure.getValue() != null) ? treasure.getValue() : 0;
-            this.remaining.setValue(currentTreasure); // Keine Kosten abziehen, wenn Karten nicht bereit
+            this.remaining.setValue(currentTreasure); // Setze remaining auf Treasure, wenn Karten nicht bereit
             return;
         }
 
-        int newTotal = 0;
-        if (selection != null && selection.size() > 0) {
-            for (String name : selection) {
-                Card adv = getBuyableAdvanceByNameFromMap(name);
-                if (adv != null) {
-                    // HIER WICHTIG: adv.getCurrentPrice() muss den Preis *nach* Anwendung
-                    // aller Boni usw. widerspiegeln. Wenn die Karte in der Map
-                    // nur den Basispreis hat, musst du hier evtl.
-                    // adv.calculateCurrentPrice(cardBonus.getValue(), librarySelected);
-                    // oder eine ähnliche Logik aufrufen, bevor du den Preis addierst.
-                    // Oder stelle sicher, dass die Objekte in der Map bereits die korrekten
-                    // aktuellen Preise haben, falls sie an anderer Stelle im ViewModel aktualisiert werden.
-                    newTotal += adv.getCurrentPrice();
-                } else {
-                    Log.e("CivicViewModel", "Card with name '" + name + "' not found in buyableCardMap during calculateTotal.");
+        int newTotalCost = 0; // Umbenannt von newTotal zu newTotalCost für Klarheit
+        if (selection != null) {
+            Iterator<String> iterator = selection.iterator();
+            if (iterator.hasNext()) { // Nur iterieren, wenn das Iterable nicht leer ist
+                for (String name : selection) {
+                    Card adv = getBuyableAdvanceByNameFromMap(name);
+                    if (adv != null) {
+                        newTotalCost += adv.getCurrentPrice();
+                    } else {
+                        Log.e("CivicViewModel", "Card with name '" + name + "' not found in buyableCardMap during calculateTotal.");
+                    }
                 }
             }
         }
         int currentTreasure = (treasure.getValue() != null) ? treasure.getValue() : 0;
-        this.remaining.setValue(currentTreasure - newTotal);
+        this.remaining.setValue(currentTreasure - newTotalCost); // remaining wird hier aktualisiert
     }
-
-/*    public void calculateTotal(Selection<String> selection) {
-        int newTotal = 0;
-        if (selection.size() > 0) {
-            for (String name : selection) {
-                Card adv = getAdvanceByName(name);
-                newTotal += adv.getCurrentPrice();
-            }
-        }
-        this.remaining.setValue(treasure.getValue() - newTotal);
-    }*/
 
 
     /**
@@ -673,10 +614,9 @@ public class CivicViewModel extends AndroidViewModel {
      * @param greenCards The list of green cards to choose from.
      */
     public void triggerAnatomyDialog(List<String> greenCards) {
-        // Posten Sie einen neuen Event mit der Liste der grünen Karten
+        // Postet einen neuen Event mit der Liste der grünen Karten
         showAnatomyDialogEvent.postValue(new Event<>(greenCards));
     }
-
 
     @Override
     protected void onCleared() {
@@ -690,5 +630,28 @@ public class CivicViewModel extends AndroidViewModel {
     public interface PurchaseCompletionCallback {
         void onPurchaseCompleted(int totalExtraCredits, List<String> anatomyCardsToChoose);
         void onPurchaseFailed(String errorMessage); // Optional: Fehlerbehandlung
+    }
+
+    private final MutableLiveData<Set<String>> _selectedCardKeysForState = new MutableLiveData<>(Collections.emptySet());
+    public LiveData<Set<String>> getSelectedCardKeysForState() {
+        return _selectedCardKeysForState;
+    }
+
+    // NEU: Methode, um die Auswahl aus dem Fragment im ViewModel zu aktualisieren
+    public void updateSelectionState(Set<String> currentSelection) {
+        if (currentSelection == null) {
+            _selectedCardKeysForState.setValue(Collections.emptySet());
+        } else {
+            _selectedCardKeysForState.setValue(new HashSet<>(currentSelection));
+        }
+    }
+
+    // NEU oder ANPASSEN: Methode, um die gespeicherte Auswahl zu löschen
+    public void clearCurrentSelectionState() {
+        _selectedCardKeysForState.setValue(Collections.emptySet());
+        // Die calculateTotal-Logik sollte idealerweise durch den SelectionTracker-Observer
+        // im Fragment ausgelöst werden, wenn der Tracker geleert wird.
+        // Wenn du hier explizit totalPrice etc. zurücksetzen willst:
+        // calculateTotal(Collections.emptySet());
     }
 }
