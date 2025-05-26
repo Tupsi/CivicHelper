@@ -19,13 +19,13 @@
     </style>
 
     <!-- 2. Ein einfacher Toolbar-Style, der die Theme-Attribute nutzt -->
-    <style name="Widget.App.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
+    <style name="Widget.App.Toolbar" parent="Widget.MaterialComponents.Toolbar">
         <item name="titleTextColor">?attr/appToolbarTitleColor</item>
         <item name="android:background">?attr/appToolbarBackgroundColor</item>
     </style>
 
     <!-- Stile für Dialoge etc. können hier bleiben -->
-    <style name="Theme.App.Dialog.FullScreen" parent="Theme.MaterialComponents.Dialog">
+    <style name="Theme.CivicHelper.Dialog" parent="Theme.MaterialComponents.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsFloating">false</item>

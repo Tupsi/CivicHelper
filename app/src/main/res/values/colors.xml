@@ -13,7 +13,8 @@
     <color name="crafts">#ff5722</color>
     <color name="science">#64dd17</color>
     <color name="religion">#ffff00</color>
-    <color name="grey">#fafafa</color>
+    <color name="grey">#cdcdcd</color>
+    <color name="grey_old">#fafafa</color>
     <color name="dark_grey">#88676767</color>
     <color name="calamity_red">#6f0000</color>
     <color name="calamity_green">#136e42</color>
@@ -33,13 +34,13 @@
     <color name="drawer_header">#f6eefd</color>
     <color name="bar_text_color">#447788</color>
 
-    <color name="toolbar_background">#EEEEEE</color> <!-- Hell -->
-    <color name="toolbar_elements">#111111</color>   <!-- Dunkel -->
+    <color name="toolbar_background">#EEEEEE</color>
+    <color name="toolbar_elements">#ff42a047</color>   <!-- Tint für Icons -->
 
     <color name="md_theme_surface">#FFFFFF</color>
     <color name="md_theme_onSurface">#000000</color>
 
-    <color name="md_theme_primary">#6200EE</color>
+    <color name="md_theme_primary">#FF03DAC5</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>
     <color name="md_theme_secondary">#03DAC5</color>
     <color name="md_theme_onSecondary">#000000</color>
