@@ -5,13 +5,13 @@
     <color name="item_name">#dddddd</color>
     <color name="drawer_header">#303030</color>
 
-    <color name="toolbar_background">#222222</color> <!-- Dunkel -->
-    <color name="toolbar_elements">#E0E0E0</color>   <!-- Hell -->
+    <color name="toolbar_background">#222222</color>
+    <color name="toolbar_elements">#FF43a047</color>   <!-- Tint für Icons -->
 
     <color name="md_theme_surface">#121212</color>
     <color name="md_theme_onSurface">#FFFFFF</color>
 
-    <color name="md_theme_primary">#6200EE</color>
+    <color name="md_theme_primary">#FF03DAC5</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>
     <color name="md_theme_secondary">#03DAC5</color>
     <color name="md_theme_onSecondary">#000000</color>

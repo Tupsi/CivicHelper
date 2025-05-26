@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_dashboard"
+        android:title="@string/menu_item_home"
+        app:showAsAction="always"
+        android:orderInCategory="1" />
+
+    <item
+        android:id="@+id/buyingFragment"
+        android:icon="@drawable/ic_add_shopping_cart"
+        android:title="@string/menu_item_buying"
+        app:showAsAction="always"
+        android:orderInCategory="10" />
+
+    <item
+        android:id="@+id/purchasesFragment"
+        android:icon="@drawable/ic_inventory"
+        android:title="@string/menu_item_purchases"
+        app:showAsAction="always"
+        android:orderInCategory="20" />
+
+    <item
+        android:id="@+id/tipsFragment"
+        android:icon="@drawable/ic_lightbulb"
+        android:title="@string/menu_item_tips"
+        app:showAsAction="always"
+        android:orderInCategory="30" />
+
+    <item
+        android:id="@+id/menu_newGame"
+        android:icon="@drawable/ic_delete"
+        android:title="@string/menu_new_game"
+        app:showAsAction="ifRoom|withText"
+        android:orderInCategory="40" />
+
+    <item
+        android:id="@+id/settingsFragment"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/menu_item_settings"
+        app:showAsAction="ifRoom|withText"
+        android:orderInCategory="100" />
+
+    <item
+        android:id="@+id/aboutFragment"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/menu_item_about"
+        app:showAsAction="ifRoom|withText"
+        android:orderInCategory="110" />
+
+</menu>

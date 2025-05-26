@@ -130,22 +130,22 @@ public class HomeFragment extends Fragment {
         registerForContextMenu(binding.tvCivilization);
 
         // shortcuts to purchase
-        binding.tvBoni.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-        binding.bonusBlue.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-        binding.bonusGreen.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-        binding.bonusOrange.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-        binding.bonusRed.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-        binding.bonusYellow.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+//        binding.tvBoni.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+//        binding.bonusBlue.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+//        binding.bonusGreen.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+//        binding.bonusOrange.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+//        binding.bonusRed.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
+//        binding.bonusYellow.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
 
         // shortcut to advances/buy fragment
-        binding.tvSpecials.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(R.id.action_homeFragment_to_buyingFragment));
+//        binding.tvSpecials.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+//                .navigate(R.id.action_homeFragment_to_buyingFragment));
 
         mCivicViewModel.getTotalVp().observe(getViewLifecycleOwner(), newTotalVp -> {
             if (newTotalVp != null) { // Null-Check, falls LiveData initial noch keinen Wert hat

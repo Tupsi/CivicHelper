@@ -50,7 +50,7 @@ public class DialogExtraCreditsFragment extends DialogFragment {
         args.putInt(ARG_CREDITS, creditsAmount);
         fragment.setArguments(args);
         fragment.setCancelable(false);
-        fragment.setStyle(STYLE_NORMAL, R.style.Theme_App_Dialog_FullScreen);
+        fragment.setStyle(STYLE_NORMAL, R.style.Theme_CivicHelper_Dialog);
         return fragment;
     }
 

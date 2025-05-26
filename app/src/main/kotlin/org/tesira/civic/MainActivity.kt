@@ -4,6 +4,8 @@ import android.content.DialogInterface
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -19,9 +21,11 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import androidx.navigation.ui.onNavDestinationSelected
 import org.tesira.civic.databinding.ActivityMainBinding
 import org.tesira.civic.db.CivicViewModel
 
@@ -48,6 +52,8 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar: Toolbar = binding!!.toolbar
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        invalidateOptionsMenu()
 
         val initialPaddingLeft = toolbar.paddingLeft
         val initialPaddingTopFromXml = toolbar.paddingTop // Hole das ursprüngliche Top-Padding aus der XML
@@ -105,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 // NavigationUI.setupActionBarWithNavController hier drinnen aufrufen,
                 // da es appBarConfiguration benötigt.
-                setupActionBarWithNavController(this, navController, appBarConfiguration) // this ist implizit
+                setupActionBarWithNavController(this, navController, appBarConfiguration)
             } else {
                 Log.e("MainActivity", "DrawerLayout ist null, AppBarConfiguration kann nicht vollständig initialisiert werden.")
                 // Fallback: AppBarConfiguration ohne Drawer initialisieren, wenn das sinnvoll ist
@@ -125,22 +131,8 @@ class MainActivity : AppCompatActivity() {
                 // Der Wert des ausgewählten when-Zweigs wird zum Rückgabewert des Lambdas.
                 when (id) {
                     R.id.menu_newGame -> {
-                        if (drawerLayout?.isDrawerOpen(binding!!.navView) == true) { // Sicherer Zugriff auf drawerLayout
-                            drawerLayout?.closeDrawer(binding!!.navView)
-                        }
-                        val dialogClickListener =
-                            DialogInterface.OnClickListener { dialog: DialogInterface?, which: Int ->
-                                when (which) {
-                                    DialogInterface.BUTTON_POSITIVE -> mCivicViewModel.requestNewGame()
-                                    DialogInterface.BUTTON_NEGATIVE -> { /* No button clicked - tu nichts */ }
-                                }
-                            }
-                        AlertDialog.Builder(this@MainActivity) // Explizit this@MainActivity für den Kontext
-                            .setMessage("Are you sure you want to start a new game? All progress will be lost.")
-                            .setPositiveButton("Yes", dialogClickListener)
-                            .setNegativeButton("No", dialogClickListener)
-                            .show()
-                        true // Rückgabewert für diesen Zweig
+                        showNewGameDialog()
+                        true
                     }
 
                     R.id.homeFragment -> {
@@ -165,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                             drawerLayout?.closeDrawer(binding!!.navView)
                             Log.d("NavDrawer_Home_Kotlin", "Drawer closed for Home navigation.")
                         }
-                        true // Rückgabewert
+                        true
                     }
 
                     // Für die kombinierten Fälle brauchen wir eine etwas andere Struktur im when,
@@ -249,5 +241,36 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         binding = null
+    }
+    // In MainActivity.kt
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_toolbar_menu, menu) // Deine neue Menüdatei für die Toolbar
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menu_newGame) {
+            showNewGameDialog()
+            return true
+        }
+        return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
+    }
+
+    private fun showNewGameDialog() {
+        if (drawerLayout?.isDrawerOpen(binding!!.navView) == true) { // binding!! ist hier potenziell riskant, wenn binding null sein kann
+            binding?.navView?.let { drawerLayout?.closeDrawer(it) }
+        }
+        val dialogClickListener =
+            DialogInterface.OnClickListener { _, which ->
+                when (which) {
+                    DialogInterface.BUTTON_POSITIVE -> mCivicViewModel.requestNewGame()
+                    DialogInterface.BUTTON_NEGATIVE -> { /* No button clicked - tu nichts */ }
+                }
+            }
+        AlertDialog.Builder(this)
+            .setMessage("Are you sure you want to start a new game? All progress will be lost.")
+            .setPositiveButton("Yes", dialogClickListener)
+            .setNegativeButton("No", dialogClickListener)
+            .show()
     }
 }
