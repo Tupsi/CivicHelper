@@ -328,6 +328,7 @@ public class BuyingFragment extends Fragment {
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
+                //mCivicViewModel.calculateTotal(tracker.getSelection());
             }
 
             @Override
@@ -466,6 +467,10 @@ public class BuyingFragment extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
         if (tracker != null) {
             tracker.onSaveInstanceState(savedInstanceState);
+        }
+        if (mCivicViewModel != null && mCivicViewModel.getTreasure().getValue() != null) {
+            Log.d("BuyingFragment", "onSaveInstanceState: Resetting remaining to treasure value for restore. Old remaining: " + mCivicViewModel.getRemaining().getValue());
+            mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
         }
     }
 
