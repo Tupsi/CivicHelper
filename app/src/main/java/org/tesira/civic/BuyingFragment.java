@@ -45,7 +45,9 @@ import org.tesira.civic.db.CivicViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 // Import the new MenuProvider interface
 import androidx.core.view.MenuProvider;
@@ -226,12 +228,13 @@ public class BuyingFragment extends Fragment {
         binding.btnClear.setOnClickListener(v -> {
             if (tracker != null) {
                 tracker.clearSelection();
-                if (mCivicViewModel.getTreasure().getValue() != null) {
-                    if (mCivicViewModel.librarySelected) {
-                        mCivicViewModel.librarySelected = false;
-                        mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - 40);
-                    }
-                }
+                mCivicViewModel.clearCurrentSelectionState();
+//                if (mCivicViewModel.getTreasure().getValue() != null) {
+//                    if (mCivicViewModel.librarySelected) {
+//                        mCivicViewModel.librarySelected = false;
+//                        mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - 40);
+//                    }
+//                }
             }
         });
 
@@ -277,9 +280,10 @@ public class BuyingFragment extends Fragment {
                 StorageStrategy.createStringStorage())
                 .withSelectionPredicate(new BuyingSelectionPredicate<>(mAdapter, mCivicViewModel))
                 .build();
-        if (savedInstanceState != null) {
-            tracker.onRestoreInstanceState(savedInstanceState);
-        }
+
+//        if (savedInstanceState != null) {
+//            tracker.onRestoreInstanceState(savedInstanceState);
+//        }
 
         mAdapter.setSelectionTracker(tracker);
         tracker.addObserver(new SelectionTracker.SelectionObserver<>() {
@@ -308,6 +312,12 @@ public class BuyingFragment extends Fragment {
                         }
                     }
                 }
+                // NEU: ViewModel über die geänderte Auswahl informieren
+                Set<String> currentSelection = new HashSet<>();
+                for (String selectedKey : tracker.getSelection()) {
+                    currentSelection.add(selectedKey);
+                }
+                mCivicViewModel.updateSelectionState(currentSelection);
             }
 
             @Override
@@ -324,21 +334,41 @@ public class BuyingFragment extends Fragment {
             public void onSelectionRestored() {
                 super.onSelectionRestored();
                 Log.d("BuyingFragment", "onSelectionRestored");
+                Set<String> restoredSelection = new HashSet<>();
+                for (String selectedKey : tracker.getSelection()) {
+                    restoredSelection.add(selectedKey);
+                }
+                mCivicViewModel.updateSelectionState(restoredSelection);
+
                 // When selection is restored, recalculate the total based on the restored selection.
                 mCivicViewModel.calculateTotal(tracker.getSelection());
 
-                // Re-evaluate if the Library card is among the restored selection
-                boolean libraryIsSelected = false;
-                for (String selectedKey : tracker.getSelection()) {
-                    if (selectedKey.equals("Library")) {
-                        libraryIsSelected = true;
-                        break;
-                    }
+                boolean libraryIsNowSelected = false;
+                if (!restoredSelection.isEmpty()) {
+                    libraryIsNowSelected = restoredSelection.contains("Library");
                 }
-                Log.w("BuyingFragment", "Library selected: " + libraryIsSelected);
-                mCivicViewModel.librarySelected = libraryIsSelected;
+                mCivicViewModel.librarySelected = libraryIsNowSelected;
+                Log.w("BuyingFragment", "In onSelectionRestored - Library selected: " + mCivicViewModel.librarySelected);
             }
         });
+
+        if (savedInstanceState == null) { // Oder savedSelectionState == null, je nachdem, wie du es handhaben willst
+            Set<String> selectionFromVm = mCivicViewModel.getSelectedCardKeysForState().getValue();
+            if (selectionFromVm != null && !selectionFromVm.isEmpty()) {
+                // Nur setzen, wenn der Tracker aktuell leer ist, um Konflikte zu vermeiden.
+                // Deine Logik für die Wiederherstellung in mCivicViewModel.getAllAdvancesNotBought().observe()
+                // könnte hier Vorrang haben. Überlege dir die genaue Bedingung.
+                // Eine Möglichkeit: Nur wiederherstellen, wenn der Tracker komplett leer ist und keine
+                // Wiederherstellung aus savedSelectionState ansteht.
+                if (tracker.getSelection().isEmpty() && savedSelectionState == null) {
+                    tracker.setItemsSelected(selectionFromVm, true); // Iterable<String> wird akzeptiert
+                    // Wichtig: Nachdem die Auswahl im Tracker gesetzt wurde, werden die Observer ausgelöst.
+                    // Die dortige Logik (calculateTotal, updateSelectionState, Library-Logik) sollte greifen.
+                    Log.d("BuyingFragment", "Selection restored from ViewModel on initial creation/return (no savedInstanceState).");
+                }
+            }
+        }
+
 
         mCivicViewModel.getTreasure().observe(getViewLifecycleOwner(), treasure -> {
             mTreasureInput.setText(String.valueOf(treasure));

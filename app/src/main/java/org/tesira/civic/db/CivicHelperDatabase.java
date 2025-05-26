@@ -1,6 +1,7 @@
 package org.tesira.civic.db;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -43,7 +44,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic_helper.db")
                             .addCallback(sRoomDatabaseCallback)
 //                            .addMigrations(MIGRATION_1_2)
-                            .fallbackToDestructiveMigration()
+//                            .fallbackToDestructiveMigration()
 //                            .allowMainThreadQueries()
                             .build();
                     ASSET_CONTEXT = context.getApplicationContext();
@@ -58,10 +59,8 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
 //            Log.v("DATABASE", "in callback onCreate");
-            databaseWriteExecutor.execute(() -> {
-                // Populate the database in the background.
-                importCivicsFromXML();
-            });
+            // Populate the database in the background.
+            databaseWriteExecutor.execute(CivicHelperDatabase::importCivicsFromXML);
         }
 
         /**
@@ -102,6 +101,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
             NodeList nList = doc.getElementsByTagName("advance");
             for (int i=0; i<nList.getLength(); i++) {
                 Node node = nList.item(i);
+//                Log.d("DATABASE", "importCivicsFromXML: " + node.getNodeName());
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     CardColor[] color = new CardColor[2];
                     int[] credits = new int[5];
