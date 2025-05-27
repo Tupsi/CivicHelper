@@ -115,11 +115,7 @@ public class BuyingListAdapter extends RecyclerView.Adapter<BuyingListAdapter.Vi
         else {
             viewHolder.bonusItemView.setVisibility(View.INVISIBLE);
         }
-        List<String> hearts = mCivicViewModel.getChooserCards();
-        viewHolder.mHeartView.setVisibility(View.INVISIBLE);
-        if (hearts != null && hearts.contains(viewHolder.nameItemView.getText().toString())) {
-            viewHolder.mHeartView.setVisibility(View.VISIBLE);
-        }
+        viewHolder.mHeartView.setVisibility(mValues.get(position).getHasHeart() ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
