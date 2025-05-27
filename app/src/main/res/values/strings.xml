@@ -3,13 +3,19 @@
     <string name="about_version">Version: %1$s</string>
     <string name="about_text">
         This is a helper app for the board games Mega Civilization,
-        Western Empires and Eastern Empires.\n\n
+        Mega Empires and its two parts \"The West\" and \"The East\".\n\n
+
         It helps you track which civilization advances you already bought and
         what color bonuses you have accumulated when you buy the next time. The cost mentioned in
-        the buy screen already has the best bonus subtracted from the original price.\n
+        the buy screen already has the best bonus subtracted from the original price.\n\n
+
         Supports cards with special buying bonuses like Anatomy, Library, Monument and Written Records.\n\n
+
         The start screen acts as a dashboard and tracks the current color bonuses, victory points
         and calamity effects you have because of the civilization advances you already bought.\n\n
+
+        The little A.S.T. boxes tell you, if you have met all criteria to advance on the A.S.T.
+        You can set the game version in the settings.\n\n
 
         Rebuild 2025
     </string>
@@ -65,5 +71,6 @@
         Don\'t be too afraid of calamities! If you can complete a set, it\'s usually worth to do so even if you are reasonably sure you will get a calamity.\n\n
     </string>
     <string name="favorite">Favorite</string>
+    <string name="about_header_desc">picture about the app</string>
 
 </resources>

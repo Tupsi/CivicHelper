@@ -3,6 +3,10 @@ package org.tesira.civic;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
@@ -13,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
+import org.tesira.civic.databinding.FragmentPurchasesBinding;
 import org.tesira.civic.db.CivicViewModel;
 
 import java.util.ArrayList;
@@ -57,13 +63,43 @@ public class PurchasesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_purchases, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_purchases, container, false);
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
 
+        // Speichere die ursprünglichen Padding-Werte der View, auf die die Insets angewendet werden
+        final int initialPaddingLeft = rootView.getPaddingLeft();
+        final int initialPaddingTop = rootView.getPaddingTop();
+        final int initialPaddingRight = rootView.getPaddingRight();
+        final int initialPaddingBottom = rootView.getPaddingBottom();
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+            Insets systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            // Insets für die Tastatur, falls du auch darauf reagieren möchtest (hier nicht primär im Fokus)
+            // Insets imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
+
+            // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
+            v.setPadding(
+                    initialPaddingLeft + systemBarInsets.left,
+                    initialPaddingTop,
+                    initialPaddingRight + systemBarInsets.right,
+                    initialPaddingBottom + systemBarInsets.bottom
+            );
+
+            // Es ist wichtig, die WindowInsets (ggf. modifiziert) zurückzugeben,
+            // damit Kind-Views sie auch konsumieren können.
+            // Wenn du hier nichts an den windowInsets selbst änderst, gib sie einfach weiter.
+            return windowInsets;
+        });
+
+        ViewCompat.requestApplyInsets(rootView);
+
+
+
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+        if (rootView instanceof RecyclerView) {
+            Context context = rootView.getContext();
+            RecyclerView recyclerView = (RecyclerView) rootView;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -81,6 +117,6 @@ public class PurchasesFragment extends Fragment {
                 }
             });
         }
-        return view;
+        return rootView;
     }
 }
