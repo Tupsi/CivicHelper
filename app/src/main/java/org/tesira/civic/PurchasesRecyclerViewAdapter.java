@@ -1,6 +1,7 @@
 package org.tesira.civic;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -23,9 +24,7 @@ import java.util.List;
 public class PurchasesRecyclerViewAdapter extends RecyclerView.Adapter<PurchasesRecyclerViewAdapter.ViewHolder> {
 
     private List<Card> mValues = new ArrayList<>();
-
     public PurchasesRecyclerViewAdapter() {
-//        mValues = items;
     }
 
     /**
@@ -55,7 +54,7 @@ public class PurchasesRecyclerViewAdapter extends RecyclerView.Adapter<Purchases
         holder.binding.name.setBackground(CivicViewModel.getItemBackgroundColor(holder.mItem, holder.itemView.getResources()));
         holder.binding.price.setText(Integer.toString(mValues.get(position).getPrice()));
         holder.binding.vp.setText(Integer.toString(mValues.get(position).getVp()));
-        holder.binding.currentPrice.setText(Integer.toString(mValues.get(position).getCurrentPrice()));
+        holder.binding.heart.setVisibility(mValues.get(position).getHasHeart() ? View.VISIBLE : View.INVISIBLE);
 
         if (holder.mItem.getBonus() > 0) {
             holder.binding.familybonus.setVisibility(View.VISIBLE);

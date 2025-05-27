@@ -146,4 +146,17 @@ public interface CivicHelperDao {
     // victory points of all bought cards in the database
     @Query("SELECT SUM(cards.vp) AS sum FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL")
     LiveData<Integer> cardsVp();
+
+    @Query("UPDATE cards SET hasHeart = 0") // 0 für false
+    void resetAllHearts();
+
+    /**
+     * Setzt hasHeart für eine Liste von Karten (identifiziert durch ihren Namen) auf true.
+     * @param cardNames Die Namen der Karten, die markiert werden sollen.
+     */
+    @Query("UPDATE cards SET hasHeart = 1 WHERE name IN (:cardNames)")
+    void setHeartsForCards(List<String> cardNames);
+
+    @Query("SELECT * FROM cards ORDER BY name ASC")
+    LiveData<List<Card>> getAllCards();
 }

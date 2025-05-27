@@ -1,6 +1,7 @@
 package org.tesira.civic.db;
 
 import android.app.Application;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData; // Import für LiveData hinzufügen
@@ -417,6 +418,35 @@ public class CivicRepository {
 
 
         return currentBonus;
+    }
+
+
+    public interface RepositoryCallback {
+        void onComplete();
+    }
+
+    public void resetAllCardsHeartStatusAsync(RepositoryCallback callback) {
+        repositoryExecutor.execute(() -> {
+            mCivicDao.resetAllHearts();
+            if (callback != null) {
+                callback.onComplete();
+            }
+        });
+    }
+
+    public void setCardsAsHeartAsync(List<String> cardNames, RepositoryCallback callback) {
+        if (cardNames == null || cardNames.isEmpty()) {
+            if (callback != null) {
+                repositoryExecutor.execute(callback::onComplete);
+            }
+            return;
+        }
+        repositoryExecutor.execute(() -> {
+            mCivicDao.setHeartsForCards(cardNames);
+            if (callback != null) {
+                callback.onComplete();
+            }
+        });
     }
 
 }

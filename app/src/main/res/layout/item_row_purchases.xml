@@ -1,94 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardHistory"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    android:background="@drawable/item_background">
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/price_background"
+        android:gravity="center"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="235" />
+
+    <TextView
+        android:id="@+id/familybonus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@+id/price"
+        app:layout_constraintEnd_toStartOf="@+id/vp"
+        app:layout_constraintBottom_toBottomOf="@+id/price"
+        app:layout_constraintTop_toTopOf="@+id/price"
+        android:maxLines="3"
+        android:ellipsize="end"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeMaxTextSize="14sp"
+        app:autoSizeStepGranularity="1sp"
+        tools:text="+20 to Cultural Ascendancy" />
 
 
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_margin"
+        android:layout_marginEnd="@dimen/text_margin"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textAppearance="?attr/textAppearanceListItem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="Name Platzhalter" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/card"
-        android:layout_width="match_parent"
-        android:layout_height="113dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:background="@drawable/item_background">
+    <TextView
+        android:id="@+id/vp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/ic_shield"
+        android:gravity="center"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="VP"/>
 
-        <TextView
-            android:id="@+id/familybonus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="@+id/price"
-            app:layout_constraintStart_toEndOf="@+id/price"
-            app:layout_constraintTop_toTopOf="@+id/price" />
+    <ImageView
+        android:id="@+id/heart"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        app:srcCompat="@drawable/ic_baseline_favorite_24"
+        android:contentDescription="@string/favorite" />
 
-        <TextView
-            android:id="@+id/price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="3dp"
-            android:background="@drawable/price_background"
-            android:foregroundGravity="center"
-            android:gravity="center"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:layout_marginTop="23dp"
-            android:layout_marginBottom="29dp"
-            android:foregroundGravity="center"
-            android:gravity="center"
-            android:textColor="@color/item_name"
-            app:layout_constraintBottom_toTopOf="@+id/price"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/vp"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="1"
-            android:background="@drawable/ic_shield"
-            android:gravity="center"
-            android:text="VP"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/price"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/price"
-            app:layout_constraintVertical_bias="1.0" />
-
-        <TextView
-            android:id="@+id/currentPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/price_background"
-            android:foregroundGravity="center"
-            android:gravity="center"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/price"
-            app:layout_constraintEnd_toStartOf="@+id/vp"
-            app:layout_constraintTop_toTopOf="@+id/vp" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
