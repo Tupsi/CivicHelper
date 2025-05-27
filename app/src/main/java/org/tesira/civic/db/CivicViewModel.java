@@ -1,7 +1,6 @@
 package org.tesira.civic.db;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -15,7 +14,6 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.Transformations;
-import androidx.recyclerview.selection.Selection;
 import androidx.preference.PreferenceManager;
 import androidx.lifecycle.Observer;
 
@@ -50,9 +48,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public String heart;
 
     public boolean librarySelected;
-
-    private static final String PREF_KEY_CIVILIZATION = "civilization";
-    private static final String PREF_KEY_SORT = "sort";
     public final static String[] TREASURY = {"Monarchy", "Coinage", "Trade Routes",
             "Politics", "Mining"};
     public final static String[] COMMODITY_CARDS = {"Rhetoric", "Cartography", "Roadbuilding",
@@ -105,10 +100,13 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public LiveData<Event<Integer>> getShowExtraCreditsDialogEvent() {
         return _showExtraCreditsDialogEvent;
     }
-    private SharedPreferences defaultPrefs, sharedPrefs;
-    private static final String PREF_FILE_BONUS = "purchasedAdvancesBonus";
-    private static final String PREF_CITIES = "cities";
-    private static final String PREF_TIME = "time";
+    private SharedPreferences defaultPrefs;
+    private static final String PREF_KEY_CIVILIZATION = "civilization";
+    private static final String PREF_KEY_SORT = "sort";
+    private static final String PREF_KEY_CITIES = "cities";
+    private static final String PREF_KEY_TIME = "time";
+    private static final String PREF_KEY_TREASURE = "treasure";
+    private static final String PREF_KEY_HEART = "heart";
     private final LiveData<Integer> cardsVpFromDao;
     private final MediatorLiveData<Integer> totalVp = new MediatorLiveData<>();
     private final Map<String, Card> buyableCardMap = new HashMap<>();
@@ -126,12 +124,9 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         mApplication = application;
         librarySelected = false;
         defaultPrefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
-        sharedPrefs = mApplication.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
         defaultPrefs.registerOnSharedPreferenceChangeListener(this);
-        Log.d("CivicViewModel", "Constructor. Listener registration for SharedPreferences: " + defaultPrefs.toString());
         cardsVpFromDao = mRepository.getCardsVp();
         setupTotalVpMediator();
-        // get stuff from sharedPrefs and initialize ViewModel Variables
         loadData();
         allAdvancesNotBought = Transformations.switchMap(currentSortingOrder,
                 order -> mRepository.getAllAdvancesNotBoughtLiveData(order));
@@ -139,8 +134,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         setupBuyableCardsObserver();
         loadTipsInitialData();
     }
-
-
     private void setupBuyableCardsObserver() {
         buyableCardsMapObserver = cards -> {
             buyableCardMap.clear();
@@ -200,7 +193,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             Integer currentCitiesVp = (cities.getValue() != null) ? cities.getValue() : 0;
             Integer currentTimeVp = (timeVp.getValue() != null) ? timeVp.getValue() : 0;
             totalVp.setValue(currentCardsVp + currentCitiesVp + currentTimeVp);
-            Log.d("CivicViewModel", "TotalVP updated due to cardsVp change. New Total: " + totalVp.getValue());
         });
 
         // Quelle 2: cities LiveData
@@ -209,7 +201,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             Integer currentCitiesVp = (cityVal != null) ? cityVal : 0;
             Integer currentTimeVp = (timeVp.getValue() != null) ? timeVp.getValue() : 0;
             totalVp.setValue(currentCardsVp + currentCitiesVp + currentTimeVp);
-            Log.d("CivicViewModel", "TotalVP updated due to cities change. New Total: " + totalVp.getValue());
         });
 
         // Quelle 3: timeVp LiveData
@@ -218,7 +209,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             Integer currentCitiesVp = (cities.getValue() != null) ? cities.getValue() : 0;
             Integer currentTimeVp = (timeVal != null) ? timeVal : 0;
             totalVp.setValue(currentCardsVp + currentCitiesVp + currentTimeVp);
-            Log.d("CivicViewModel", "TotalVP updated due to timeVp change. New Total: " + totalVp.getValue());
         });
     }
     public LiveData<Integer> getTotalVp() {
@@ -234,11 +224,11 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     }
     public void loadData() {
         int blue, green, orange, red, yellow;
-        blue = sharedPrefs.getInt(CardColor.BLUE.getName(), 0);
-        green = sharedPrefs.getInt(CardColor.GREEN.getName(), 0);
-        orange = sharedPrefs.getInt(CardColor.ORANGE.getName(), 0);
-        red = sharedPrefs.getInt(CardColor.RED.getName(), 0);
-        yellow = sharedPrefs.getInt(CardColor.YELLOW.getName(), 0);
+        blue = defaultPrefs.getInt(CardColor.BLUE.getName(), 0);
+        green = defaultPrefs.getInt(CardColor.GREEN.getName(), 0);
+        orange = defaultPrefs.getInt(CardColor.ORANGE.getName(), 0);
+        red = defaultPrefs.getInt(CardColor.RED.getName(), 0);
+        yellow = defaultPrefs.getInt(CardColor.YELLOW.getName(), 0);
         if (cardBonus.getValue() != null) {
             cardBonus.getValue().put(CardColor.BLUE, blue);
             cardBonus.getValue().put(CardColor.GREEN, green);
@@ -247,8 +237,8 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             cardBonus.getValue().put(CardColor.YELLOW, yellow);
         }
         setHeart(defaultPrefs.getString("heart", "custom"));
-        setCities(sharedPrefs.getInt(PREF_CITIES, 0));
-        setTimeVp(sharedPrefs.getInt(PREF_TIME,0));
+        setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0));
+        setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME,0));
         mColumnCount = Integer.parseInt(defaultPrefs.getString("columns", "1"));
         currentSortingOrder.setValue(defaultPrefs.getString("sort", "name"));
     }
@@ -344,7 +334,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
      * This is called from the UI.
      */
     public void requestNewGame() {
-        Log.d("CivicViewModel", "requestNewGame() called. Initiating startNewGameProcess.");
         startNewGameProcess();
     }
 
@@ -353,7 +342,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
      * This includes resetting persistent data and ViewModel state.
      */
     public void startNewGameProcess() {
-        sharedPrefs.edit().clear().apply();
         mRepository.deletePurchases();
         mRepository.resetCurrentPrice();
         mRepository.resetDB();
@@ -364,9 +352,17 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         vp.setValue(0);
         cardBonus.setValue(new HashMap<>());
 
-        defaultPrefs.edit().putInt("treasure", 0).apply();
-        defaultPrefs.edit().putString("heart", "custom").apply();
-        defaultPrefs.edit().remove("civilization").apply();
+        defaultPrefs.edit().putInt(CardColor.BLUE.getName(), 0).apply();
+        defaultPrefs.edit().putInt(CardColor.GREEN.getName(), 0).apply();
+        defaultPrefs.edit().putInt(CardColor.ORANGE.getName(), 0).apply();
+        defaultPrefs.edit().putInt(CardColor.RED.getName(), 0).apply();
+        defaultPrefs.edit().putInt(CardColor.YELLOW.getName(), 0).apply();
+
+        defaultPrefs.edit().putInt(PREF_KEY_CITIES, 0).apply();
+        defaultPrefs.edit().putInt(PREF_KEY_TIME, 0).apply();
+        defaultPrefs.edit().putInt(PREF_KEY_TREASURE, 0).apply();
+        defaultPrefs.edit().putString(PREF_KEY_HEART, "custom").apply();
+        defaultPrefs.edit().remove(PREF_KEY_CIVILIZATION).apply();
 
         newGameStartedEvent.setValue(new Event<>(true));
         newGameResetCompletedEvent.setValue(new Event<>(true));
@@ -435,7 +431,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public void addBonus(String name) {
         Card adv = getBuyableAdvanceByNameFromMap(name);
         Log.d("CivicViewModel", "Adding bonus for card: " + name);
-//        Card adv = getAdvanceByName(name);
         updateBonus(adv.getCreditsBlue(), adv.getCreditsGreen(), adv.getCreditsOrange(), adv.getCreditsRed(), adv.getCreditsYellow());
     }
 
@@ -590,19 +585,16 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     }
 
     public void saveBonus() {
-        SharedPreferences.Editor editor = sharedPrefs.edit();
+        Log.d("CivicViewModel", "Saving bonus to SharedPreferences.");
         // HashMap Save
         for (Map.Entry<CardColor, Integer> entry: getCardBonus().getValue().entrySet()){
-            editor.putInt(entry.getKey().getName(), entry.getValue());
+            defaultPrefs.edit().putInt(entry.getKey().getName(), entry.getValue()).apply();
         }
-        editor.apply();
     }
 
     public void saveData() {
-        SharedPreferences.Editor edit = sharedPrefs.edit();
-        edit.putInt(PREF_CITIES, getCities());
-        edit.putInt(PREF_TIME, getTimeVp());
-        edit.apply();
+        defaultPrefs.edit().putInt(PREF_KEY_CITIES, getCities()).apply();
+        defaultPrefs.edit().putInt(PREF_KEY_TIME, getTimeVp()).apply();
     }
 
     /**
@@ -633,7 +625,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             allAdvancesNotBought.removeObserver(buyableCardsMapObserver);
         }
         defaultPrefs.unregisterOnSharedPreferenceChangeListener(this);
-        Log.d("CivicViewModel", "ViewModel cleared, SharedPreferences listener unregistered.");
     }
 
     // Schnittstelle für die Callback vom Repository
@@ -671,7 +662,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         if (tipsArray == null) {
             tipsArray = mApplication.getResources().getStringArray(R.array.tips);
         }
-        int civicNumber = Integer.parseInt(defaultPrefs.getString("civilization", "1"));
+        int civicNumber = Integer.parseInt(defaultPrefs.getString(PREF_KEY_CIVILIZATION, "1"));
         _selectedTipIndex.setValue(civicNumber - 1);
     }
 
@@ -694,8 +685,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.d("Preferences", "(in CivicModel) onSharedPreferenceChanged called for key: " + key);
-        Log.d("CivicViewModel", "SharedPreferences changed for key: " + key);
         if (PREF_KEY_CIVILIZATION.equals(key)) {
             // Wert neu laden und LiveData aktualisieren
             int civicNumber = Integer.parseInt(sharedPreferences.getString(key, "1"));
