@@ -21,16 +21,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <RadioButton android:id="@+id/radio_0" style="@style/RadioButtonStyle" android:text="0" />
-        <RadioButton android:id="@+id/radio_1" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="1" />
-        <RadioButton android:id="@+id/radio_2" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="2" />
-        <RadioButton android:id="@+id/radio_3" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="3" />
-        <RadioButton android:id="@+id/radio_4" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="4" />
-        <RadioButton android:id="@+id/radio_5" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="5" />
-        <RadioButton android:id="@+id/radio_6" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="6" />
-        <RadioButton android:id="@+id/radio_7" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="7" />
-        <RadioButton android:id="@+id/radio_8" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="8" />
-        <RadioButton android:id="@+id/radio_9" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="9" />
+        <RadioButton android:id="@+id/radio_0" style="@style/RadioButtonStyleLandscape" android:text="0" />
+        <RadioButton android:id="@+id/radio_1" style="@style/RadioButtonStyleLandscape" android:layout_marginStart="4dp" android:text="1" />
+        <RadioButton android:id="@+id/radio_2" style="@style/RadioButtonStyleLandscape" android:layout_marginStart="4dp" android:text="2" />
+        <RadioButton android:id="@+id/radio_3" style="@style/RadioButtonStyleLandscape" android:layout_marginStart="4dp" android:text="3" />
+        <RadioButton android:id="@+id/radio_4" style="@style/RadioButtonStyleLandscape" android:layout_marginStart="4dp" android:text="4" />
+        <RadioButton android:id="@+id/radio_5" style="@style/RadioButtonStyleLandscape" android:layout_marginStart="4dp" android:text="5" />
+        <RadioButton android:id="@+id/radio_6" style="@style/RadioButtonStyleLandscape" android:layout_marginStart="4dp" android:text="6" />
+        <RadioButton android:id="@+id/radio_7" style="@style/RadioButtonStyleLandscape" android:layout_marginStart="4dp" android:text="7" />
+        <RadioButton android:id="@+id/radio_8" style="@style/RadioButtonStyleLandscape" android:layout_marginStart="4dp" android:text="8" />
+        <RadioButton android:id="@+id/radio_9" style="@style/RadioButtonStyleLandscape" android:layout_marginStart="4dp" android:text="9" />
     </RadioGroup>
 
     <!-- AST Marker jetzt hier horizontal neben der RadioGroup -->

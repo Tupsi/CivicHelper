@@ -242,11 +242,12 @@ public class HomeFragment extends Fragment {
      */
     private void checkASTInternal() {
         String ast = prefsDefault.getString("ast", "basic");
+        String astMarkerText;
         Log.d("AST_Check", "Current AST: " + ast + ", Cities: " + currentCities + ", CardsVP: " + currentCardsVp);
         int countAllPurchases = currentAllPurchases.size();
         int countSize100 = 0;
         int countSize200 = 0;
-        boolean mbaAchieved, lbaAchieved, eiaAchieved, liaAchieved;
+        boolean ebaAchieved, mbaAchieved, lbaAchieved, eiaAchieved, liaAchieved;
 
         // count the number of cards which have a buying price greater 100 and 200
         for (Card card : currentAllPurchases) {
@@ -261,6 +262,9 @@ public class HomeFragment extends Fragment {
 
 
         if ("basic".equals(ast)) {
+            astMarkerText = "AST (B)";
+            // EBA: 2 cities
+            ebaAchieved = (currentCities >= 2 );
             // MBA: 3 cities & 3 cards
             mbaAchieved = (currentCities >= 3 && countAllPurchases >= 3);
             // LBA: 3 cities & 3 cards 100+
@@ -270,6 +274,9 @@ public class HomeFragment extends Fragment {
             // LIA: 5 cities & 3 cards 200+  (Original war LEA, ich nehme an LIA ist ein Tippfehler oben)
             liaAchieved = (currentCities >= 5 && countSize200 >= 3);
         } else { // "expert" AST
+            astMarkerText = "AST (E)";
+            // EBA: 2 cities
+            ebaAchieved = (currentCities >= 3 );
             // MBA: 3 cities & 5 VP
             mbaAchieved = (currentCities >= 3 && currentCardsVp >= 5);
             // LBA: 4 cities & 12 cards
@@ -279,11 +286,13 @@ public class HomeFragment extends Fragment {
             // LIA: 6 cities & 17 cards 100+ & 56 VP
             liaAchieved = (currentCities >= 6 && countSize100 >= 17 && currentCardsVp >= 56);
         }
+        binding.tvAST.setText(astMarkerText);
 
         // Wende den Status auf die UI-Elemente an
         // Es ist wichtig, requireContext() zu verwenden, wenn das Fragment attached ist.
         // Stelle sicher, dass diese Methode nur aufgerufen wird, wenn das Fragment einen Context hat.
         if (isAdded() && getContext() != null) { // Prüfen, ob das Fragment attached ist und einen Context hat
+            setAstStatus(binding.tvEBA, ebaAchieved);
             setAstStatus(binding.tvMBA, mbaAchieved);
             setAstStatus(binding.tvLBA, lbaAchieved);
             setAstStatus(binding.tvEIA, eiaAchieved);
