@@ -104,8 +104,10 @@ class MainActivity : AppCompatActivity() {
             val currentDrawerLayout = drawerLayout
             if (currentDrawerLayout != null) {
                 appBarConfiguration = AppBarConfiguration(
-                    setOf(R.id.homeFragment, R.id.buyingFragment, R.id.purchasesFragment, R.id.tipsFragment, R.id.settingsFragment, R.id.aboutFragment),
-                    currentDrawerLayout
+//                    setOf(R.id.homeFragment, R.id.buyingFragment, R.id.purchasesFragment, R.id.tipsFragment, R.id.settingsFragment, R.id.aboutFragment),
+//                    currentDrawerLayout
+                    setOf(R.id.homeFragment, R.id.buyingFragment, R.id.purchasesFragment, R.id.tipsFragment, R.id.settingsFragment, R.id.aboutFragment)
+
                 )
                 // NavigationUI.setupActionBarWithNavController hier drinnen aufrufen,
                 // da es appBarConfiguration benötigt.
