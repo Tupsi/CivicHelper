@@ -1,6 +1,6 @@
 package org.tesira.civic;
 
-import android.content.SharedPreferences;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,7 +9,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
@@ -21,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import org.tesira.civic.R;
 import org.tesira.civic.databinding.FragmentTipsBinding;
 import org.tesira.civic.db.CivicViewModel;
 
@@ -48,7 +46,6 @@ public class TipsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        tips = getResources().getStringArray(R.array.tips);
         scaleGestureDetector = new ScaleGestureDetector(this.getContext(), new PinchToZoomGestureListener() );
     }
 
@@ -91,6 +88,7 @@ public class TipsFragment extends Fragment {
         return rootView;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -145,29 +143,33 @@ public class TipsFragment extends Fragment {
         });
 
         binding.tipsTextView.setMovementMethod(new ScrollingMovementMethod());
+        // was für das MovementMethod wichtig ist.
+        binding.tipsTextView.setClickable(true);
+        binding.tipsTextView.setFocusable(true);
+        binding.tipsTextView.setFocusableInTouchMode(true);
+
         binding.tipsTextView.setOnTouchListener((v, event) -> {
-            boolean gestureHandled = scaleGestureDetector.onTouchEvent(event);
-            if (gestureHandled) {
-                return true;
-            }
-            // Wenn keine Geste, Touch-Event weitergeben für ggf. Scrolling oder andere Listener
-            // performClick hier nur, wenn die View tatsächlich klickbar sein soll und eine Aktion auslöst
-            // return v.performClick(); // Wenn es eine onClick-Aktion gibt
-            return false; // Lässt Scrolling und andere Standard-Interaktionen zu
+            // Zuerst Zoom-Gesten behandeln
+            scaleGestureDetector.onTouchEvent(event);
+
+            // Gib das Event an die TextView weiter, damit sie scrollen kann
+            v.getParent().requestDisallowInterceptTouchEvent(scaleGestureDetector.isInProgress());
+            return false; // Wichtig: false zurückgeben, um Scroll-Events nicht zu blockieren
         });
     }
 
-
-
     public class PinchToZoomGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-
+        float minSp = 12f;
+        float maxSp = 48f;
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+
+            float minSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, minSp, getResources().getDisplayMetrics());
+            float maxSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, maxSp, getResources().getDisplayMetrics());
             float size = binding.tipsTextView.getTextSize();
             float factor = detector.getScaleFactor();
-            float product = size * factor;
-            binding.tipsTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, product);
-            size = binding.tipsTextView.getTextSize();
+            float newSize = Math.max(minSizePx, Math.min(size * factor, maxSizePx));
+            binding.tipsTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
             return true;
         }
     }
