@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 
-public class CivicViewModel extends AndroidViewModel {
+public class CivicViewModel extends AndroidViewModel implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private CivicRepository mRepository;
     private int screenWidthDp, smallestScreenWidthDp;
@@ -51,6 +51,8 @@ public class CivicViewModel extends AndroidViewModel {
 
     public boolean librarySelected;
 
+    private static final String PREF_KEY_CIVILIZATION = "civilization";
+    private static final String PREF_KEY_SORT = "sort";
     public final static String[] TREASURY = {"Monarchy", "Coinage", "Trade Routes",
             "Politics", "Mining"};
     public final static String[] COMMODITY_CARDS = {"Rhetoric", "Cartography", "Roadbuilding",
@@ -91,7 +93,10 @@ public class CivicViewModel extends AndroidViewModel {
     private final LiveData<List<String>> specialAbilitiesRawLiveData;
     private final LiveData<List<String>> immunitiesRawLiveData;
     private final MediatorLiveData<List<String>> combinedSpecialsAndImmunitiesLiveData = new MediatorLiveData<>();
+    private final MutableLiveData<Integer> _selectedTipIndex = new MutableLiveData<>();
+    public LiveData<Integer> selectedTipIndex = _selectedTipIndex;
 
+    private String[] tipsArray;
 
     public LiveData<Event<List<String>>> getShowAnatomyDialogEvent() {
         return showAnatomyDialogEvent;
@@ -122,6 +127,8 @@ public class CivicViewModel extends AndroidViewModel {
         librarySelected = false;
         defaultPrefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
         sharedPrefs = mApplication.getSharedPreferences(PREF_FILE_BONUS, Context.MODE_PRIVATE );
+        defaultPrefs.registerOnSharedPreferenceChangeListener(this);
+        Log.d("CivicViewModel", "Constructor. Listener registration for SharedPreferences: " + defaultPrefs.toString());
         cardsVpFromDao = mRepository.getCardsVp();
         setupTotalVpMediator();
         // get stuff from sharedPrefs and initialize ViewModel Variables
@@ -130,6 +137,7 @@ public class CivicViewModel extends AndroidViewModel {
                 order -> mRepository.getAllAdvancesNotBoughtLiveData(order));
         setupCombinedSpecialsLiveData();
         setupBuyableCardsObserver();
+        loadTipsInitialData();
     }
 
 
@@ -624,6 +632,8 @@ public class CivicViewModel extends AndroidViewModel {
         if (buyableCardsMapObserver != null) {
             allAdvancesNotBought.removeObserver(buyableCardsMapObserver);
         }
+        defaultPrefs.unregisterOnSharedPreferenceChangeListener(this);
+        Log.d("CivicViewModel", "ViewModel cleared, SharedPreferences listener unregistered.");
     }
 
     // Schnittstelle für die Callback vom Repository
@@ -653,5 +663,53 @@ public class CivicViewModel extends AndroidViewModel {
         // im Fragment ausgelöst werden, wenn der Tracker geleert wird.
         // Wenn du hier explizit totalPrice etc. zurücksetzen willst:
         // calculateTotal(Collections.emptySet());
+    }
+
+    // Methode, um die initialen Daten für die Tipps zu laden
+    // Wird vom TipsFragment aufgerufen
+    public void loadTipsInitialData() {
+        if (tipsArray == null) {
+            tipsArray = mApplication.getResources().getStringArray(R.array.tips);
+        }
+        int civicNumber = Integer.parseInt(defaultPrefs.getString("civilization", "1"));
+        _selectedTipIndex.setValue(civicNumber - 1);
+    }
+
+    public void setSelectedTipIndex(int index) {
+        if (index >= 0 && (tipsArray == null || index < tipsArray.length)) {
+            _selectedTipIndex.setValue(index);
+
+            // Optional: Hier die neue Auswahl in SharedPreferences speichern, wenn gewünscht
+            // defaultPrefs.edit().putString("civilization", String.valueOf(index + 1)).apply();
+        }
+    }
+
+    public String getTipForIndex(int index) {
+        if (tipsArray != null && index >= 0 && index < tipsArray.length) {
+            return tipsArray[index];
+        }
+        Log.w("CivicViewModel", "Attempted to get tip for invalid index: " + index + " or tipsArray not loaded.");
+        return ""; // Fallback
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.d("Preferences", "(in CivicModel) onSharedPreferenceChanged called for key: " + key);
+        Log.d("CivicViewModel", "SharedPreferences changed for key: " + key);
+        if (PREF_KEY_CIVILIZATION.equals(key)) {
+            // Wert neu laden und LiveData aktualisieren
+            int civicNumber = Integer.parseInt(sharedPreferences.getString(key, "1"));
+            int newIndex = civicNumber - 1;
+            // Nur aktualisieren, wenn sich der Wert tatsächlich geändert hat,
+            // um unnötige UI-Updates oder Schleifen zu vermeiden.
+            if (_selectedTipIndex.getValue() == null || _selectedTipIndex.getValue() != newIndex) {
+                _selectedTipIndex.setValue(newIndex);
+            }
+        } else if (PREF_KEY_SORT.equals(key)) {
+            String newSortingOrder = sharedPreferences.getString(key, "name");
+            if (currentSortingOrder.getValue() == null || !currentSortingOrder.getValue().equals(newSortingOrder)) {
+                currentSortingOrder.setValue(newSortingOrder);
+            }
+        }
     }
 }
