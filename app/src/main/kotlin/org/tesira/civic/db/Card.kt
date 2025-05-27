@@ -1,16 +1,18 @@
-package org.tesira.civic.db // Selbes Paket
+package org.tesira.civic.db
 
+import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters // Wichtig für die CardColor-Felder
+import org.jetbrains.annotations.NotNull
 
 @Entity(tableName = "cards")
-@TypeConverters(Converters::class) // Den Konverter hier auf Klassenebene deklarieren
+@TypeConverters(Converters::class)
 data class Card(
     @PrimaryKey
     @ColumnInfo(name = "name")
-    val name: String, // Nicht-nullable
+    val name: String,
 
     @ColumnInfo(name = "family")
     val family: Int,
@@ -21,20 +23,11 @@ data class Card(
     @ColumnInfo(name = "price")
     val price: Int,
 
-    // Für group1, das nicht null sein soll:
-    // Der Konverter Converters.toCardColor gibt CardColor? zurück.
-    // Wenn du hier 'val group1: CardColor' (nicht-nullable) deklarierst,
-    // musst du sicherstellen, dass der Konverter für group1 nie null liefert
-    // ODER du deklarierst es als nullable und machst eine Prüfung.
-    // Sicherer ist, es hier als nullable zu deklarieren, um dem Konverter-Output zu entsprechen,
-    // und die Nicht-Null-Logik woanders zu erzwingen (z.B. bei der Erstellung des Objekts
-    // bevor es in die DB kommt, oder durch einen spezifischeren NonNull-Konverter für group1).
-    // Fürs Erste, um den Room-Fehler zu beheben:
     @ColumnInfo(name = "group1")
-    val group1: CardColor?, // Akzeptiert den Output von Converters.toCardColor
+    val group1: CardColor?,
 
     @ColumnInfo(name = "group2")
-    val group2: CardColor?, // Ist sowieso nullable
+    val group2: CardColor?,
 
     @ColumnInfo(name = "creditsBlue")
     val creditsBlue: Int,
@@ -52,7 +45,7 @@ data class Card(
     val creditsYellow: Int,
 
     @ColumnInfo(name = "bonusCard")
-    val bonusCard: String?, // Ist nullable
+    val bonusCard: String?,
 
     @ColumnInfo(name = "bonus")
     val bonus: Int,
@@ -61,11 +54,13 @@ data class Card(
     val isBuyable: Boolean,
 
     @ColumnInfo(name = "currentPrice")
-    val currentPrice: Int
-) {
-    // Wichtig: Wenn group1 logisch NIE null sein darf, aber hier als CardColor? deklariert ist,
-    // um mit dem generischen Konverter kompatibel zu sein, solltest du an der Stelle,
-    // wo Card-Objekte *erstellt* werden (z.B. beim Parsen der XML),
-    // sicherstellen, dass group1 immer einen Wert bekommt oder einen Fehler werfen.
-    // Für Room ist es so aber erstmal "sicher" zu lesen.
-}
+    val currentPrice: Int,
+
+    @NonNull
+    @ColumnInfo(name = "buyingPrice")
+    val buyingPrice: Int,
+
+    @NonNull
+    @ColumnInfo(name = "hasHeart")
+    val hasHeart: Boolean
+)

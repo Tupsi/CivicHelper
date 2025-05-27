@@ -1,6 +1,7 @@
 package org.tesira.civic.db;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -21,7 +22,7 @@ import java.util.concurrent.Executors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-@Database(entities = {Card.class, Purchase.class, Effect.class, SpecialAbility.class, Immunity.class}, version = 2, exportSchema = true)
+@Database(entities = {Card.class, Purchase.class, Effect.class, SpecialAbility.class, Immunity.class}, version = 3, exportSchema = true)
 @TypeConverters({Converters.class})
 public abstract class CivicHelperDatabase extends RoomDatabase {
 
@@ -43,7 +44,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(), CivicHelperDatabase.class, "civic_helper.db")
                             .addCallback(sRoomDatabaseCallback)
-//                            .addMigrations(MIGRATION_1_2)
+                            .addMigrations(MIGRATION_2_3)
 //                            .fallbackToDestructiveMigration()
 //                            .allowMainThreadQueries()
                             .build();
@@ -71,16 +72,6 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
         @Override
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
-//            databaseWriteExecutor.execute(() -> {
-                // Populate the database in the background.
-                // DEBUGGING: remove later!
-//                CivicHelperDao dao = INSTANCE.civicDao();
-//                dao.deleteAllCards();
-//                dao.deleteAllEffects();
-//                dao.deleteAllSpecials();
-//                dao.deleteAllImmunities();
-//                importCivicsFromXML();
-//            });
         }
     };
 
@@ -145,7 +136,7 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
                     }
                     Card civic = new Card(name, family, vp, price, color[0], color[1], credits[0],
                             credits[1], credits[2], credits[3], credits[4], null,
-                            0, false, price);
+                            0, false, price,0,false);
 
                     dao.insert(civic);
                     for (int x=0; x<element2.getElementsByTagName("special").getLength();x++) {
@@ -175,17 +166,50 @@ public abstract class CivicHelperDatabase extends RoomDatabase {
     }
 
 
-    // NEU: Definiere die Migration von Version 1 zu 2
-    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            // Da die Schemaänderungen wahrscheinlich durch KSP/Kotlin-Umstellung
-            // und nicht durch tatsächliche Strukturänderungen der Tabellen entstanden sind,
-            // bleibt dieser Block vorerst leer.
-            // Room braucht nur die Bestätigung, dass du die Migration bedacht hast.
-            // Falls spezifische ALTER TABLE Befehle nötig wären, kämen sie hier rein.
-            // Beispiel:
-            // database.execSQL("ALTER TABLE Card ADD COLUMN new_column_name INTEGER");
+
+            if (!isColumnExists(database, "cards", "buyingPrice")) {
+                database.execSQL("ALTER TABLE cards ADD COLUMN buyingPrice INTEGER NOT NULL DEFAULT 0");
+            }
+            if (!isColumnExists(database, "cards", "hasHeart")) {
+                database.execSQL("ALTER TABLE cards ADD COLUMN hasHeart INTEGER NOT NULL DEFAULT 0");
+            }
+        }
+
+        /**
+         * Hilfsmethode, um zu prüfen, ob eine Spalte in einer Tabelle existiert.
+         * @param db Die SupportSQLiteDatabase-Instanz.
+         * @param tableName Der Name der Tabelle.
+         * @param columnName Der Name der zu prüfenden Spalte.
+         * @return true, wenn die Spalte existiert, sonst false.
+         */
+        private boolean isColumnExists(@NonNull SupportSQLiteDatabase db, @NonNull String tableName, @NonNull String columnName) {
+            Cursor cursor = null;
+            try {
+                // PRAGMA table_info gibt Informationen über die Spalten einer Tabelle zurück.
+                // Wir verwenden LIKE, um sicherzustellen, dass wir bei Groß-/Kleinschreibungsproblemen
+                // (obwohl SQLite meist case-insensitive für Bezeichner ist) keine Probleme bekommen.
+                // Besser ist es, exakte Namen zu verwenden, wenn möglich.
+                cursor = db.query("PRAGMA table_info(" + tableName + ")");
+                int nameColumnIndex = cursor.getColumnIndex("name");
+                if (nameColumnIndex >= 0) {
+                    while (cursor.moveToNext()) {
+                        if (columnName.equalsIgnoreCase(cursor.getString(nameColumnIndex))) {
+                            return true; // Spalte gefunden
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Logge den Fehler oder handle ihn, falls nötig
+                Log.e("MigrationUtil", "Error checking if column exists", e);
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+            return false; // Spalte nicht gefunden
         }
     };
 }

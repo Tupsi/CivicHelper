@@ -236,7 +236,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             cardBonus.getValue().put(CardColor.RED, red);
             cardBonus.getValue().put(CardColor.YELLOW, yellow);
         }
-        setHeart(defaultPrefs.getString("heart", "custom"));
+        setHeart(defaultPrefs.getString(PREF_KEY_HEART, "custom"));
         setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0));
         setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME,0));
         mColumnCount = Integer.parseInt(defaultPrefs.getString("columns", "1"));
@@ -268,6 +268,12 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
 
     public void setHeart(String heart) {
         this.heart = heart;
+    }
+
+    private final MutableLiveData<String> userPreferenceForHeartCards = new MutableLiveData<>();
+
+    public LiveData<String> getUserPreferenceForHeartCards() {
+        return userPreferenceForHeartCards;
     }
     public int getTimeVp() {
         return timeVp.getValue();
@@ -699,6 +705,79 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             if (currentSortingOrder.getValue() == null || !currentSortingOrder.getValue().equals(newSortingOrder)) {
                 currentSortingOrder.setValue(newSortingOrder);
             }
+        } else if (PREF_KEY_HEART.equals(key)){
+            String newHeartSelection = sharedPreferences.getString(key, "custom");
+            if (userPreferenceForHeartCards.getValue() == null || !userPreferenceForHeartCards.getValue().equals(newHeartSelection)) {
+                updateUserHeartPreference(newHeartSelection);
+            }
+        }
+    }
+
+    public void updateUserHeartPreference(String selectionName) {
+        // Speichere die Auswahl (z.B. in SharedPreferences)
+        defaultPrefs.edit().putString(PREF_KEY_HEART, selectionName).apply();
+        setHeart(selectionName); // Deine existierende Methode, die das 'heart'-Feld setzt
+        userPreferenceForHeartCards.setValue(selectionName); // Benachrichtige Observer
+
+        // NEU: Logik zum Aktualisieren der 'hasHeart'-Flags in der DB auslösen
+        processHeartPreferenceChange(selectionName);
+    }
+
+
+    private void processHeartPreferenceChange(String selectionName) {
+        List<String> cardNamesToMarkAsHeart = getCardNamesForHeartSelection(selectionName);
+
+        // Wichtig: Diese Datenbankoperationen sollten in einem Hintergrundthread ausgeführt werden.
+        // mRepository sollte Methoden anbieten, die dies intern tun (z.B. mit Coroutinen oder AsyncTask).
+        mRepository.resetAllCardsHeartStatusAsync(() -> {
+            // Dieser Callback wird ausgeführt, nachdem alle Herzen zurückgesetzt wurden.
+            if (cardNamesToMarkAsHeart != null && !cardNamesToMarkAsHeart.isEmpty()) {
+                mRepository.setCardsAsHeartAsync(cardNamesToMarkAsHeart, () -> {
+                    // Optional: Benachrichtige die UI, dass sich die Daten geändert haben,
+                    // falls die LiveData-Beobachtung der Kartenliste nicht ausreicht.
+                    // Zum Beispiel, wenn du eine spezifische Aktion nach dem Update auslösen willst.
+                    Log.d("CivicViewModel", "Cards updated with new heart status for: " + selectionName);
+                });
+            } else {
+                Log.d("CivicViewModel", "No specific cards to mark for heart selection: " + selectionName + " or selection is 'custom'.");
+            }
+        });
+    }
+
+    /**
+     * Holt die Liste der Kartennamen basierend auf der "heart"-Auswahl.
+     * Nutzt deine bestehende Logik aus getChooserCards().
+     */
+    private List<String> getCardNamesForHeartSelection(String selectionName) {
+        // Deine bestehende Logik, um die Kartenlisten zu bekommen.
+        // Du hast diese Logik bereits in 'getChooserCards()', passe sie ggf. leicht an,
+        // um direkt die Namen zurückzugeben oder die Logik hier zu duplizieren/refaktorieren.
+
+        // Beispielhafte Übernahme/Anpassung deiner getChooserCards-Logik:
+        switch (selectionName.toLowerCase()) { // ToLowerCase für Robustheit
+            case "treasury":
+                return Arrays.asList(TREASURY);
+            case "commodities":
+                return Arrays.asList(COMMODITY_CARDS);
+            case "cheaper":
+                return Arrays.asList(CHEAPER_CIVILIZATION_CARDS);
+            case "bend":
+                return Arrays.asList(TO_BEND_THE_RULES);
+            case "more":
+                return Arrays.asList(MORE_TOKEN_ON_THE_MAP);
+            case "mobility":
+                return Arrays.asList(TOKEN_MOBILITY);
+            case "cities":
+                return Arrays.asList(CITIES); // Stelle sicher, dass CITIES hier Kartennamen sind
+            case "sea":
+                return Arrays.asList(SEA_POWER);
+            case "aggression":
+                return Arrays.asList(AGGRESSION);
+            case "defense":
+                return Arrays.asList(DEFENSE);
+            case "custom":
+            default:
+                return new ArrayList<>(); // Keine spezifischen Karten für "custom" oder unbekannte Auswahl
         }
     }
 }
