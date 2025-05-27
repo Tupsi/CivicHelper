@@ -3,10 +3,14 @@ package org.tesira.civic;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.ScaleGestureDetector;
@@ -76,15 +80,51 @@ public class TipsFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentTipsBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
+
+        // Speichere die ursprünglichen Padding-Werte der View, auf die die Insets angewendet werden
+        final int initialPaddingLeft = rootView.getPaddingLeft();
+        final int initialPaddingTop = rootView.getPaddingTop();
+        final int initialPaddingRight = rootView.getPaddingRight();
+        final int initialPaddingBottom = rootView.getPaddingBottom();
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+            Insets systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            // Insets für die Tastatur, falls du auch darauf reagieren möchtest (hier nicht primär im Fokus)
+            // Insets imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
+
+            // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
+            v.setPadding(
+                    initialPaddingLeft + systemBarInsets.left,
+                    initialPaddingTop,
+                    initialPaddingRight + systemBarInsets.right,
+                    initialPaddingBottom + systemBarInsets.bottom
+            );
+
+            // Es ist wichtig, die WindowInsets (ggf. modifiziert) zurückzugeben,
+            // damit Kind-Views sie auch konsumieren können.
+            // Wenn du hier nichts an den windowInsets selbst änderst, gib sie einfach weiter.
+            return windowInsets;
+        });
+
+        ViewCompat.requestApplyInsets(rootView);
+
+
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
         ArrayAdapter<CharSequence> civicsAdapter = ArrayAdapter.createFromResource(getContext(), R.array.civilizations_entries, android.R.layout.simple_spinner_dropdown_item);
         binding.tipsSpinner.setAdapter(civicsAdapter);
         binding.tipsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String out = tips[parent.getSelectedItemPosition()] + getString(R.string.no_war_game);
                 binding.tipsTextView.setText(out);
-                ((TextView) parent.getChildAt(0)).setTextSize(20);
+
+                View selectedView = parent.getChildAt(0);
+                if (selectedView instanceof TextView) {
+                    ((TextView) selectedView).setTextSize(20);
+                } else {
+                    // Optional: Log, wenn die View nicht das erwartete TextView ist oder null ist
+                    Log.w("TipsFragment", "Spinner's selected view is not a TextView or is null.");
+                }
             }
 
             @Override
