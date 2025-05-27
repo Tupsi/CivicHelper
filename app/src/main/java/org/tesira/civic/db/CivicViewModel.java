@@ -36,16 +36,16 @@ import java.util.stream.Collectors;
 
 public class CivicViewModel extends AndroidViewModel implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private CivicRepository mRepository;
+    private final CivicRepository mRepository;
     private int screenWidthDp, smallestScreenWidthDp;
     private final MutableLiveData<Integer> treasure  = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> remaining = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> vp = new MutableLiveData<>(0);
     public MutableLiveData<HashMap<CardColor, Integer>> cardBonus;
     private final MutableLiveData<Integer> cities = new MutableLiveData<>(0);
-    private Application mApplication;
+    private final Application mApplication;
     private final MutableLiveData<Integer> timeVp = new MutableLiveData<>(0);
-    public String heart;
+//    public String heart;
 
     public boolean librarySelected;
     public final static String[] TREASURY = {"Monarchy", "Coinage", "Trade Routes",
@@ -236,7 +236,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             cardBonus.getValue().put(CardColor.RED, red);
             cardBonus.getValue().put(CardColor.YELLOW, yellow);
         }
-        setHeart(defaultPrefs.getString(PREF_KEY_HEART, "custom"));
+        userPreferenceForHeartCards.setValue(defaultPrefs.getString(PREF_KEY_HEART, "custom"));
         setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0));
         setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME,0));
         mColumnCount = Integer.parseInt(defaultPrefs.getString("columns", "1"));
@@ -265,10 +265,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public void setSmallestScreenWidthDp(int smallestScreenWidthDp) {
         this.smallestScreenWidthDp = smallestScreenWidthDp;
     };
-
-    public void setHeart(String heart) {
-        this.heart = heart;
-    }
 
     private final MutableLiveData<String> userPreferenceForHeartCards = new MutableLiveData<>();
 
@@ -429,7 +425,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         this.remaining.setValue(currentTreasure - newTotalCost); // remaining wird hier aktualisiert
     }
 
-
     /**
      * Adds the bonuses of a bought card to the cardBonus HashSet.
      * @param name The name of the bought card.
@@ -438,45 +433,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         Card adv = getBuyableAdvanceByNameFromMap(name);
         Log.d("CivicViewModel", "Adding bonus for card: " + name);
         updateBonus(adv.getCreditsBlue(), adv.getCreditsGreen(), adv.getCreditsOrange(), adv.getCreditsRed(), adv.getCreditsYellow());
-    }
-
-    public List<String> getChooserCards() {
-        List<String> list = null;
-        switch (heart) {
-            case "treasury":
-                list = Arrays.asList(TREASURY);
-                break;
-            case "commodities":
-                list = Arrays.asList(COMMODITY_CARDS);
-                break;
-            case "cheaper":
-                list = Arrays.asList(CHEAPER_CIVILIZATION_CARDS);
-                break;
-            case "bend":
-                list = Arrays.asList(TO_BEND_THE_RULES);
-                break;
-            case "more":
-                list = Arrays.asList(MORE_TOKEN_ON_THE_MAP);
-                break;
-            case "mobility":
-                list = Arrays.asList(TOKEN_MOBILITY);
-                break;
-            case "cities":
-                list = Arrays.asList(CITIES);
-                break;
-            case "sea":
-                list = Arrays.asList(SEA_POWER);
-                break;
-            case "aggression":
-                list = Arrays.asList(AGGRESSION);
-                break;
-            case "defense":
-                list = Arrays.asList(DEFENSE);
-                break;
-            case "custom":
-            default:
-        }
-        return list;
     }
 
     public static Drawable getItemBackgroundColor(Card card, Resources res) {
@@ -714,12 +670,8 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     }
 
     public void updateUserHeartPreference(String selectionName) {
-        // Speichere die Auswahl (z.B. in SharedPreferences)
         defaultPrefs.edit().putString(PREF_KEY_HEART, selectionName).apply();
-        setHeart(selectionName); // Deine existierende Methode, die das 'heart'-Feld setzt
-        userPreferenceForHeartCards.setValue(selectionName); // Benachrichtige Observer
-
-        // NEU: Logik zum Aktualisieren der 'hasHeart'-Flags in der DB auslösen
+        userPreferenceForHeartCards.setValue(selectionName);
         processHeartPreferenceChange(selectionName);
     }
 
