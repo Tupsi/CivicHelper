@@ -10,6 +10,8 @@
         <item name="colorOnSurface">@color/md_theme_onSurface</item>
         <item name="colorControlNormal">@color/toolbar_elements</item>
         <item name="appToolbarTitleColor">@color/toolbar_elements</item>
+        <item name="preferenceCategoryTitleTextColor">@color/md_theme_primary</item>
+
     </style>
 
 </resources>

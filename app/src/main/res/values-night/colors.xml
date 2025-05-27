@@ -11,9 +11,9 @@
     <color name="md_theme_surface">#121212</color>
     <color name="md_theme_onSurface">#FFFFFF</color>
 
-    <color name="md_theme_primary">#FF03DAC5</color>
+    <color name="md_theme_primary">#ff42a047</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>
-    <color name="md_theme_secondary">#03DAC5</color>
+    <color name="md_theme_secondary">#33691e</color>
     <color name="md_theme_onSecondary">#000000</color>
 
 </resources>

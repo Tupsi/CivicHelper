@@ -14,6 +14,7 @@
         <item name="appToolbarTitleColor">@color/toolbar_elements</item>
         <item name="appToolbarBackgroundColor">@color/toolbar_background</item>
         <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
+        <item name="preferenceCategoryTitleTextColor">@color/md_theme_primary</item>
 
 
     </style>
