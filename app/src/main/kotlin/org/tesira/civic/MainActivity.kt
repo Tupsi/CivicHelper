@@ -244,7 +244,7 @@ class MainActivity : AppCompatActivity() {
     }
     // In MainActivity.kt
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main_toolbar_menu, menu) // Deine neue Menüdatei für die Toolbar
+        menuInflater.inflate(R.menu.main_toolbar_menu, menu)
         return true
     }
 

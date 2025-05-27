@@ -3,20 +3,18 @@ package org.tesira.civic;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable; // Hinzugefügt für onCreate
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider; // Hinzugefügt
+import androidx.lifecycle.ViewModelProvider;
 
 import org.tesira.civic.databinding.DialogCreditsBinding;
-// import org.tesira.civic.db.CardColor; // Nicht direkt verwendet, kann entfernt werden, wenn nicht benötigt
 import org.tesira.civic.db.CivicViewModel;
 
 /**
@@ -25,25 +23,19 @@ import org.tesira.civic.db.CivicViewModel;
  * https://developer.android.com/guide/topics/ui/dialogs
  */
 public class DialogExtraCreditsFragment extends DialogFragment {
-
     private static final String ARG_CREDITS = "arg_credits";
     private static final String REQUEST_KEY = "extraCreditsDialogResult";
-
     private DialogCreditsBinding binding;
-    private String[] items; // Wird in onCreate basierend auf 'credits' initialisiert
-    private int initialCredits; // Umbenannt von 'credits' zur Klarheit
-    private int blue, green, orange, red, yellow; // Diese bleiben für die Auswahl
-    // private int oldblue, oldgreen, oldorange, oldred, oldyellow; // Nicht verwendet, kann entfernt werden
+    private String[] items;
+    private int initialCredits;
+    private int blue, green, orange, red, yellow;
 
-    private AlertDialog dialogInstance; // Umbenannt von 'dialog' zur Klarheit, um Kollision mit Parametername zu vermeiden
+    private AlertDialog dialogInstance;
     private CivicViewModel mCivicViewModel;
 
-    // WICHTIG: Parameterloser Konstruktor
     public DialogExtraCreditsFragment() {
-        // super(R.layout.dialog_credits); // Nicht hier, da das Layout in onCreateDialog über Binding geladen wird
     }
 
-    // Factory-Methode
     public static DialogExtraCreditsFragment newInstance(int creditsAmount) {
         DialogExtraCreditsFragment fragment = new DialogExtraCreditsFragment();
         Bundle args = new Bundle();
@@ -69,8 +61,8 @@ public class DialogExtraCreditsFragment extends DialogFragment {
 
         // 2. Argumente abrufen
         if (getArguments() != null) {
-            this.initialCredits = getArguments().getInt(ARG_CREDITS, 0); // Standardwert 0, falls Argument fehlt
-            if (this.initialCredits == 0 && getArguments().getInt(ARG_CREDITS, -1) == -1) { // Striktere Prüfung, ob Argument wirklich fehlt
+            this.initialCredits = getArguments().getInt(ARG_CREDITS, 0);
+            if (this.initialCredits == 0 && getArguments().getInt(ARG_CREDITS, -1) == -1) {
                 Log.e("ExtraCreditsDialog", "Credits argument is missing or zero, which might be unintended.");
                 // Hier entscheiden, ob ein Wert von 0 gültig ist oder ein Fehler.
                 // Wenn 0 ungültig ist:
@@ -114,23 +106,13 @@ public class DialogExtraCreditsFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Binding initialisieren
-        // Stelle sicher, dass getLayoutInflater() hier korrekt funktioniert.
-        // Wenn du `super(R.layout.dialog_credits)` nicht mehr im Konstruktor hast,
-        // musst du LayoutInflater explizit holen, falls onCreateDialog vor onCreateView aufgerufen wird
-        // oder wenn das Fragment kein eigenes View-Layout hat (was bei DialogFragmenten der Fall sein kann, die nur einen Dialog erstellen).
-        // Für DialogFragment, das setView verwendet, ist dies der übliche Weg:
-        binding = DialogCreditsBinding.inflate(LayoutInflater.from(getContext()));
-
-
-        // Initialisiere die lokalen Variablen für die ausgewählten Werte (optional, aber gut für Klarheit)
+        binding = DialogCreditsBinding.inflate(getLayoutInflater());
         blue = 0;
         green = 0;
         orange = 0;
         red = 0;
         yellow = 0;
 
-        // Stelle sicher, dass 'items' in onCreate korrekt initialisiert wurde
         if (items == null || items.length == 0) {
             Log.e("ExtraCreditsDialog", "Spinner items not initialized!");
             // Erstelle einen einfachen Fehlerdialog oder schließe diesen Dialog
@@ -181,7 +163,6 @@ public class DialogExtraCreditsFragment extends DialogFragment {
         builder.setView(spinnerView);
         builder.setPositiveButton(R.string.ok, (dialogInterface, id) -> { // dialogInterface statt dialog
             mCivicViewModel.updateBonus(blue, green, orange, red, yellow);
-            mCivicViewModel.saveBonus(); // Überlege, ob das hier oder im ViewModel besser aufgehoben ist
             mCivicViewModel.requestPriceRecalculation();
 
             Bundle result = new Bundle();
@@ -199,16 +180,9 @@ public class DialogExtraCreditsFragment extends DialogFragment {
             dialogInstance.getWindow().setWindowAnimations(R.style.DialogAnimation);
         }
 
-        // Initialisiere den Zustand des OK-Buttons (wichtig, da calculateCredits jetzt davon abhängt)
-        // Muss nach dialogInstance = builder.create() erfolgen, aber bevor der Dialog angezeigt wird.
-        // Da calculateCredits in onItemSelected aufgerufen wird, wird es beim ersten Setzen der Auswahl getriggert.
-        // Um sicherzustellen, dass der Button initial korrekt gesetzt ist:
-        if (dialogInstance.isShowing()) { // Nur wenn der Dialog schon angezeigt wird (unwahrscheinlich hier, aber sicher ist sicher)
+        if (dialogInstance.isShowing()) {
             updateOkButtonState();
         } else {
-            // Wenn der Dialog noch nicht angezeigt wird, wird der Button-Status beim ersten Anzeigen
-            // durch die onItemSelected Listener korrekt gesetzt, wenn die Spinner ihre erste Auswahl erhalten.
-            // Alternativ könnte man hier manuell den initialen Zustand setzen:
             dialogInstance.setOnShowListener(dialogInterface -> updateOkButtonState());
         }
 
@@ -225,18 +199,15 @@ public class DialogExtraCreditsFragment extends DialogFragment {
         }
     }
 
-
-    // onDismiss bleibt wie es ist
-
     private class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (items == null || position >= items.length) { // Sicherheitscheck
+            if (items == null || position >= items.length) {
                 return;
             }
             int selectedValue = Integer.parseInt(items[position]);
-
             int parentId = parent.getId();
+
             if (parentId == R.id.spinnerblue) {
                 blue = selectedValue;
             } else if (parentId == R.id.spinnergreen) {
@@ -248,21 +219,16 @@ public class DialogExtraCreditsFragment extends DialogFragment {
             } else if (parentId == R.id.spinneryellow) {
                 yellow = selectedValue;
             }
-            // calculateCredits(); // Wird jetzt von updateOkButtonState() übernommen
-            updateOkButtonState(); // Rufe die zentrale Methode auf
+            updateOkButtonState();
         }
-
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
         }
-
-        // Die calculateCredits() Logik ist jetzt in updateOkButtonState()
-        // public void calculateCredits() { ... } // Kann entfernt werden
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Wichtig für View Binding in Fragmenten, um Memory Leaks zu vermeiden
+        binding = null;
     }
 }

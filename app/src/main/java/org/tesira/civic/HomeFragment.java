@@ -11,17 +11,18 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,6 +36,7 @@ import org.tesira.civic.db.CivicViewModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Shows the Dashboard where you can check the number of cities,
@@ -129,32 +131,8 @@ public class HomeFragment extends Fragment {
         });
         registerForContextMenu(binding.tvCivilization);
 
-        // shortcuts to purchase
-//        binding.tvBoni.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-//        binding.bonusBlue.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-//        binding.bonusGreen.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-//        binding.bonusOrange.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-//        binding.bonusRed.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-//        binding.bonusYellow.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-//                .navigate(R.id.action_homeFragment_to_purchasesFragment));
-
-        // shortcut to advances/buy fragment
-//        binding.tvSpecials.setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-//                .navigate(R.id.action_homeFragment_to_buyingFragment));
-
-        mCivicViewModel.getTotalVp().observe(getViewLifecycleOwner(), newTotalVp -> {
-            if (newTotalVp != null) { // Null-Check, falls LiveData initial noch keinen Wert hat
-                binding.tvVp.setText(getString(R.string.tv_vp, newTotalVp));
-            } else {
-                binding.tvVp.setText(getString(R.string.tv_vp, 0));
-            }
-        });
-        binding.tvTime.setText(CivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
+        mCivicViewModel.getTotalVp().observe(getViewLifecycleOwner(), newTotalVp -> binding.tvVp.setText(getString(R.string.tv_vp, Objects.requireNonNullElse(newTotalVp, 0))));
+//        binding.tvTime.setText(CivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
         registerForContextMenu(binding.tvTime);
 
         return rootView;
@@ -246,12 +224,16 @@ public class HomeFragment extends Fragment {
         });
 
         // Observer für Time
-        mCivicViewModel.getTimeVpLive().observe(getViewLifecycleOwner(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer value) {
-                binding.tvTime.setText(CivicViewModel.TIME_TABLE[value/5]);
-            }
-        });
+        mCivicViewModel.getTimeVpLive().observe(getViewLifecycleOwner(), value -> binding.tvTime.setText(CivicViewModel.TIME_TABLE[value / 5]));
+    }
+    private void setAstStatus(TextView textView, boolean achieved) {
+        if (achieved) {
+            textView.setBackgroundResource(R.color.ast_green);
+            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.ast_onGreen));
+        } else {
+            textView.setBackgroundResource(R.color.ast_red);
+            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.ast_onRed));
+        }
     }
 
     /**
@@ -260,71 +242,54 @@ public class HomeFragment extends Fragment {
      */
     private void checkASTInternal() {
         String ast = prefsDefault.getString("ast", "basic");
-        int numberPurchases = currentAllPurchases.size();
-        int size100 = 0;
-        int size200 = 0;
+        Log.d("AST_Check", "Current AST: " + ast + ", Cities: " + currentCities + ", CardsVP: " + currentCardsVp);
+        int countAllPurchases = currentAllPurchases.size();
+        int countSize100 = 0;
+        int countSize200 = 0;
+        boolean mbaAchieved, lbaAchieved, eiaAchieved, liaAchieved;
+
+        // count the number of cards which have a buying price greater 100 and 200
         for (Card card : currentAllPurchases) {
             if (card.getPrice() >= 100) {
-                size100++;
+                countSize100++;
             }
             if (card.getPrice() >= 200) {
-                size200++;
+                countSize200++;
             }
         }
+        Log.d("AST_Check", "NumberPurchases: " + countAllPurchases + ", Size>100: " + countSize100 + ", Size>200: " + countSize200);
 
-        // Reset der UI-Elemente
-        // reset everything first and then see where we are
-            binding.tvMBA.setBackgroundResource(R.color.ast_red);
-            binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onRed));
-            binding.tvLBA.setBackgroundResource(R.color.ast_red);
-            binding.tvLBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onRed));
-            binding.tvEIA.setBackgroundResource(R.color.ast_red);
-            binding.tvEIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onRed));
-            binding.tvLIA.setBackgroundResource(R.color.ast_red);
-            binding.tvLIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onRed));
-        if (ast.compareTo("basic") == 0){
-            if (numberPurchases >= 3 && currentCities >= 3) {
-                // MBA needs 3 cities & 3 cards
-                binding.tvMBA.setBackgroundResource(R.color.ast_green);
-                binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
-            }
-            if (numberPurchases >= 3 && size100 >= 3 && currentCities >= 3) {
-                // LBA needs 3 cities & 3 cards 100+
-                binding.tvLBA.setBackgroundResource(R.color.ast_green);
-                binding.tvLBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
-            }
-            if (numberPurchases >= 2 && size200 >= 2 && currentCities >= 4) {
-                // EIA needs 4 cities & 2 cards 200+
-                binding.tvEIA.setBackgroundResource(R.color.ast_green);
-                binding.tvEIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
-            }
-            if (numberPurchases >= 3 && size200 >= 3 && currentCities >= 5) {
-                // LEA needs 5 cities & 3 cards 200+
-                binding.tvLIA.setBackgroundResource(R.color.ast_green);
-                binding.tvLIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
-            }
+
+        if ("basic".equals(ast)) {
+            // MBA: 3 cities & 3 cards
+            mbaAchieved = (currentCities >= 3 && countAllPurchases >= 3);
+            // LBA: 3 cities & 3 cards 100+
+            lbaAchieved = (currentCities >= 3 && countSize100 >= 3); // Annahme: countAllPurchases >=3 ist hier implizit, da countSize100 <= countAllPurchases
+            // EIA: 4 cities & 2 cards 200+
+            eiaAchieved = (currentCities >= 4 && countSize200 >= 2);
+            // LIA: 5 cities & 3 cards 200+  (Original war LEA, ich nehme an LIA ist ein Tippfehler oben)
+            liaAchieved = (currentCities >= 5 && countSize200 >= 3);
+        } else { // "expert" AST
+            // MBA: 3 cities & 5 VP
+            mbaAchieved = (currentCities >= 3 && currentCardsVp >= 5);
+            // LBA: 4 cities & 12 cards
+            lbaAchieved = (currentCities >= 4 && countAllPurchases >= 12);
+            // EIA: 5 cities & 10 cards 100+ & 38 VP
+            eiaAchieved = (currentCities >= 5 && countSize100 >= 10 && currentCardsVp >= 38);
+            // LIA: 6 cities & 17 cards 100+ & 56 VP
+            liaAchieved = (currentCities >= 6 && countSize100 >= 17 && currentCardsVp >= 56);
+        }
+
+        // Wende den Status auf die UI-Elemente an
+        // Es ist wichtig, requireContext() zu verwenden, wenn das Fragment attached ist.
+        // Stelle sicher, dass diese Methode nur aufgerufen wird, wenn das Fragment einen Context hat.
+        if (isAdded() && getContext() != null) { // Prüfen, ob das Fragment attached ist und einen Context hat
+            setAstStatus(binding.tvMBA, mbaAchieved);
+            setAstStatus(binding.tvLBA, lbaAchieved);
+            setAstStatus(binding.tvEIA, eiaAchieved);
+            setAstStatus(binding.tvLIA, liaAchieved);
         } else {
-            // expert version needs a bit more
-            if (currentCardsVp >= 5 && currentCities >= 3) {
-                // MBA needs 3 cities & 5 VP
-                binding.tvMBA.setBackgroundResource(R.color.ast_green);
-                binding.tvMBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
-            }
-            if (numberPurchases >= 12 && currentCities >= 4) {
-                // LBA needs 4 cities & 12 cards
-                binding.tvLBA.setBackgroundResource(R.color.ast_green);
-                binding.tvLBA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
-            }
-            if (size100 >= 10 && currentCardsVp >= 38 && currentCities >= 5) {
-                // EIA needs 5 cities & 10 cards 100+ & 38 VP
-                binding.tvEIA.setBackgroundResource(R.color.ast_green);
-                binding.tvEIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
-            }
-            if (size100 >= 17 && currentCardsVp >= 56 && currentCities >= 6) {
-                // LEA needs 6 cities & 17 cards 100+ & 56 VP
-                binding.tvLIA.setBackgroundResource(R.color.ast_green);
-                binding.tvLIA.setTextColor(ContextCompat.getColor(getContext(), R.color.ast_onGreen));
-            }
+            Log.w("HomeFragment", "checkASTInternal called when fragment not attached or context is null.");
         }
     }
 
@@ -336,27 +301,6 @@ public class HomeFragment extends Fragment {
         if (index != -1) {
             mCivicViewModel.setCities(index);
         }
-    }
-
-    public void onPause() {
-        super.onPause();
-    }
-
-    public void onStart() {
-        super.onStart();
-    }
-
-    public void onResume() {
-        super.onResume();
-    }
-
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override
@@ -374,7 +318,6 @@ public class HomeFragment extends Fragment {
             Context context = requireContext();
             String[] entries = context.getResources().getStringArray(R.array.civilizations_entries);
             String[] values = context.getResources().getStringArray(R.array.civilizations_values);
-            String currentValue = prefsDefault.getString("civilization", "");
             for (int i = 0; i < values.length; i++) {
                 menu.add(1, i, i, entries[i]);  // Group 1 = Civilization
             }

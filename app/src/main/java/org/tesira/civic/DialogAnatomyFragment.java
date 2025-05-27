@@ -22,7 +22,6 @@ import java.util.List;
  * https://developer.android.com/guide/topics/ui/dialogs
  */
 public class DialogAnatomyFragment extends DialogFragment {
-
     private static final String ARG_GREEN_CARDS_LIST = "arg_green_cards_list";
     private static final String REQUEST_KEY = "anatomySelectionResult";
     private CivicViewModel mCivicViewModel;
@@ -34,7 +33,6 @@ public class DialogAnatomyFragment extends DialogFragment {
     public static DialogAnatomyFragment newInstance(List<String> greenCardNames) {
         DialogAnatomyFragment fragment = new DialogAnatomyFragment();
         Bundle args = new Bundle();
-        // Wichtig: Übergebe eine ArrayList<String>, da Bundle dies direkt unterstützt
         args.putStringArrayList(ARG_GREEN_CARDS_LIST, new ArrayList<>(greenCardNames));
         fragment.setArguments(args);
         fragment.setCancelable(false);
@@ -88,7 +86,6 @@ public class DialogAnatomyFragment extends DialogFragment {
             String selectedGreenCard = greenCardsArray[which];
 
             mCivicViewModel.addBonus(selectedGreenCard);
-            mCivicViewModel.saveBonus(); // Überlege, ob dies hier oder im ViewModel nach erfolgreichem Kauf sein soll
             mCivicViewModel.insertPurchase(selectedGreenCard);
             mCivicViewModel.requestPriceRecalculation();
 
