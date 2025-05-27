@@ -1,24 +1,19 @@
 package org.tesira.civic;
 
-import static java.lang.Integer.parseInt;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
@@ -29,9 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -49,9 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-// Import the new MenuProvider interface
-import androidx.core.view.MenuProvider;
-import androidx.lifecycle.Lifecycle;
 
 /**
  * Fragment for the buy process. User can input a treasure sum and select up to that value
@@ -61,7 +50,6 @@ import androidx.lifecycle.Lifecycle;
 public class BuyingFragment extends Fragment {
     private static final String EXTRA_CREDITS_REQUEST_KEY = "extraCreditsDialogResult";
     private static final String ANATOMY_REQUEST_KEY = "anatomySelectionResult";
-    private static final String TREASURE_BOX = "treasure";
     private CivicViewModel mCivicViewModel;
     private String sortingOrder;
     protected EditText mTreasureInput;
@@ -74,18 +62,15 @@ public class BuyingFragment extends Fragment {
     private RecyclerView.LayoutManager mLayout;
     private BuyingListAdapter mAdapter;
     private RecyclerView mRecyclerView;
-    private int mColumnCount = 2;
     private int mColumnCountPreference;
     private String[] sortingOptionsValues, sortingOptionsNames;
     private Bundle savedSelectionState = null;
     private ViewTreeObserver.OnGlobalLayoutListener keyboardListener;
-    private int currentSpanCount;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-//        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
         mColumnCountPreference = Integer.parseInt(prefs.getString("columns", "1"));
         sortingOrder = prefs.getString("sort", "name");
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);

@@ -1,7 +1,6 @@
 package org.tesira.civic
 
 import android.content.DialogInterface
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -25,7 +24,6 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
-import androidx.navigation.ui.onNavDestinationSelected
 import org.tesira.civic.databinding.ActivityMainBinding
 import org.tesira.civic.db.CivicViewModel
 
@@ -106,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             val currentDrawerLayout = drawerLayout
             if (currentDrawerLayout != null) {
                 appBarConfiguration = AppBarConfiguration(
-                    setOf(R.id.homeFragment, R.id.buyingFragment),
+                    setOf(R.id.homeFragment, R.id.buyingFragment, R.id.purchasesFragment, R.id.tipsFragment, R.id.settingsFragment, R.id.aboutFragment),
                     currentDrawerLayout
                 )
                 // NavigationUI.setupActionBarWithNavController hier drinnen aufrufen,
