@@ -40,10 +40,6 @@ public class HomeCalamityAdapter extends RecyclerView.Adapter<HomeCalamityAdapte
         this.viewModel = viewModel;
         this.mContext = context;
     }
-    public void clearData() {
-        calamityList.clear();
-        notifyDataSetChanged();
-    }
 
     @NonNull
     @Override
@@ -71,16 +67,11 @@ public class HomeCalamityAdapter extends RecyclerView.Adapter<HomeCalamityAdapte
             holder.bonus.setBackgroundResource(R.drawable.specials_background);
     }
 
-
     @Override
     public int getItemCount() {
         return calamityList.size();
     }
 
-    public void updateData() {
-        calamityList = viewModel.getCalamityBonus();
-        notifyDataSetChanged();
-    }
     public void submitCalamityList(List<Calamity> newCalamities) {
         this.calamityList.clear();
         if (newCalamities != null) {

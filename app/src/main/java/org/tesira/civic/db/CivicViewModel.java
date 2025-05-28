@@ -45,7 +45,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     private final MutableLiveData<Integer> cities = new MutableLiveData<>(0);
     private final Application mApplication;
     private final MutableLiveData<Integer> timeVp = new MutableLiveData<>(0);
-//    public String heart;
 
     public boolean librarySelected;
     public final static String[] TREASURY = {"Monarchy", "Coinage", "Trade Routes",
@@ -107,6 +106,8 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     private static final String PREF_KEY_TIME = "time";
     private static final String PREF_KEY_TREASURE = "treasure";
     private static final String PREF_KEY_HEART = "heart";
+    private static final String PREF_KEY_COLUMNS = "columns";
+
     private final LiveData<Integer> cardsVpFromDao;
     private final MediatorLiveData<Integer> totalVp = new MediatorLiveData<>();
     private final Map<String, Card> buyableCardMap = new HashMap<>();
@@ -215,13 +216,14 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         return totalVp;
     }
 
-    public int getCardsVp() {
-        return cardsVpFromDao.getValue() != null ? cardsVpFromDao.getValue() : 0;
-    }
-
     public LiveData<Integer> getCardsVpLiveData() {
         return cardsVpFromDao;
     }
+
+    public int getmColumnCount() {
+        return mColumnCount;
+    }
+
     public void loadData() {
         int blue, green, orange, red, yellow;
         blue = defaultPrefs.getInt(CardColor.BLUE.getName(), 0);
@@ -239,8 +241,8 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         userPreferenceForHeartCards.setValue(defaultPrefs.getString(PREF_KEY_HEART, "custom"));
         setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0));
         setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME,0));
-        mColumnCount = Integer.parseInt(defaultPrefs.getString("columns", "1"));
-        currentSortingOrder.setValue(defaultPrefs.getString("sort", "name"));
+        mColumnCount = Integer.parseInt(defaultPrefs.getString(PREF_KEY_COLUMNS, "1"));
+        currentSortingOrder.setValue(defaultPrefs.getString(PREF_KEY_SORT, "name"));
     }
     public int getCities() {
         return cities.getValue() != null ? cities.getValue() : 0;
@@ -253,7 +255,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         cities.setValue(value);
     }
     public void requestPriceRecalculation() {
-        mRepository.recalculateCurrentPricesAsync(cardBonus.getValue());
+        mRepository.recalculateCurrentPricesAsync(cardBonus);
     }
     public int getScreenWidthDp() {
         return screenWidthDp;
@@ -268,9 +270,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
 
     private final MutableLiveData<String> userPreferenceForHeartCards = new MutableLiveData<>();
 
-    public LiveData<String> getUserPreferenceForHeartCards() {
-        return userPreferenceForHeartCards;
-    }
     public int getTimeVp() {
         return timeVp.getValue();
     }
@@ -296,11 +295,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public LiveData<List<Calamity>> getCalamityBonusListLiveData() {
         return calamityBonusListLiveData;
     }
-    public LiveData<Card> getAdvanceByNameToCardLiveData(String name) {return mRepository.getAdvanceByNameToCardLiveData(name);}
     public LiveData<List<Card>> getPurchasesAsCardLiveData() {return mRepository.getPurchasesAsCardLiveData();}
-    public List<Calamity> getCalamityBonus() {return mRepository.getCalamityBonus();}
-    public List<String> getSpecialAbilities() {return mRepository.getSpecialAbilities();}
-    public List<String> getImmunities() {return mRepository.getImmunities();}
     public MutableLiveData<Integer> getTreasure() {
         return treasure;
     }
@@ -316,12 +311,9 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public MutableLiveData<HashMap<CardColor, Integer>> getCardBonus() {
         return cardBonus;
     }
-
-
     public LiveData<Event<Boolean>> getNewGameStartedEvent() {
         return newGameStartedEvent;
     }
-
     private final MutableLiveData<Event<Boolean>> newGameResetCompletedEvent = new MutableLiveData<>();
     public final LiveData<Event<Boolean>> getNewGameResetCompletedEvent() {
         return newGameResetCompletedEvent;
