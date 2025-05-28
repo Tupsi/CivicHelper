@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.tesira.civic.db.CivicViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,21 +68,6 @@ public class HomeSpecialsAdapter extends RecyclerView.Adapter<HomeSpecialsAdapte
     @Override
     public int getItemCount() {
         return localDataSet.length;
-    }
-
-    public void clearData() {
-        localDataSet = new String[0];
-        notifyDataSetChanged();
-    }
-
-    public void updateData() {
-        List<String> combinedList = new ArrayList<>();
-        combinedList.add("___Special Abilities");
-        combinedList.addAll(viewModel.getSpecialAbilities());
-        combinedList.add("___Immunities");
-        combinedList.addAll(viewModel.getImmunities());
-        localDataSet = combinedList.stream().distinct().toArray(String[]::new);
-        notifyDataSetChanged();
     }
 
     public void submitSpecialsList(List<String> newSpecialsAndImmunities) {
