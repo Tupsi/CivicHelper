@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+import org.tesira.civic.databinding.FragmentPurchasesBinding;
 import org.tesira.civic.db.CivicViewModel;
 
 import java.util.ArrayList;
@@ -26,9 +27,10 @@ import java.util.ArrayList;
 public class PurchasesFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
-//    private int mColumnCount = 1;
     private CivicViewModel mCivicViewModel;
     private PurchasesRecyclerViewAdapter adapter;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayout;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -56,7 +58,7 @@ public class PurchasesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_purchases, container, false);
-
+        mRecyclerView = (RecyclerView) rootView;
         final int initialPaddingLeft = rootView.getPaddingLeft();
         final int initialPaddingTop = rootView.getPaddingTop();
         final int initialPaddingRight = rootView.getPaddingRight();
@@ -76,18 +78,20 @@ public class PurchasesFragment extends Fragment {
         });
 
         ViewCompat.requestApplyInsets(rootView);
+        int actualColumnCount = mCivicViewModel.calculateColumnCount(rootView.getContext());
+
+        if (actualColumnCount <= 1) {
+            mLayout = new LinearLayoutManager(rootView.getContext());
+            mRecyclerView.setLayoutManager(mLayout);
+        } else {
+            mLayout = new GridLayoutManager(rootView.getContext(), actualColumnCount);
+            mRecyclerView.setLayoutManager(mLayout);
+        }
 
         // Set the adapter
         if (rootView instanceof RecyclerView) {
-            Context context = rootView.getContext();
-            RecyclerView recyclerView = (RecyclerView) rootView;
-            if (mCivicViewModel.getColumns() <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mCivicViewModel.getColumns()));
-            }
             adapter = new PurchasesRecyclerViewAdapter();
-            recyclerView.setAdapter(adapter);
+            mRecyclerView.setAdapter(adapter);
 
             // LiveData beobachten und Adapter aktualisieren
             mCivicViewModel.getPurchasesAsCardLiveData().observe(getViewLifecycleOwner(), purchasedCards -> {

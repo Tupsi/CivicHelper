@@ -17,10 +17,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
@@ -33,13 +31,6 @@ class MainActivity : AppCompatActivity() {
     private var drawerLayout: DrawerLayout? = null
     private lateinit var navController: NavController
     private val mCivicViewModel: CivicViewModel by viewModels()
-
-    private fun getLabelOrId(destination: NavDestination): String {
-        if (destination.label != null && destination.label.toString().isNotEmpty()) {
-            return destination.label.toString()
-        }
-        return "ID:0x${Integer.toHexString(destination.id)}"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         this.enableEdgeToEdge()
@@ -54,23 +45,13 @@ class MainActivity : AppCompatActivity() {
         invalidateOptionsMenu()
 
         val initialPaddingLeft = toolbar.paddingLeft
-        val initialPaddingTopFromXml = toolbar.paddingTop // Hole das ursprüngliche Top-Padding aus der XML
+        val initialPaddingTopFromXml = toolbar.paddingTop
         val initialPaddingRight = toolbar.paddingRight
         val initialPaddingBottom = toolbar.paddingBottom
 
-        Log.d("ToolbarInsets", "Initial XML paddingTop: $initialPaddingTopFromXml")
-
         ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view, windowInsets ->
             val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-
-            Log.d("ToolbarInsets", "systemBars.top: ${systemBars.top}")
-            Log.d("ToolbarInsets", "Current view.paddingTop before setPadding: ${view.paddingTop}")
-
             val newPaddingTop = systemBars.top // Standardmäßig nur die Insets für oben
-            // Wenn du das ursprüngliche XML-Padding *zusätzlich* zu den Insets haben willst (selten für Toolbar oben):
-            // val newPaddingTop = initialPaddingTopFromXml + systemBars.top
-
-            Log.d("ToolbarInsets", "Calculated newPaddingTop: $newPaddingTop")
 
             view.setPadding(
                 initialPaddingLeft + systemBars.left,
@@ -78,7 +59,6 @@ class MainActivity : AppCompatActivity() {
                 initialPaddingRight + systemBars.right,
                 initialPaddingBottom
             )
-            Log.d("ToolbarInsets", "Final view.paddingTop after setPadding: ${view.paddingTop}")
             windowInsets
         }
         ViewCompat.requestApplyInsets(toolbar)
@@ -87,50 +67,37 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.myNavHostFragment) as? NavHostFragment
 
         if (navHostFragment == null) {
-            Log.e("MainActivity", "NavHostFragment nicht gefunden! App-Navigation wird nicht funktionieren.")
+            Log.e("NavDrawer", "NavHostFragment nicht gefunden! App-Navigation wird nicht funktionieren.")
         } else {
             navController = navHostFragment.navController
-
-            navController.addOnDestinationChangedListener { controller, destination, arguments ->
-                Log.d("Nav_DEST_CHANGED", "----------------------------------------------------")
-                val destLabelOrId = getLabelOrId(destination)
-                val destIdHex = Integer.toHexString(destination.id)
-                Log.d("Nav_DEST_CHANGED", "Navigated TO: $destLabelOrId (ID: 0x$destIdHex)")
-                Log.d("Nav_DEST_CHANGED", "----------------------------------------------------")
-            }
-
             drawerLayout = binding!!.drawerLayout
 
             val currentDrawerLayout = drawerLayout
             if (currentDrawerLayout != null) {
                 appBarConfiguration = AppBarConfiguration(
-//                    setOf(R.id.homeFragment, R.id.buyingFragment, R.id.purchasesFragment, R.id.tipsFragment, R.id.settingsFragment, R.id.aboutFragment),
-//                    currentDrawerLayout
                     setOf(R.id.homeFragment, R.id.buyingFragment, R.id.purchasesFragment, R.id.tipsFragment, R.id.settingsFragment, R.id.aboutFragment)
-
                 )
-                // NavigationUI.setupActionBarWithNavController hier drinnen aufrufen,
-                // da es appBarConfiguration benötigt.
                 setupActionBarWithNavController(this, navController, appBarConfiguration)
             } else {
-                Log.e("MainActivity", "DrawerLayout ist null, AppBarConfiguration kann nicht vollständig initialisiert werden.")
+                Log.e("NavDrawer", "DrawerLayout ist null, AppBarConfiguration kann nicht vollständig initialisiert werden.")
                 // Fallback: AppBarConfiguration ohne Drawer initialisieren, wenn das sinnvoll ist
                 // appBarConfiguration = AppBarConfiguration(setOf(R.id.homeFragment, R.id.buyingFragment))
                 // setupActionBarWithNavController(navController, appBarConfiguration)
                 // Oder einen Fehler signalisieren.
             }
 
-            binding?.navView?.setNavigationItemSelectedListener { menuItem ->
+/*            binding?.navView?.setNavigationItemSelectedListener { menuItem ->
                 val id = menuItem.itemId
-                Log.d("NavDrawer_Kotlin", "Item selected: ${menuItem.title}, ID: $id (Hex: ${Integer.toHexString(id)})")
+                Log.d("NavDrawer", "Item selected: ${menuItem.title}, ID: $id (Hex: ${Integer.toHexString(id)})")
 
-                val currentDestination = navController.currentDestination // navController sollte hier non-null sein
+                val currentDestination = navController.currentDestination
                 val currentDestinationId = currentDestination?.id ?: 0
 
                 // Der when-Ausdruck ersetzt die if-else if-Kette.
                 // Der Wert des ausgewählten when-Zweigs wird zum Rückgabewert des Lambdas.
                 when (id) {
                     R.id.menu_newGame -> {
+                        Log.d("NavDrawer", "New Game menu item selected.")
                         showNewGameDialog()
                         true
                     }
@@ -198,16 +165,8 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-            } ?: Log.e("MainActivity_Kotlin", "NavView oder Binding ist null, Listener nicht gesetzt.")
+            } ?: Log.e("MainActivity_Kotlin", "NavView oder Binding ist null, Listener nicht gesetzt.")*/
         }
-
-        val configuration = this.resources.configuration
-        val screenWidthDp = configuration.screenWidthDp
-        Log.d("ScreenDetails", "screenWidthDp: $screenWidthDp")
-        mCivicViewModel.screenWidthDp = screenWidthDp
-        val smallestScreenWidthDp = configuration.smallestScreenWidthDp
-        Log.d("ScreenDetails", "smallestScreenWidthDp: $smallestScreenWidthDp")
-        mCivicViewModel.smallestScreenWidthDp = smallestScreenWidthDp
 
         mCivicViewModel.newGameStartedEvent.observe(this) { event ->
             event?.getContentIfNotHandled()?.let { resetCompleted ->
@@ -244,17 +203,17 @@ class MainActivity : AppCompatActivity() {
             showNewGameDialog()
             return true
         }
-        return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
+        return onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
     }
 
     private fun showNewGameDialog() {
-        if (drawerLayout?.isDrawerOpen(binding!!.navView) == true) { // binding!! ist hier potenziell riskant, wenn binding null sein kann
+        if (drawerLayout?.isDrawerOpen(binding!!.navView) == true) {
             binding?.navView?.let { drawerLayout?.closeDrawer(it) }
         }
         val dialogClickListener =
             DialogInterface.OnClickListener { _, which ->
                 when (which) {
-                    DialogInterface.BUTTON_POSITIVE -> mCivicViewModel.requestNewGame()
+                    DialogInterface.BUTTON_POSITIVE -> mCivicViewModel.startNewGameProcess()
                     DialogInterface.BUTTON_NEGATIVE -> { /* No button clicked - tu nichts */ }
                 }
             }
