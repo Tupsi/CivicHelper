@@ -2,7 +2,7 @@
     <string name="app_name">Civic Helper</string>
     <string name="about_version">Version: %1$s</string>
     <string name="about_text">
-        This is a tools for the board games Mega Civilization,
+        This is a tool for the board games Mega Civilization,
         Mega Empires and its two parts \"The West\" and \"The East\".\n\n
         The app is inspired by the player aids on boardgamegeek.com for the games.
         It helps you track which civilization advances you already bought and
@@ -11,7 +11,7 @@
         The start screen acts as a dashboard and tracks the current number of cities, color bonuses, victory points, A.S.T.
         and effects from advances you bought.\n
         The buying process supports cards with special buying bonuses like Anatomy, Library, Monument and Written Records.\n\n
-        The included Tips are taken from the Beginner\'s Guide I found on boardgamesgeek.com. Big Thanks to Nicholas M. for writing them!
+        The included Tips are taken from the Beginner\'s Guide I found on boardgamesgeek.com.\n Big Thanks to Nicholas M. for writing them!
     </string>
     <string name="money">Treasure</string>
     <!-- Preference Titles -->
