@@ -67,12 +67,10 @@ public class DialogAnatomyFragment extends DialogFragment {
             } else {
                 Log.d("AnatomyDialogFragment", "Green cards list is null or empty in arguments.");
                 dismissAllowingStateLoss();
-                return;
             }
         } else {
             Log.d("AnatomyDialogFragment", "Arguments are null.");
             dismissAllowingStateLoss();
-            return;
         }
     }
 

@@ -120,7 +120,7 @@ public class BuyingFragment extends Fragment {
 
         ViewCompat.requestApplyInsets(rootView);
 
-        int actualColumnCount = calculateColumnCount(rootView.getContext());
+        int actualColumnCount = mCivicViewModel.calculateColumnCount(rootView.getContext());
 
         if (actualColumnCount <= 1) {
             mLayout = new LinearLayoutManager(rootView.getContext());
@@ -502,41 +502,5 @@ public class BuyingFragment extends Fragment {
         //   }
 
         binding.btnSort.setText(labelToShow);
-    }
-
-
-    private int calculateColumnCount(Context context) {
-        // 1. Hole die aktuelle Gerätekonfiguration
-        Configuration configuration = context.getResources().getConfiguration();
-        int screenWidthDp = configuration.screenWidthDp; // Aktuelle Bildschirmbreite in dp
-        int orientation = configuration.orientation;     // Aktuelle Orientierung
-
-        // 2. Deine Logik zur Bestimmung der Spaltenanzahl
-        // Beispiel: Wenn im Querformat und die Benutzereinstellung 1 ist, setze auf 2 Spalten.
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (mCivicViewModel.getColumns() <= 1) {
-                return 2; // Immer 2 Spalten im Querformat, wenn User 1 wollte
-            } else {
-                return mCivicViewModel.getColumns();
-            }
-        } else { // Portrait-Modus
-            // Im Portrait-Modus, verwende die Benutzereinstellung
-            return mCivicViewModel.getColumns();
-        }
-
-        // Alternative oder erweiterte Logik basierend auf screenWidthDp:
-        // (Diese kannst du mit der obigen Orientierungslogik kombinieren oder stattdessen verwenden)
-        /*
-        if (screenWidthDp >= 600) { // Beispiel: typische Tablet-Breite oder sehr breites Querformat
-            if (mColumnCountPreference < 2) return 2; // Mindestens 2 Spalten
-            if (mColumnCountPreference < 3 && screenWidthDp >= 800) return 3; // Mindestens 3 Spalten auf sehr breiten Screens
-            return mColumnCountPreference; // Ansonsten Benutzereinstellung
-        } else if (screenWidthDp >= 480) { // Breiteres Smartphone im Querformat
-             if (mColumnCountPreference <= 1) return 2; // Mindestens 2 Spalten
-             return mColumnCountPreference;
-        } else { // Schmaleres Smartphone
-            return mColumnCountPreference; // Im Hochformat oder schmal, die Benutzereinstellung
-        }
-        */
     }
 }

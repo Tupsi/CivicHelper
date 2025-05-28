@@ -1,7 +1,9 @@
 package org.tesira.civic.db;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -261,19 +263,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public void requestPriceRecalculation() {
         mRepository.recalculateCurrentPricesAsync(cardBonus);
     }
-    public int getScreenWidthDp() {
-        return screenWidthDp;
-    }
-    public void setScreenWidthDp(int screenWidthDp) {
-        this.screenWidthDp = screenWidthDp;
-    }
-    public int getSmallestScreenWidthDp(){return smallestScreenWidthDp;}
-    public void setSmallestScreenWidthDp(int smallestScreenWidthDp) {
-        this.smallestScreenWidthDp = smallestScreenWidthDp;
-    };
-
     private final MutableLiveData<String> userPreferenceForHeartCards = new MutableLiveData<>();
-
     public int getTimeVp() {
         return timeVp.getValue();
     }
@@ -325,14 +315,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     private final MutableLiveData<Event<Boolean>> _navigateToDashboardEvent = new MutableLiveData<>();
     public LiveData<Event<Boolean>> getNavigateToDashboardEvent() {
         return _navigateToDashboardEvent;
-    }
-
-    /**
-     * Signals that a new game process should be initiated by the ViewModel.
-     * This is called from the UI.
-     */
-    public void requestNewGame() {
-        startNewGameProcess();
     }
 
     /**
@@ -702,12 +684,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
      * Nutzt deine bestehende Logik aus getChooserCards().
      */
     private List<String> getCardNamesForHeartSelection(String selectionName) {
-        // Deine bestehende Logik, um die Kartenlisten zu bekommen.
-        // Du hast diese Logik bereits in 'getChooserCards()', passe sie ggf. leicht an,
-        // um direkt die Namen zurückzugeben oder die Logik hier zu duplizieren/refaktorieren.
-
-        // Beispielhafte Übernahme/Anpassung deiner getChooserCards-Logik:
-        switch (selectionName.toLowerCase()) { // ToLowerCase für Robustheit
+        switch (selectionName.toLowerCase()) {
             case "treasury":
                 return Arrays.asList(TREASURY);
             case "commodities":
@@ -721,7 +698,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             case "mobility":
                 return Arrays.asList(TOKEN_MOBILITY);
             case "cities":
-                return Arrays.asList(CITIES); // Stelle sicher, dass CITIES hier Kartennamen sind
+                return Arrays.asList(CITIES);
             case "sea":
                 return Arrays.asList(SEA_POWER);
             case "aggression":
@@ -730,7 +707,42 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
                 return Arrays.asList(DEFENSE);
             case "custom":
             default:
-                return new ArrayList<>(); // Keine spezifischen Karten für "custom" oder unbekannte Auswahl
+                return new ArrayList<>();
         }
+    }
+
+    public int calculateColumnCount(Context context) {
+        // 1. Hole die aktuelle Gerätekonfiguration
+        Configuration configuration = context.getResources().getConfiguration();
+        int screenWidthDp = configuration.screenWidthDp; // Aktuelle Bildschirmbreite in dp
+        int orientation = configuration.orientation;     // Aktuelle Orientierung
+
+        // 2. Deine Logik zur Bestimmung der Spaltenanzahl
+        // Beispiel: Wenn im Querformat und die Benutzereinstellung 1 ist, setze auf 2 Spalten.
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (getColumns() <= 1) {
+                return 2; // Immer 2 Spalten im Querformat, wenn User 1 wollte
+            } else {
+                return getColumns();
+            }
+        } else { // Portrait-Modus
+            // Im Portrait-Modus, verwende die Benutzereinstellung
+            return getColumns();
+        }
+
+        // Alternative oder erweiterte Logik basierend auf screenWidthDp:
+        // (Diese kannst du mit der obigen Orientierungslogik kombinieren oder stattdessen verwenden)
+        /*
+        if (screenWidthDp >= 600) { // Beispiel: typische Tablet-Breite oder sehr breites Querformat
+            if (mColumnCountPreference < 2) return 2; // Mindestens 2 Spalten
+            if (mColumnCountPreference < 3 && screenWidthDp >= 800) return 3; // Mindestens 3 Spalten auf sehr breiten Screens
+            return mColumnCountPreference; // Ansonsten Benutzereinstellung
+        } else if (screenWidthDp >= 480) { // Breiteres Smartphone im Querformat
+             if (mColumnCountPreference <= 1) return 2; // Mindestens 2 Spalten
+             return mColumnCountPreference;
+        } else { // Schmaleres Smartphone
+            return mColumnCountPreference; // Im Hochformat oder schmal, die Benutzereinstellung
+        }
+        */
     }
 }

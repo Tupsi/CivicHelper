@@ -59,10 +59,10 @@
     <string name="reset_tv_civic">set civic in prefs!</string>
     <string name="no_war_game">\n\n\n
         General Hints:\n\n
-        This is not a wargame. Don\'t attack unless you are sure you gain something from the attack.\n\n
-        Try only to turn in complete sets of commodities.\n\n
-        Advancing on the AST is very important. Check out the goals before purchasing advances.\n\n
-        Don\'t be too afraid of calamities! If you can complete a set, it\'s usually worth to do so even if you are reasonably sure you will get a calamity.\n\n
+        This is not a war game. Don\'t attack unless you are sure you gain something from the attack.
+        Try only to turn in complete sets of commodities.
+        Advancing on the AST is very important. Check out the goals before purchasing advances.
+        Don\'t be too afraid of calamities! If you can complete a set, it\'s usually worth to do so even if you are reasonably sure you will get a calamity.
     </string>
     <string name="favorite">Favorite</string>
     <string name="about_header_desc">picture about the app</string>
