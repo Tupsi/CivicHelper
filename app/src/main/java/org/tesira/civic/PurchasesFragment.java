@@ -1,7 +1,6 @@
 package org.tesira.civic;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.core.graphics.Insets;
@@ -9,7 +8,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-import org.tesira.civic.databinding.FragmentPurchasesBinding;
 import org.tesira.civic.db.CivicViewModel;
 
 import java.util.ArrayList;
@@ -53,13 +50,6 @@ public class PurchasesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-//        mColumnCount = Integer.parseInt(prefs.getString("columns", "1"));
-
-//        if (getArguments() != null) {
-//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-//        }
     }
 
     @Override
@@ -91,10 +81,10 @@ public class PurchasesFragment extends Fragment {
         if (rootView instanceof RecyclerView) {
             Context context = rootView.getContext();
             RecyclerView recyclerView = (RecyclerView) rootView;
-            if (mCivicViewModel.getmColumnCount() <= 1) {
+            if (mCivicViewModel.getColumns() <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mCivicViewModel.getmColumnCount()));
+                recyclerView.setLayoutManager(new GridLayoutManager(context, mCivicViewModel.getColumns()));
             }
             adapter = new PurchasesRecyclerViewAdapter();
             recyclerView.setAdapter(adapter);

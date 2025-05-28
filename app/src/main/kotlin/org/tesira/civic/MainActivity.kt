@@ -160,15 +160,6 @@ class MainActivity : AppCompatActivity() {
                         true
                     }
 
-                    // Für die kombinierten Fälle brauchen wir eine etwas andere Struktur im when,
-                    // oder wir behandeln sie innerhalb eines 'else'-Zweiges des when(id)
-                    // oder wir prüfen 'id' und 'currentDestinationId' zusammen.
-                    // Hier eine Möglichkeit, es im 'else' zu verschachteln oder als separate Bedingung danach:
-
-                    // Hier würde normalerweise der nächste case für 'id' kommen.
-                    // Da die Bedingung aber auch 'currentDestinationId' beinhaltet,
-                    // passt es nicht direkt in das 'when (id)'
-                    // Wir können es so machen:
                     else -> { // Dieser else-Zweig behandelt alle anderen IDs
                         if (currentDestinationId == R.id.buyingFragment &&
                             (id == R.id.purchasesFragment || id == R.id.tipsFragment || id == R.id.aboutFragment || id == R.id.settingsFragment)) {
@@ -242,7 +233,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         binding = null
     }
-    // In MainActivity.kt
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_toolbar_menu, menu)
         return true

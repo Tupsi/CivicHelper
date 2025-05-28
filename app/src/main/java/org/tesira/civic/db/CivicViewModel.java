@@ -78,9 +78,10 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     private final MutableLiveData<String> currentSortingOrder = new MutableLiveData<>();
     private final LiveData<List<Card>> allAdvancesNotBought;
 
+    private final MutableLiveData<Integer> _columns = new MutableLiveData<>();
+
     // LiveData für Dialog-Events
     private final MutableLiveData<Event<List<String>>> showAnatomyDialogEvent = new MutableLiveData<>();
-    private int mColumnCount;
     private final MutableLiveData<Event<Boolean>> newGameStartedEvent = new MutableLiveData<>();
     private final LiveData<List<Calamity>> calamityBonusListLiveData;
 
@@ -220,8 +221,11 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         return cardsVpFromDao;
     }
 
-    public int getmColumnCount() {
-        return mColumnCount;
+    public LiveData<Integer> getColumnsLiveData() {
+        return _columns;
+    }
+    public int getColumns() {
+        return _columns.getValue();
     }
 
     public void loadData() {
@@ -241,7 +245,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         userPreferenceForHeartCards.setValue(defaultPrefs.getString(PREF_KEY_HEART, "custom"));
         setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0));
         setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME,0));
-        mColumnCount = Integer.parseInt(defaultPrefs.getString(PREF_KEY_COLUMNS, "1"));
+        _columns.setValue(Integer.parseInt(defaultPrefs.getString(PREF_KEY_COLUMNS, "1")));
         currentSortingOrder.setValue(defaultPrefs.getString(PREF_KEY_SORT, "name"));
     }
     public int getCities() {
@@ -657,6 +661,11 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             String newHeartSelection = sharedPreferences.getString(key, "custom");
             if (userPreferenceForHeartCards.getValue() == null || !userPreferenceForHeartCards.getValue().equals(newHeartSelection)) {
                 updateUserHeartPreference(newHeartSelection);
+            }
+        } else if (PREF_KEY_COLUMNS.equals(key)){
+            int newColumns = Integer.parseInt(sharedPreferences.getString(key, "1"));
+            if (_columns.getValue() == null || _columns.getValue() != newColumns) {
+                _columns.setValue(newColumns);
             }
         }
     }

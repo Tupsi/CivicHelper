@@ -62,7 +62,7 @@ public class BuyingFragment extends Fragment {
     private RecyclerView.LayoutManager mLayout;
     private BuyingListAdapter mAdapter;
     private RecyclerView mRecyclerView;
-    private int mColumnCountPreference;
+
     private String[] sortingOptionsValues, sortingOptionsNames;
     private Bundle savedSelectionState = null;
     private ViewTreeObserver.OnGlobalLayoutListener keyboardListener;
@@ -70,9 +70,6 @@ public class BuyingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        mColumnCountPreference = Integer.parseInt(prefs.getString("columns", "1"));
-        sortingOrder = prefs.getString("sort", "name");
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
         sortingOptionsValues = getResources().getStringArray(R.array.sort_values);
         sortingOptionsNames = getResources().getStringArray(R.array.sort_entries);
@@ -137,8 +134,6 @@ public class BuyingFragment extends Fragment {
         ViewCompat.requestApplyInsets(rootView);
 
         int actualColumnCount = calculateColumnCount(rootView.getContext());
-        Log.w("BuyingFragment", "Effective column count: " + actualColumnCount);
-        Log.w("BuyingFragment", "User preference for columns: " + mColumnCountPreference);
 
         if (actualColumnCount <= 1) {
             mLayout = new LinearLayoutManager(rootView.getContext());
@@ -175,8 +170,7 @@ public class BuyingFragment extends Fragment {
         } else {
             // Fallback, wenn initial noch nichts gesetzt ist, z.B. erster Start
             // Hole den Standardwert aus den SharedPreferences oder definiere einen festen Startwert
-            String defaultSortOrder = prefs.getString("sort", sortingOptionsValues[0]); // Beispiel: aus Prefs
-            updateSortButtonText(defaultSortOrder);
+            updateSortButtonText(mCivicViewModel.getCurrentSortingOrder().getValue());
         }
 
         if (savedInstanceState != null) {
@@ -214,12 +208,6 @@ public class BuyingFragment extends Fragment {
             if (tracker != null) {
                 tracker.clearSelection();
                 mCivicViewModel.clearCurrentSelectionState();
-//                if (mCivicViewModel.getTreasure().getValue() != null) {
-//                    if (mCivicViewModel.librarySelected) {
-//                        mCivicViewModel.librarySelected = false;
-//                        mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - 40);
-//                    }
-//                }
             }
         });
 
@@ -558,27 +546,17 @@ public class BuyingFragment extends Fragment {
         int screenWidthDp = configuration.screenWidthDp; // Aktuelle Bildschirmbreite in dp
         int orientation = configuration.orientation;     // Aktuelle Orientierung
 
-        // Logge die erkannten Werte
-        Log.d("BuyingFragment", "calculateColumnCount - ScreenWidthDp: " + screenWidthDp + ", Orientation: " + (orientation == Configuration.ORIENTATION_LANDSCAPE ? "Landscape" : "Portrait"));
-        Log.d("BuyingFragment", "calculateColumnCount - User preference: " + mColumnCountPreference);
-
         // 2. Deine Logik zur Bestimmung der Spaltenanzahl
         // Beispiel: Wenn im Querformat und die Benutzereinstellung 1 ist, setze auf 2 Spalten.
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (mColumnCountPreference <= 1) {
-                Log.d("BuyingFragment", "Landscape mode and user preference is 1, forcing 2 columns.");
+            if (mCivicViewModel.getColumns() <= 1) {
                 return 2; // Immer 2 Spalten im Querformat, wenn User 1 wollte
             } else {
-                // Wenn User schon 2 oder mehr Spalten wollte, behalte das bei
-                // oder erhöhe ggf. weiter, falls genug Platz ist (z.B. auf Tablets)
-                // Für den Anfang behalten wir die Benutzereinstellung, wenn sie > 1 ist.
-                Log.d("BuyingFragment", "Landscape mode, user preference is > 1, using: " + mColumnCountPreference);
-                return mColumnCountPreference;
+                return mCivicViewModel.getColumns();
             }
         } else { // Portrait-Modus
             // Im Portrait-Modus, verwende die Benutzereinstellung
-            Log.d("BuyingFragment", "Portrait mode, using user preference: " + mColumnCountPreference);
-            return mColumnCountPreference;
+            return mCivicViewModel.getColumns();
         }
 
         // Alternative oder erweiterte Logik basierend auf screenWidthDp:
