@@ -1,17 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Civic Helper</string>
     <string name="about_version">Version: %1$s</string>
-    <string name="about_text">
-        This is a tool for the board games Mega Civilization,
-        Mega Empires and its two parts \"The West\" and \"The East\".\n\n
-        The app is inspired by the player aids on boardgamegeek.com for the games.
+    <string name="about_text"><![CDATA[
+        <p>
+        This is a tool for the board games <b<><i>Mega Civilization</i></b>,
+        <b<><i>Mega Empires</i></b> and its two parts <b<><i>\"The West\"</i></b> and
+        <b<><i>\"The East\"</i></b>.</p>
+        <p>The app is inspired by the player aids on
+        <a href="https://boardgamegeek.com/boardgame/184424/mega-civilization">boardgamegeek.com</a> for the games.
         It helps you track which civilization advances you already bought and
         what color bonuses you have accumulated when you buy the next time. The cost mentioned in
-        the buy screen already has the best bonus subtracted from the original price.\n\n
+        the buy screen already has the best bonus subtracted from the original price.</p>
         The start screen acts as a dashboard and tracks the current number of cities, color bonuses, victory points, A.S.T.
-        and effects from advances you bought.\n
-        The buying process supports cards with special buying bonuses like Anatomy, Library, Monument and Written Records.\n\n
-        The included Tips are taken from the Beginner\'s Guide I found on boardgamesgeek.com.\n Big Thanks to Nicholas M. for writing them!
+        and effects from advances you bought.
+        The buying process supports cards with special buying bonuses like Anatomy, Library, Monument and Written Records.
+        <p>The included Tips are taken from the Beginner\'s Guide I found on <a href="https://boardgamegeek.com/boardgame/184424/mega-civilization/files">boardgamesgeek.com</a>.<br>
+        <b>Big Thanks to Nicholas M. for writing them!</b></p>
+        ]]>
     </string>
     <string name="money">Treasure</string>
     <!-- Preference Titles -->

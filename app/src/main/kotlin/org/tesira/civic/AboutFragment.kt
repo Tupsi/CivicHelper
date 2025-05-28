@@ -2,10 +2,12 @@ package org.tesira.civic
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 
 import androidx.fragment.app.Fragment
 import androidx.core.view.ViewCompat
@@ -58,8 +60,10 @@ class AboutFragment : Fragment() {
         }
 
         binding.tvAboutVersion.text = getString(R.string.about_version, versionName)
-        binding.tvAboutText.text = getString(R.string.about_text)
-        binding.tvAboutText.movementMethod = ScrollingMovementMethod()
+//        binding.tvAboutText.text = getString(R.string.about_text)
+        binding.tvAboutText.text = HtmlCompat.fromHtml(getString(R.string.about_text), HtmlCompat.FROM_HTML_MODE_LEGACY)
+//        binding.tvAboutText.movementMethod = ScrollingMovementMethod()
+        binding.tvAboutText.movementMethod = LinkMovementMethod.getInstance()
     }
 
     override fun onDestroyView() {
