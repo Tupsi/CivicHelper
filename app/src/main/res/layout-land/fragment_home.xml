@@ -7,9 +7,6 @@
     android:layout_height="match_parent"
     tools:context="org.tesira.civic.HomeFragment">
 
-    <!-- Obere Reihe: RadioGroup und AST Marker -->
-
-    <!-- Wichtig: RadioGroup layout_width="wrap_content", damit Platz daneben ist für die AST Marker -->
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
@@ -33,8 +30,6 @@
         <RadioButton android:id="@+id/radio_9" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="9" />
     </RadioGroup>
 
-    <!-- AST Marker jetzt hier horizontal neben der RadioGroup -->
-    <!-- Größerer Abstand zur RadioGroup für den ersten AST Marker (tvMBA) -->
     <TextView
         android:id="@+id/tvAST"
         style="@style/AstMarkerTextView"
@@ -43,7 +38,6 @@
         app:layout_constraintStart_toEndOf="@id/radioGroup"
         app:layout_constraintTop_toTopOf="@id/radioGroup"
         app:layout_constraintBottom_toBottomOf="@id/radioGroup" />
-
 
     <TextView
         android:id="@+id/tvEBA"
@@ -90,10 +84,6 @@
         app:layout_constraintTop_toTopOf="@id/tvEIA"
         app:layout_constraintBottom_toBottomOf="@id/tvEIA" />
 
-
-    <!-- Zweite Reihe: Container für Boni, Civilization, Time, VP -->
-    <!-- Diese Reihe beginnt jetzt unter der RadioGroup (oder dem höchsten Element in der oberen Zeile) -->
-    <!-- Ggf. anpassen, falls AST-Marker höher als RadioGroup sind, dann an AST-Marker binden -->
     <LinearLayout
         android:id="@+id/secondRowContainer"
         android:layout_width="0dp"
@@ -153,8 +143,6 @@
                 android:background="#FFFF00" />
         </LinearLayout>
 
-        <!-- AST MARKER SIND HIER JETZT ENTFERNT -->
-        <!-- Margin für tvCivilization ggf. anpassen, da AST-Marker aus dieser Reihe entfernt wurden -->
         <TextView
             android:id="@+id/tvCivilization"
             android:layout_width="wrap_content"
@@ -182,8 +170,6 @@
             android:layout_marginStart="8dp"/>
     </LinearLayout>
 
-    <!-- Vertikale Guideline zur Teilung der RecyclerView-Bereiche -->
-    <!-- Teilt den Bildschirm in zwei Hälften für die Listen -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline_main_split"
         android:layout_width="wrap_content"
@@ -191,7 +177,6 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
-    <!-- Block 1 (Calamity) - LINKE SPALTE -->
     <TextView
         android:id="@+id/tvCalamityBonus"
         android:layout_width="0dp"
@@ -222,7 +207,6 @@
         tools:listitem="@layout/item_row_calamity"
         tools:itemCount="5"/>
 
-    <!-- Block 2 (Specials) - RECHTE SPALTE -->
     <TextView
         android:id="@+id/tvSpecials"
         android:layout_width="0dp"
