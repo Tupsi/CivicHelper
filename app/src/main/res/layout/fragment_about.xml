@@ -6,13 +6,31 @@
     <ImageView
         android:id="@+id/AboutImage"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="120dp"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/nav_header"
         android:contentDescription="@string/about_header_desc" />
+
+    <!-- tvAboutText kommt jetzt zuerst und ist unter AboutImage -->
+    <TextView
+        android:id="@+id/tvAboutText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/about_text"
+        android:textSize="14sp"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintTop_toBottomOf="@id/AboutImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tvAboutVersion" />
 
     <TextView
         android:id="@+id/tvAboutVersion"
@@ -21,22 +39,10 @@
         android:text="@string/about_version"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/AboutImage"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+    <!-- Optional: app:layout_constraintEnd_toEndOf="parent" wenn zentriert oder rechts sein soll -->
 
-    <TextView
-        android:id="@+id/tvAboutText"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/about_text"
-        android:textSize="14sp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/tvAboutVersion"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
