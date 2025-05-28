@@ -1,7 +1,6 @@
 package org.tesira.civic;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
@@ -51,11 +49,9 @@ public class BuyingFragment extends Fragment {
     private static final String EXTRA_CREDITS_REQUEST_KEY = "extraCreditsDialogResult";
     private static final String ANATOMY_REQUEST_KEY = "anatomySelectionResult";
     private CivicViewModel mCivicViewModel;
-    private String sortingOrder;
     protected EditText mTreasureInput;
     protected TextView mRemainingText;
     private SelectionTracker<String> tracker;
-    private SharedPreferences prefs;
     private FragmentBuyingBinding binding;
     private int numberDialogs = 0;
     private BuyingItemKeyProvider mBuyingItemKeyProvider;
@@ -105,19 +101,13 @@ public class BuyingFragment extends Fragment {
         View rootView = binding.getRoot();
         mRecyclerView = binding.listAdvances;
 
-        // Speichere die ursprünglichen Padding-Werte der View, auf die die Insets angewendet werden
         final int initialPaddingLeft = rootView.getPaddingLeft();
         final int initialPaddingTop = rootView.getPaddingTop();
         final int initialPaddingRight = rootView.getPaddingRight();
         final int initialPaddingBottom = rootView.getPaddingBottom();
 
-
         ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
             Insets systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            // Insets für die Tastatur, falls du auch darauf reagieren möchtest (hier nicht primär im Fokus)
-            // Insets imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
-
-            // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
             v.setPadding(
                     initialPaddingLeft + systemBarInsets.left,
                     initialPaddingTop,
@@ -125,9 +115,6 @@ public class BuyingFragment extends Fragment {
                     initialPaddingBottom + systemBarInsets.bottom
             );
 
-            // Es ist wichtig, die WindowInsets (ggf. modifiziert) zurückzugeben,
-            // damit Kind-Views sie auch konsumieren können.
-            // Wenn du hier nichts an den windowInsets selbst änderst, gib sie einfach weiter.
             return windowInsets;
         });
 
@@ -160,7 +147,7 @@ public class BuyingFragment extends Fragment {
 
         mCivicViewModel.getCurrentSortingOrder().observe(getViewLifecycleOwner(), order -> {
             if (order != null) {
-                updateSortButtonText(order); // Diese Methode setzt den Button-Text
+                updateSortButtonText(order);
             }
         });
 
@@ -168,8 +155,6 @@ public class BuyingFragment extends Fragment {
         if (initialOrder != null) {
             updateSortButtonText(initialOrder);
         } else {
-            // Fallback, wenn initial noch nichts gesetzt ist, z.B. erster Start
-            // Hole den Standardwert aus den SharedPreferences oder definiere einen festen Startwert
             updateSortButtonText(mCivicViewModel.getCurrentSortingOrder().getValue());
         }
 
@@ -189,7 +174,7 @@ public class BuyingFragment extends Fragment {
         // button which finalizes the buy process
         binding.btnBuy.setOnClickListener(v -> {
             if (tracker.getSelection().isEmpty()){
-                showToast("Keine Karten ausgewählt.");
+                showToast(getString(R.string.no_cards_selected));
                 return;
             }
             List<String> selectedCardNames = new ArrayList<>();
@@ -254,10 +239,6 @@ public class BuyingFragment extends Fragment {
                 .withSelectionPredicate(new BuyingSelectionPredicate<>(mAdapter, mCivicViewModel))
                 .build();
 
-//        if (savedInstanceState != null) {
-//            tracker.onRestoreInstanceState(savedInstanceState);
-//        }
-
         mAdapter.setSelectionTracker(tracker);
         tracker.addObserver(new SelectionTracker.SelectionObserver<>() {
             @Override
@@ -299,15 +280,11 @@ public class BuyingFragment extends Fragment {
             }
 
             @Override
-            public void onSelectionChanged() {
-                super.onSelectionChanged();
-                //mCivicViewModel.calculateTotal(tracker.getSelection());
-            }
+            public void onSelectionChanged() { super.onSelectionChanged(); }
 
             @Override
             public void onSelectionRestored() {
                 super.onSelectionRestored();
-                Log.d("BuyingFragment", "onSelectionRestored");
                 Set<String> restoredSelection = new HashSet<>();
                 for (String selectedKey : tracker.getSelection()) {
                     restoredSelection.add(selectedKey);
@@ -322,27 +299,17 @@ public class BuyingFragment extends Fragment {
                     libraryIsNowSelected = restoredSelection.contains("Library");
                 }
                 mCivicViewModel.librarySelected = libraryIsNowSelected;
-                Log.w("BuyingFragment", "In onSelectionRestored - Library selected: " + mCivicViewModel.librarySelected);
             }
         });
 
-        if (savedInstanceState == null) { // Oder savedSelectionState == null, je nachdem, wie du es handhaben willst
+        if (savedInstanceState == null) {
             Set<String> selectionFromVm = mCivicViewModel.getSelectedCardKeysForState().getValue();
             if (selectionFromVm != null && !selectionFromVm.isEmpty()) {
-                // Nur setzen, wenn der Tracker aktuell leer ist, um Konflikte zu vermeiden.
-                // Deine Logik für die Wiederherstellung in mCivicViewModel.getAllAdvancesNotBought().observe()
-                // könnte hier Vorrang haben. Überlege dir die genaue Bedingung.
-                // Eine Möglichkeit: Nur wiederherstellen, wenn der Tracker komplett leer ist und keine
-                // Wiederherstellung aus savedSelectionState ansteht.
                 if (tracker.getSelection().isEmpty() && savedSelectionState == null) {
-                    tracker.setItemsSelected(selectionFromVm, true); // Iterable<String> wird akzeptiert
-                    // Wichtig: Nachdem die Auswahl im Tracker gesetzt wurde, werden die Observer ausgelöst.
-                    // Die dortige Logik (calculateTotal, updateSelectionState, Library-Logik) sollte greifen.
-                    Log.d("BuyingFragment", "Selection restored from ViewModel on initial creation/return (no savedInstanceState).");
+                    tracker.setItemsSelected(selectionFromVm, true);
                 }
             }
         }
-
 
         mCivicViewModel.getTreasure().observe(getViewLifecycleOwner(), treasure -> {
             mTreasureInput.setText(String.valueOf(treasure));
@@ -477,8 +444,6 @@ public class BuyingFragment extends Fragment {
             keyboardListener = null;
         }
     }
-
-
 
     public void showToast(String text) {
         if (getContext() != null) Toast.makeText(getContext(), text,Toast.LENGTH_LONG).show();
