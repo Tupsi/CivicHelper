@@ -15,7 +15,9 @@ The buying process supports cards with special buying bonuses like Anatomy, Libr
 Monument and Written Records.
 
 I included the Beginner's Guide from Nicholas M from [boardgamesgeek](https://boardgamegeek.com/boardgame/184424/mega-civilization/files) in the Tips section. 
+
 **Big Thanks to Nicholas M. for writing them!** 
+
 *"This is not a war game"* still is the first thing we explain to new people.
 
 
