@@ -172,13 +172,17 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
 
     private void combineAndSetData(List<String> abilities, List<String> immunities) {
         List<String> combinedList = new ArrayList<>();
-        combinedList.add("___Special Abilities");
         if (abilities != null) {
-            combinedList.addAll(abilities);
+            if (!abilities.isEmpty()) {
+                combinedList.add("___Special Abilities");
+                combinedList.addAll(abilities);
+            }
         }
-        combinedList.add("___Immunities");
         if (immunities != null) {
-            combinedList.addAll(immunities);
+            if (!immunities.isEmpty()) {
+                combinedList.add("___Immunities");
+                combinedList.addAll(immunities);
+            }
         }
 
         List<String> distinctList = combinedList.stream().distinct().collect(Collectors.toList());

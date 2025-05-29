@@ -50,7 +50,10 @@ public interface CivicHelperDao {
             "CASE WHEN :sortingOrder = 'vp' THEN cards.vp END," +
             "CASE WHEN :sortingOrder = 'vp' THEN cards.currentPrice END ASC," +
             "CASE WHEN :sortingOrder = 'currentPrice'THEN cards.currentPrice END," +
-            "CASE WHEN :sortingOrder = 'currentPrice'THEN cards.name END ASC")
+            "CASE WHEN :sortingOrder = 'currentPrice'THEN cards.name END ASC," +
+            "CASE WHEN :sortingOrder = 'heart' THEN cards.hasHeart END DESC, " +
+            "CASE WHEN :sortingOrder = 'heart'THEN cards.currentPrice END," +
+            "CASE WHEN :sortingOrder = 'heart' THEN cards.name END ASC")
     LiveData<List<Card>> getAllAdvancesNotBoughtLiveData(String sortingOrder);
 
     @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL ORDER BY name ASC")
