@@ -73,5 +73,6 @@
     <string name="favorite">Favorite</string>
     <string name="about_header_desc">picture about the app</string>
     <string name="no_cards_selected">No cards selected!</string>
+    <string name="colorbonus">Color Bonus</string>
 
 </resources>

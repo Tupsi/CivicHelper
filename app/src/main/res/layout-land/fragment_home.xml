@@ -101,8 +101,8 @@
             android:id="@+id/tvBoni"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Colorbonus"
-            android:textSize="16sp"
+            android:text="@string/colorbonus"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -150,7 +150,7 @@
             android:text="ast rank order"
             android:textSize="14sp"
             android:textStyle="bold|italic"
-            android:layout_marginStart="16dp"/>
+            android:layout_marginStart="32dp"/>
 
         <TextView
             android:id="@+id/tvTime"
@@ -159,7 +159,7 @@
             android:text="8000BC"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:layout_marginStart="16dp"/>
+            android:layout_marginStart="32dp"/>
 
         <TextView
             android:id="@+id/tvVp"
@@ -167,7 +167,7 @@
             android:layout_height="wrap_content"
             android:text="VP"
             android:textStyle="bold"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="32dp"/>
     </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
@@ -181,11 +181,11 @@
         android:id="@+id/tvCalamityBonus"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Calamity Effects Overview"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/secondRowContainer"
         app:layout_constraintStart_toStartOf="parent"
@@ -215,7 +215,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Special Abilities and Immunities"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/secondRowContainer"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline_main_split"
