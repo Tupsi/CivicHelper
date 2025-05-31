@@ -55,9 +55,6 @@ public class CivicRepository {
     public LiveData<List<Card>> getAllAdvancesNotBoughtLiveData(String sortingOrder) {
         return mCivicDao.getAllAdvancesNotBoughtLiveData(sortingOrder);
     }
-    public List<Calamity> getCalamityBonus() {
-        return mCivicDao.getCalamityBonus();
-    }
     public LiveData<List<Calamity>> getCalamityBonusLiveData() {
         return mCivicDao.getCalamityBonusLiveData();
     }
