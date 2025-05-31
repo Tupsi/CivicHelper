@@ -71,6 +71,7 @@
         Advancing on the AST is very important. Check out the goals before purchasing advances.
         Don\'t be too afraid of calamities! If you can complete a set, it\'s usually worth to do so even if you are reasonably sure you will get a calamity.
     </string>
+    <string name="tips_text_combined">%1$s %2$s</string>
     <string name="favorite">Favorite</string>
     <string name="about_header_desc">picture about the app</string>
     <string name="no_cards_selected">No cards selected!</string>

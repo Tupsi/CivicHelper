@@ -1,174 +1,180 @@
-package org.tesira.civic;
+package org.tesira.civic
 
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.ScaleGestureDetector;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
-
-import org.tesira.civic.databinding.FragmentTipsBinding;
-import org.tesira.civic.db.CivicViewModel;
-
+import android.annotation.SuppressLint
+import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
+import android.util.TypedValue
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
+import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
+import org.tesira.civic.databinding.FragmentTipsBinding
+import org.tesira.civic.db.CivicViewModel
+import kotlin.math.max
+import kotlin.math.min
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link TipsFragment#newInstance} factory method to
+ * A simple [Fragment] subclass.
+ * Use the [TipsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-public class TipsFragment extends Fragment {
+class TipsFragment : Fragment() {
+    private lateinit var binding: FragmentTipsBinding
+    private var civicViewModel: CivicViewModel? = null
+    private var scaleGestureDetector: ScaleGestureDetector? = null
 
-    private FragmentTipsBinding binding;
-    private CivicViewModel mCivicViewModel;
-    private ScaleGestureDetector scaleGestureDetector;
-
-    public TipsFragment() {}
-    public static TipsFragment newInstance() {
-        return new TipsFragment();
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        civicViewModel = ViewModelProvider(requireActivity()).get<CivicViewModel>()
+        scaleGestureDetector = ScaleGestureDetector(this.requireContext(), PinchToZoomGestureListener())
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
-        scaleGestureDetector = new ScaleGestureDetector(this.getContext(), new PinchToZoomGestureListener() );
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentTipsBinding.inflate(inflater, container,false);
-        View rootView = binding.getRoot();
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentTipsBinding.inflate(inflater, container, false)
+        val rootView: View = binding.root
 
         // Speichere die ursprünglichen Padding-Werte der View, auf die die Insets angewendet werden
-        final int initialPaddingLeft = rootView.getPaddingLeft();
-        final int initialPaddingTop = rootView.getPaddingTop();
-        final int initialPaddingRight = rootView.getPaddingRight();
-        final int initialPaddingBottom = rootView.getPaddingBottom();
+        val initialPaddingLeft = rootView.paddingLeft
+        val initialPaddingTop = rootView.paddingTop
+        val initialPaddingRight = rootView.paddingRight
+        val initialPaddingBottom = rootView.paddingBottom
 
 
-        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
-            Insets systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { v: View, windowInsets: WindowInsetsCompat ->
+            val systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
             v.setPadding(
-                    initialPaddingLeft + systemBarInsets.left,
-                    initialPaddingTop,
-                    initialPaddingRight + systemBarInsets.right,
-                    initialPaddingBottom + systemBarInsets.bottom
-            );
+                initialPaddingLeft + systemBarInsets.left,
+                initialPaddingTop,
+                initialPaddingRight + systemBarInsets.right,
+                initialPaddingBottom + systemBarInsets.bottom
+            )
+            windowInsets
+        }
 
-            // Es ist wichtig, die WindowInsets (ggf. modifiziert) zurückzugeben,
-            // damit Kind-Views sie auch konsumieren können.
-            // Wenn du hier nichts an den windowInsets selbst änderst, gib sie einfach weiter.
-            return windowInsets;
-        });
+        //ViewCompat.requestApplyInsets(rootView)
 
-        ViewCompat.requestApplyInsets(rootView);
-
-        ArrayAdapter<CharSequence> civicsAdapter = ArrayAdapter.createFromResource(requireContext(),
-                R.array.civilizations_entries, android.R.layout.simple_spinner_item);
-        civicsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.tipsSpinner.setAdapter(civicsAdapter);
-        return rootView;
+        val civicsAdapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.civilizations_entries, android.R.layout.simple_spinner_item
+        )
+        civicsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.tipsSpinner.adapter = civicsAdapter
+        return rootView
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         // Beobachte den selectedTipIndex aus dem CivicViewModel
-        mCivicViewModel.selectedTipIndex.observe(getViewLifecycleOwner(), index -> {
+        civicViewModel!!.selectedTipIndex.observe(
+            viewLifecycleOwner
+        ) { index: Int? ->
             if (index != null) {
                 // Spinner-Auswahl setzen, wenn sie sich vom aktuellen ViewModel-Wert unterscheidet
                 // um endlose Schleifen zu vermeiden, wenn setSelection onItemSelected auslöst.
-                if (binding.tipsSpinner.getSelectedItemPosition() != index) {
-                    if (index >= 0 && index < binding.tipsSpinner.getCount()) {
-                        binding.tipsSpinner.setSelection(index, false); // false, um onItemSelected nicht unnötig zu triggern
+                if (binding.tipsSpinner.selectedItemPosition != index) {
+                    if (index >= 0 && index < binding.tipsSpinner.count) {
+                        binding.tipsSpinner.setSelection(
+                            index,
+                            false
+                        ) // false, um onItemSelected nicht unnötig zu triggern
                     }
                 }
 
-                String tipText = mCivicViewModel.getTipForIndex(index);
-                if (tipText != null && !tipText.isEmpty()) {
-                    binding.tipsTextView.setText(tipText + getString(R.string.no_war_game));
-                } else {
-                    // Fallback, wenn kein Tipp gefunden wurde oder der Index ungültig ist
-                    binding.tipsTextView.setText(getString(R.string.no_war_game) + " (Tip not found for index: " + index + ")");
+                val tipText = civicViewModel!!.getTipForIndex(index)
+                if (tipText != null && tipText.isNotEmpty()) {
+                    binding.tipsTextView.text = getString(R.string.tips_text_combined,tipText, getString(R.string.no_war_game))
                 }
-            } else {
-                binding.tipsTextView.setText(getString(R.string.no_war_game) + " (No tip index selected)");
             }
-        });
+        }
 
-        binding.tipsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View selectedItemView, int position, long id) {
+        binding.tipsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                selectedItemView: View?,
+                position: Int,
+                id: Long
+            ) {
                 // Aktualisiere das ViewModel, wenn der Benutzer eine Auswahl trifft
                 // Prüfe, ob die Auswahl tatsächlich vom Benutzer stammt und sich geändert hat
-                Integer currentIndexInViewModel = mCivicViewModel.selectedTipIndex.getValue();
+                val currentIndexInViewModel = civicViewModel!!.selectedTipIndex.value
                 if (currentIndexInViewModel == null || currentIndexInViewModel != position) {
-                    mCivicViewModel.setSelectedTipIndex(position);
+                    civicViewModel!!.setSelectedTipIndex(position)
                 }
 
                 // Absturzsicherung für setTextSize
-                View firstChild = parent.getChildAt(0);
-                if (firstChild instanceof TextView) {
-                    ((TextView) firstChild).setTextSize(20); // Oder hole die Größe aus dimen
-                } else {
-                    Log.w("TipsFragment", "Spinner's selected view (getChildAt(0)) is not a TextView or is null in onItemSelected.");
+                val firstChild = parent.getChildAt(0)
+                if (firstChild is TextView) {
+                    firstChild.textSize = 20f
                 }
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
                 // Optional: Standard-Tipp anzeigen oder Index auf einen Standardwert setzen
                 // mCivicViewModel.setSelectedTipIndex(-1); // Beispiel für "keine Auswahl"
             }
-        });
+        }
 
-        binding.tipsTextView.setMovementMethod(new ScrollingMovementMethod());
+        binding.tipsTextView.movementMethod = ScrollingMovementMethod()
         // was für das MovementMethod wichtig ist.
-        binding.tipsTextView.setClickable(true);
-        binding.tipsTextView.setFocusable(true);
-        binding.tipsTextView.setFocusableInTouchMode(true);
+        binding.tipsTextView.isClickable = true
+        binding.tipsTextView.isFocusable = true
+        binding.tipsTextView.isFocusableInTouchMode = true
 
-        binding.tipsTextView.setOnTouchListener((v, event) -> {
+        binding.tipsTextView.setOnTouchListener { v: View, event: MotionEvent? ->
             // Zuerst Zoom-Gesten behandeln
-            scaleGestureDetector.onTouchEvent(event);
+            scaleGestureDetector!!.onTouchEvent(event!!)
 
             // Gib das Event an die TextView weiter, damit sie scrollen kann
-            v.getParent().requestDisallowInterceptTouchEvent(scaleGestureDetector.isInProgress());
-            return false; // Wichtig: false zurückgeben, um Scroll-Events nicht zu blockieren
-        });
-    }
-
-    public class PinchToZoomGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        float minSp = 12f;
-        float maxSp = 48f;
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-
-            float minSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, minSp, getResources().getDisplayMetrics());
-            float maxSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, maxSp, getResources().getDisplayMetrics());
-            float size = binding.tipsTextView.getTextSize();
-            float factor = detector.getScaleFactor();
-            float newSize = Math.max(minSizePx, Math.min(size * factor, maxSizePx));
-            binding.tipsTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
-            return true;
+            v.parent.requestDisallowInterceptTouchEvent(scaleGestureDetector!!.isInProgress)
+            false // Wichtig: false zurückgeben, um Scroll-Events nicht zu blockieren
         }
     }
+
+    inner class PinchToZoomGestureListener : SimpleOnScaleGestureListener() {
+        private var minSp: Float = 12f
+        private var maxSp: Float = 48f
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val minSizePx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                minSp,
+                resources.displayMetrics
+            )
+            val maxSizePx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                maxSp,
+                resources.displayMetrics
+            )
+            val size = binding.tipsTextView.textSize
+            val factor = detector.scaleFactor
+            val newSize = max(
+                minSizePx.toDouble(),
+                min((size * factor).toDouble(), maxSizePx.toDouble())
+            ).toFloat()
+            binding.tipsTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize)
+            return true
+        }
+    }
+
+    companion object {
+        fun newInstance(): TipsFragment {
+            return TipsFragment()
+        }
+    }
+
 }
