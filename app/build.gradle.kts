@@ -58,7 +58,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.recyclerview:recyclerview-selection:1.2.0")
 
-    implementation("androidx.databinding:databinding-runtime:8.10.0")
+    implementation("androidx.databinding:databinding-runtime:8.10.1")
 
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.gridlayout:gridlayout:1.1.0")
