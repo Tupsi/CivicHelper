@@ -1,9 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
     //https://github.com/google/ksp/releases
     id("com.google.devtools.ksp") version "2.1.21-2.0.1"
+    id("androidx.room") version "2.7.1"
 }
 
 android {
@@ -49,7 +49,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
 }
+
+
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.21")
@@ -68,6 +71,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.9.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.9.0")
 
+    // oben plugin version gleichhalten!!!
     implementation("androidx.room:room-runtime:2.7.1")
     ksp("androidx.room:room-compiler:2.7.1")
 
@@ -83,4 +87,8 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.activity:activity-ktx:1.10.1")
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

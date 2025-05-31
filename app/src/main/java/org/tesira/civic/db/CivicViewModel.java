@@ -242,11 +242,11 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
 
     public void loadData() {
         int blue, green, orange, red, yellow;
-        blue = defaultPrefs.getInt(CardColor.BLUE.getName(), 0);
-        green = defaultPrefs.getInt(CardColor.GREEN.getName(), 0);
-        orange = defaultPrefs.getInt(CardColor.ORANGE.getName(), 0);
-        red = defaultPrefs.getInt(CardColor.RED.getName(), 0);
-        yellow = defaultPrefs.getInt(CardColor.YELLOW.getName(), 0);
+        blue = defaultPrefs.getInt(CardColor.BLUE.getColorName(), 0);
+        green = defaultPrefs.getInt(CardColor.GREEN.getColorName(), 0);
+        orange = defaultPrefs.getInt(CardColor.ORANGE.getColorName(), 0);
+        red = defaultPrefs.getInt(CardColor.RED.getColorName(), 0);
+        yellow = defaultPrefs.getInt(CardColor.YELLOW.getColorName(), 0);
         if (cardBonus.getValue() != null) {
             cardBonus.getValue().put(CardColor.BLUE, blue);
             cardBonus.getValue().put(CardColor.GREEN, green);
@@ -349,11 +349,11 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         vp.setValue(0);
         cardBonus.setValue(new HashMap<>());
 
-        defaultPrefs.edit().putInt(CardColor.BLUE.getName(), 0).apply();
-        defaultPrefs.edit().putInt(CardColor.GREEN.getName(), 0).apply();
-        defaultPrefs.edit().putInt(CardColor.ORANGE.getName(), 0).apply();
-        defaultPrefs.edit().putInt(CardColor.RED.getName(), 0).apply();
-        defaultPrefs.edit().putInt(CardColor.YELLOW.getName(), 0).apply();
+        defaultPrefs.edit().putInt(CardColor.BLUE.getColorName(), 0).apply();
+        defaultPrefs.edit().putInt(CardColor.GREEN.getColorName(), 0).apply();
+        defaultPrefs.edit().putInt(CardColor.ORANGE.getColorName(), 0).apply();
+        defaultPrefs.edit().putInt(CardColor.RED.getColorName(), 0).apply();
+        defaultPrefs.edit().putInt(CardColor.YELLOW.getColorName(), 0).apply();
 
         defaultPrefs.edit().putInt(PREF_KEY_CITIES, 0).apply();
         defaultPrefs.edit().putInt(PREF_KEY_TIME, 0).apply();
@@ -545,7 +545,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         Log.d("CivicViewModel", "Saving bonus to SharedPreferences.");
         // HashMap Save
         for (Map.Entry<CardColor, Integer> entry: getCardBonus().getValue().entrySet()){
-            defaultPrefs.edit().putInt(entry.getKey().getName(), entry.getValue()).apply();
+            defaultPrefs.edit().putInt(entry.getKey().getColorName(), entry.getValue()).apply();
         }
     }
 

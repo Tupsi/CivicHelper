@@ -28,7 +28,7 @@ interface CivicHelperDao {
     fun getAdvancesByName(): List<Card>
 
     @Query("SELECT * FROM cards WHERE family = :familyNumber ORDER BY vp ASC")
-    fun getAdvancesByFamily(familyNumber: Int): List<Card?>?
+    fun getAdvancesByFamily(familyNumber: Int): List<Card>
 
     @Query("UPDATE cards SET bonusCard = :newBonusCard WHERE name = :name")
     fun updateBonusCard(name: String, newBonusCard: String)
@@ -52,7 +52,7 @@ interface CivicHelperDao {
                 "CASE WHEN :sortingOrder = 'heart'THEN cards.currentPrice END," +
                 "CASE WHEN :sortingOrder = 'heart' THEN cards.name END ASC"
     )
-    fun getAllAdvancesNotBoughtLiveData(sortingOrder: String?): LiveData<List<Card?>?>?
+    fun getAllAdvancesNotBoughtLiveData(sortingOrder: String): LiveData<List<Card>>
 
     @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL ORDER BY name ASC")
     fun getPurchasesAsCardLiveData(): LiveData<List<Card>>
@@ -79,7 +79,7 @@ interface CivicHelperDao {
     fun insertEffect(effect: Effect)
 
     @Query("SELECT * FROM effects WHERE name = :name AND advance = :advance ORDER BY advance ASC")
-    fun getEffect(advance: String?, name: String?): List<Effect?>?
+    fun getEffect(advance: String?, name: String?): List<Effect>
 
     @Query("SELECT  effects.name AS calamity, SUM(effects.value) AS bonus FROM effects LEFT JOIN purchases on effects.advance = purchases.name WHERE purchases.name IS NOT NULL AND calamity NOT LIKE 'Credits%' AND calamity NOT LIKE 'FreeScience' GROUP BY effects.name ORDER BY calamity ASC")
     fun getCalamityBonus(): List<Calamity>
