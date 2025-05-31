@@ -1,19 +1,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Bild oben rechts -->
     <ImageView
         android:id="@+id/AboutImage"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
         app:srcCompat="@drawable/nav_header"
-        android:contentDescription="@string/about_header_desc" />
+        android:contentDescription="@string/about_header_desc"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- tvAboutText kommt jetzt zuerst und ist unter AboutImage -->
+    <!-- Text, der sich links vom Bild und nach unten erstreckt -->
     <TextView
         android:id="@+id/tvAboutText"
         android:layout_width="0dp"
@@ -22,15 +25,17 @@
         android:textSize="14sp"
         android:scrollbars="vertical"
         android:fadeScrollbars="false"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="10dp"
-        app:layout_constraintTop_toBottomOf="@id/AboutImage"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tvAboutVersion" />
+        app:layout_constraintEnd_toStartOf="@id/AboutImage"
+        app:layout_constraintBottom_toTopOf="@+id/tvAboutVersion"
+        tools:text="Dies ist ein langer Beispieltext, um das Layout im Landscape-Modus zu testen. Der Text sollte links vom Bild beginnen und sich nach unten erstrecken, bis er auf die Versionsnummer trifft. Das Bild selbst befindet sich oben rechts." />
 
+    <!-- Versionsnummer unten links -->
     <TextView
         android:id="@+id/tvAboutVersion"
         android:layout_width="wrap_content"
@@ -38,10 +43,9 @@
         android:text="@string/about_version"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-    <!-- Optional: app:layout_constraintEnd_toEndOf="parent" wenn zentriert oder rechts sein soll -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

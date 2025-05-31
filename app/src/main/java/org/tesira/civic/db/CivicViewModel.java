@@ -93,6 +93,26 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     private final MutableLiveData<Integer> _selectedTipIndex = new MutableLiveData<>();
     public LiveData<Integer> selectedTipIndex = _selectedTipIndex;
 
+    private final MutableLiveData<String> _astVersion = new MutableLiveData<>();
+
+    public String getCivilization() {
+        if (_selectedTipIndex.getValue() == 0) {
+            return "not set";
+        } else {
+            return String.valueOf(_selectedTipIndex.getValue());
+        }
+
+    }
+    public LiveData<String> getAstVersion() {
+        return _astVersion;
+    }
+    public void setAstVersion(String newAstVersion) {
+        _astVersion.setValue(newAstVersion);
+    }
+
+    public LiveData<String> astVersion = _astVersion;
+
+
     private String[] tipsArray;
 
     public LiveData<Event<List<String>>> getShowAnatomyDialogEvent() {
@@ -253,6 +273,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME,0));
         _columns.setValue(Integer.parseInt(defaultPrefs.getString(PREF_KEY_COLUMNS, "1")));
         currentSortingOrder.setValue(defaultPrefs.getString(PREF_KEY_SORT, "name"));
+        _astVersion.setValue(defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set"));
     }
     public int getCities() {
         return cities.getValue() != null ? cities.getValue() : 0;

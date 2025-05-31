@@ -33,7 +33,8 @@
     <TextView
         android:id="@+id/tvAST"
         style="@style/AstMarkerTextView"
-        android:text="AST"
+        tools:text="AST (B)"
+        android:layout_width="wrap_content"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toEndOf="@id/radioGroup"
         app:layout_constraintTop_toTopOf="@id/radioGroup"
@@ -103,7 +104,7 @@
             android:id="@+id/tvBoni"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Colorbonus"
+            android:text="@string/colorbonus"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -112,36 +113,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginStart="8dp">
+            android:layout_marginStart="16dp">
 
             <TextView
                 android:id="@+id/bonusBlue"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:minWidth="35dp" android:padding="4dp" android:gravity="center"
-                android:text="B" android:textColor="#FFFFFF" android:background="#0000FF" />
+                tools:text="B" android:textColor="#FFFFFF" android:background="#0000FF" />
             <TextView
                 android:id="@+id/bonusGreen"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:minWidth="35dp" android:padding="4dp" android:layout_marginStart="4dp"
-                android:gravity="center" android:text="G" android:textColor="#000000"
+                android:gravity="center" tools:text="G" android:textColor="#000000"
                 android:background="#00FF00" />
             <TextView
                 android:id="@+id/bonusOrange"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:minWidth="35dp" android:padding="4dp" android:layout_marginStart="4dp"
-                android:gravity="center" android:text="O" android:textColor="#FFFFFF"
+                android:gravity="center" tools:text="0" android:textColor="#FFFFFF"
                 android:background="#FFA500" />
             <TextView
                 android:id="@+id/bonusRed"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:minWidth="35dp" android:padding="4dp" android:layout_marginStart="4dp"
-                android:gravity="center" android:text="R" android:textColor="#FFFFFF"
+                android:gravity="center" tools:text="R" android:textColor="#FFFFFF"
                 android:background="#FF0000" />
             <TextView
                 android:id="@+id/bonusYellow"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:minWidth="35dp" android:padding="4dp" android:layout_marginStart="4dp"
-                android:gravity="center" android:text="Y" android:textColor="#000000"
+                android:gravity="center" tools:text="Y" android:textColor="#000000"
                 android:background="#FFFF00" />
         </LinearLayout>
 
@@ -149,27 +150,27 @@
             android:id="@+id/tvCivilization"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ast rank order"
+            tools:text="A.S.T. rank order 00"
             android:textSize="14sp"
-            android:textStyle="bold|italic"
-            android:layout_marginStart="16dp"/>
+            android:textStyle="bold"
+            android:layout_marginStart="32dp"/>
 
         <TextView
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="8000BC"
+            tools:text="8000BC"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:layout_marginStart="16dp"/>
+            android:layout_marginStart="32dp"/>
 
         <TextView
             android:id="@+id/tvVp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="VP"
+            tools:text="VP: 000"
             android:textStyle="bold"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="32dp"/>
     </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
@@ -186,7 +187,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Calamity Effects Overview"
+        android:text="@string/calamity_effects_overview"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/secondRowContainer"
@@ -216,7 +217,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Special Abilities and Immunities"
+        android:text="@string/special_abilities_and_immunities"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/secondRowContainer"
