@@ -8,9 +8,9 @@ import org.tesira.civic.db.Card;
 import java.util.List;
 
 public class BuyingItemKeyProvider extends ItemKeyProvider<String> {
-    private BuyingListAdapter adapter;
+    private BuyingAdapter adapter;
 
-    public BuyingItemKeyProvider(int scope, BuyingListAdapter adapter) {
+    public BuyingItemKeyProvider(int scope, BuyingAdapter adapter) {
         super(scope);
         this.adapter = adapter;
     }

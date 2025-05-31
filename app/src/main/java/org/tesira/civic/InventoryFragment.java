@@ -1,6 +1,5 @@
 package org.tesira.civic;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.core.graphics.Insets;
@@ -15,8 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-import org.tesira.civic.databinding.FragmentPurchasesBinding;
 import org.tesira.civic.db.CivicViewModel;
 
 import java.util.ArrayList;
@@ -24,11 +21,11 @@ import java.util.ArrayList;
 /**
  * Shows all bought civilization advances (cards).
  */
-public class PurchasesFragment extends Fragment {
+public class InventoryFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private CivicViewModel mCivicViewModel;
-    private PurchasesRecyclerViewAdapter adapter;
+    private InventoryAdapter adapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayout;
 
@@ -36,12 +33,12 @@ public class PurchasesFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public PurchasesFragment() {
+    public InventoryFragment() {
     }
 
     @SuppressWarnings("unused")
-    public static PurchasesFragment newInstance(int columnCount) {
-        PurchasesFragment fragment = new PurchasesFragment();
+    public static InventoryFragment newInstance(int columnCount) {
+        InventoryFragment fragment = new InventoryFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -57,7 +54,7 @@ public class PurchasesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_purchases, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_inventory, container, false);
         mRecyclerView = (RecyclerView) rootView;
         final int initialPaddingLeft = rootView.getPaddingLeft();
         final int initialPaddingTop = rootView.getPaddingTop();
@@ -90,11 +87,11 @@ public class PurchasesFragment extends Fragment {
 
         // Set the adapter
         if (rootView instanceof RecyclerView) {
-            adapter = new PurchasesRecyclerViewAdapter();
+            adapter = new InventoryAdapter();
             mRecyclerView.setAdapter(adapter);
 
             // LiveData beobachten und Adapter aktualisieren
-            mCivicViewModel.getPurchasesAsCardLiveData().observe(getViewLifecycleOwner(), purchasedCards -> {
+            mCivicViewModel.getInventoryAsCardLiveData().observe(getViewLifecycleOwner(), purchasedCards -> {
                 if (purchasedCards != null) {
                     adapter.submitList(purchasedCards);
                 } else {

@@ -1,7 +1,6 @@
 package org.tesira.civic;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -56,7 +55,7 @@ public class BuyingFragment extends Fragment {
     private int numberDialogs = 0;
     private BuyingItemKeyProvider mBuyingItemKeyProvider;
     private RecyclerView.LayoutManager mLayout;
-    private BuyingListAdapter mAdapter;
+    private BuyingAdapter mAdapter;
     private RecyclerView mRecyclerView;
 
     private String[] sortingOptionsValues, sortingOptionsNames;
@@ -99,7 +98,7 @@ public class BuyingFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentBuyingBinding.inflate(inflater, container,false);
         View rootView = binding.getRoot();
-        mRecyclerView = binding.listAdvances;
+        mRecyclerView = binding.purchasableCards;
 
         final int initialPaddingLeft = rootView.getPaddingLeft();
         final int initialPaddingTop = rootView.getPaddingTop();
@@ -130,7 +129,7 @@ public class BuyingFragment extends Fragment {
             mRecyclerView.setLayoutManager(mLayout);
         }
 
-        mAdapter = new BuyingListAdapter(new ArrayList<>(), mCivicViewModel);
+        mAdapter = new BuyingAdapter(new ArrayList<>(), mCivicViewModel);
         mRecyclerView.setAdapter(mAdapter);
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);

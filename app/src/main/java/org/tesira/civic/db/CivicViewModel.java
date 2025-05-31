@@ -306,7 +306,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public LiveData<List<Calamity>> getCalamityBonusListLiveData() {
         return calamityBonusListLiveData;
     }
-    public LiveData<List<Card>> getPurchasesAsCardLiveData() {return mRepository.getPurchasesAsCardLiveData();}
+    public LiveData<List<Card>> getInventoryAsCardLiveData() {return mRepository.getInventoryAsCardLiveData();}
     public MutableLiveData<Integer> getTreasure() {
         return treasure;
     }
@@ -339,7 +339,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
      * This includes resetting persistent data and ViewModel state.
      */
     public void startNewGameProcess() {
-        mRepository.deletePurchases();
+        mRepository.deleteInventory();
         mRepository.resetCurrentPrice();
         mRepository.resetDB();
         treasure.setValue(0);

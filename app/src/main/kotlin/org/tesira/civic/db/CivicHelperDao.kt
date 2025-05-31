@@ -55,7 +55,7 @@ interface CivicHelperDao {
     fun getAllAdvancesNotBoughtLiveData(sortingOrder: String): LiveData<List<Card>>
 
     @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL ORDER BY name ASC")
-    fun getPurchasesAsCardLiveData(): LiveData<List<Card>>
+    fun getInventoryAsCardLiveData(): LiveData<List<Card>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertPurchase(purchase: Purchase)
