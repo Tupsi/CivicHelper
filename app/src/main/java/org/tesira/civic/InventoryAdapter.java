@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.tesira.civic.databinding.ItemRowPurchasesBinding;
+import org.tesira.civic.databinding.ItemRowInventoryBinding;
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CivicViewModel;
 
@@ -42,7 +42,7 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(ItemRowPurchasesBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        return new ViewHolder(ItemRowInventoryBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -81,10 +81,10 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final ItemRowPurchasesBinding binding;
+        public final ItemRowInventoryBinding binding;
         public Card mItem;
 
-        public ViewHolder(ItemRowPurchasesBinding binding) {
+        public ViewHolder(ItemRowInventoryBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
