@@ -195,7 +195,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        mCivicViewModel.getPurchasesAsCardLiveData().observe(getViewLifecycleOwner(), purchases -> {
+        mCivicViewModel.getInventoryAsCardLiveData().observe(getViewLifecycleOwner(), purchases -> {
             if (purchases != null) {
                 currentAllPurchases = purchases;
                 // Wenn alle anderen benötigten Daten auch schon da sind, checkAST ausführen

@@ -1,13 +1,12 @@
 package org.tesira.civic;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
 import org.tesira.civic.databinding.ItemRowPurchasesBinding;
 import org.tesira.civic.db.Card;
 import org.tesira.civic.db.CivicViewModel;
@@ -21,10 +20,10 @@ import java.util.List;
  * {@link RecyclerView.Adapter} that can display a {@link Card}.
  * Shows all Civilization Advances and highlights already purchases ones.
  */
-public class PurchasesRecyclerViewAdapter extends RecyclerView.Adapter<PurchasesRecyclerViewAdapter.ViewHolder> {
+public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.ViewHolder> {
 
     private List<Card> mValues = new ArrayList<>();
-    public PurchasesRecyclerViewAdapter() {
+    public InventoryAdapter() {
     }
 
     /**

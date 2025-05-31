@@ -33,9 +33,9 @@
 
     <fragment
         android:id="@+id/purchasesFragment"
-        android:name="org.tesira.civic.PurchasesFragment"
+        android:name="org.tesira.civic.InventoryFragment"
         android:label="@string/menu_item_purchases"
-        tools:layout="@layout/fragment_purchases" />
+        tools:layout="@layout/fragment_inventory" />
 
     <fragment
         android:id="@+id/tipsFragment"

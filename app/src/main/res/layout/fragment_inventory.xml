@@ -9,5 +9,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="org.tesira.civic.PurchasesFragment"
+    tools:context="org.tesira.civic.InventoryFragment"
     tools:listitem="@layout/item_row_purchases" />

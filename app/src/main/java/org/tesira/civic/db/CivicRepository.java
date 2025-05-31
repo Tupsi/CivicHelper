@@ -27,7 +27,7 @@ public class CivicRepository {
         mCivicDao = db.civicDao();
     }
 
-    public void deletePurchases() {
+    public void deleteInventory() {
         repositoryExecutor.execute(() -> mCivicDao.deleteAllPurchases());
     }
 
@@ -64,8 +64,8 @@ public class CivicRepository {
     public LiveData<List<String>> getImmunitiesLiveData() {
         return mCivicDao.getImmunitiesLiveData();
     }
-    public LiveData<List<Card>> getPurchasesAsCardLiveData() {
-        return mCivicDao.getPurchasesAsCardLiveData();
+    public LiveData<List<Card>> getInventoryAsCardLiveData() {
+        return mCivicDao.getInventoryAsCardLiveData();
     }
     /**
      * Returns the victory points of all bought cards in the database.
@@ -75,7 +75,7 @@ public class CivicRepository {
     }
     public void recalculateCurrentPricesAsync(MutableLiveData<HashMap<CardColor, Integer>> currentBonus) {
         repositoryExecutor.execute(() -> {
-            recalculateCurrentPricesBasedOnPurchases(currentBonus.getValue());
+            recalculateCurrentPricesBasedOnInventory(currentBonus.getValue());
         });
     }
 
@@ -108,7 +108,7 @@ public class CivicRepository {
                 }
                 // 3. Preise neu berechnen nach den Käufen und Boni
                 // Boni basieren auf den aktuell in der Datenbank befindlichen Käufen
-                recalculateCurrentPricesBasedOnPurchases(currentBonus.getValue());
+                recalculateCurrentPricesBasedOnInventory(currentBonus.getValue());
 
                 // 4. Wenn Anatomy gekauft wurde, alle grünen gratis Karten holen
                 if (boughtAnatomy) {
@@ -125,7 +125,7 @@ public class CivicRepository {
         });
 
     }
-    private void recalculateCurrentPricesBasedOnPurchases(HashMap<CardColor, Integer> currentBonus) {
+    private void recalculateCurrentPricesBasedOnInventory(HashMap<CardColor, Integer> currentBonus) {
         Log.d("CivicRepository", "recalculateCurrentPricesBasedOnPurchases: Starting price recalculation.");
 
         // Aktualisiere die Preise basierend auf den aktuellen Boni

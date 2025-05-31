@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.selection.ItemDetailsLookup;
-import androidx.recyclerview.selection.Selection;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +23,7 @@ import java.util.List;
  * Checks if there is enough treasure, otherwise grays out the item. Sets a heart if user has
  * set a "what do I want?" preference.
  */
-public class BuyingListAdapter extends RecyclerView.Adapter<BuyingListAdapter.ViewHolder> {
+public class BuyingAdapter extends RecyclerView.Adapter<BuyingAdapter.ViewHolder> {
 
     private final  List<Card> mValues;
     private SelectionTracker<String> tracker;
@@ -54,7 +52,7 @@ public class BuyingListAdapter extends RecyclerView.Adapter<BuyingListAdapter.Vi
         }
     }
 
-    public BuyingListAdapter(List<Card> dataSet, CivicViewModel mCivicViewModel) {
+    public BuyingAdapter(List<Card> dataSet, CivicViewModel mCivicViewModel) {
         this.mValues = dataSet;
         this.mCivicViewModel = mCivicViewModel;
     }

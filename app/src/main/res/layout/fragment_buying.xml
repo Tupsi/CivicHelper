@@ -64,7 +64,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_advances"
+        android:id="@+id/purchasable_cards"
         android:name="org.tesira.civic.AdvancesFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"

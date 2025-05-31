@@ -16,10 +16,10 @@ import java.util.List;
  * @param <String> Name of the civilization advance.
  */
 public class BuyingSelectionPredicate<String> extends SelectionTracker.SelectionPredicate<String> {
-    private BuyingListAdapter adapter;
+    private BuyingAdapter adapter;
     private CivicViewModel mCivicViewModel;
 
-    public BuyingSelectionPredicate(BuyingListAdapter adapter, CivicViewModel model) {
+    public BuyingSelectionPredicate(BuyingAdapter adapter, CivicViewModel model) {
         super();
         this.adapter = adapter;
         this.mCivicViewModel = model;
