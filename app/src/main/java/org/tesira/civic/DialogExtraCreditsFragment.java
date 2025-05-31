@@ -29,7 +29,6 @@ public class DialogExtraCreditsFragment extends DialogFragment {
     private String[] items;
     private int initialCredits;
     private int blue, green, orange, red, yellow;
-
     private AlertDialog dialogInstance;
     private CivicViewModel mCivicViewModel;
 
@@ -129,9 +128,7 @@ public class DialogExtraCreditsFragment extends DialogFragment {
 
         binding.spinnerblue.setAdapter(spinnerAdapter);
         binding.spinnerblue.setOnItemSelectedListener(new MyOnItemSelectedListener());
-        // Setze initiale Auswahl, z.B. auf "0" (erstes Element)
         binding.spinnerblue.setSelection(0, false);
-
 
         binding.spinnerred.setAdapter(spinnerAdapter);
         binding.spinnerred.setOnItemSelectedListener(new MyOnItemSelectedListener());
@@ -149,7 +146,7 @@ public class DialogExtraCreditsFragment extends DialogFragment {
         binding.spinnergreen.setOnItemSelectedListener(new MyOnItemSelectedListener());
         binding.spinnergreen.setSelection(0, false);
 
-        binding.creditsremaining.setText(String.valueOf(initialCredits)); // Verwende initialCredits
+        binding.creditsremaining.setText(String.valueOf(initialCredits));
         // Aktuelle Boni aus dem ViewModel anzeigen
         binding.bonusblue.setText(String.valueOf(mCivicViewModel.getBlue()));
         binding.bonusgreen.setText(String.valueOf(mCivicViewModel.getGreen()));
@@ -161,7 +158,7 @@ public class DialogExtraCreditsFragment extends DialogFragment {
         builder.setTitle(R.string.dialog_extra_credits);
         View spinnerView = binding.getRoot();
         builder.setView(spinnerView);
-        builder.setPositiveButton(R.string.ok, (dialogInterface, id) -> { // dialogInterface statt dialog
+        builder.setPositiveButton(R.string.ok, (dialogInterface, id) -> {
             mCivicViewModel.updateBonus(blue, green, orange, red, yellow);
             mCivicViewModel.requestPriceRecalculation();
 
@@ -171,9 +168,6 @@ public class DialogExtraCreditsFragment extends DialogFragment {
 
             dismiss();
         });
-        // Den negativen Button nicht vergessen, falls der Dialog abbrechbar sein soll (obwohl setCancelable(false) ist)
-        // builder.setNegativeButton(R.string.cancel, (dialogInterface, id) -> dismiss());
-
 
         dialogInstance = builder.create(); // Verwende dialogInstance
         if (dialogInstance.getWindow() != null) {
@@ -190,9 +184,8 @@ public class DialogExtraCreditsFragment extends DialogFragment {
         return dialogInstance;
     }
 
-    // Methode zum Aktualisieren des OK-Button-Status extrahiert
     private void updateOkButtonState() {
-        if (dialogInstance != null && binding != null) { // Sicherstellen, dass alles initialisiert ist
+        if (dialogInstance != null && binding != null) {
             int totalSelected = blue + green + orange + red + yellow;
             binding.creditsremaining.setText(String.valueOf(initialCredits - totalSelected));
             dialogInstance.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(totalSelected == initialCredits);

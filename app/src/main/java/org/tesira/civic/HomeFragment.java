@@ -1,7 +1,6 @@
 package org.tesira.civic;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,12 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -96,13 +92,13 @@ public class HomeFragment extends Fragment {
         // RecylerView Calamity Effects
         RecyclerView mRecyclerView = rootView.findViewById(R.id.listCalamity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        mHomeCalamityAdapter = new HomeCalamityAdapter(mCivicViewModel, this.getContext());
+        mHomeCalamityAdapter = new HomeCalamityAdapter(this.getContext());
         mRecyclerView.setAdapter(mHomeCalamityAdapter);
 
         // RecyclerView Special Abilities
         mRecyclerView = rootView.findViewById(R.id.listAbility);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        mHomeSpecialsAdapter = new HomeSpecialsAdapter(mCivicViewModel);
+        mHomeSpecialsAdapter = new HomeSpecialsAdapter();
         mRecyclerView.setAdapter(mHomeSpecialsAdapter);
 
         binding.radio0.setOnClickListener(this::onCitiesClicked);

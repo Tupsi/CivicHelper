@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-
 public class CivicViewModel extends AndroidViewModel implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private final CivicRepository mRepository;
@@ -46,7 +45,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     private final MutableLiveData<Integer> cities = new MutableLiveData<>(0);
     private final Application mApplication;
     private final MutableLiveData<Integer> timeVp = new MutableLiveData<>(0);
-
     public boolean librarySelected;
     public final static String[] TREASURY = {"Monarchy", "Coinage", "Trade Routes",
             "Politics", "Mining"};
@@ -89,33 +87,10 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public LiveData<Integer> selectedTipIndex = _selectedTipIndex;
     private final MutableLiveData<String> _astVersion = new MutableLiveData<>();
     public LiveData<String> astVersion = _astVersion;
-
-    public void setAstVersion(String version) {
-        _astVersion.setValue(version);
-        if (version != null) {
-            defaultPrefs.edit().putString(PREF_KEY_AST, version).apply();
-        }
-    }
-
-    public void setCivNumber(String civNumber) {
-        _civNumber.setValue(civNumber);
-        if (civNumber != null) {
-            defaultPrefs.edit().putString(PREF_KEY_CIVILIZATION, civNumber).apply();
-        }
-    }
-
     private final MutableLiveData<String> _civNumber = new MutableLiveData<>();
     public LiveData<String> getCivNumber = _civNumber;
-
     private String[] tipsArray;
-
-    public LiveData<Event<List<String>>> getShowAnatomyDialogEvent() {
-        return showAnatomyDialogEvent;
-    }
     private final MutableLiveData<Event<Integer>> _showExtraCreditsDialogEvent = new MutableLiveData<>();
-    public LiveData<Event<Integer>> getShowExtraCreditsDialogEvent() {
-        return _showExtraCreditsDialogEvent;
-    }
     private final SharedPreferences defaultPrefs;
     private static final String PREF_KEY_CIVILIZATION = "civilization";
     private static final String PREF_KEY_SORT = "sort";
@@ -125,13 +100,11 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     private static final String PREF_KEY_HEART = "heart";
     private static final String PREF_KEY_COLUMNS = "columns";
     private static final String PREF_KEY_AST = "ast";
-
     private final LiveData<Integer> cardsVpFromDao;
     private final MediatorLiveData<Integer> totalVp = new MediatorLiveData<>();
     private final Map<String, Card> buyableCardMap = new HashMap<>();
     private final MutableLiveData<Boolean> areBuyableCardsReady = new MutableLiveData<>(false);
     private Observer<List<Card>> buyableCardsMapObserver;
-
 
     public CivicViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) throws ExecutionException, InterruptedException {
         super(application);
@@ -152,7 +125,25 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         setupCombinedSpecialsLiveData();
         setupBuyableCardsObserver();
     }
+    public LiveData<Event<List<String>>> getShowAnatomyDialogEvent() {
+        return showAnatomyDialogEvent;
+    }
+    public LiveData<Event<Integer>> getShowExtraCreditsDialogEvent() {
+        return _showExtraCreditsDialogEvent;
+    }
+    public void setAstVersion(String version) {
+        _astVersion.setValue(version);
+        if (version != null) {
+            defaultPrefs.edit().putString(PREF_KEY_AST, version).apply();
+        }
+    }
 
+    public void setCivNumber(String civNumber) {
+        _civNumber.setValue(civNumber);
+        if (civNumber != null) {
+            defaultPrefs.edit().putString(PREF_KEY_CIVILIZATION, civNumber).apply();
+        }
+    }
     private void setupBuyableCardsObserver() {
         buyableCardsMapObserver = cards -> {
             buyableCardMap.clear();
@@ -677,7 +668,6 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         userPreferenceForHeartCards.setValue(selectionName);
         processHeartPreferenceChange(selectionName);
     }
-
 
     private void processHeartPreferenceChange(String selectionName) {
         List<String> cardNamesToMarkAsHeart = getCardNamesForHeartSelection(selectionName);
