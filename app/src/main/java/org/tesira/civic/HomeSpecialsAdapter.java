@@ -8,8 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.tesira.civic.db.CivicViewModel;
-
 import java.util.List;
 
 /**
@@ -17,8 +15,7 @@ import java.util.List;
  */
 public class HomeSpecialsAdapter extends RecyclerView.Adapter<HomeSpecialsAdapter.ViewHolder> {
 
-    private String[] localDataSet = new String[0];
-    private final CivicViewModel viewModel;
+    private String[] localDataSet;
 
     /**
      * Provide a reference to the type of views that you are using
@@ -29,8 +26,6 @@ public class HomeSpecialsAdapter extends RecyclerView.Adapter<HomeSpecialsAdapte
 
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
-
             textView = view.findViewById(R.id.textView);
         }
 
@@ -39,9 +34,8 @@ public class HomeSpecialsAdapter extends RecyclerView.Adapter<HomeSpecialsAdapte
         }
     }
 
-    public HomeSpecialsAdapter(CivicViewModel viewModel) {
-        this.viewModel = viewModel;
-        this.localDataSet = new String[0]; // initial leer
+    public HomeSpecialsAdapter() {
+        this.localDataSet = new String[0];
     }
 
     // Create new views (invoked by the layout manager)

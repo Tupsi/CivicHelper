@@ -8,8 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.tesira.civic.db.CivicViewModel;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +15,6 @@ public class HomeCalamityAdapter extends RecyclerView.Adapter<HomeCalamityAdapte
 
     private List<Calamity> calamityList = new ArrayList<>();
     private Context mContext;
-    private final CivicViewModel viewModel;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
@@ -36,8 +33,7 @@ public class HomeCalamityAdapter extends RecyclerView.Adapter<HomeCalamityAdapte
         public TextView getBonus() { return bonus;}
     }
 
-    public HomeCalamityAdapter(CivicViewModel viewModel, Context context) {
-        this.viewModel = viewModel;
+    public HomeCalamityAdapter(Context context) {
         this.mContext = context;
     }
 
@@ -50,7 +46,6 @@ public class HomeCalamityAdapter extends RecyclerView.Adapter<HomeCalamityAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-//        Log.v("HOLDER", "Position: " + position + " : Name: " + calamityList.get(position).getCalamity() + " : Bonus: " + calamityList.get(position).getBonus() );
         holder.getCalamity().setText(calamityList.get(position).getCalamity());
         holder.getBonus().setText(calamityList.get(position).getBonus());
         if (Integer.parseInt(calamityList.get(position).getBonus()) > 0) {
