@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 public class CivicViewModel extends AndroidViewModel implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private final CivicRepository mRepository;
-    private int screenWidthDp, smallestScreenWidthDp;
     private final MutableLiveData<Integer> treasure  = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> remaining = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> vp = new MutableLiveData<>(0);
@@ -77,41 +76,36 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
             "3300 BC", "2700 BC", "2000 BC", "1800 BC", "1700 BC", "1500 BC", "1400 BC", "1300 BC",
             "1200 BC", "800 BC", "0", "400 AD"};
 
-    private final MutableLiveData<String> currentSortingOrder = new MutableLiveData<>();
     private final LiveData<List<Card>> allAdvancesNotBought;
-
+    private final MutableLiveData<String> _currentSortingOrder = new MutableLiveData<>();
     private final MutableLiveData<Integer> _columns = new MutableLiveData<>();
-
-    // LiveData für Dialog-Events
     private final MutableLiveData<Event<List<String>>> showAnatomyDialogEvent = new MutableLiveData<>();
     private final MutableLiveData<Event<Boolean>> newGameStartedEvent = new MutableLiveData<>();
     private final LiveData<List<Calamity>> calamityBonusListLiveData;
-
     private final LiveData<List<String>> specialAbilitiesRawLiveData;
     private final LiveData<List<String>> immunitiesRawLiveData;
     private final MediatorLiveData<List<String>> combinedSpecialsAndImmunitiesLiveData = new MediatorLiveData<>();
     private final MutableLiveData<Integer> _selectedTipIndex = new MutableLiveData<>();
     public LiveData<Integer> selectedTipIndex = _selectedTipIndex;
-
     private final MutableLiveData<String> _astVersion = new MutableLiveData<>();
-
-    public String getCivilization() {
-        if (_selectedTipIndex.getValue() == 0) {
-            return "not set";
-        } else {
-            return String.valueOf(_selectedTipIndex.getValue());
-        }
-
-    }
-    public LiveData<String> getAstVersion() {
-        return _astVersion;
-    }
-    public void setAstVersion(String newAstVersion) {
-        _astVersion.setValue(newAstVersion);
-    }
-
     public LiveData<String> astVersion = _astVersion;
 
+    public void setAstVersion(String version) {
+        _astVersion.setValue(version);
+        if (version != null) {
+            defaultPrefs.edit().putString(PREF_KEY_AST, version).apply();
+        }
+    }
+
+    public void setCivNumber(String civNumber) {
+        _civNumber.setValue(civNumber);
+        if (civNumber != null) {
+            defaultPrefs.edit().putString(PREF_KEY_CIVILIZATION, civNumber).apply();
+        }
+    }
+
+    private final MutableLiveData<String> _civNumber = new MutableLiveData<>();
+    public LiveData<String> getCivNumber = _civNumber;
 
     private String[] tipsArray;
 
@@ -122,7 +116,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public LiveData<Event<Integer>> getShowExtraCreditsDialogEvent() {
         return _showExtraCreditsDialogEvent;
     }
-    private SharedPreferences defaultPrefs;
+    private final SharedPreferences defaultPrefs;
     private static final String PREF_KEY_CIVILIZATION = "civilization";
     private static final String PREF_KEY_SORT = "sort";
     private static final String PREF_KEY_CITIES = "cities";
@@ -130,6 +124,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     private static final String PREF_KEY_TREASURE = "treasure";
     private static final String PREF_KEY_HEART = "heart";
     private static final String PREF_KEY_COLUMNS = "columns";
+    private static final String PREF_KEY_AST = "ast";
 
     private final LiveData<Integer> cardsVpFromDao;
     private final MediatorLiveData<Integer> totalVp = new MediatorLiveData<>();
@@ -152,12 +147,12 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         cardsVpFromDao = mRepository.getCardsVp();
         setupTotalVpMediator();
         loadData();
-        allAdvancesNotBought = Transformations.switchMap(currentSortingOrder,
+        allAdvancesNotBought = Transformations.switchMap(_currentSortingOrder,
                 order -> mRepository.getAllAdvancesNotBoughtLiveData(order));
         setupCombinedSpecialsLiveData();
         setupBuyableCardsObserver();
-        loadTipsInitialData();
     }
+
     private void setupBuyableCardsObserver() {
         buyableCardsMapObserver = cards -> {
             buyableCardMap.clear();
@@ -272,8 +267,14 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0));
         setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME,0));
         _columns.setValue(Integer.parseInt(defaultPrefs.getString(PREF_KEY_COLUMNS, "1")));
-        currentSortingOrder.setValue(defaultPrefs.getString(PREF_KEY_SORT, "name"));
-        _astVersion.setValue(defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set"));
+        _currentSortingOrder.setValue(defaultPrefs.getString(PREF_KEY_SORT, "name"));
+        _astVersion.setValue(defaultPrefs.getString(PREF_KEY_AST, "basic"));
+        _civNumber.setValue(defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set"));
+
+        if (tipsArray == null) {
+            tipsArray = mApplication.getResources().getStringArray(R.array.tips);
+        }
+
     }
     public int getCities() {
         return cities.getValue() != null ? cities.getValue() : 0;
@@ -300,12 +301,12 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     }
     public void insertPurchase(String purchase) {mRepository.insertPurchase(purchase);}
     public void setSortingOrder(String order) {
-        if (!order.equals(currentSortingOrder.getValue())) {
-            currentSortingOrder.setValue(order);
+        if (!order.equals(_currentSortingOrder.getValue())) {
+            _currentSortingOrder.setValue(order);
         }
     }
     public LiveData<String> getCurrentSortingOrder() {
-        return currentSortingOrder;
+        return _currentSortingOrder;
     }
 
     public LiveData<List<Card>> getAllAdvancesNotBought() {
@@ -621,22 +622,9 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
         // calculateTotal(Collections.emptySet());
     }
 
-    // Methode, um die initialen Daten für die Tipps zu laden
-    // Wird vom TipsFragment aufgerufen
-    public void loadTipsInitialData() {
-        if (tipsArray == null) {
-            tipsArray = mApplication.getResources().getStringArray(R.array.tips);
-        }
-        int civicNumber = Integer.parseInt(defaultPrefs.getString(PREF_KEY_CIVILIZATION, "1"));
-        _selectedTipIndex.setValue(civicNumber - 1);
-    }
-
     public void setSelectedTipIndex(int index) {
         if (index >= 0 && (tipsArray == null || index < tipsArray.length)) {
             _selectedTipIndex.setValue(index);
-
-            // Optional: Hier die neue Auswahl in SharedPreferences speichern, wenn gewünscht
-            // defaultPrefs.edit().putString("civilization", String.valueOf(index + 1)).apply();
         }
     }
 
@@ -651,28 +639,35 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (PREF_KEY_CIVILIZATION.equals(key)) {
-            // Wert neu laden und LiveData aktualisieren
             int civicNumber = Integer.parseInt(sharedPreferences.getString(key, "1"));
+            String newCivNumber = sharedPreferences.getString(key, "not set");
+            if (_civNumber.getValue() == null || !_civNumber.getValue().equals(newCivNumber)){
+                _civNumber.setValue(newCivNumber);
+            }
             int newIndex = civicNumber - 1;
-            // Nur aktualisieren, wenn sich der Wert tatsächlich geändert hat,
-            // um unnötige UI-Updates oder Schleifen zu vermeiden.
             if (_selectedTipIndex.getValue() == null || _selectedTipIndex.getValue() != newIndex) {
                 _selectedTipIndex.setValue(newIndex);
             }
         } else if (PREF_KEY_SORT.equals(key)) {
             String newSortingOrder = sharedPreferences.getString(key, "name");
-            if (currentSortingOrder.getValue() == null || !currentSortingOrder.getValue().equals(newSortingOrder)) {
-                currentSortingOrder.setValue(newSortingOrder);
+            if (_currentSortingOrder.getValue() == null || !_currentSortingOrder.getValue().equals(newSortingOrder)) {
+                _currentSortingOrder.setValue(newSortingOrder);
             }
         } else if (PREF_KEY_HEART.equals(key)){
             String newHeartSelection = sharedPreferences.getString(key, "custom");
             if (userPreferenceForHeartCards.getValue() == null || !userPreferenceForHeartCards.getValue().equals(newHeartSelection)) {
-                updateUserHeartPreference(newHeartSelection);
+                userPreferenceForHeartCards.setValue(newHeartSelection);
+                processHeartPreferenceChange(newHeartSelection);
             }
         } else if (PREF_KEY_COLUMNS.equals(key)){
             int newColumns = Integer.parseInt(sharedPreferences.getString(key, "1"));
             if (_columns.getValue() == null || _columns.getValue() != newColumns) {
                 _columns.setValue(newColumns);
+            }
+        } else if (PREF_KEY_AST.equals(key)) {
+            String newAstVersion = sharedPreferences.getString(key, "name");
+            if (_astVersion.getValue() == null || !_astVersion.getValue().equals(newAstVersion)) {
+                _astVersion.setValue(newAstVersion);
             }
         }
     }

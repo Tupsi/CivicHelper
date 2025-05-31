@@ -33,11 +33,9 @@ public class TipsFragment extends Fragment {
 
     private FragmentTipsBinding binding;
     private CivicViewModel mCivicViewModel;
-    private String[] tips;
     private ScaleGestureDetector scaleGestureDetector;
 
     public TipsFragment() {}
-
     public static TipsFragment newInstance() {
         return new TipsFragment();
     }
