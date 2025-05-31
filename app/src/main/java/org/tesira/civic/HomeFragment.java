@@ -49,7 +49,6 @@ public class HomeFragment extends Fragment {
     private CivicViewModel mCivicViewModel;
     private HomeCalamityAdapter mHomeCalamityAdapter;
     private HomeSpecialsAdapter mHomeSpecialsAdapter;
-    private SharedPreferences prefsDefault;
     private final List<Integer> cityIds = Arrays.asList(
             R.id.radio_0, R.id.radio_1, R.id.radio_2, R.id.radio_3, R.id.radio_4,
             R.id.radio_5, R.id.radio_6, R.id.radio_7, R.id.radio_8, R.id.radio_9
@@ -65,7 +64,6 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentHomeBinding.inflate(inflater, container,false);
-        prefsDefault = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         mCivicViewModel = new ViewModelProvider(requireActivity()).get(CivicViewModel.class);
         View rootView = binding.getRoot();
 
@@ -118,23 +116,12 @@ public class HomeFragment extends Fragment {
         binding.radio8.setOnClickListener(this::onCitiesClicked);
         binding.radio9.setOnClickListener(this::onCitiesClicked);
         restoreCityButton(mCivicViewModel.getCities());
-        String civicAST = prefsDefault.getString("civilization", "not set");
-        binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));
-        binding.tvCivilization.setOnClickListener(v -> {
-            String civ = prefsDefault.getString("civilization", "not set");
-            if (!civ.equals("not set")) {
-                NavHostFragment.findNavController(HomeFragment.this)
-                        .navigate(R.id.action_homeFragment_to_tipsFragment);
-            } else {
-                Toast.makeText(getActivity(), "You need to set a civilization first.\nLong-Press the text again.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        binding.tvCivilization.setText(getString(R.string.tv_ast,mCivicViewModel.getCivNumber.getValue()));
         registerForContextMenu(binding.tvCivilization);
 
         mCivicViewModel.getTotalVp().observe(getViewLifecycleOwner(), newTotalVp -> binding.tvVp.setText(getString(R.string.tv_vp, Objects.requireNonNullElse(newTotalVp, 0))));
-//        binding.tvTime.setText(CivicViewModel.TIME_TABLE[mCivicViewModel.getTimeVp()/5]);
         registerForContextMenu(binding.tvTime);
-
+        registerForContextMenu(binding.tvAST);
         return rootView;
     }
 
@@ -160,8 +147,7 @@ public class HomeFragment extends Fragment {
                 // Update UI elements that need resetting in HomeFragment
                 mHomeSpecialsAdapter.submitSpecialsList(currentSpecialsAndImmunities); // Update special abilities/immunities data in the adapter
                 mHomeCalamityAdapter.submitCalamityList(currentCalamities); // Update calamity data in the adapter
-                String civicAST = prefsDefault.getString("civilization", "not set");
-                binding.tvCivilization.setText(getString(R.string.tv_ast,civicAST));
+                binding.tvCivilization.setText(getString(R.string.tv_ast,"not set"));
             }
         });
         mCivicViewModel.getCalamityBonusListLiveData().observe(getViewLifecycleOwner(), calamities -> {
@@ -241,9 +227,8 @@ public class HomeFragment extends Fragment {
      * the background on the dashboard of the respective info textview
      */
     private void checkASTInternal() {
-        String ast = prefsDefault.getString("ast", "basic");
+        String ast = mCivicViewModel.astVersion.getValue();
         String astMarkerText;
-        Log.d("AST_Check", "Current AST: " + ast + ", Cities: " + currentCities + ", CardsVP: " + currentCardsVp);
         int countAllPurchases = currentAllPurchases.size();
         int countSize100 = 0;
         int countSize200 = 0;
@@ -258,8 +243,6 @@ public class HomeFragment extends Fragment {
                 countSize200++;
             }
         }
-        Log.d("AST_Check", "NumberPurchases: " + countAllPurchases + ", Size>100: " + countSize100 + ", Size>200: " + countSize200);
-
 
         if ("basic".equals(ast)) {
             astMarkerText = "AST (B)";
@@ -268,10 +251,10 @@ public class HomeFragment extends Fragment {
             // MBA: 3 cities & 3 cards
             mbaAchieved = (currentCities >= 3 && countAllPurchases >= 3);
             // LBA: 3 cities & 3 cards 100+
-            lbaAchieved = (currentCities >= 3 && countSize100 >= 3); // Annahme: countAllPurchases >=3 ist hier implizit, da countSize100 <= countAllPurchases
+            lbaAchieved = (currentCities >= 3 && countSize100 >= 3);
             // EIA: 4 cities & 2 cards 200+
             eiaAchieved = (currentCities >= 4 && countSize200 >= 2);
-            // LIA: 5 cities & 3 cards 200+  (Original war LEA, ich nehme an LIA ist ein Tippfehler oben)
+            // LIA: 5 cities & 3 cards 200+
             liaAchieved = (currentCities >= 5 && countSize200 >= 3);
         } else { // "expert" AST
             astMarkerText = "AST (E)";
@@ -288,9 +271,6 @@ public class HomeFragment extends Fragment {
         }
         binding.tvAST.setText(astMarkerText);
 
-        // Wende den Status auf die UI-Elemente an
-        // Es ist wichtig, requireContext() zu verwenden, wenn das Fragment attached ist.
-        // Stelle sicher, dass diese Methode nur aufgerufen wird, wenn das Fragment einen Context hat.
         if (isAdded() && getContext() != null) { // Prüfen, ob das Fragment attached ist und einen Context hat
             setAstStatus(binding.tvEBA, ebaAchieved);
             setAstStatus(binding.tvMBA, mbaAchieved);
@@ -317,7 +297,7 @@ public class HomeFragment extends Fragment {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v.getId() == R.id.tvTime) {
             int timeTableLength = CivicViewModel.TIME_TABLE.length;
-            if ("basic".equals(prefsDefault.getString("ast", "basic"))) {
+            if ("basic".equals(mCivicViewModel.astVersion.getValue())) {
                 timeTableLength--;
             }
             for (int i = 0; i < timeTableLength; i++) {
@@ -330,6 +310,9 @@ public class HomeFragment extends Fragment {
             for (int i = 0; i < values.length; i++) {
                 menu.add(1, i, i, entries[i]);  // Group 1 = Civilization
             }
+        } else if (v.getId() == R.id.tvAST) {
+            menu.add(2, 0, 0, getResources().getStringArray(R.array.ast_entries)[0]);
+            menu.add(2, 1, 1, getResources().getStringArray(R.array.ast_entries)[1]);
         }
     }
 
@@ -345,10 +328,16 @@ public class HomeFragment extends Fragment {
             String[] values = getResources().getStringArray(R.array.civilizations_values);
             if (item.getItemId() < values.length) {
                 String selectedValue = values[item.getItemId()];
-                prefsDefault.edit().putString("civilization", selectedValue).apply();
+                mCivicViewModel.setCivNumber(selectedValue);
                 binding.tvCivilization.setText(getString(R.string.tv_ast, selectedValue));
                 return true;
             }
+        } else if (item.getGroupId() == 2) {
+            // AST Menu
+            String[] entries = getResources().getStringArray(R.array.ast_values);
+            mCivicViewModel.setAstVersion(entries[item.getItemId()]);
+            checkASTInternal();
+            return true;
         }
         return super.onContextItemSelected(item);
     }
