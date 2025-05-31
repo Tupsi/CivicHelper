@@ -16,8 +16,8 @@ import java.util.List;
  * @param <String> Name of the civilization advance.
  */
 public class BuyingSelectionPredicate<String> extends SelectionTracker.SelectionPredicate<String> {
-    private BuyingAdapter adapter;
-    private CivicViewModel mCivicViewModel;
+    private final BuyingAdapter adapter;
+    private final CivicViewModel mCivicViewModel;
 
     public BuyingSelectionPredicate(BuyingAdapter adapter, CivicViewModel model) {
         super();
@@ -66,9 +66,6 @@ public class BuyingSelectionPredicate<String> extends SelectionTracker.Selection
 
         if (remainingValue >= currentPrice) {
             return true;
-        } else {
-            // Optional: Zeige eine Toast-Nachricht an, wenn nicht genug Geld da ist.
-            // Fragment kann dies übernehmen, indem es die remaining LiveData beobachtet.
         }
 
         return false; // Nicht genug Geld

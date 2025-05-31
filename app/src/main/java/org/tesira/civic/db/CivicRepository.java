@@ -16,7 +16,7 @@ import org.tesira.civic.Calamity;
 
 public class CivicRepository {
 
-    private CivicHelperDao mCivicDao;
+    private final CivicHelperDao mCivicDao;
 
     private static final int NUMBER_OF_THREADS = 4;
     private final ExecutorService repositoryExecutor =
@@ -33,9 +33,7 @@ public class CivicRepository {
 
     // Methode zum Einfügen eines Kaufs nur mit Namen (wird nur für den extra Anatomy Kauf verwendet)
     public void insertPurchase(String name) {
-        repositoryExecutor.execute(() -> {
-            mCivicDao.insertPurchase(new Purchase(name));
-        });
+        repositoryExecutor.execute(() -> mCivicDao.insertPurchase(new Purchase(name)));
     }
 
     public void resetDB() {
@@ -74,9 +72,7 @@ public class CivicRepository {
         return mCivicDao.cardsVp();
     }
     public void recalculateCurrentPricesAsync(MutableLiveData<HashMap<CardColor, Integer>> currentBonus) {
-        repositoryExecutor.execute(() -> {
-            recalculateCurrentPricesBasedOnInventory(currentBonus.getValue());
-        });
+        repositoryExecutor.execute(() -> recalculateCurrentPricesBasedOnInventory(currentBonus.getValue()));
     }
 
     /**
@@ -125,6 +121,7 @@ public class CivicRepository {
         });
 
     }
+    @SuppressWarnings("DataFlowIssue")
     private void recalculateCurrentPricesBasedOnInventory(HashMap<CardColor, Integer> currentBonus) {
         Log.d("CivicRepository", "recalculateCurrentPricesBasedOnPurchases: Starting price recalculation.");
 
