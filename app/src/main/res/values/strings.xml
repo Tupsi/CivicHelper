@@ -15,8 +15,9 @@
         The start screen acts as a dashboard and tracks the current number of cities, color bonuses, victory points, A.S.T.
         and effects from advances you bought.
         The buying process supports cards with special buying bonuses like Anatomy, Library, Monument and Written Records.
-        <p>The included Tips are taken from the Beginner\'s Guide I found on <a href="https://boardgamegeek.com/boardgame/184424/mega-civilization/files">boardgamesgeek.com</a>.<br>
-        <b>Big Thanks to Nicholas M. for writing them!</b></p>
+        <p>The included Tips are taken from the <a href="https://boardgamegeek.com/filepage/125855/beginners-guide-for-the-different-nations">Beginner\'s Guide</a> and
+        the \"What do you want\" hearts are inspired by BillNC\'s <a href="https://boardgamegeek.com/filepage/218745/mega-civilization-civilization-advances-chooser">Civilization Advances Chooser</a>.</p>
+        <p><b>A big thank you to Nicholas M and BillNC for writing them!</b></p>
         ]]>
     </string>
     <string name="money">Treasure</string>
@@ -74,5 +75,7 @@
     <string name="about_header_desc">picture about the app</string>
     <string name="no_cards_selected">No cards selected!</string>
     <string name="colorbonus">Color Bonus</string>
+    <string name="special_abilities_and_immunities">Special Abilities and Immunities</string>
+    <string name="calamity_effects_overview">Calamity Effects Overview</string>
 
 </resources>
