@@ -1,186 +1,199 @@
-package org.tesira.civic.db;
+package org.tesira.civic.db
 
-import android.app.Application;
-import android.content.Context;
-import android.util.Log;
+import android.app.Application
+import android.content.Context
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import org.tesira.civic.Calamity
+import org.tesira.civic.db.CivicHelperDatabase.Companion.getDatabase
+import org.tesira.civic.db.CivicHelperDatabase.Companion.importCivicsFromXML
+import org.tesira.civic.db.CivicViewModel.PurchaseCompletionCallback
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import kotlin.math.max
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+class CivicRepository(application: Application) {
+    private var mCivicDao: CivicHelperDao
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+    private val repositoryExecutor: ExecutorService = Executors.newFixedThreadPool(
+        NUMBER_OF_THREADS
+    )
 
-import org.tesira.civic.Calamity;
-
-public class CivicRepository {
-
-    private final CivicHelperDao mCivicDao;
-
-    private static final int NUMBER_OF_THREADS = 4;
-    private final ExecutorService repositoryExecutor =
-            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-
-    public CivicRepository(Application application) {
-        CivicHelperDatabase db = CivicHelperDatabase.getDatabase(application);
-        mCivicDao = db.civicDao();
+    init {
+        val db = getDatabase(application)
+        mCivicDao = db!!.civicDao()
     }
 
-    public void deleteInventory() {
-        repositoryExecutor.execute(() -> mCivicDao.deleteAllPurchases());
+    fun deleteInventory() {
+        repositoryExecutor.execute { mCivicDao.deleteAllPurchases() }
     }
 
     // Methode zum Einfügen eines Kaufs nur mit Namen (wird nur für den extra Anatomy Kauf verwendet)
-    public void insertPurchase(String name) {
-        repositoryExecutor.execute(() -> mCivicDao.insertPurchase(new Purchase(name)));
+    fun insertPurchase(name: String) {
+        repositoryExecutor.execute { mCivicDao.insertPurchase(Purchase(name)) }
     }
 
-    public void resetDB(Context context) {
-        repositoryExecutor.execute(() ->{
-            mCivicDao.deleteAllCards();
-            mCivicDao.deleteAllEffects();
-            mCivicDao.deleteAllSpecials();
-            mCivicDao.deleteAllImmunities();
+    fun resetDB(context: Context) {
+        repositoryExecutor.execute {
+            mCivicDao.deleteAllCards()
+            mCivicDao.deleteAllEffects()
+            mCivicDao.deleteAllSpecials()
+            mCivicDao.deleteAllImmunities()
             // Stelle sicher, dass importCivicsFromXML eine synchrone Operation ist
-            CivicHelperDatabase.importCivicsFromXML(context);
-        });
+            importCivicsFromXML(context)
+        }
     }
 
-    public void resetCurrentPrice(){
-        repositoryExecutor.execute(() -> mCivicDao.resetCurrentPrice());
+    fun resetCurrentPrice() {
+        repositoryExecutor.execute { mCivicDao.resetCurrentPrice() }
     }
-    public LiveData<List<Card>> getAllAdvancesNotBoughtLiveData(String sortingOrder) {
-        return mCivicDao.getAllAdvancesNotBoughtLiveData(sortingOrder);
+
+    fun getAllAdvancesNotBoughtLiveData(sortingOrder: String): LiveData<List<Card>> {
+        return mCivicDao.getAllAdvancesNotBoughtLiveData(sortingOrder)
     }
-    public LiveData<List<Calamity>> getCalamityBonusLiveData() {
-        return mCivicDao.getCalamityBonusLiveData();
-    }
-    public LiveData<List<String>> getSpecialAbilitiesLiveData() {
-        return mCivicDao.getSpecialAbilitiesLiveData();
-    }
-    public LiveData<List<String>> getImmunitiesLiveData() {
-        return mCivicDao.getImmunitiesLiveData();
-    }
-    public LiveData<List<Card>> getInventoryAsCardLiveData() {
-        return mCivicDao.getInventoryAsCardLiveData();
-    }
-    /**
-     * Returns the victory points of all bought cards in the database.
-     */
-    public LiveData<Integer> getCardsVp() {
-        return mCivicDao.cardsVp();
-    }
-    public void recalculateCurrentPricesAsync(MutableLiveData<HashMap<CardColor, Integer>> currentBonus) {
-        repositoryExecutor.execute(() -> recalculateCurrentPricesBasedOnInventory(currentBonus.getValue()));
+
+    val calamityBonusLiveData: LiveData<List<Calamity>>
+        get() = mCivicDao.getCalamityBonusLiveData()
+    val specialAbilitiesLiveData: LiveData<List<String>>
+        get() = mCivicDao.getSpecialAbilitiesLiveData()
+    val immunitiesLiveData: LiveData<List<String>>
+        get() = mCivicDao.getImmunitiesLiveData()
+    val inventoryAsCardLiveData: LiveData<List<Card>>
+        get() = mCivicDao.getInventoryAsCardLiveData()
+    val cardsVp: LiveData<Int>
+        /**
+         * Returns the victory points of all bought cards in the database.
+         */
+        get() = mCivicDao.cardsVp()
+
+    fun recalculateCurrentPricesAsync(currentBonus: MutableLiveData<HashMap<CardColor?, Int>>) {
+        repositoryExecutor.execute {
+            recalculateCurrentPricesBasedOnInventory(
+                currentBonus.value!!
+            )
+        }
     }
 
     /**
      * recalculates the color bonus and adds the purchased cards to inventory.
      */
-    public void processPurchasesAndRecalculatePricesAsync(List<String> selectedKeys, MutableLiveData<HashMap<CardColor, Integer>> currentBonus, CivicViewModel.PurchaseCompletionCallback callback) {
-        repositoryExecutor.execute(() -> {
-            Log.d("CivicRepository", "processPurchasesAndRecalculatePricesAsync: Starting processing purchases.");
-
-            int totalExtraCredits = 0;
-            boolean boughtAnatomy = false;
-            List<String> anatomyCardsToChoose = new ArrayList<>();
+    fun processPurchasesAndRecalculatePricesAsync(
+        selectedKeys: List<String>,
+        currentBonus: MutableLiveData<HashMap<CardColor?, Int>>,
+        callback: PurchaseCompletionCallback
+    ) {
+        repositoryExecutor.execute {
+            Log.d(
+                "CivicRepository",
+                "processPurchasesAndRecalculatePricesAsync: Starting processing purchases."
+            )
+            var totalExtraCredits = 0
+            var boughtAnatomy = false
+            var anatomyCardsToChoose: List<String?> =
+                ArrayList()
 
             try {
-                for (String name : selectedKeys) {
+                for (name in selectedKeys) {
                     // 1. Kauf einfügen
-                    mCivicDao.insertPurchase(new Purchase(name)); // Synchron im Hintergrund-Thread
+                    mCivicDao.insertPurchase(Purchase(name)) // Synchron im Hintergrund-Thread
 
                     // 2. Extra Credits und spezielle Karten prüfen (Synchron im Hintergrund-Thread)
-                    List<Effect> creditEffects = mCivicDao.getEffect(name, "Credits");
-                    for (Effect effect : creditEffects) {
-                        totalExtraCredits += effect.getValue();
+                    val creditEffects =
+                        mCivicDao.getEffect(name, "Credits")
+                    for (effect in creditEffects) {
+                        totalExtraCredits += effect.value
                     }
 
-                    if (name.equals("Anatomy")) {
-                        boughtAnatomy = true;
-
+                    if (name == "Anatomy") {
+                        boughtAnatomy = true
                     }
                 }
                 // 3. Preise neu berechnen nach den Käufen und Boni
                 // Boni basieren auf den aktuell in der Datenbank befindlichen Käufen
-                recalculateCurrentPricesBasedOnInventory(currentBonus.getValue());
+                recalculateCurrentPricesBasedOnInventory(currentBonus.value!!)
 
                 // 4. Wenn Anatomy gekauft wurde, alle grünen gratis Karten holen
                 if (boughtAnatomy) {
-                    anatomyCardsToChoose = mCivicDao.getAnatomyCards();
+                    anatomyCardsToChoose = mCivicDao.getAnatomyCards()
                 }
                 // 4. Callback aufrufen, um das ViewModel zu benachrichtigen
-                callback.onPurchaseCompleted(totalExtraCredits, anatomyCardsToChoose);
-
-            } catch (Exception e) {
-                Log.e("CivicRepository", "Error processing purchases: " + e.getMessage(), e);
-                callback.onPurchaseFailed(e.getMessage());
+                callback.onPurchaseCompleted(totalExtraCredits, anatomyCardsToChoose)
+            } catch (e: Exception) {
+                Log.e("CivicRepository", "Error processing purchases: " + e.message, e)
+                callback.onPurchaseFailed(e.message)
             }
-            Log.d("CivicRepository", "processPurchasesAndRecalculatePricesAsync: Finished processing purchases.");
-        });
-
+            Log.d(
+                "CivicRepository",
+                "processPurchasesAndRecalculatePricesAsync: Finished processing purchases."
+            )
+        }
     }
-    @SuppressWarnings("DataFlowIssue")
-    private void recalculateCurrentPricesBasedOnInventory(HashMap<CardColor, Integer> currentBonus) {
-        Log.d("CivicRepository", "recalculateCurrentPricesBasedOnPurchases: Starting price recalculation.");
+
+    private fun recalculateCurrentPricesBasedOnInventory(currentBonus: HashMap<CardColor?, Int>) {
+        Log.d(
+            "CivicRepository",
+            "recalculateCurrentPricesBasedOnPurchases: Starting price recalculation."
+        )
 
         // Aktualisiere die Preise basierend auf den aktuellen Boni
-        List<Card> allCards = mCivicDao.getAdvancesByName(); // Synchron im Hintergrund-Thread
-        for (Card adv : allCards) {
-            int newCurrent;
-            if (adv.getGroup2() == null) {
-                newCurrent = adv.getPrice() - currentBonus.getOrDefault(adv.getGroup1(), 0);
+        val allCards = mCivicDao.getAdvancesByName() // Synchron im Hintergrund-Thread
+        for ((name, _, _, price, group11, group21) in allCards) {
+            var newCurrent: Int
+            if (group21 == null) {
+                newCurrent = price - currentBonus.getOrDefault(group11, 0)
             } else {
-                int group1 = currentBonus.getOrDefault(adv.getGroup1(), 0);
-                int group2 = currentBonus.getOrDefault(adv.getGroup2(), 0);
-                newCurrent = adv.getPrice() - Math.max(group1, group2);
+                val group1 = currentBonus.getOrDefault(group11, 0)
+                val group2 = currentBonus.getOrDefault(group21, 0)
+                newCurrent = (price - max(group1.toDouble(), group2.toDouble())).toInt()
             }
-            if (newCurrent < 0) newCurrent = 0;
-            mCivicDao.updateCurrentPrice(adv.getName(), newCurrent); // Synchron im Hintergrund-Thread
+            if (newCurrent < 0) newCurrent = 0
+            mCivicDao.updateCurrentPrice(name, newCurrent) // Synchron im Hintergrund-Thread
         }
 
         // Special family bonus (prüft gekaufte Karten und aktualisiert Preise basierend auf deren bonusCard und bonus)
-        List<Card> purchasesForBonus = mCivicDao.getPurchasesForBonus(); // Synchron im Hintergrund-Thread
-        for (Card adv : purchasesForBonus) {
-            Card bonusTo = mCivicDao.getAdvanceByNameToCard(adv.getBonusCard()); // Synchron im Hintergrund-Thread
-            if (bonusTo != null) {
-                int newCurrent = bonusTo.getCurrentPrice() - adv.getBonus();
-                if (newCurrent < 0) newCurrent = 0;
-                mCivicDao.updateCurrentPrice(bonusTo.getName(), newCurrent); // Synchron im Hintergrund-Thread
-            }
+        val purchasesForBonus = mCivicDao.getPurchasesForBonus() // Synchron im Hintergrund-Thread
+        for ((_, _, _, _, _, _, _, _, _, _, _, bonusCard, bonus) in purchasesForBonus) {
+            val bonusTo =
+                mCivicDao.getAdvanceByNameToCard(bonusCard!!) // Synchron im Hintergrund-Thread
+            var newCurrent = bonusTo.currentPrice - bonus
+            if (newCurrent < 0) newCurrent = 0
+            mCivicDao.updateCurrentPrice(
+                bonusTo.name,
+                newCurrent
+            ) // Synchron im Hintergrund-Thread
         }
-        Log.d("CivicRepository", "recalculateCurrentPricesBasedOnPurchases: Price recalculation finished.");
+        Log.d(
+            "CivicRepository",
+            "recalculateCurrentPricesBasedOnPurchases: Price recalculation finished."
+        )
     }
 
-    public interface RepositoryCallback {
-        void onComplete();
+    interface RepositoryCallback {
+        fun onComplete()
     }
 
-    public void resetAllCardsHeartStatusAsync(RepositoryCallback callback) {
-        repositoryExecutor.execute(() -> {
-            mCivicDao.resetAllHearts();
-            if (callback != null) {
-                callback.onComplete();
-            }
-        });
-    }
-
-    public void setCardsAsHeartAsync(List<String> cardNames, RepositoryCallback callback) {
-        if (cardNames == null || cardNames.isEmpty()) {
-            if (callback != null) {
-                repositoryExecutor.execute(callback::onComplete);
-            }
-            return;
+    fun resetAllCardsHeartStatusAsync(callback: RepositoryCallback?) {
+        repositoryExecutor.execute {
+            mCivicDao.resetAllHearts()
+            callback?.onComplete()
         }
-        repositoryExecutor.execute(() -> {
-            mCivicDao.setHeartsForCards(cardNames);
-            if (callback != null) {
-                callback.onComplete();
-            }
-        });
     }
 
+    fun setCardsAsHeartAsync(cardNames: List<String>, callback: RepositoryCallback?) {
+        if (cardNames.isEmpty()) {
+            if (callback != null) {
+                repositoryExecutor.execute { callback.onComplete() }
+            }
+            return
+        }
+        repositoryExecutor.execute {
+            mCivicDao.setHeartsForCards(cardNames)
+            callback?.onComplete()
+        }
+    }
+
+    companion object {
+        private const val NUMBER_OF_THREADS = 4
+    }
 }

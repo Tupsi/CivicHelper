@@ -23,7 +23,7 @@ import kotlin.concurrent.Volatile
 )
 @TypeConverters(Converters::class)
 abstract class CivicHelperDatabase : RoomDatabase() {
-    abstract fun civicDao(): CivicHelperDao?
+    abstract fun civicDao(): CivicHelperDao
 
     companion object {
         @Volatile
