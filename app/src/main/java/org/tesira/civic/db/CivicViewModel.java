@@ -341,7 +341,7 @@ public class CivicViewModel extends AndroidViewModel implements SharedPreference
     public void startNewGameProcess() {
         mRepository.deleteInventory();
         mRepository.resetCurrentPrice();
-        mRepository.resetDB();
+        mRepository.resetDB(mApplication.getApplicationContext());
         treasure.setValue(0);
         remaining.setValue(0);
         cities.setValue(0);

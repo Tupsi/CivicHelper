@@ -1,11 +1,13 @@
 package org.tesira.civic.db;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,14 +38,14 @@ public class CivicRepository {
         repositoryExecutor.execute(() -> mCivicDao.insertPurchase(new Purchase(name)));
     }
 
-    public void resetDB() {
+    public void resetDB(Context context) {
         repositoryExecutor.execute(() ->{
             mCivicDao.deleteAllCards();
             mCivicDao.deleteAllEffects();
             mCivicDao.deleteAllSpecials();
             mCivicDao.deleteAllImmunities();
             // Stelle sicher, dass importCivicsFromXML eine synchrone Operation ist
-            CivicHelperDatabase.importCivicsFromXML();
+            CivicHelperDatabase.importCivicsFromXML(context);
         });
     }
 
