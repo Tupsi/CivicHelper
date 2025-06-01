@@ -30,8 +30,8 @@ import kotlin.math.min
  */
 class TipsFragment : Fragment() {
     private lateinit var binding: FragmentTipsBinding
-    private var civicViewModel: CivicViewModel? = null
-    private var scaleGestureDetector: ScaleGestureDetector? = null
+    private lateinit var civicViewModel: CivicViewModel
+    private lateinit var scaleGestureDetector: ScaleGestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,12 +67,10 @@ class TipsFragment : Fragment() {
 
         //ViewCompat.requestApplyInsets(rootView)
 
-        val civicsAdapter = ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.civilizations_entries, android.R.layout.simple_spinner_item
-        )
-        civicsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.tipsSpinner.adapter = civicsAdapter
+        ArrayAdapter.createFromResource(requireContext(), R.array.civilizations_entries, android.R.layout.simple_spinner_item).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.tipsSpinner.adapter = adapter
+        }
         return rootView
     }
 
@@ -81,7 +79,7 @@ class TipsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Beobachte den selectedTipIndex aus dem CivicViewModel
-        civicViewModel!!.selectedTipIndex.observe(
+        civicViewModel.selectedTipIndex.observe(
             viewLifecycleOwner
         ) { index: Int? ->
             if (index != null) {
@@ -96,7 +94,7 @@ class TipsFragment : Fragment() {
                     }
                 }
 
-                val tipText = civicViewModel!!.getTipForIndex(index)
+                val tipText = civicViewModel.getTipForIndex(index)
                 if (tipText != null && tipText.isNotEmpty()) {
                     binding.tipsTextView.text = getString(R.string.tips_text_combined,tipText, getString(R.string.no_war_game))
                 }
@@ -112,16 +110,13 @@ class TipsFragment : Fragment() {
             ) {
                 // Aktualisiere das ViewModel, wenn der Benutzer eine Auswahl trifft
                 // Prüfe, ob die Auswahl tatsächlich vom Benutzer stammt und sich geändert hat
-                val currentIndexInViewModel = civicViewModel!!.selectedTipIndex.value
+                val currentIndexInViewModel = civicViewModel.selectedTipIndex.value
                 if (currentIndexInViewModel == null || currentIndexInViewModel != position) {
-                    civicViewModel!!.setSelectedTipIndex(position)
+                    civicViewModel.setSelectedTipIndex(position)
                 }
 
                 // Absturzsicherung für setTextSize
-                val firstChild = parent.getChildAt(0)
-                if (firstChild is TextView) {
-                    firstChild.textSize = 20f
-                }
+                (selectedItemView as? TextView)?.textSize = 20f
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
