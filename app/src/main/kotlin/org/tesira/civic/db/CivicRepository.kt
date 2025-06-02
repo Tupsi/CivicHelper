@@ -88,8 +88,7 @@ class CivicRepository(application: Application) {
             )
             var totalExtraCredits = 0
             var boughtAnatomy = false
-            var anatomyCardsToChoose: List<String> =
-                ArrayList()
+            var anatomyCardsToChoose: List<String> = ArrayList()
 
             try {
                 for (name in selectedKeys) {
