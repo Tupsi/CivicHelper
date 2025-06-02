@@ -7,11 +7,11 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "purchases",
-    indices = [Index("name")] // Beachte die Array-Syntax für 'indices' in Kotlin
+    indices = [Index("name")]
 )
-data class Purchase( // 'data class' ist ideal für solche Entitäten
+data class Purchase(
 
     @PrimaryKey
-    @ColumnInfo(name = "name") // @NonNull ist hier implizit durch den Typ 'String'
-    val name: String // 'val name: String' ist nicht-nullable. Für nullable wäre es 'val name: String?'
+    @ColumnInfo(name = "name")
+    val name: String
 )

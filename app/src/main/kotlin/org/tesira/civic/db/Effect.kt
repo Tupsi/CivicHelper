@@ -19,5 +19,4 @@ data class Effect(
     @ColumnInfo(name = "value")
     val value: Int
 
-    // Kein weiterer Konstruktor nötig!
 )
