@@ -67,11 +67,9 @@ class CivicRepository(application: Application) {
          */
         get() = mCivicDao.cardsVp()
 
-    fun recalculateCurrentPricesAsync(currentBonus: MutableLiveData<HashMap<CardColor?, Int>>) {
+    fun recalculateCurrentPricesAsync(currentBonus: MutableLiveData<HashMap<CardColor, Int>>) {
         repositoryExecutor.execute {
-            recalculateCurrentPricesBasedOnInventory(
-                currentBonus.value!!
-            )
+            currentBonus.value?.let { recalculateCurrentPricesBasedOnInventory(it) }
         }
     }
 
@@ -80,7 +78,7 @@ class CivicRepository(application: Application) {
      */
     fun processPurchasesAndRecalculatePricesAsync(
         selectedKeys: List<String>,
-        currentBonus: MutableLiveData<HashMap<CardColor?, Int>>,
+        currentBonus: MutableLiveData<HashMap<CardColor, Int>>,
         callback: PurchaseCompletionCallback
     ) {
         repositoryExecutor.execute {
@@ -90,7 +88,7 @@ class CivicRepository(application: Application) {
             )
             var totalExtraCredits = 0
             var boughtAnatomy = false
-            var anatomyCardsToChoose: List<String?> =
+            var anatomyCardsToChoose: List<String> =
                 ArrayList()
 
             try {
@@ -130,7 +128,7 @@ class CivicRepository(application: Application) {
         }
     }
 
-    private fun recalculateCurrentPricesBasedOnInventory(currentBonus: HashMap<CardColor?, Int>) {
+    private fun recalculateCurrentPricesBasedOnInventory(currentBonus: HashMap<CardColor, Int>) {
         Log.d(
             "CivicRepository",
             "recalculateCurrentPricesBasedOnPurchases: Starting price recalculation."
@@ -138,30 +136,27 @@ class CivicRepository(application: Application) {
 
         // Aktualisiere die Preise basierend auf den aktuellen Boni
         val allCards = mCivicDao.getAdvancesByName() // Synchron im Hintergrund-Thread
-        for ((name, _, _, price, group11, group21) in allCards) {
+        for (card_loop in allCards) {
             var newCurrent: Int
-            if (group21 == null) {
-                newCurrent = price - currentBonus.getOrDefault(group11, 0)
+            if (card_loop.group2 == null) {
+                newCurrent = card_loop.price - currentBonus.getOrDefault(card_loop.group1, 0)
             } else {
-                val group1 = currentBonus.getOrDefault(group11, 0)
-                val group2 = currentBonus.getOrDefault(group21, 0)
-                newCurrent = (price - max(group1.toDouble(), group2.toDouble())).toInt()
+                val group1 = currentBonus.getOrDefault(card_loop.group1, 0)
+                val group2 = currentBonus.getOrDefault(card_loop.group2, 0)
+                newCurrent = (card_loop.price - max(group1.toDouble(), group2.toDouble())).toInt()
             }
             if (newCurrent < 0) newCurrent = 0
-            mCivicDao.updateCurrentPrice(name, newCurrent) // Synchron im Hintergrund-Thread
+            mCivicDao.updateCurrentPrice(card_loop.name, newCurrent)
         }
 
         // Special family bonus (prüft gekaufte Karten und aktualisiert Preise basierend auf deren bonusCard und bonus)
-        val purchasesForBonus = mCivicDao.getPurchasesForBonus() // Synchron im Hintergrund-Thread
-        for ((_, _, _, _, _, _, _, _, _, _, _, bonusCard, bonus) in purchasesForBonus) {
-            val bonusTo =
-                mCivicDao.getAdvanceByNameToCard(bonusCard!!) // Synchron im Hintergrund-Thread
-            var newCurrent = bonusTo.currentPrice - bonus
+        // muss nur für Karten gemacht werden die 1 oder 3 VP geben. Karten mit 6 VP haben so einen Bonus nicht
+        val purchasesForBonus = mCivicDao.getPurchasesForFamilyBonus()
+        for (card_loop in purchasesForBonus) {
+            val bonusTo = mCivicDao.getAdvanceByNameToCard(card_loop.bonusCard!!)
+            var newCurrent = bonusTo.currentPrice - card_loop.bonus
             if (newCurrent < 0) newCurrent = 0
-            mCivicDao.updateCurrentPrice(
-                bonusTo.name,
-                newCurrent
-            ) // Synchron im Hintergrund-Thread
+            mCivicDao.updateCurrentPrice(bonusTo.name, newCurrent)
         }
         Log.d(
             "CivicRepository",
