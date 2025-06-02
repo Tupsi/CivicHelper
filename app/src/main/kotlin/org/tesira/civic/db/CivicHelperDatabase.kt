@@ -147,13 +147,13 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                             for (x in 0..<element2.getElementsByTagName("special").length) {
                                 val abilityText =
                                     element2.getElementsByTagName("special").item(x).textContent
-                                val ability = SpecialAbility(name, abilityText)
+                                val ability = SpecialAbility(advance = name, ability = abilityText)
                                 dao.insertSpecialAbility(ability)
                             }
                             for (x in 0..<element2.getElementsByTagName("immunity").length) {
                                 val immunityText =
                                     element2.getElementsByTagName("immunity").item(x).textContent
-                                val immunity = Immunity(name, immunityText)
+                                val immunity = Immunity(advance = name, immunity = immunityText)
                                 dao.insertImmunity(immunity)
                             }
                         }
