@@ -133,7 +133,7 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                                 val value =
                                     element2.getElementsByTagName("effect")
                                         .item(x).textContent.toInt()
-                                val newEffect = Effect(name, effect, value)
+                                val newEffect = Effect(advance = name, name = effect, value = value)
                                 dao.insertEffect(newEffect)
                             }
                             val civic = Card(
