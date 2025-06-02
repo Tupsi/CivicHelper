@@ -146,7 +146,7 @@ public class HomeFragment extends Fragment {
                 binding.tvCivilization.setText(getString(R.string.tv_ast,"not set"));
             }
         });
-        mCivicViewModel.getCalamityBonusListLiveData().observe(getViewLifecycleOwner(), calamities -> {
+        mCivicViewModel.calamityBonusListLiveData.observe(getViewLifecycleOwner(), calamities -> {
             // 'calamities' ist hier die List<Calamity> aus der Datenbank (über LiveData)
             if (calamities != null) {
                 currentCalamities = calamities;
@@ -161,7 +161,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        mCivicViewModel.getCardBonus().observe(getViewLifecycleOwner(), cardBonusMap -> {
+        mCivicViewModel.cardBonus.observe(getViewLifecycleOwner(), cardBonusMap -> {
             if (cardBonusMap == null) return;
             binding.bonusBlue.setText(String.valueOf(cardBonusMap.getOrDefault(CardColor.BLUE, 0)));
             binding.bonusBlue.setBackgroundResource(R.color.arts);

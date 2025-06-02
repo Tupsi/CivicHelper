@@ -134,7 +134,7 @@ public class BuyingFragment extends Fragment {
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
 
-        mCivicViewModel.getAllAdvancesNotBought().observe(getViewLifecycleOwner(), cards -> {
+        mCivicViewModel.allAdvancesNotBought.observe(getViewLifecycleOwner(), cards -> {
             if (cards != null) {
                 mAdapter.changeList(cards);
                 if (savedSelectionState != null) {
@@ -252,7 +252,7 @@ public class BuyingFragment extends Fragment {
                         if (!mCivicViewModel.librarySelected) { // Only add if it wasn't already selected
                             mCivicViewModel.librarySelected = true;
                             // Add the temporary treasure bonus
-                            mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() + 40);
+                            mCivicViewModel.setTreasure(mCivicViewModel.treasure.getValue() + 40);
                             showToast(key + " selected, temporary adding 40 treasure.");
                         }
                     } else {
@@ -260,7 +260,7 @@ public class BuyingFragment extends Fragment {
                         if (mCivicViewModel.librarySelected) { // Only remove if it was previously selected
                             mCivicViewModel.librarySelected = false; // Reset the flag
                             // Remove the temporary treasure bonus
-                            mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - 40);
+                            mCivicViewModel.setTreasure(mCivicViewModel.treasure.getValue() - 40);
                             showToast(key + " deselected, removing the temporary 40 treasure.");
                         }
                     }
@@ -310,9 +310,9 @@ public class BuyingFragment extends Fragment {
             }
         }
 
-        mCivicViewModel.getTreasure().observe(getViewLifecycleOwner(), treasure -> {
+        mCivicViewModel.treasure.observe(getViewLifecycleOwner(), treasure -> {
             mTreasureInput.setText(String.valueOf(treasure));
-            if (treasure < mCivicViewModel.getRemaining().getValue()) {
+            if (treasure < mCivicViewModel.remaining.getValue()) {
                 mCivicViewModel.setRemaining(treasure);
                 tracker.clearSelection();
             } else if (tracker != null &&  tracker.getSelection().size() > 0){
@@ -322,7 +322,7 @@ public class BuyingFragment extends Fragment {
             }
         });
 
-        mCivicViewModel.getRemaining().observe(getViewLifecycleOwner(), remaining -> {
+        mCivicViewModel.remaining.observe(getViewLifecycleOwner(), remaining -> {
                 mRemainingText.setText(String.valueOf(remaining));
                 if (tracker != null) {
                     updateViews();
@@ -390,7 +390,7 @@ public class BuyingFragment extends Fragment {
                     int price = Integer.parseInt(priceText.getText().toString());
                     View mCardView = visibleView.findViewById(R.id.card);
                     if (!isSelected) {
-                        if (price > mCivicViewModel.getRemaining().getValue()) {
+                        if (price > mCivicViewModel.remaining.getValue()) {
                             mCardView.setAlpha(0.25F);
                         } else {
                             mCardView.setAlpha(1.0F);
@@ -407,9 +407,9 @@ public class BuyingFragment extends Fragment {
         if (tracker != null) {
             tracker.onSaveInstanceState(savedInstanceState);
         }
-        if (mCivicViewModel != null && mCivicViewModel.getTreasure().getValue() != null) {
-            Log.d("BuyingFragment", "onSaveInstanceState: Resetting remaining to treasure value for restore. Old remaining: " + mCivicViewModel.getRemaining().getValue());
-            mCivicViewModel.setRemaining(mCivicViewModel.getTreasure().getValue());
+        if (mCivicViewModel != null && mCivicViewModel.treasure.getValue() != null) {
+            Log.d("BuyingFragment", "onSaveInstanceState: Resetting remaining to treasure value for restore. Old remaining: " + mCivicViewModel.remaining.getValue());
+            mCivicViewModel.setRemaining(mCivicViewModel.treasure.getValue());
         }
     }
 

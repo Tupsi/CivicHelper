@@ -86,7 +86,7 @@ public class BuyingAdapter extends RecyclerView.Adapter<BuyingAdapter.ViewHolder
             tracker.select(name);
         } else {
             // can we buy the card?
-            if (!isSelected && mCivicViewModel.getRemaining().getValue() < price) {
+            if (!isSelected && mCivicViewModel.remaining.getValue() < price) {
                 viewHolder.mCardView.setAlpha(0.25F);
             } else {
                 viewHolder.mCardView.setAlpha(1F);

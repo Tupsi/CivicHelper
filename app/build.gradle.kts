@@ -55,7 +55,7 @@ android {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.21")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+//    implementation("androidx.legacy:legacy-support-v4:1.0.0")
 
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.recyclerview:recyclerview-selection:1.2.0")
@@ -72,12 +72,15 @@ dependencies {
 
     // oben plugin version gleichhalten!!!
     implementation("androidx.room:room-runtime:2.7.1")
+    implementation("androidx.room:room-ktx:2.7.1")
     ksp("androidx.room:room-compiler:2.7.1")
 
     implementation("androidx.annotation:annotation:1.9.1")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.9.0")
 
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
 
@@ -86,6 +89,8 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.activity:activity-ktx:1.10.1")
+
+    implementation("androidx.paging:paging-runtime-ktx:3.2.1")
 }
 
 room {

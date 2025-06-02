@@ -45,8 +45,8 @@ public class BuyingSelectionPredicate<String> extends SelectionTracker.Selection
 
         Log.v("Buying", " Test if possible to select for key :" + key + " : State: " + nextState);
         int currentPrice = adv.getCurrentPrice();
-        Integer treasureValue = mCivicViewModel.getTreasure().getValue();
-        Integer remainingValue = mCivicViewModel.getRemaining().getValue();
+        Integer treasureValue = mCivicViewModel.treasure.getValue();
+        Integer remainingValue = mCivicViewModel.remaining.getValue();
 
         if (treasureValue == null || remainingValue == null) {
             // Werte sind noch nicht initialisiert, Auswahl vorerst nicht erlauben
