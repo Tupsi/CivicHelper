@@ -118,7 +118,7 @@ class CivicRepository(application: Application) {
                 callback.onPurchaseCompleted(totalExtraCredits, anatomyCardsToChoose)
             } catch (e: Exception) {
                 Log.e("CivicRepository", "Error processing purchases: " + e.message, e)
-                callback.onPurchaseFailed(e.message)
+                callback.onPurchaseFailed(e.message!!)
             }
             Log.d(
                 "CivicRepository",
@@ -163,7 +163,7 @@ class CivicRepository(application: Application) {
         )
     }
 
-    interface RepositoryCallback {
+    fun interface RepositoryCallback {
         fun onComplete()
     }
 
