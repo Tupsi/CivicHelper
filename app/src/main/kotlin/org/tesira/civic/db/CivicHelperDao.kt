@@ -64,7 +64,7 @@ interface CivicHelperDao {
     fun deleteAllPurchases()
 
     @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL AND cards.vp < 6")
-    fun getPurchasesForBonus(): List<Card>
+    fun getPurchasesForFamilyBonus(): List<Card>
 
     @Query("UPDATE cards SET currentPrice = :current WHERE name = :name")
     fun updateCurrentPrice(name: String, current: Int)
