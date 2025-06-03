@@ -137,15 +137,16 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mCivicViewModel.getNewGameResetCompletedEvent().observe(getViewLifecycleOwner(), newGameEvent -> {
+/*        mCivicViewModel.getNewGameStartedEvent().observe(getViewLifecycleOwner(), newGameEvent -> {
             Boolean resetTriggered = newGameEvent.getContentIfNotHandled();
             if (resetTriggered != null && resetTriggered) {
+                Log.d("HomeFragment", "Resetting HomeFragment UI elements.");
                 // Update UI elements that need resetting in HomeFragment
                 mHomeSpecialsAdapter.submitSpecialsList(currentSpecialsAndImmunities); // Update special abilities/immunities data in the adapter
                 mHomeCalamityAdapter.submitCalamityList(currentCalamities); // Update calamity data in the adapter
                 binding.tvCivilization.setText(getString(R.string.tv_ast,"not set"));
             }
-        });
+        });*/
         mCivicViewModel.calamityBonusListLiveData.observe(getViewLifecycleOwner(), calamities -> {
             // 'calamities' ist hier die List<Calamity> aus der Datenbank (über LiveData)
             if (calamities != null) {
