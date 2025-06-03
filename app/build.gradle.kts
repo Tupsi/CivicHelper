@@ -1,18 +1,11 @@
 val roomVersion: String = "2.7.1"
 val lifecycleVersion: String = "2.9.0"
 val navigationVersion: String = "2.9.0"
-val coreKtxVersion: String = "1.16.0"
-val appCompatVersion: String = "1.7.0"
-val materialVersion: String = "1.12.0"
-val constraintLayoutVersion: String = "2.2.1"
-val recyclerViewVersion: String = "1.4.0"
-val pagingVersion: String = "3.3.6"
-val kspVersion: String = "2.1.21-2.0.1"
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    //https://github.com/google/ksp/releases
+    //  https://github.com/google/ksp/releases
     id("com.google.devtools.ksp") version "2.1.21-2.0.1"
     id("androidx.room") version "2.7.1"
 }
