@@ -245,8 +245,9 @@ public class BuyingFragment extends Fragment {
                 super.onItemStateChanged(key, selected);
                 // item selection changed, we need to redo total selected cost
                 mCivicViewModel.calculateTotal(tracker.getSelection());
+                boolean isFinalizing = Boolean.TRUE.equals(mCivicViewModel.isFinalizingPurchase().getValue());
 
-                if (key.equals("Library")) {
+                if (!isFinalizing && key.equals("Library")) {
                     if (selected) {
                         // Library was just selected
                         if (!mCivicViewModel.librarySelected) { // Only add if it wasn't already selected
@@ -271,6 +272,8 @@ public class BuyingFragment extends Fragment {
                     currentSelection.add(selectedKey);
                 }
                 mCivicViewModel.updateSelectionState(currentSelection);
+
+
             }
 
             @Override
@@ -323,10 +326,10 @@ public class BuyingFragment extends Fragment {
         });
 
         mCivicViewModel.remaining.observe(getViewLifecycleOwner(), remaining -> {
-                mRemainingText.setText(String.valueOf(remaining));
-                if (tracker != null) {
-                    updateViews();
-                }
+            mRemainingText.setText(String.valueOf(remaining));
+            if (tracker != null) {
+                updateViews();
+            }
         });
 
         View rootView = requireActivity().getWindow().getDecorView().getRootView();
@@ -351,6 +354,9 @@ public class BuyingFragment extends Fragment {
         };
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(keyboardListener);
 
+        if (mCivicViewModel.treasure.getValue() < 0){
+            mCivicViewModel.setTreasure(0);
+        }
     }
 
     /**

@@ -22,6 +22,7 @@ import org.tesira.civic.Event
 import org.tesira.civic.R
 import java.util.Arrays
 import java.util.Locale
+import androidx.core.content.edit
 
 class CivicViewModel(application: Application, savedStateHandle: SavedStateHandle?) :
     AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -43,9 +44,8 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     private val _currentSortingOrder = MutableLiveData<String>()
     private val _columns = MutableLiveData<Int?>()
     private val showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
-    private val _newGameStartedEvent = MutableLiveData<Event<Boolean?>>()
-    val newGameStartedEvent: LiveData<Event<Boolean?>>
-        get() = _newGameStartedEvent
+
+
 
 
     @JvmField
@@ -70,6 +70,9 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
     private lateinit var buyableCardsMapObserver: Observer<MutableList<Card>>
 
+    private val _isFinalizingPurchase = MutableLiveData(false)
+    val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
+
     fun getShowAnatomyDialogEvent(): LiveData<Event<List<String>>> {
         return showAnatomyDialogEvent
     }
@@ -80,14 +83,14 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     fun setAstVersion(version: String?) {
         _astVersion.setValue(version)
         if (version != null) {
-            defaultPrefs.edit().putString(PREF_KEY_AST, version).apply()
+            defaultPrefs.edit { putString(PREF_KEY_AST, version) }
         }
     }
 
     fun setCivNumber(civNumber: String?) {
         _civNumber.setValue(civNumber)
         if (civNumber != null) {
-            defaultPrefs.edit().putString(PREF_KEY_CIVILIZATION, civNumber).apply()
+            defaultPrefs.edit { putString(PREF_KEY_CIVILIZATION, civNumber) }
         }
     }
 
@@ -285,14 +288,15 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         this.remaining.setValue(treasure)
     }
 
-    private val newGameResetCompletedEvent = MutableLiveData<Event<Boolean?>?>()
-    fun getNewGameResetCompletedEvent(): LiveData<Event<Boolean?>?> {
-        return newGameResetCompletedEvent
-    }
 
     private val _navigateToDashboardEvent = MutableLiveData<Event<Boolean?>?>()
     val navigateToDashboardEvent: LiveData<Event<Boolean?>?>
         get() = _navigateToDashboardEvent
+
+
+    private val _newGameStartedEvent = MutableLiveData<Event<Boolean?>>()
+    val newGameStartedEvent: LiveData<Event<Boolean?>>
+        get() = _newGameStartedEvent
 
     /**
      * Performs the core logic for starting a new game.
@@ -301,28 +305,28 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     fun startNewGameProcess() {
         mRepository.deleteInventory()
         mRepository.resetCurrentPrice()
-        mRepository.resetDB(mApplication.getApplicationContext())
-        treasure.setValue(0)
-        remaining.setValue(0)
-        cities.setValue(0)
-        timeVp.setValue(0)
-        vp.setValue(0)
-        cardBonus.setValue(HashMap<CardColor, Int>())
+        mRepository.resetDB(mApplication.applicationContext)
+        treasure.value = 0
+        remaining.value = 0
+        cities.value = 0
+        timeVp.value = 0
+        vp.value = 0
+        cardBonus.value = HashMap<CardColor, Int>()
+        librarySelected = false
 
-        defaultPrefs.edit().putInt(CardColor.BLUE.colorName, 0).apply()
-        defaultPrefs.edit().putInt(CardColor.GREEN.colorName, 0).apply()
-        defaultPrefs.edit().putInt(CardColor.ORANGE.colorName, 0).apply()
-        defaultPrefs.edit().putInt(CardColor.RED.colorName, 0).apply()
-        defaultPrefs.edit().putInt(CardColor.YELLOW.colorName, 0).apply()
+        defaultPrefs.edit { putInt(CardColor.BLUE.colorName, 0) }
+        defaultPrefs.edit { putInt(CardColor.GREEN.colorName, 0) }
+        defaultPrefs.edit { putInt(CardColor.ORANGE.colorName, 0) }
+        defaultPrefs.edit { putInt(CardColor.RED.colorName, 0) }
+        defaultPrefs.edit { putInt(CardColor.YELLOW.colorName, 0) }
 
-        defaultPrefs.edit().putInt(PREF_KEY_CITIES, 0).apply()
-        defaultPrefs.edit().putInt(PREF_KEY_TIME, 0).apply()
-        defaultPrefs.edit().putInt(PREF_KEY_TREASURE, 0).apply()
-        defaultPrefs.edit().putString(PREF_KEY_HEART, "custom").apply()
-        defaultPrefs.edit().remove(PREF_KEY_CIVILIZATION).apply()
+        defaultPrefs.edit { putInt(PREF_KEY_CITIES, 0) }
+        defaultPrefs.edit { putInt(PREF_KEY_TIME, 0) }
+        defaultPrefs.edit { putInt(PREF_KEY_TREASURE, 0) }
+        defaultPrefs.edit { putString(PREF_KEY_HEART, "custom") }
+        defaultPrefs.edit { remove(PREF_KEY_CIVILIZATION) }
 
-        _newGameStartedEvent.value= Event(true)
-        newGameResetCompletedEvent.setValue(Event<Boolean?>(true))
+        _newGameStartedEvent.value = Event(true)
     }
 
     /**
@@ -426,10 +430,7 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
      * @param selectedCardNames The names of the cards selected for purchase.
      */
     fun processPurchases(selectedCardNames: List<String>) {
-        Log.d(
-            "CivicViewModel",
-            "processPurchases() called from Fragment with " + selectedCardNames.size + " cards."
-        )
+        _isFinalizingPurchase.value = true
         // Rufe die asynchrone Methode im Repository auf
         mRepository.processPurchasesAndRecalculatePricesAsync(
             selectedCardNames, cardBonus,
@@ -438,10 +439,6 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
                     totalExtraCredits: Int,
                     anatomyCardsToChoose: List<String>
                 ) {
-                    Log.d(
-                        "CivicViewModel",
-                        "PurchaseCompletionCallback: onPurchaseCompleted. Extra Credits: " + totalExtraCredits + ", Anatomy Cards: " + anatomyCardsToChoose.size
-                    )
                     // Diese Methode wird im Hintergrund-Thread aufgerufen.
                     // Aktualisiere LiveData im ViewModel auf dem Haupt-Thread mit postValue
                     if (!anatomyCardsToChoose.isEmpty()) {
@@ -457,6 +454,7 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
                     if (anatomyCardsToChoose.isEmpty() && totalExtraCredits == 0) {
                         _navigateToDashboardEvent.postValue(Event<Boolean?>(true))
                     }
+                    _isFinalizingPurchase.postValue(false)
                 }
 
                 override fun onPurchaseFailed(errorMessage: String) {
@@ -466,6 +464,7 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
                     )
                     // Handle error, maybe show a Toast via another LiveData event
                     // _showErrorToastEvent.postValue(new Event<>(errorMessage));
+                    _isFinalizingPurchase.postValue(false)
                 }
             })
     }
