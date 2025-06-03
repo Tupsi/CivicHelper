@@ -48,7 +48,9 @@ public class BuyingFragment extends Fragment {
     private static final String EXTRA_CREDITS_REQUEST_KEY = "extraCreditsDialogResult";
     private static final String ANATOMY_REQUEST_KEY = "anatomySelectionResult";
     private CivicViewModel mCivicViewModel;
+    @NonNull
     protected EditText mTreasureInput;
+    @NonNull
     protected TextView mRemainingText;
     private SelectionTracker<String> tracker;
     private FragmentBuyingBinding binding;
@@ -61,6 +63,7 @@ public class BuyingFragment extends Fragment {
     private String[] sortingOptionsValues, sortingOptionsNames;
     private Bundle savedSelectionState = null;
     private ViewTreeObserver.OnGlobalLayoutListener keyboardListener;
+    private boolean treasureInputFocusedOnStart = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -315,6 +318,7 @@ public class BuyingFragment extends Fragment {
 
         mCivicViewModel.getTreasure().observe(getViewLifecycleOwner(), treasure -> {
             mTreasureInput.setText(String.valueOf(treasure));
+
             if (treasure < mCivicViewModel.getRemaining().getValue()) {
                 mCivicViewModel.setRemaining(treasure);
                 tracker.clearSelection();
@@ -356,6 +360,28 @@ public class BuyingFragment extends Fragment {
 
         if (mCivicViewModel.getTreasure().getValue() < 0){
             mCivicViewModel.setTreasure(0);
+        }
+    }
+
+    private void focusTreasureInputAndShowKeyboard() {
+        if (mTreasureInput != null && mTreasureInput.requestFocus()) {
+            // Fenster-Token ist manchmal erst nach einer kleinen Verzögerung verfügbar,
+            // besonders wenn das Fragment gerade erst erstellt wird.
+            mTreasureInput.post(() -> {
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.showSoftInput(mTreasureInput, InputMethodManager.SHOW_IMPLICIT);
+                }
+            });
+        }
+    }
+
+    private void hideKeyboard() {
+        if (mTreasureInput != null) {
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(mTreasureInput.getWindowToken(), 0);
+            }
         }
     }
 
@@ -424,10 +450,18 @@ public class BuyingFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
+        Integer currentTreasure = mCivicViewModel.getTreasure().getValue();
+        if (currentTreasure != null && currentTreasure == 0 && !treasureInputFocusedOnStart) {
+            focusTreasureInputAndShowKeyboard();
+            treasureInputFocusedOnStart = true; // Setze das Flag, damit es nicht wiederholt wird,
+            // falls der Benutzer das Fragment verlässt und zurückkommt,
+            // während treasure immer noch 0 ist.
+        }
     }
 
     public void onPause() {
         super.onPause();
+        hideKeyboard();
     }
 
     public void onStop() {
