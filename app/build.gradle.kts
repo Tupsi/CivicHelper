@@ -1,3 +1,14 @@
+val roomVersion: String = "2.7.1"
+val lifecycleVersion: String = "2.9.0"
+val navigationVersion: String = "2.9.0"
+val coreKtxVersion: String = "1.16.0"
+val appCompatVersion: String = "1.7.0"
+val materialVersion: String = "1.12.0"
+val constraintLayoutVersion: String = "2.2.1"
+val recyclerViewVersion: String = "1.4.0"
+val pagingVersion: String = "3.3.6"
+val kspVersion: String = "2.1.21-2.0.1"
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -55,42 +66,33 @@ android {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.21")
-//    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.recyclerview:recyclerview-selection:1.2.0")
-
     implementation("androidx.databinding:databinding-runtime:8.10.1")
-
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.gridlayout:gridlayout:1.1.0")
-
     implementation("androidx.appcompat:appcompat:1.7.0")
-
-    implementation("androidx.navigation:navigation-fragment-ktx:2.9.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.9.0")
-
-    // oben plugin version gleichhalten!!!
-    implementation("androidx.room:room-runtime:2.7.1")
-    implementation("androidx.room:room-ktx:2.7.1")
-    ksp("androidx.room:room-compiler:2.7.1")
-
     implementation("androidx.annotation:annotation:1.9.1")
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.9.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
 
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    // mit plugin version oben gleichhalten!!!
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
 
     // https://maven.google.com/web/index.html#com.google.android.material:material
     implementation("com.google.android.material:material:1.12.0")
-
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.activity:activity-ktx:1.10.1")
-
-    implementation("androidx.paging:paging-runtime-ktx:3.2.1")
+    implementation("androidx.paging:paging-runtime-ktx:3.3.6")
 }
 
 room {
