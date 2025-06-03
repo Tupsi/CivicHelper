@@ -162,7 +162,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        mCivicViewModel.cardBonus.observe(getViewLifecycleOwner(), cardBonusMap -> {
+        mCivicViewModel.getCardBonus().observe(getViewLifecycleOwner(), cardBonusMap -> {
             if (cardBonusMap == null) return;
             binding.bonusBlue.setText(String.valueOf(cardBonusMap.getOrDefault(CardColor.BLUE, 0)));
             binding.bonusBlue.setBackgroundResource(R.color.arts);
