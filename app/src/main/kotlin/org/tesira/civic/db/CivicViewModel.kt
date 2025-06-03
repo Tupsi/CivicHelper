@@ -298,6 +298,10 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     val newGameStartedEvent: LiveData<Event<Boolean?>>
         get() = _newGameStartedEvent
 
+    private val _navigateToCivilizationSelectionEvent = MutableLiveData<Event<Unit>>()
+    val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>>
+        get() = _navigateToCivilizationSelectionEvent
+
     /**
      * Performs the core logic for starting a new game.
      * This includes resetting persistent data and ViewModel state.
@@ -326,7 +330,8 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         defaultPrefs.edit { putString(PREF_KEY_HEART, "custom") }
         defaultPrefs.edit { remove(PREF_KEY_CIVILIZATION) }
 
-        _newGameStartedEvent.value = Event(true)
+//        _newGameStartedEvent.value = Event(true)
+        _navigateToCivilizationSelectionEvent.value = Event(Unit)
     }
 
     /**
