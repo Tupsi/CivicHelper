@@ -1,0 +1,352 @@
+package org.tesira.civic
+
+import android.os.Bundle
+import android.util.Log
+import android.view.ContextMenu
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.view.OnApplyWindowInsetsListener
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import org.tesira.civic.databinding.FragmentHomeBinding
+import org.tesira.civic.db.Card
+import org.tesira.civic.db.CardColor
+import org.tesira.civic.db.CivicViewModel
+import java.util.Objects
+
+/**
+ * Shows the Dashboard where you can check the number of cities,
+ * see your current color bonus and the effects the already bought
+ * cards have on your game.
+ */
+class HomeFragment : Fragment() {
+    private lateinit var binding: FragmentHomeBinding
+    private lateinit var mCivicViewModel: CivicViewModel
+    private lateinit var mHomeCalamityAdapter: HomeCalamityAdapter
+    private lateinit var mHomeSpecialsAdapter: HomeSpecialsAdapter
+    private val cityIds: List<Int> = listOf(
+        R.id.radio_0, R.id.radio_1, R.id.radio_2, R.id.radio_3, R.id.radio_4,
+        R.id.radio_5, R.id.radio_6, R.id.radio_7, R.id.radio_8, R.id.radio_9
+    )
+    private var currentCities = 0
+    private var currentCardsVp = 0
+    private var currentAllPurchases: List<Card> = ArrayList<Card>()
+    private var currentCalamities: List<Calamity> = ArrayList<Calamity>()
+    private var currentSpecialsAndImmunities: List<String> = ArrayList<String>()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        mCivicViewModel =
+            ViewModelProvider(requireActivity()).get<CivicViewModel>(CivicViewModel::class.java)
+        val rootView: View = binding.getRoot()
+
+        // Speichere die ursprünglichen Padding-Werte der View, auf die die Insets angewendet werden
+        val initialPaddingLeft = rootView.paddingLeft
+        val initialPaddingTop = rootView.paddingTop
+        val initialPaddingRight = rootView.paddingRight
+        val initialPaddingBottom = rootView.paddingBottom
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            rootView,
+            OnApplyWindowInsetsListener { v: View?, windowInsets: WindowInsetsCompat? ->
+                val systemBarInsets = windowInsets!!.getInsets(WindowInsetsCompat.Type.systemBars())
+                // Insets für die Tastatur, falls du auch darauf reagieren möchtest (hier nicht primär im Fokus)
+                // Insets imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
+
+                // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
+                v!!.setPadding(
+                    initialPaddingLeft + systemBarInsets.left,
+                    initialPaddingTop,
+                    initialPaddingRight + systemBarInsets.right,
+                    initialPaddingBottom + systemBarInsets.bottom
+                )
+                windowInsets
+            })
+
+        // RecylerView Calamity Effects
+        var mRecyclerView = rootView.findViewById<RecyclerView>(R.id.listCalamity)
+        mRecyclerView.setLayoutManager(LinearLayoutManager(rootView.context))
+        mHomeCalamityAdapter = HomeCalamityAdapter(this.requireContext())
+        mRecyclerView.setAdapter(mHomeCalamityAdapter)
+
+        // RecyclerView Special Abilities
+        mRecyclerView = rootView.findViewById<RecyclerView>(R.id.listAbility)
+        mRecyclerView.setLayoutManager(LinearLayoutManager(rootView.context))
+        mHomeSpecialsAdapter = HomeSpecialsAdapter()
+        mRecyclerView.setAdapter(mHomeSpecialsAdapter)
+        binding.radio0.setOnClickListener { onCitiesClicked(it) }
+        binding.radio1.setOnClickListener { onCitiesClicked(it) }
+        binding.radio2.setOnClickListener { onCitiesClicked(it) }
+        binding.radio3.setOnClickListener { onCitiesClicked(it) }
+        binding.radio4.setOnClickListener { onCitiesClicked(it) }
+        binding.radio5.setOnClickListener { onCitiesClicked(it) }
+        binding.radio6.setOnClickListener { onCitiesClicked(it) }
+        binding.radio7.setOnClickListener { onCitiesClicked(it) }
+        binding.radio8.setOnClickListener { onCitiesClicked(it) }
+        binding.radio9.setOnClickListener { onCitiesClicked(it) }
+
+//        restoreCityButton(mCivicViewModel.getCities())
+        binding.tvCivilization.text = getString(
+            R.string.tv_ast,
+            mCivicViewModel.getCivNumber.getValue()
+        )
+        registerForContextMenu(binding.tvCivilization)
+
+        mCivicViewModel.getTotalVp().observe(
+            getViewLifecycleOwner(),
+            Observer { newTotalVp: Int? ->
+                binding.tvVp.text = getString(
+                    R.string.tv_vp,
+                    Objects.requireNonNullElse<Int?>(newTotalVp, 0)
+                )
+            })
+        registerForContextMenu(binding.tvTime)
+        registerForContextMenu(binding.tvAST)
+        return rootView
+    }
+
+    /**
+     * sets the city button to the current number of cities
+     */
+    internal fun restoreCityButton(cities: Int) {
+        if (cities >= 0 && cities < cityIds.size) {
+            val button = binding.getRoot().findViewById<RadioButton?>(cityIds[cities])
+            if (button != null) {
+                button.isChecked = true
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        /*        mCivicViewModel.getNewGameStartedEvent().observe(getViewLifecycleOwner(), newGameEvent -> {
+            Boolean resetTriggered = newGameEvent.getContentIfNotHandled();
+            if (resetTriggered != null && resetTriggered) {
+                Log.d("HomeFragment", "Resetting HomeFragment UI elements.");
+                // Update UI elements that need resetting in HomeFragment
+                mHomeSpecialsAdapter.submitSpecialsList(currentSpecialsAndImmunities); // Update special abilities/immunities data in the adapter
+                mHomeCalamityAdapter.submitCalamityList(currentCalamities); // Update calamity data in the adapter
+                binding.tvCivilization.setText(getString(R.string.tv_ast,"not set"));
+            }
+        });*/
+        mCivicViewModel.calamityBonusListLiveData.observe(
+            getViewLifecycleOwner(),
+            Observer { calamities: List<Calamity> ->
+                currentCalamities = calamities
+                mHomeCalamityAdapter.submitCalamityList(calamities)
+            })
+
+        mCivicViewModel.getCombinedSpecialsAndImmunitiesLiveData()
+            .observe(getViewLifecycleOwner(), Observer { combinedList: List<String> ->
+                currentSpecialsAndImmunities = combinedList
+                mHomeSpecialsAdapter.submitSpecialsList(combinedList)
+            })
+
+        mCivicViewModel.cardBonus.observe(
+            getViewLifecycleOwner(),
+            Observer { cardBonusMap: HashMap<CardColor, Int> ->
+
+                binding.bonusBlue.text = cardBonusMap.getOrDefault(CardColor.BLUE, 0).toString()
+                binding.bonusBlue.setBackgroundResource(R.color.arts)
+                binding.bonusGreen.text = cardBonusMap.getOrDefault(CardColor.GREEN, 0).toString()
+                binding.bonusGreen.setBackgroundResource(R.color.science)
+                binding.bonusOrange.text = cardBonusMap.getOrDefault(CardColor.ORANGE, 0).toString()
+                binding.bonusOrange.setBackgroundResource(R.color.crafts)
+                binding.bonusRed.text = cardBonusMap.getOrDefault(CardColor.RED, 0).toString()
+                binding.bonusRed.setBackgroundResource(R.color.civic)
+                binding.bonusYellow.text = cardBonusMap.getOrDefault(CardColor.YELLOW, 0).toString()
+                binding.bonusYellow.setBackgroundResource(R.color.religion)
+            })
+        // Observer für Cities
+        mCivicViewModel.citiesLive.observe(getViewLifecycleOwner(), object : Observer<Int?> {
+            override fun onChanged(cities: Int?) {
+                if (cities != null) {
+                    currentCities = cities
+                    restoreCityButton(currentCities)
+                    checkASTInternal()
+                }
+            }
+        })
+        mCivicViewModel.cardsVpLiveData.observe(getViewLifecycleOwner(), Observer { vp: Int? ->
+            if (vp != null) {
+                currentCardsVp = vp
+                // Wenn alle anderen benötigten Daten auch schon da sind, checkAST ausführen
+                if (mCivicViewModel.citiesLive.getValue() != null && !currentAllPurchases.isEmpty()) {
+                    checkASTInternal()
+                }
+            }
+        })
+
+        mCivicViewModel.inventoryAsCardLiveData.observe(
+            getViewLifecycleOwner(),
+            Observer { purchases: List<Card> ->
+                currentAllPurchases = purchases
+                // Wenn alle anderen benötigten Daten auch schon da sind, checkAST ausführen
+                if (mCivicViewModel.citiesLive.getValue() != null && currentCardsVp != 0 /* oder eine andere Logik */) {
+                    checkASTInternal()
+                }
+            })
+
+        // Observer für Time
+        mCivicViewModel.timeVpLive.observe(
+            getViewLifecycleOwner(),
+            Observer { value: Int? ->
+                binding.tvTime.text = CivicViewModel.Companion.TIME_TABLE[value!! / 5]
+            })
+    }
+
+    private fun setAstStatus(textView: TextView, achieved: Boolean) {
+        if (achieved) {
+            textView.setBackgroundResource(R.color.ast_green)
+            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.ast_onGreen))
+        } else {
+            textView.setBackgroundResource(R.color.ast_red)
+            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.ast_onRed))
+        }
+    }
+
+    /**
+     * checks if certain requirements are set to advance further on the AST and sets
+     * the background on the dashboard of the respective info textview
+     */
+    internal fun checkASTInternal() {
+        val ast = mCivicViewModel.astVersion.getValue()
+        val astMarkerText: String?
+        val countAllPurchases = currentAllPurchases.size
+        var countSize100 = 0
+        var countSize200 = 0
+        val ebaAchieved: Boolean
+        val mbaAchieved: Boolean
+        val lbaAchieved: Boolean
+        val eiaAchieved: Boolean
+        val liaAchieved: Boolean
+
+        // count the number of cards which have a buying price greater 100 and 200
+        for (card in currentAllPurchases) {
+            if (card.price >= 100) {
+                countSize100++
+            }
+            if (card.price >= 200) {
+                countSize200++
+            }
+        }
+
+        if ("basic" == ast) {
+            astMarkerText = "AST (B)"
+            // EBA: 2 cities
+            ebaAchieved = (currentCities >= 2)
+            // MBA: 3 cities & 3 cards
+            mbaAchieved = (currentCities >= 3 && countAllPurchases >= 3)
+            // LBA: 3 cities & 3 cards 100+
+            lbaAchieved = (currentCities >= 3 && countSize100 >= 3)
+            // EIA: 4 cities & 2 cards 200+
+            eiaAchieved = (currentCities >= 4 && countSize200 >= 2)
+            // LIA: 5 cities & 3 cards 200+
+            liaAchieved = (currentCities >= 5 && countSize200 >= 3)
+        } else { // "expert" AST
+            astMarkerText = "AST (E)"
+            // EBA: 2 cities
+            ebaAchieved = (currentCities >= 3)
+            // MBA: 3 cities & 5 VP
+            mbaAchieved = (currentCities >= 3 && currentCardsVp >= 5)
+            // LBA: 4 cities & 12 cards
+            lbaAchieved = (currentCities >= 4 && countAllPurchases >= 12)
+            // EIA: 5 cities & 10 cards 100+ & 38 VP
+            eiaAchieved = (currentCities >= 5 && countSize100 >= 10 && currentCardsVp >= 38)
+            // LIA: 6 cities & 17 cards 100+ & 56 VP
+            liaAchieved = (currentCities >= 6 && countSize100 >= 17 && currentCardsVp >= 56)
+        }
+        binding.tvAST.text = astMarkerText
+
+        if (isAdded && context != null) { // Prüfen, ob das Fragment attached ist und einen Context hat
+            setAstStatus(binding.tvEBA, ebaAchieved)
+            setAstStatus(binding.tvMBA, mbaAchieved)
+            setAstStatus(binding.tvLBA, lbaAchieved)
+            setAstStatus(binding.tvEIA, eiaAchieved)
+            setAstStatus(binding.tvLIA, liaAchieved)
+        } else {
+            Log.w(
+                "HomeFragment",
+                "checkASTInternal called when fragment not attached or context is null."
+            )
+        }
+    }
+
+    fun onCitiesClicked(view: View) {
+        val checked = (view as RadioButton).isChecked
+        if (!checked) return
+
+        val index = cityIds.indexOf(view.id)
+        if (index != -1) {
+            mCivicViewModel.setCities(index)
+        }
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        if (v.id == R.id.tvTime) {
+            var timeTableLength = CivicViewModel.Companion.TIME_TABLE.size
+            if ("basic" == mCivicViewModel.astVersion.getValue()) {
+                timeTableLength--
+            }
+            for (i in 0..<timeTableLength) {
+                menu.add(0, i * 5, i, CivicViewModel.Companion.TIME_TABLE[i])
+            }
+        } else if (v.id == R.id.tvCivilization) {
+            val context = requireContext()
+            val entries = context.resources.getStringArray(R.array.civilizations_entries)
+            val values = context.resources.getStringArray(R.array.civilizations_values)
+            for (i in values.indices) {
+                menu.add(1, i, i, entries[i]) // Group 1 = Civilization
+            }
+        } else if (v.id == R.id.tvAST) {
+            menu.add(2, 0, 0, resources.getStringArray(R.array.ast_entries)[0])
+            menu.add(2, 1, 1, resources.getStringArray(R.array.ast_entries)[1])
+        }
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        if (item.groupId == 0) {
+            // Time Menu
+            mCivicViewModel.setTimeVp(item.itemId)
+            binding.tvTime.text = item.title
+            return true
+        } else if (item.groupId == 1) {
+            // Civilization Menu
+            val values = resources.getStringArray(R.array.civilizations_values)
+            if (item.itemId < values.size) {
+                val selectedValue = values[item.itemId]
+                mCivicViewModel.setCivNumber(selectedValue)
+                binding.tvCivilization.text = getString(R.string.tv_ast, selectedValue)
+                return true
+            }
+        } else if (item.groupId == 2) {
+            // AST Menu
+            val entries = resources.getStringArray(R.array.ast_values)
+            mCivicViewModel.setAstVersion(entries[item.itemId])
+            checkASTInternal()
+            return true
+        }
+        return super.onContextItemSelected(item)
+    }
+}

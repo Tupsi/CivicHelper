@@ -53,7 +53,7 @@ class HomeCalamityAdapter(private val mContext: Context) :
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitCalamityList(newCalamities: MutableList<Calamity>) {
+    fun submitCalamityList(newCalamities: List<Calamity>) {
         this.calamityList.clear()
         this.calamityList.addAll(newCalamities)
         notifyDataSetChanged()
