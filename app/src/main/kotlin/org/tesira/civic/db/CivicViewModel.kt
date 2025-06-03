@@ -27,25 +27,28 @@ import androidx.core.content.edit
 class CivicViewModel(application: Application, savedStateHandle: SavedStateHandle?) :
     AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
     private val mRepository: CivicRepository
-    @JvmField
+
+//    @JvmField
     val treasure: MutableLiveData<Int?> = MutableLiveData<Int?>(0)
-    @JvmField
+
+//    @JvmField
     val remaining: MutableLiveData<Int?> = MutableLiveData<Int?>(0)
     private val vp = MutableLiveData<Int?>(0)
-    @JvmField
+
+//    @JvmField
     var cardBonus: MutableLiveData<HashMap<CardColor, Int>>
     private val cities = MutableLiveData<Int?>(0)
     private val mApplication: Application
     private val timeVp = MutableLiveData<Int?>(0)
+
     @JvmField
     var librarySelected: Boolean
+
     @JvmField
     val allAdvancesNotBought: LiveData<MutableList<Card>>
     private val _currentSortingOrder = MutableLiveData<String>()
     private val _columns = MutableLiveData<Int?>()
     private val showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
-
-
 
 
     @JvmField
@@ -56,9 +59,11 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     private val _selectedTipIndex = MutableLiveData<Int?>()
     var selectedTipIndex: LiveData<Int?> = _selectedTipIndex
     private val _astVersion = MutableLiveData<String?>()
+
     @JvmField
     var astVersion: LiveData<String?> = _astVersion
     private val _civNumber = MutableLiveData<String?>()
+
     @JvmField
     var getCivNumber: LiveData<String?> = _civNumber
     private lateinit var tipsArray: Array<String>
@@ -89,6 +94,8 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
 
     fun setCivNumber(civNumber: String?) {
         _civNumber.setValue(civNumber)
+        _selectedTipIndex.value = civNumber?.toIntOrNull()?.minus(1)
+        Log.d("CivicViewModel", "Setting civNumber to $civNumber")
         if (civNumber != null) {
             defaultPrefs.edit { putString(PREF_KEY_CIVILIZATION, civNumber) }
         }
@@ -207,16 +214,12 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         get() = _columns.getValue()!!
 
     fun loadData() {
-        val blue: Int
-        val green: Int
-        val orange: Int
-        val red: Int
-        val yellow: Int
-        blue = defaultPrefs.getInt(CardColor.BLUE.colorName, 0)
-        green = defaultPrefs.getInt(CardColor.GREEN.colorName, 0)
-        orange = defaultPrefs.getInt(CardColor.ORANGE.colorName, 0)
-        red = defaultPrefs.getInt(CardColor.RED.colorName, 0)
-        yellow = defaultPrefs.getInt(CardColor.YELLOW.colorName, 0)
+        val blue: Int = defaultPrefs.getInt(CardColor.BLUE.colorName, 0)
+        val green: Int = defaultPrefs.getInt(CardColor.GREEN.colorName, 0)
+        val orange: Int = defaultPrefs.getInt(CardColor.ORANGE.colorName, 0)
+        val red: Int = defaultPrefs.getInt(CardColor.RED.colorName, 0)
+        val yellow: Int = defaultPrefs.getInt(CardColor.YELLOW.colorName, 0)
+
         if (cardBonus.getValue() != null) {
             cardBonus.getValue()!!.put(CardColor.BLUE, blue)
             cardBonus.getValue()!!.put(CardColor.GREEN, green)
@@ -224,17 +227,16 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
             cardBonus.getValue()!!.put(CardColor.RED, red)
             cardBonus.getValue()!!.put(CardColor.YELLOW, yellow)
         }
-        userPreferenceForHeartCards.setValue(defaultPrefs.getString(PREF_KEY_HEART, "custom"))
+        userPreferenceForHeartCards.value = defaultPrefs.getString(PREF_KEY_HEART, "custom")
         setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0))
         setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME, 0))
-        _columns.setValue(defaultPrefs.getString(PREF_KEY_COLUMNS, "1")!!.toInt())
+        _columns.value = defaultPrefs.getString(PREF_KEY_COLUMNS, "1")!!.toInt()
         _currentSortingOrder.value = (defaultPrefs.getString(PREF_KEY_SORT, "name"))!!
-        _astVersion.setValue(defaultPrefs.getString(PREF_KEY_AST, "basic"))
-        _civNumber.setValue(defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set"))
+        _astVersion.value = defaultPrefs.getString(PREF_KEY_AST, "basic")
+        _civNumber.value = defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set")
 
-//        if (tipsArray == null) {
-            tipsArray = mApplication.getResources().getStringArray(R.array.tips)
-//        }
+        tipsArray = mApplication.resources.getStringArray(R.array.tips)
+        _selectedTipIndex.value = _civNumber.value?.toIntOrNull()?.minus(1)
     }
 
     fun getCities(): Int {
@@ -245,7 +247,7 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         get() = cities
 
     fun setCities(value: Int) {
-        cities.setValue(value)
+        cities.value = value
     }
 
     fun requestPriceRecalculation() {
@@ -261,7 +263,7 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         get() = timeVp
 
     fun setTimeVp(value: Int) {
-        timeVp.setValue(value)
+        timeVp.value = value
     }
 
     fun insertPurchase(purchase: String) {
@@ -270,7 +272,7 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
 
     fun setSortingOrder(order: String) {
         if (order != _currentSortingOrder.getValue()) {
-            _currentSortingOrder.setValue(order)
+            _currentSortingOrder.value = order
         }
     }
 
@@ -281,22 +283,16 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         get() = mRepository.inventoryAsCardLiveData
 
     fun setTreasure(treasure: Int) {
-        this.treasure.setValue(treasure)
+        this.treasure.value = treasure
     }
 
     fun setRemaining(treasure: Int) {
-        this.remaining.setValue(treasure)
+        this.remaining.value = treasure
     }
-
 
     private val _navigateToDashboardEvent = MutableLiveData<Event<Boolean?>?>()
     val navigateToDashboardEvent: LiveData<Event<Boolean?>?>
         get() = _navigateToDashboardEvent
-
-
-    private val _newGameStartedEvent = MutableLiveData<Event<Boolean?>>()
-    val newGameStartedEvent: LiveData<Event<Boolean?>>
-        get() = _newGameStartedEvent
 
     private val _navigateToCivilizationSelectionEvent = MutableLiveData<Event<Unit>>()
     val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>>
@@ -561,7 +557,7 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
 
     // NEU oder ANPASSEN: Methode, um die gespeicherte Auswahl zu löschen
     fun clearCurrentSelectionState() {
-        _selectedCardKeysForState.setValue(mutableSetOf<String?>())
+        _selectedCardKeysForState.value = mutableSetOf<String?>()
         // Die calculateTotal-Logik sollte idealerweise durch den SelectionTracker-Observer
         // im Fragment ausgelöst werden, wenn der Tracker geleert wird.
         // Wenn du hier explizit totalPrice etc. zurücksetzen willst:
@@ -569,14 +565,14 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     }
 
     fun setSelectedTipIndex(index: Int) {
-        if (index >= 0 && (tipsArray == null || index < tipsArray!!.size)) {
-            _selectedTipIndex.setValue(index)
+        if (index >= 0 && (index < tipsArray.size)) {
+            _selectedTipIndex.value = index
         }
     }
 
     fun getTipForIndex(index: Int): String? {
-        if (tipsArray != null && index >= 0 && index < tipsArray!!.size) {
-            return tipsArray!![index]
+        if (index >= 0 && index < tipsArray.size) {
+            return tipsArray[index]
         }
         Log.w(
             "CivicViewModel",
@@ -590,11 +586,11 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
             val civicNumber = sharedPreferences.getString(key, "1")!!.toInt()
             val newCivNumber: String = sharedPreferences.getString(key, "not set")!!
             if (_civNumber.getValue() == null || _civNumber.getValue() != newCivNumber) {
-                _civNumber.setValue(newCivNumber)
+                _civNumber.value = newCivNumber
             }
             val newIndex = civicNumber - 1
             if (_selectedTipIndex.getValue() == null || _selectedTipIndex.getValue() != newIndex) {
-                _selectedTipIndex.setValue(newIndex)
+                _selectedTipIndex.value = newIndex
             }
         } else if (PREF_KEY_SORT == key) {
             val newSortingOrder: String = sharedPreferences.getString(key, "name")!!
@@ -755,6 +751,7 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
             "Public Works", "Politics", "Monotheism", "Theology", "Provincial Empire", "Diaspora",
             "Cultural Ascendancy"
         )
+
         @JvmField
         val TIME_TABLE: Array<String> = arrayOf(
             "8000 BC", "7000 BC", "6000 BC", "4300 BC", "5000 BC",
@@ -770,6 +767,7 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         private const val PREF_KEY_HEART = "heart"
         private const val PREF_KEY_COLUMNS = "columns"
         private const val PREF_KEY_AST = "ast"
+
         @JvmStatic
         fun getItemBackgroundColor(card: Card, res: Resources): Drawable? {
             var backgroundColor = 0

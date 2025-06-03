@@ -3,6 +3,7 @@ package org.tesira.civic
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -82,6 +83,7 @@ class TipsFragment : Fragment() {
         civicViewModel.selectedTipIndex.observe(
             viewLifecycleOwner
         ) { index: Int? ->
+            Log.d("TipsFragment", "selectedTipIndex changed to $index")
             if (index != null) {
                 // Spinner-Auswahl setzen, wenn sie sich vom aktuellen ViewModel-Wert unterscheidet
                 // um endlose Schleifen zu vermeiden, wenn setSelection onItemSelected auslöst.
