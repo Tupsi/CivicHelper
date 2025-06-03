@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Adapter for showing a list of Special Abilities or Immunities against on the dashboard.
  */
 class HomeSpecialsAdapter : RecyclerView.Adapter<HomeSpecialsAdapter.ViewHolder?>() {
-    private var localDataSet: Array<String>
+    private var localDataSet: MutableList<String> = ArrayList<String>()
 
     /**
      * Provide a reference to the type of views that you are using
@@ -20,10 +20,6 @@ class HomeSpecialsAdapter : RecyclerView.Adapter<HomeSpecialsAdapter.ViewHolder?
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textView: TextView? = view.findViewById<TextView?>(R.id.textView)
-    }
-
-    init {
-        this.localDataSet = arrayOf()
     }
 
     // Create new views (invoked by the layout manager)
@@ -49,8 +45,9 @@ class HomeSpecialsAdapter : RecyclerView.Adapter<HomeSpecialsAdapter.ViewHolder?
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitSpecialsList(newSpecialsAndImmunities: MutableList<String>) {
-        this.localDataSet = newSpecialsAndImmunities.toTypedArray<String>()
+    fun submitSpecialsList(newSpecialsAndImmunities: List<String>) {
+        this.localDataSet.clear()
+        this.localDataSet.addAll(newSpecialsAndImmunities)
         notifyDataSetChanged()
     }
 }
