@@ -3,8 +3,8 @@ package org.tesira.civic
 import android.view.MotionEvent
 import androidx.recyclerview.selection.ItemDetailsLookup
 
-class BuyingItemDetails(private val adapterPosition: Int, private val itemId: String?) :
-    ItemDetailsLookup.ItemDetails<String?>() {
+class BuyingItemDetails(private val adapterPosition: Int, private val itemId: String) :
+    ItemDetailsLookup.ItemDetails<String>() {
     /**
      * Areas are often included in a view that behave similar to checkboxes, such
      * as the icon to the left of an email message. "selection
@@ -26,7 +26,7 @@ class BuyingItemDetails(private val adapterPosition: Int, private val itemId: St
         return adapterPosition
     }
 
-    override fun getSelectionKey(): String? {
+    override fun getSelectionKey(): String {
         return itemId
     }
 }
