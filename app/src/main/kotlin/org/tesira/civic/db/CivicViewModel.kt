@@ -252,16 +252,8 @@ class CivicViewModel(application: Application) :
     val inventoryAsCardLiveData: LiveData<List<Card>>
         get() = mRepository.inventoryAsCardLiveData
 
-    fun setTreasure(treasure: Int) {
-        this.treasure.value = treasure
-    }
-
-    fun setRemaining(treasure: Int) {
-        this.remaining.value = treasure
-    }
-
-    private val _navigateToDashboardEvent = MutableLiveData<Event<Boolean?>?>()
-    val navigateToDashboardEvent: LiveData<Event<Boolean?>?>
+    private val _navigateToDashboardEvent = MutableLiveData<Event<Boolean>>()
+    val navigateToDashboardEvent: LiveData<Event<Boolean>>
         get() = _navigateToDashboardEvent
 
     private val _navigateToCivilizationSelectionEvent = MutableLiveData<Event<Unit>>()
@@ -417,7 +409,7 @@ class CivicViewModel(application: Application) :
 
                     // Optional: LiveData Event auslösen, um Navigation zu signalisieren, falls keine Dialoge nötig sind
                     if (anatomyCardsToChoose.isEmpty() && totalExtraCredits == 0) {
-                        _navigateToDashboardEvent.postValue(Event<Boolean?>(true))
+                        _navigateToDashboardEvent.postValue(Event<Boolean>(true))
                     }
                     _isFinalizingPurchase.postValue(false)
                 }
