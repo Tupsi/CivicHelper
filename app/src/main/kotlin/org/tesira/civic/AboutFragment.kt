@@ -3,17 +3,14 @@ package org.tesira.civic
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
-import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
-
-import androidx.fragment.app.Fragment
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-
+import androidx.fragment.app.Fragment
 import org.tesira.civic.databinding.FragmentAboutBinding
 
 class AboutFragment : Fragment() {
@@ -49,20 +46,22 @@ class AboutFragment : Fragment() {
                 bottom = initialPaddingBottom + systemBarInsets.bottom
             )
 
-            WindowInsetsCompat.CONSUMED
+//            WindowInsetsCompat.CONSUMED
             windowInsets
         }
 
         val versionName = try {
-            requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0).versionName
-        } catch (e: PackageManager.NameNotFoundException) {
+            requireActivity().packageManager.getPackageInfo(
+                requireActivity().packageName,
+                0
+            ).versionName
+        } catch (_: PackageManager.NameNotFoundException) {
             "n/a"
         }
 
         binding.tvAboutVersion.text = getString(R.string.about_version, versionName)
-//        binding.tvAboutText.text = getString(R.string.about_text)
-        binding.tvAboutText.text = HtmlCompat.fromHtml(getString(R.string.about_text), HtmlCompat.FROM_HTML_MODE_LEGACY)
-//        binding.tvAboutText.movementMethod = ScrollingMovementMethod()
+        binding.tvAboutText.text =
+            HtmlCompat.fromHtml(getString(R.string.about_text), HtmlCompat.FROM_HTML_MODE_LEGACY)
         binding.tvAboutText.movementMethod = LinkMovementMethod.getInstance()
     }
 
