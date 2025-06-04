@@ -33,18 +33,11 @@ class CivicViewModel(application: Application) :
     private val cities = MutableLiveData<Int?>(0)
     private val mApplication: Application = application
     private val timeVp = MutableLiveData<Int?>(0)
-
-    @JvmField
-    var librarySelected: Boolean
-
-    @JvmField
+    var librarySelected: Boolean = false
     val allAdvancesNotBought: LiveData<MutableList<Card>>
     private val _currentSortingOrder = MutableLiveData<String>()
     private val _columns = MutableLiveData<Int?>()
     private val showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
-
-
-    @JvmField
     val calamityBonusListLiveData: LiveData<List<Calamity>> = mRepository.calamityBonusLiveData
     private val specialAbilitiesRawLiveData: LiveData<List<String>> =
         mRepository.specialAbilitiesLiveData
@@ -53,12 +46,8 @@ class CivicViewModel(application: Application) :
     private val _selectedTipIndex = MutableLiveData<Int?>()
     var selectedTipIndex: LiveData<Int?> = _selectedTipIndex
     private val _astVersion = MutableLiveData<String?>()
-
-    @JvmField
     var astVersion: LiveData<String?> = _astVersion
     private val _civNumber = MutableLiveData<String?>()
-
-    @JvmField
     var getCivNumber: LiveData<String?> = _civNumber
     private lateinit var tipsArray: Array<String>
     private val _showExtraCreditsDialogEvent = MutableLiveData<Event<Int?>?>()
@@ -68,7 +57,6 @@ class CivicViewModel(application: Application) :
     private val buyableCardMap: MutableMap<String, Card> = HashMap<String, Card>()
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
     private lateinit var buyableCardsMapObserver: Observer<MutableList<Card>>
-
     private val _isFinalizingPurchase = MutableLiveData(false)
     val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
 

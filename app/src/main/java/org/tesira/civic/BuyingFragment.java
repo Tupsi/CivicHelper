@@ -137,7 +137,7 @@ public class BuyingFragment extends Fragment {
         mTreasureInput = rootView.findViewById(R.id.treasure);
         mRemainingText = rootView.findViewById(R.id.moneyleft);
 
-        mCivicViewModel.allAdvancesNotBought.observe(getViewLifecycleOwner(), cards -> {
+        mCivicViewModel.getAllAdvancesNotBought().observe(getViewLifecycleOwner(), cards -> {
             if (cards != null) {
                 mAdapter.changeList(cards);
                 if (savedSelectionState != null) {
@@ -253,16 +253,16 @@ public class BuyingFragment extends Fragment {
                 if (!isFinalizing && key.equals("Library")) {
                     if (selected) {
                         // Library was just selected
-                        if (!mCivicViewModel.librarySelected) { // Only add if it wasn't already selected
-                            mCivicViewModel.librarySelected = true;
+                        if (!mCivicViewModel.getLibrarySelected()) { // Only add if it wasn't already selected
+                            mCivicViewModel.setLibrarySelected(true);
                             // Add the temporary treasure bonus
                             mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() + 40);
                             showToast(key + " selected, temporary adding 40 treasure.");
                         }
                     } else {
                         // Library was just deselected
-                        if (mCivicViewModel.librarySelected) { // Only remove if it was previously selected
-                            mCivicViewModel.librarySelected = false; // Reset the flag
+                        if (mCivicViewModel.getLibrarySelected()) { // Only remove if it was previously selected
+                            mCivicViewModel.setLibrarySelected(false); // Reset the flag
                             // Remove the temporary treasure bonus
                             mCivicViewModel.setTreasure(mCivicViewModel.getTreasure().getValue() - 40);
                             showToast(key + " deselected, removing the temporary 40 treasure.");
@@ -303,7 +303,7 @@ public class BuyingFragment extends Fragment {
                 if (!restoredSelection.isEmpty()) {
                     libraryIsNowSelected = restoredSelection.contains("Library");
                 }
-                mCivicViewModel.librarySelected = libraryIsNowSelected;
+                mCivicViewModel.setLibrarySelected(libraryIsNowSelected);
             }
         });
 
