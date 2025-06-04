@@ -11,11 +11,12 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="@string/current"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_column="1"
         app:layout_columnWeight="1"
         app:layout_gravity="right|center_vertical"
-        app:layout_row="1" />
+        app:layout_row="1"
+        tools:text="100" />
 
     <TextView
         android:id="@+id/bonusred"
@@ -23,19 +24,23 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:textSize="16sp"
+        android:textIsSelectable="false"
         app:layout_column="1"
         app:layout_gravity="right|center_vertical"
-        app:layout_row="5" />
+        app:layout_row="5"
+        tools:text="100" />
 
     <TextView
         android:id="@+id/bonusgreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:textIsSelectable="false"
         android:textSize="16sp"
         app:layout_column="1"
         app:layout_gravity="right|center_vertical"
-        app:layout_row="3" />
+        app:layout_row="3"
+        tools:text="100" />
 
     <TextView
         android:id="@+id/bonusblue"
@@ -43,11 +48,13 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:textAlignment="textEnd"
+        android:textIsSelectable="false"
         android:textSize="16sp"
         app:layout_column="1"
         app:layout_columnWeight="1"
         app:layout_gravity="right|center_vertical"
-        app:layout_row="2" />
+        app:layout_row="2"
+        tools:text="100" />
 
     <TextView
         android:id="@+id/textblue"
@@ -88,10 +95,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:textIsSelectable="true"
         android:textSize="16sp"
         app:layout_column="1"
         app:layout_gravity="right|center_vertical"
-        app:layout_row="4" />
+        app:layout_row="4"
+        tools:text="100" />
 
     <TextView
         android:id="@+id/textyellow"
@@ -109,10 +118,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:textIsSelectable="true"
         android:textSize="16sp"
         app:layout_column="1"
         app:layout_gravity="right|center_vertical"
-        app:layout_row="6" />
+        app:layout_row="6"
+        tools:text="100" />
 
     <TextView
         android:id="@+id/textgreen"
@@ -189,7 +200,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="@string/remaining_credits"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_column="0"
         app:layout_row="0" />
 
@@ -198,8 +209,10 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:textSize="14sp"
+        android:textIsSelectable="true"
+        android:textSize="16sp"
         app:layout_column="1"
-        app:layout_row="0" />
+        app:layout_row="0"
+        tools:text="100" />
 
 </androidx.gridlayout.widget.GridLayout>
