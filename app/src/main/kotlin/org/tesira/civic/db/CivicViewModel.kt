@@ -326,18 +326,18 @@ class CivicViewModel(application: Application) :
      * updates remaining treasure.
      * @param selection Currently selected cards from the View.  <-- PARAMETER TYP ANGEPASST
      */
-    fun calculateTotal(selection: Iterable<String>) { // Parameter-Typ von Selection<String> zu Iterable<String>
+    fun calculateTotal(selection: Iterable<String>) {
         if (java.lang.Boolean.TRUE != areBuyableCardsReady.getValue()) {
             val currentTreasure: Int =
                 (if (treasure.getValue() != null) treasure.getValue() else 0)!!
             this.remaining.value =
-                currentTreasure // Setze remaining auf Treasure, wenn Karten nicht bereit
+                currentTreasure
             return
         }
 
-        var newTotalCost = 0 // Umbenannt von newTotal zu newTotalCost für Klarheit
+        var newTotalCost = 0
         val iterator: Iterator<String> = selection.iterator()
-        if (iterator.hasNext()) { // Nur iterieren, wenn das Iterable nicht leer ist
+        if (iterator.hasNext()) {
             for (name in selection) {
                 val adv = getBuyableAdvanceByNameFromMap(name)
                 if (adv != null) {
@@ -369,6 +369,16 @@ class CivicViewModel(application: Application) :
         )
     }
 
+    private fun addSingleCardBonusToTotal(card: Card) {
+        updateBonus(
+            card.creditsBlue,
+            card.creditsGreen,
+            card.creditsOrange,
+            card.creditsRed,
+            card.creditsYellow
+        )
+    }
+
     val blue: Int
         get() = cardBonus.getValue()!!.getOrDefault(CardColor.BLUE, 0)
     val green: Int
@@ -396,20 +406,23 @@ class CivicViewModel(application: Application) :
                     totalExtraCredits: Int,
                     anatomyCardsToChoose: List<String>
                 ) {
-                    if (totalExtraCredits > 0) {
-                        _showExtraCreditsDialogEvent.postValue(Event<Int>(totalExtraCredits))
-                    }
-                    if (anatomyCardsToChoose.isNotEmpty()) {
-                        showAnatomyDialogEvent.postValue(
-                            Event<List<String>>(anatomyCardsToChoose)
-                        )
-                    }
-
-                    // Optional: LiveData Event auslösen, um Navigation zu signalisieren, falls keine Dialoge nötig sind
-                    if (anatomyCardsToChoose.isEmpty() && totalExtraCredits == 0) {
-                        _navigateToDashboardEvent.postValue(Event<Boolean>(true))
-                    }
                     _isFinalizingPurchase.postValue(false)
+
+                    if (anatomyCardsToChoose.isNotEmpty()) {
+                        // Speichere die ExtraCredits für später, falls vorhanden
+                        if (totalExtraCredits > 0) {
+                            _pendingExtraCredits.postValue(totalExtraCredits)
+                        }
+                        // Zeige ZUERST den Anatomy-Dialog
+                        showAnatomyDialogEvent.postValue(Event(anatomyCardsToChoose))
+                    } else if (totalExtraCredits > 0) {
+                        // Keine Anatomy-Karten, zeige direkt den ExtraCredits-Dialog
+                        _showExtraCreditsDialogEvent.postValue(Event(totalExtraCredits))
+                        _navigateToDashboardEvent.postValue(Event(true))
+                    } else {
+                        // Weder Anatomy noch Extra Credits
+                        _navigateToDashboardEvent.postValue(Event(true))
+                    }
                 }
 
                 override fun onPurchaseFailed(errorMessage: String) {
@@ -422,6 +435,34 @@ class CivicViewModel(application: Application) :
                     _isFinalizingPurchase.postValue(false)
                 }
             })
+    }
+
+    private val _pendingExtraCredits = MutableLiveData<Int?>()
+
+    fun onAnatomyCardSelected(selectedGreenCardName: String) {
+        // 1. Verarbeite die ausgewählte grüne Karte (Boni hinzufügen etc.)
+        //    Dies könnte eine ähnliche Logik wie in deinem Repository sein,
+        //    um die Boni dieser Karte zu `cardBonus` hinzuzufügen.
+        //    Beispielhaft:
+        val card = getBuyableAdvanceByNameFromMap(selectedGreenCardName) // Oder hol es aus dem Repo
+        if (card != null) {
+            // Füge die Boni der ausgewählten grünen Karte hinzu.
+            // Du brauchst eine Methode, die die Boni einer einzelnen Karte zu `cardBonus` addiert.
+            // Das könnte eine angepasste Version von `updateBonus` sein oder eine neue Methode.
+            addSingleCardBonusToTotal(card) // Implementiere diese Methode
+            saveBonus() // Speichere die aktualisierten Boni
+        }
+
+        // 2. Prüfe, ob Extra Credits anstanden und zeige jetzt den Dialog
+        _pendingExtraCredits.value?.let { credits ->
+            _showExtraCreditsDialogEvent.postValue(Event(credits))
+            _pendingExtraCredits.value = null // Zurücksetzen
+        }
+
+        // 3. Navigiere weiter, falls nötig (z.B. wenn keine Extra Credits anstanden)
+        if (_pendingExtraCredits.value == null) {
+            _navigateToDashboardEvent.postValue(Event(true))
+        }
     }
 
     fun saveBonus() {

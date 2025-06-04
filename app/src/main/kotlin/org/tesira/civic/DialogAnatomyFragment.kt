@@ -61,7 +61,7 @@ class DialogAnatomyFragment : DialogFragment() {
             greenCardsArray,
             DialogInterface.OnClickListener { dialogInterface: DialogInterface?, which: Int ->
                 val selectedGreenCard = greenCardsArray[which]
-                mCivicViewModel.addBonus(selectedGreenCard)
+                mCivicViewModel.onAnatomyCardSelected(selectedGreenCard)
                 mCivicViewModel.insertPurchase(selectedGreenCard)
                 mCivicViewModel.requestPriceRecalculation()
 
