@@ -123,8 +123,11 @@ public class DialogExtraCreditsFragment extends DialogFragment {
         }
 
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, items);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, items);
+//        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_item_right, items);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_right);
 
         binding.spinnerblue.setAdapter(spinnerAdapter);
         binding.spinnerblue.setOnItemSelectedListener(new MyOnItemSelectedListener());
@@ -180,7 +183,7 @@ public class DialogExtraCreditsFragment extends DialogFragment {
             dialogInstance.setOnShowListener(dialogInterface -> updateOkButtonState());
         }
 
-
+        binding.spinnerblue.post(() -> binding.spinnerblue.setSelection(0));
         return dialogInstance;
     }
 
