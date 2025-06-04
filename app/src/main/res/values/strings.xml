@@ -78,5 +78,6 @@
     <string name="colorbonus">Color Bonus</string>
     <string name="special_abilities_and_immunities">Special Abilities and Immunities</string>
     <string name="calamity_effects_overview">Calamity Effects Overview</string>
+    <string name="sort_by">Sort by:</string>
 
 </resources>
