@@ -82,11 +82,10 @@ class DialogAnatomyFragment : DialogFragment() {
         private const val ARG_GREEN_CARDS_LIST = "arg_green_cards_list"
         private const val REQUEST_KEY = "anatomySelectionResult"
 
-        @JvmStatic
-        fun newInstance(greenCardNames: MutableList<String?>): DialogAnatomyFragment {
+        fun newInstance(greenCardNames: List<String>): DialogAnatomyFragment {
             val fragment = DialogAnatomyFragment()
             val args = Bundle()
-            args.putStringArrayList(ARG_GREEN_CARDS_LIST, ArrayList<String?>(greenCardNames))
+            args.putStringArrayList(ARG_GREEN_CARDS_LIST, ArrayList<String>(greenCardNames))
             fragment.setArguments(args)
             fragment.setCancelable(false)
             return fragment
