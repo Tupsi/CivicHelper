@@ -25,35 +25,35 @@ import java.util.Locale
 class CivicViewModel(application: Application) :
     AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
     private val mRepository: CivicRepository = CivicRepository(application)
-    val treasure: MutableLiveData<Int?> = MutableLiveData<Int?>(0)
-    val remaining: MutableLiveData<Int?> = MutableLiveData<Int?>(0)
-    private val vp = MutableLiveData<Int?>(0)
+    val treasure: MutableLiveData<Int> = MutableLiveData<Int>(0)
+    val remaining: MutableLiveData<Int> = MutableLiveData<Int>(0)
+    private val vp = MutableLiveData<Int>(0)
     var cardBonus: MutableLiveData<HashMap<CardColor, Int>> =
         MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
-    private val cities = MutableLiveData<Int?>(0)
+    private val cities = MutableLiveData<Int>(0)
     private val mApplication: Application = application
-    private val timeVp = MutableLiveData<Int?>(0)
+    private val timeVp = MutableLiveData<Int>(0)
     var librarySelected: Boolean = false
     val allAdvancesNotBought: LiveData<MutableList<Card>>
     private val _currentSortingOrder = MutableLiveData<String>()
-    private val _columns = MutableLiveData<Int?>()
+    private val _columns = MutableLiveData<Int>()
     private val showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
     val calamityBonusListLiveData: LiveData<List<Calamity>> = mRepository.calamityBonusLiveData
     private val specialAbilitiesRawLiveData: LiveData<List<String>> =
         mRepository.specialAbilitiesLiveData
     private val immunitiesRawLiveData: LiveData<List<String>> = mRepository.immunitiesLiveData
     private val combinedSpecialsAndImmunitiesLiveData = MediatorLiveData<MutableList<String>>()
-    private val _selectedTipIndex = MutableLiveData<Int?>()
-    var selectedTipIndex: LiveData<Int?> = _selectedTipIndex
-    private val _astVersion = MutableLiveData<String?>()
-    var astVersion: LiveData<String?> = _astVersion
-    private val _civNumber = MutableLiveData<String?>()
-    var getCivNumber: LiveData<String?> = _civNumber
+    private val _selectedTipIndex = MutableLiveData<Int>()
+    var selectedTipIndex: LiveData<Int> = _selectedTipIndex
+    private val _astVersion = MutableLiveData<String>()
+    var astVersion: LiveData<String> = _astVersion
+    private val _civNumber = MutableLiveData<String>()
+    var getCivNumber: LiveData<String> = _civNumber
     private lateinit var tipsArray: Array<String>
-    private val _showExtraCreditsDialogEvent = MutableLiveData<Event<Int?>?>()
+    private val _showExtraCreditsDialogEvent = MutableLiveData<Event<Int>>()
     private val defaultPrefs: SharedPreferences
     val cardsVpLiveData: LiveData<Int>
-    private val totalVp = MediatorLiveData<Int?>()
+    private val totalVp = MediatorLiveData<Int>()
     private val buyableCardMap: MutableMap<String, Card> = HashMap<String, Card>()
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
     private lateinit var buyableCardsMapObserver: Observer<MutableList<Card>>
@@ -64,22 +64,18 @@ class CivicViewModel(application: Application) :
         return showAnatomyDialogEvent
     }
 
-    val showExtraCreditsDialogEvent: LiveData<Event<Int?>?>
+    val showExtraCreditsDialogEvent: LiveData<Event<Int>>
         get() = _showExtraCreditsDialogEvent
 
-    fun setAstVersion(version: String?) {
+    fun setAstVersion(version: String) {
         _astVersion.value = version
-        if (version != null) {
-            defaultPrefs.edit { putString(PREF_KEY_AST, version) }
-        }
+        defaultPrefs.edit { putString(PREF_KEY_AST, version) }
     }
 
-    fun setCivNumber(civNumber: String?) {
+    fun setCivNumber(civNumber: String) {
         _civNumber.value = civNumber
-        _selectedTipIndex.value = civNumber?.toIntOrNull()?.minus(1)
-        if (civNumber != null) {
-            defaultPrefs.edit { putString(PREF_KEY_CIVILIZATION, civNumber) }
-        }
+        _selectedTipIndex.value = civNumber.toIntOrNull()?.minus(1)
+        defaultPrefs.edit { putString(PREF_KEY_CIVILIZATION, civNumber) }
     }
 
     private fun setupBuyableCardsObserver() {
@@ -416,7 +412,7 @@ class CivicViewModel(application: Application) :
                         )
                     }
                     if (totalExtraCredits > 0) {
-                        _showExtraCreditsDialogEvent.postValue(Event<Int?>(totalExtraCredits))
+                        _showExtraCreditsDialogEvent.postValue(Event<Int>(totalExtraCredits))
                     }
 
                     // Optional: LiveData Event auslösen, um Navigation zu signalisieren, falls keine Dialoge nötig sind
@@ -458,7 +454,7 @@ class CivicViewModel(application: Application) :
      * @param credits The number of extra credits to offer.
      */
     fun triggerExtraCreditsDialog(credits: Int) {
-        _showExtraCreditsDialogEvent.postValue(Event<Int?>(credits))
+        _showExtraCreditsDialogEvent.postValue(Event<Int>(credits))
     }
 
     override fun onCleared() {
