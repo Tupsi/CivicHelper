@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             navController = navHostFragment.navController
             drawerLayout = binding.drawerLayout
+            drawerLayout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             appBarConfiguration = AppBarConfiguration(
                 setOf(
                     R.id.homeFragment,
