@@ -367,6 +367,7 @@ public class BuyingFragment extends Fragment {
         if (mTreasureInput != null && mTreasureInput.requestFocus()) {
             // Fenster-Token ist manchmal erst nach einer kleinen Verzögerung verfügbar,
             // besonders wenn das Fragment gerade erst erstellt wird.
+            mTreasureInput.selectAll();
             mTreasureInput.post(() -> {
                 InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
