@@ -7,38 +7,31 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.util.Log
+import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.preference.PreferenceManager
 import org.tesira.civic.Calamity
 import org.tesira.civic.Event
 import org.tesira.civic.R
-import java.util.Arrays
 import java.util.Locale
-import androidx.core.content.edit
 
-class CivicViewModel(application: Application, savedStateHandle: SavedStateHandle?) :
+class CivicViewModel(application: Application) :
     AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
-    private val mRepository: CivicRepository
-
-//    @JvmField
+    private val mRepository: CivicRepository = CivicRepository(application)
     val treasure: MutableLiveData<Int?> = MutableLiveData<Int?>(0)
-
-//    @JvmField
     val remaining: MutableLiveData<Int?> = MutableLiveData<Int?>(0)
     private val vp = MutableLiveData<Int?>(0)
-
-//    @JvmField
-    var cardBonus: MutableLiveData<HashMap<CardColor, Int>>
+    var cardBonus: MutableLiveData<HashMap<CardColor, Int>> =
+        MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
     private val cities = MutableLiveData<Int?>(0)
-    private val mApplication: Application
+    private val mApplication: Application = application
     private val timeVp = MutableLiveData<Int?>(0)
 
     @JvmField
@@ -52,9 +45,10 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
 
 
     @JvmField
-    val calamityBonusListLiveData: LiveData<List<Calamity>>
-    private val specialAbilitiesRawLiveData: LiveData<List<String>>
-    private val immunitiesRawLiveData: LiveData<List<String>>
+    val calamityBonusListLiveData: LiveData<List<Calamity>> = mRepository.calamityBonusLiveData
+    private val specialAbilitiesRawLiveData: LiveData<List<String>> =
+        mRepository.specialAbilitiesLiveData
+    private val immunitiesRawLiveData: LiveData<List<String>> = mRepository.immunitiesLiveData
     private val combinedSpecialsAndImmunitiesLiveData = MediatorLiveData<MutableList<String>>()
     private val _selectedTipIndex = MutableLiveData<Int?>()
     var selectedTipIndex: LiveData<Int?> = _selectedTipIndex
@@ -86,16 +80,15 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         get() = _showExtraCreditsDialogEvent
 
     fun setAstVersion(version: String?) {
-        _astVersion.setValue(version)
+        _astVersion.value = version
         if (version != null) {
             defaultPrefs.edit { putString(PREF_KEY_AST, version) }
         }
     }
 
     fun setCivNumber(civNumber: String?) {
-        _civNumber.setValue(civNumber)
+        _civNumber.value = civNumber
         _selectedTipIndex.value = civNumber?.toIntOrNull()?.minus(1)
-        Log.d("CivicViewModel", "Setting civNumber to $civNumber")
         if (civNumber != null) {
             defaultPrefs.edit { putString(PREF_KEY_CIVILIZATION, civNumber) }
         }
@@ -104,15 +97,10 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     private fun setupBuyableCardsObserver() {
         buyableCardsMapObserver = Observer { cards: MutableList<Card> ->
             buyableCardMap.clear()
-            if (cards != null) {
-                for (card in cards) {
-                    buyableCardMap.put(card.name, card)
-                }
-                areBuyableCardsReady.setValue(true)
-                Log.d("CivicViewModel", "Buyable cards map updated. Size: " + buyableCardMap.size)
-            } else {
-                areBuyableCardsReady.setValue(false)
+            for (card in cards) {
+                buyableCardMap.put(card.name, card)
             }
+            areBuyableCardsReady.value = true
         }
         allAdvancesNotBought.observeForever(buyableCardsMapObserver)
     }
@@ -169,16 +157,16 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     }
 
     private fun setupTotalVpMediator() {
-        totalVp.setValue(0)
+        totalVp.value = 0
 
         // Quelle 1: cardsVpFromDao
         totalVp.addSource<Int?>(
             this.cardsVpLiveData,
             Observer { cardsVal: Int? ->  // Parameter umbenannt zur Klarheit
-                val currentCardsVp = if (cardsVal != null) cardsVal else 0
+                val currentCardsVp = cardsVal ?: 0
                 val currentCitiesVp = (if (cities.getValue() != null) cities.getValue() else 0)!!
                 val currentTimeVp = (if (timeVp.getValue() != null) timeVp.getValue() else 0)!!
-                totalVp.setValue(currentCardsVp + currentCitiesVp + currentTimeVp)
+                totalVp.value = currentCardsVp + currentCitiesVp + currentTimeVp
             })
 
         // Quelle 2: cities LiveData
@@ -187,9 +175,9 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
             Observer { cityVal: Int? ->  // Parameter umbenannt zur Klarheit
                 val currentCardsVp: Int =
                     (if (cardsVpLiveData.getValue() != null) cardsVpLiveData.getValue() else 0)!!
-                val currentCitiesVp = if (cityVal != null) cityVal else 0
+                val currentCitiesVp = cityVal ?: 0
                 val currentTimeVp = (if (timeVp.getValue() != null) timeVp.getValue() else 0)!!
-                totalVp.setValue(currentCardsVp + currentCitiesVp + currentTimeVp)
+                totalVp.value = currentCardsVp + currentCitiesVp + currentTimeVp
             })
 
         // Quelle 3: timeVp LiveData
@@ -199,8 +187,8 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
                 val currentCardsVp: Int =
                     (if (cardsVpLiveData.getValue() != null) cardsVpLiveData.getValue() else 0)!!
                 val currentCitiesVp = (if (cities.getValue() != null) cities.getValue() else 0)!!
-                val currentTimeVp = if (timeVal != null) timeVal else 0
-                totalVp.setValue(currentCardsVp + currentCitiesVp + currentTimeVp)
+                val currentTimeVp = timeVal ?: 0
+                totalVp.value = currentCardsVp + currentCitiesVp + currentTimeVp
             })
     }
 
@@ -208,8 +196,6 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         return totalVp
     }
 
-    val columnsLiveData: LiveData<Int?>
-        get() = _columns
     val columns: Int
         get() = _columns.getValue()!!
 
@@ -323,7 +309,8 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         defaultPrefs.edit { putInt(PREF_KEY_CITIES, 0) }
         defaultPrefs.edit { putInt(PREF_KEY_TIME, 0) }
         defaultPrefs.edit { putInt(PREF_KEY_TREASURE, 0) }
-        defaultPrefs.edit { putString(PREF_KEY_HEART, "custom") }
+//        defaultPrefs.edit { putString(PREF_KEY_HEART, "custom") }
+        defaultPrefs.edit { remove(PREF_KEY_HEART) }
         defaultPrefs.edit { remove(PREF_KEY_CIVILIZATION) }
 
 //        _newGameStartedEvent.value = Event(true)
@@ -353,12 +340,8 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
 
     private fun getBuyableAdvanceByNameFromMap(name: String?): Card? {
         if (java.lang.Boolean.TRUE == areBuyableCardsReady.getValue()) {
-            return buyableCardMap.get(name)
+            return buyableCardMap[name]
         }
-        Log.w(
-            "CivicViewModel",
-            "Attempted to get card '" + name + "' from map, but cards not ready."
-        )
         return null
     }
 
@@ -369,32 +352,30 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
      */
     fun calculateTotal(selection: Iterable<String>) { // Parameter-Typ von Selection<String> zu Iterable<String>
         if (java.lang.Boolean.TRUE != areBuyableCardsReady.getValue()) {
-            Log.w("CivicViewModel", "calculateTotal called, but buyable cards are not ready.")
             val currentTreasure: Int =
                 (if (treasure.getValue() != null) treasure.getValue() else 0)!!
-            this.remaining.setValue(currentTreasure) // Setze remaining auf Treasure, wenn Karten nicht bereit
+            this.remaining.value =
+                currentTreasure // Setze remaining auf Treasure, wenn Karten nicht bereit
             return
         }
 
         var newTotalCost = 0 // Umbenannt von newTotal zu newTotalCost für Klarheit
-        if (selection != null) {
-            val iterator: Iterator<String> = selection.iterator()
-            if (iterator.hasNext()) { // Nur iterieren, wenn das Iterable nicht leer ist
-                for (name in selection) {
-                    val adv = getBuyableAdvanceByNameFromMap(name)
-                    if (adv != null) {
-                        newTotalCost += adv.currentPrice
-                    } else {
-                        Log.e(
-                            "CivicViewModel",
-                            "Card with name '" + name + "' not found in buyableCardMap during calculateTotal."
-                        )
-                    }
+        val iterator: Iterator<String> = selection.iterator()
+        if (iterator.hasNext()) { // Nur iterieren, wenn das Iterable nicht leer ist
+            for (name in selection) {
+                val adv = getBuyableAdvanceByNameFromMap(name)
+                if (adv != null) {
+                    newTotalCost += adv.currentPrice
+                } else {
+                    Log.e(
+                        "CivicViewModel",
+                        "Card with name '$name' not found in buyableCardMap during calculateTotal."
+                    )
                 }
             }
         }
         val currentTreasure: Int = (if (treasure.getValue() != null) treasure.getValue() else 0)!!
-        this.remaining.setValue(currentTreasure - newTotalCost) // remaining wird hier aktualisiert
+        this.remaining.value = currentTreasure - newTotalCost // remaining wird hier aktualisiert
     }
 
     /**
@@ -403,7 +384,6 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
      */
     fun addBonus(name: String?) {
         val adv = getBuyableAdvanceByNameFromMap(name)
-        Log.d("CivicViewModel", "Adding bonus for card: " + name)
         updateBonus(
             adv!!.creditsBlue,
             adv.creditsGreen,
@@ -414,15 +394,15 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     }
 
     val blue: Int
-        get() = cardBonus.getValue()!!.getOrDefault(CardColor.BLUE, 0)!!
+        get() = cardBonus.getValue()!!.getOrDefault(CardColor.BLUE, 0)
     val green: Int
-        get() = cardBonus.getValue()!!.getOrDefault(CardColor.GREEN, 0)!!
+        get() = cardBonus.getValue()!!.getOrDefault(CardColor.GREEN, 0)
     val orange: Int
-        get() = cardBonus.getValue()!!.getOrDefault(CardColor.ORANGE, 0)!!
+        get() = cardBonus.getValue()!!.getOrDefault(CardColor.ORANGE, 0)
     val red: Int
-        get() = cardBonus.getValue()!!.getOrDefault(CardColor.RED, 0)!!
+        get() = cardBonus.getValue()!!.getOrDefault(CardColor.RED, 0)
     val yellow: Int
-        get() = cardBonus.getValue()!!.getOrDefault(CardColor.YELLOW, 0)!!
+        get() = cardBonus.getValue()!!.getOrDefault(CardColor.YELLOW, 0)
 
     /**
      * Orchestrates the purchase process. Delegates the database operations to the Repository
@@ -461,7 +441,7 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
                 override fun onPurchaseFailed(errorMessage: String) {
                     Log.e(
                         "CivicViewModel",
-                        "PurchaseCompletionCallback: onPurchaseFailed. Error: " + errorMessage
+                        "PurchaseCompletionCallback: onPurchaseFailed. Error: $errorMessage"
                     )
                     // Handle error, maybe show a Toast via another LiveData event
                     // _showErrorToastEvent.postValue(new Event<>(errorMessage));
@@ -474,13 +454,13 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         Log.d("CivicViewModel", "Saving bonus to SharedPreferences.")
         // HashMap Save
         for (entry in this.cardBonus.getValue()!!.entries) {
-            defaultPrefs.edit().putInt(entry.key!!.colorName, entry.value!!).apply()
+            defaultPrefs.edit { putInt(entry.key.colorName, entry.value) }
         }
     }
 
     fun saveData() {
-        defaultPrefs.edit().putInt(PREF_KEY_CITIES, getCities()).apply()
-        defaultPrefs.edit().putInt(PREF_KEY_TIME, getTimeVp()).apply()
+        defaultPrefs.edit { putInt(PREF_KEY_CITIES, getCities()) }
+        defaultPrefs.edit { putInt(PREF_KEY_TIME, getTimeVp()) }
     }
 
     /**
@@ -493,22 +473,9 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         _showExtraCreditsDialogEvent.postValue(Event<Int?>(credits))
     }
 
-    /**
-     * Triggers the event to show the Anatomy Dialog.
-     * The observing Fragment will react to this event.
-     *
-     * @param greenCards The list of green cards to choose from.
-     */
-    fun triggerAnatomyDialog(greenCards: MutableList<String>) {
-        // Postet einen neuen Event mit der Liste der grünen Karten
-        showAnatomyDialogEvent.postValue(Event(greenCards))
-    }
-
     override fun onCleared() {
         super.onCleared()
-        if (buyableCardsMapObserver != null) {
-            allAdvancesNotBought.removeObserver(buyableCardsMapObserver)
-        }
+        allAdvancesNotBought.removeObserver(buyableCardsMapObserver)
         defaultPrefs.unregisterOnSharedPreferenceChangeListener(this)
     }
 
@@ -522,12 +489,6 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         MutableLiveData<MutableSet<String?>?>(mutableSetOf<String?>())
 
     init {
-        cardBonus = MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
-        mRepository = CivicRepository(application)
-        calamityBonusListLiveData = mRepository.calamityBonusLiveData
-        specialAbilitiesRawLiveData = mRepository.specialAbilitiesLiveData
-        immunitiesRawLiveData = mRepository.immunitiesLiveData
-        mApplication = application
         librarySelected = false
         defaultPrefs = PreferenceManager.getDefaultSharedPreferences(mApplication)
         defaultPrefs.registerOnSharedPreferenceChangeListener(this)
@@ -549,9 +510,9 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
     // NEU: Methode, um die Auswahl aus dem Fragment im ViewModel zu aktualisieren
     fun updateSelectionState(currentSelection: MutableSet<String?>?) {
         if (currentSelection == null) {
-            _selectedCardKeysForState.setValue(mutableSetOf<String?>())
+            _selectedCardKeysForState.value = mutableSetOf<String?>()
         } else {
-            _selectedCardKeysForState.setValue(HashSet<String?>(currentSelection))
+            _selectedCardKeysForState.value = HashSet<String?>(currentSelection)
         }
     }
 
@@ -576,12 +537,13 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
         }
         Log.w(
             "CivicViewModel",
-            "Attempted to get tip for invalid index: " + index + " or tipsArray not loaded."
+            "Attempted to get tip for invalid index: $index or tipsArray not loaded."
         )
         return "" // Fallback
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
+        // Civilization selection
         if (PREF_KEY_CIVILIZATION == key) {
             val civicNumber = sharedPreferences.getString(key, "1")!!.toInt()
             val newCivNumber: String = sharedPreferences.getString(key, "not set")!!
@@ -592,34 +554,32 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
             if (_selectedTipIndex.getValue() == null || _selectedTipIndex.getValue() != newIndex) {
                 _selectedTipIndex.value = newIndex
             }
+            // Sorting of cards (buying)
         } else if (PREF_KEY_SORT == key) {
             val newSortingOrder: String = sharedPreferences.getString(key, "name")!!
             if (_currentSortingOrder.getValue() == null || _currentSortingOrder.getValue() != newSortingOrder) {
-                _currentSortingOrder.setValue(newSortingOrder)
+                _currentSortingOrder.value = newSortingOrder
             }
+            // What do you want
         } else if (PREF_KEY_HEART == key) {
             val newHeartSelection: String = sharedPreferences.getString(key, "custom")!!
             if (userPreferenceForHeartCards.getValue() == null || userPreferenceForHeartCards.getValue() != newHeartSelection) {
-                userPreferenceForHeartCards.setValue(newHeartSelection)
+                userPreferenceForHeartCards.value = newHeartSelection
                 processHeartPreferenceChange(newHeartSelection)
             }
+            // Number of columns
         } else if (PREF_KEY_COLUMNS == key) {
             val newColumns = sharedPreferences.getString(key, "1")!!.toInt()
             if (_columns.getValue() == null || _columns.getValue() != newColumns) {
-                _columns.setValue(newColumns)
+                _columns.value = newColumns
             }
+            // Game Version
         } else if (PREF_KEY_AST == key) {
-            val newAstVersion: String = sharedPreferences.getString(key, "name")!!
+            val newAstVersion: String = sharedPreferences.getString(key, "basic")!!
             if (_astVersion.getValue() == null || _astVersion.getValue() != newAstVersion) {
-                _astVersion.setValue(newAstVersion)
+                _astVersion.value = newAstVersion
             }
         }
-    }
-
-    fun updateUserHeartPreference(selectionName: String) {
-        defaultPrefs.edit().putString(PREF_KEY_HEART, selectionName).apply()
-        userPreferenceForHeartCards.setValue(selectionName)
-        processHeartPreferenceChange(selectionName)
     }
 
     private fun processHeartPreferenceChange(selectionName: String) {
@@ -633,18 +593,11 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
                 mRepository.setCardsAsHeartAsync(
                     cardNamesToMarkAsHeart,
                     CivicRepository.RepositoryCallback {
-                        // Optional: Benachrichtige die UI, dass sich die Daten geändert haben,
-                        // falls die LiveData-Beobachtung der Kartenliste nicht ausreicht.
-                        // Zum Beispiel, wenn du eine spezifische Aktion nach dem Update auslösen willst.
-                        Log.d(
-                            "CivicViewModel",
-                            "Cards updated with new heart status for: " + selectionName
-                        )
                     })
             } else {
                 Log.d(
                     "CivicViewModel",
-                    "No specific cards to mark for heart selection: " + selectionName + " or selection is 'custom'."
+                    "No specific cards to mark for heart selection: $selectionName or selection is 'custom'."
                 )
             }
         })
@@ -656,25 +609,24 @@ class CivicViewModel(application: Application, savedStateHandle: SavedStateHandl
      */
     private fun getCardNamesForHeartSelection(selectionName: String): List<String> {
         when (selectionName.lowercase(Locale.getDefault())) {
-            "treasury" -> return Arrays.asList<String>(*TREASURY)
-            "commodities" -> return Arrays.asList<String>(*COMMODITY_CARDS)
-            "cheaper" -> return Arrays.asList<String>(*CHEAPER_CIVILIZATION_CARDS)
-            "bend" -> return Arrays.asList<String>(*TO_BEND_THE_RULES)
-            "more" -> return Arrays.asList<String>(*MORE_TOKEN_ON_THE_MAP)
-            "mobility" -> return Arrays.asList<String>(*TOKEN_MOBILITY)
-            "cities" -> return Arrays.asList<String>(*CITIES)
-            "sea" -> return Arrays.asList<String>(*SEA_POWER)
-            "aggression" -> return Arrays.asList<String>(*AGGRESSION)
-            "defense" -> return Arrays.asList<String>(*DEFENSE)
-            "custom" -> return ArrayList<String>()
-            else -> return ArrayList<String>()
+            "treasury" -> return listOf<String>(*TREASURY)
+            "commodities" -> return listOf<String>(*COMMODITY_CARDS)
+            "cheaper" -> return listOf<String>(*CHEAPER_CIVILIZATION_CARDS)
+            "bend" -> return listOf<String>(*TO_BEND_THE_RULES)
+            "more" -> return listOf<String>(*MORE_TOKEN_ON_THE_MAP)
+            "mobility" -> return listOf<String>(*TOKEN_MOBILITY)
+            "cities" -> return listOf<String>(*CITIES)
+            "sea" -> return listOf<String>(*SEA_POWER)
+            "aggression" -> return listOf<String>(*AGGRESSION)
+            "defense" -> return listOf<String>(*DEFENSE)
+            else -> return listOf<String>()
         }
     }
 
     fun calculateColumnCount(context: Context): Int {
         // 1. Hole die aktuelle Gerätekonfiguration
-        val configuration = context.getResources().getConfiguration()
-        val screenWidthDp = configuration.screenWidthDp // Aktuelle Bildschirmbreite in dp
+        val configuration = context.resources.configuration
+//        val screenWidthDp = configuration.screenWidthDp // Aktuelle Bildschirmbreite in dp
         val orientation = configuration.orientation // Aktuelle Orientierung
 
         // 2. Deine Logik zur Bestimmung der Spaltenanzahl
