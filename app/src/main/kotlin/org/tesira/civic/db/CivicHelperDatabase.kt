@@ -14,7 +14,6 @@ import org.w3c.dom.Node
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.xml.parsers.DocumentBuilderFactory
-import kotlin.concurrent.Volatile
 
 @Database(
     entities = [Card::class, Purchase::class, Effect::class, SpecialAbility::class, Immunity::class],
@@ -58,7 +57,8 @@ abstract class CivicHelperDatabase : RoomDatabase() {
             }
             return INSTANCE
         }
-        private fun createRoomDatabaseCallback(appContext: Context): Callback {
+
+        internal fun createRoomDatabaseCallback(appContext: Context): Callback {
             return object : Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)

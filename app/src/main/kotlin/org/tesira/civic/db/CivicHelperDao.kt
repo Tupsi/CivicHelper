@@ -39,7 +39,8 @@ interface CivicHelperDao {
     @Query("SELECT * FROM cards WHERE name = :name ")
     fun getAdvanceByNameToCard(name: String): Card
 
-    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY " +
+    @Query(
+        "SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY " +
                 "CASE WHEN :sortingOrder = 'name' THEN cards.name END ASC," +
                 "CASE WHEN :sortingOrder = 'family' THEN cards.family END ASC," +
                 "CASE WHEN :sortingOrder = 'color' THEN cards.group1 END," +
