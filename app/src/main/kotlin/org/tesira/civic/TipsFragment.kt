@@ -3,7 +3,6 @@ package org.tesira.civic
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -37,7 +36,8 @@ class TipsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         civicViewModel = ViewModelProvider(requireActivity()).get<CivicViewModel>()
-        scaleGestureDetector = ScaleGestureDetector(this.requireContext(), PinchToZoomGestureListener())
+        scaleGestureDetector =
+            ScaleGestureDetector(this.requireContext(), PinchToZoomGestureListener())
     }
 
     override fun onCreateView(
@@ -68,7 +68,11 @@ class TipsFragment : Fragment() {
 
         //ViewCompat.requestApplyInsets(rootView)
 
-        ArrayAdapter.createFromResource(requireContext(), R.array.civilizations_entries, android.R.layout.simple_spinner_item).also { adapter ->
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.civilizations_entries,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.tipsSpinner.adapter = adapter
         }
@@ -83,7 +87,6 @@ class TipsFragment : Fragment() {
         civicViewModel.selectedTipIndex.observe(
             viewLifecycleOwner
         ) { index: Int? ->
-            Log.d("TipsFragment", "selectedTipIndex changed to $index")
             if (index != null) {
                 // Spinner-Auswahl setzen, wenn sie sich vom aktuellen ViewModel-Wert unterscheidet
                 // um endlose Schleifen zu vermeiden, wenn setSelection onItemSelected auslöst.
@@ -98,7 +101,11 @@ class TipsFragment : Fragment() {
 
                 val tipText = civicViewModel.getTipForIndex(index)
                 if (tipText != null && tipText.isNotEmpty()) {
-                    binding.tipsTextView.text = getString(R.string.tips_text_combined,tipText, getString(R.string.no_war_game))
+                    binding.tipsTextView.text = getString(
+                        R.string.tips_text_combined,
+                        tipText,
+                        getString(R.string.no_war_game)
+                    )
                 }
             }
         }
@@ -135,10 +142,10 @@ class TipsFragment : Fragment() {
 
         binding.tipsTextView.setOnTouchListener { v: View, event: MotionEvent? ->
             // Zuerst Zoom-Gesten behandeln
-            scaleGestureDetector!!.onTouchEvent(event!!)
+            scaleGestureDetector.onTouchEvent(event!!)
 
             // Gib das Event an die TextView weiter, damit sie scrollen kann
-            v.parent.requestDisallowInterceptTouchEvent(scaleGestureDetector!!.isInProgress)
+            v.parent.requestDisallowInterceptTouchEvent(scaleGestureDetector.isInProgress)
             false // Wichtig: false zurückgeben, um Scroll-Events nicht zu blockieren
         }
     }

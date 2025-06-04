@@ -1,11 +1,9 @@
 package org.tesira.civic.db
 
-import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters // Wichtig für die CardColor-Felder
-import org.jetbrains.annotations.NotNull
+import androidx.room.TypeConverters
 
 @Entity(tableName = "cards")
 @TypeConverters(Converters::class)
@@ -56,11 +54,9 @@ data class Card(
     @ColumnInfo(name = "currentPrice")
     val currentPrice: Int,
 
-    @NonNull
     @ColumnInfo(name = "buyingPrice")
     val buyingPrice: Int,
 
-    @NonNull
     @ColumnInfo(name = "hasHeart")
     val hasHeart: Boolean
 )

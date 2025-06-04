@@ -135,25 +135,25 @@ class CivicRepository(application: Application) {
 
         // Aktualisiere die Preise basierend auf den aktuellen Boni
         val allCards = mCivicDao.getAdvancesByName() // Synchron im Hintergrund-Thread
-        for (card_loop in allCards) {
+        for (cardLoop in allCards) {
             var newCurrent: Int
-            if (card_loop.group2 == null) {
-                newCurrent = card_loop.price - currentBonus.getOrDefault(card_loop.group1, 0)
+            if (cardLoop.group2 == null) {
+                newCurrent = cardLoop.price - currentBonus.getOrDefault(cardLoop.group1, 0)
             } else {
-                val group1 = currentBonus.getOrDefault(card_loop.group1, 0)
-                val group2 = currentBonus.getOrDefault(card_loop.group2, 0)
-                newCurrent = (card_loop.price - max(group1.toDouble(), group2.toDouble())).toInt()
+                val group1 = currentBonus.getOrDefault(cardLoop.group1, 0)
+                val group2 = currentBonus.getOrDefault(cardLoop.group2, 0)
+                newCurrent = (cardLoop.price - max(group1.toDouble(), group2.toDouble())).toInt()
             }
             if (newCurrent < 0) newCurrent = 0
-            mCivicDao.updateCurrentPrice(card_loop.name, newCurrent)
+            mCivicDao.updateCurrentPrice(cardLoop.name, newCurrent)
         }
 
         // Special family bonus (prüft gekaufte Karten und aktualisiert Preise basierend auf deren bonusCard und bonus)
         // muss nur für Karten gemacht werden die 1 oder 3 VP geben. Karten mit 6 VP haben so einen Bonus nicht
         val purchasesForBonus = mCivicDao.getPurchasesForFamilyBonus()
-        for (card_loop in purchasesForBonus) {
-            val bonusTo = mCivicDao.getAdvanceByNameToCard(card_loop.bonusCard!!)
-            var newCurrent = bonusTo.currentPrice - card_loop.bonus
+        for (cardLoop in purchasesForBonus) {
+            val bonusTo = mCivicDao.getAdvanceByNameToCard(cardLoop.bonusCard!!)
+            var newCurrent = bonusTo.currentPrice - cardLoop.bonus
             if (newCurrent < 0) newCurrent = 0
             mCivicDao.updateCurrentPrice(bonusTo.name, newCurrent)
         }
