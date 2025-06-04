@@ -237,7 +237,7 @@ public class BuyingFragment extends Fragment {
                 mBuyingItemKeyProvider,
                 new BuyingItemDetailsLookup(mRecyclerView),
                 StorageStrategy.createStringStorage())
-                .withSelectionPredicate(new BuyingSelectionPredicate<>(mAdapter, mCivicViewModel))
+                .withSelectionPredicate(new BuyingSelectionPredicate(mAdapter, mCivicViewModel))
                 .build();
 
         mAdapter.setSelectionTracker(tracker);
