@@ -3,8 +3,11 @@ package org.tesira.civic
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
+import android.view.ContextMenu
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
@@ -150,9 +153,6 @@ class BuyingFragment : Fragment() {
                 }
             })
 
-        val order = mCivicViewModel.currentSortingOrder.value ?: "name"
-        updateSortButtonText(order)
-
         if (savedInstanceState != null) {
             savedSelectionState = savedInstanceState
         }
@@ -190,15 +190,12 @@ class BuyingFragment : Fragment() {
             tracker.clearSelection()
             mCivicViewModel.clearCurrentSelectionState()
         })
-
-        // sort button
-        binding.btnSort.setOnClickListener(View.OnClickListener { v: View? -> this.changeSorting() })
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        registerForContextMenu(binding.btnSort)
         mCivicViewModel.getShowAnatomyDialogEvent()
             .observe(getViewLifecycleOwner(), Observer { event: Event<List<String>> ->
                 val anatomyCardsToShow = event.getContentIfNotHandled()
@@ -208,6 +205,14 @@ class BuyingFragment : Fragment() {
                         .show(getParentFragmentManager(), "Anatomy")
                 }
             })
+
+        binding.btnSort.setOnClickListener {
+            cycleNextSortOrder()
+        }
+        mCivicViewModel.currentSortingOrder.value?.let { currentSortValue ->
+            updateSortButtonText(currentSortValue)
+        }
+
         mCivicViewModel.showExtraCreditsDialogEvent.observe(
             getViewLifecycleOwner(),
             Observer { event: Event<Int?>? ->
@@ -489,48 +494,67 @@ class BuyingFragment : Fragment() {
         }
     }
 
+
     /**
-     * This gets the list of possible sorting options from the preferences array and cycles
-     * through them on each new entry.
+     * Schaltet zur nächsten Sortierreihenfolge im Zyklus weiter.
+     * Diese Methode wird beim normalen Klick auf den Button aufgerufen.
      */
-    private fun changeSorting() {
-        var currentSortingOrderValue = mCivicViewModel.currentSortingOrder.getValue()
-        if (currentSortingOrderValue == null) {
-            // Fallback, falls der Wert aus dem ViewModel noch nicht verfügbar ist
-            currentSortingOrderValue = sortingOptionsValues[0]
-        }
-
-        var currentSortingIndex =
-            listOf<String?>(*sortingOptionsValues).indexOf(currentSortingOrderValue)
-        if (currentSortingIndex == -1) {
-            currentSortingIndex = 0
-        }
-        val nextSortingIndex: Int = if (currentSortingIndex == sortingOptionsValues.size - 1) {
-            0
-        } else {
-            currentSortingIndex + 1
-        }
-
-        val nextSortingOrderValue = sortingOptionsValues[nextSortingIndex]
-        mCivicViewModel.setSortingOrder(nextSortingOrderValue)
+    private fun cycleNextSortOrder() {
+        val currentSortValue =
+            mCivicViewModel.currentSortingOrder.value ?: sortingOptionsValues.first()
+        val currentIndex = sortingOptionsValues.indexOf(currentSortValue)
+        val nextIndex = (currentIndex + 1) % sortingOptionsValues.size
+        val nextSortValue = sortingOptionsValues[nextIndex]
+        applyNewSortOrder(nextSortValue)
     }
 
-    private fun updateSortButtonText(currentOrderValue: String?) {
-        var sortingIndex = listOf<String?>(*sortingOptionsValues).indexOf(currentOrderValue)
-        if (sortingIndex == -1) {
-            sortingIndex = 0
-        }
-        val labelToShow = sortingOptionsNames[sortingIndex]
+    /**
+     * Aktualisiert den Text des Sortierbuttons basierend auf dem aktuellen Sortierwert.
+     * Diese Methode existiert bereits in deinem Code. Stelle sicher, dass sie korrekt funktioniert.
+     * Du könntest sie anpassen, um den Anzeigenamen (`sortingOptionsNames`) zu verwenden.
+     */
 
-        // falls nicht genug Platz
-        //   if (mCivicViewModel.getScreenWidthDp() <= 400) {
-        //      labelToShow = String.valueOf(label.charAt(0));
-        //   }
-        binding.btnSort.text = labelToShow
+    private fun updateSortButtonText(sortValue: String) {
+        val index = sortingOptionsValues.indexOf(sortValue)
+        if (index != -1 && index < sortingOptionsNames.size) {
+            binding.btnSort.text = sortingOptionsNames[index]
+        }
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        if (v.id == binding.btnSort.id) { // Stelle sicher, dass es der btnSort ist
+            menu.setHeaderTitle(getString(R.string.sort_by)) // Titel für das Kontextmenü
+            // Füge Menüeinträge dynamisch basierend auf deinen sortingOptions hinzu
+            sortingOptionsNames.forEachIndexed { index, name ->
+                // Die itemId muss ein eindeutiger Integer sein.
+                // Wir verwenden den Index + einen Offset als itemId.
+                menu.add(Menu.NONE, MENU_ID_SORT_OPTION_OFFSET + index, index, name)
+            }
+        }
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        val selectedIndex = item.itemId - MENU_ID_SORT_OPTION_OFFSET
+        if (selectedIndex >= 0 && selectedIndex < sortingOptionsValues.size) {
+            val selectedSortValue = sortingOptionsValues[selectedIndex]
+            applyNewSortOrder(selectedSortValue)
+            return true
+        }
+        return super.onContextItemSelected(item)
+    }
+
+    private fun applyNewSortOrder(sortValue: String) {
+        mCivicViewModel.setSortingOrder(sortValue)
     }
 
     companion object {
         private const val EXTRA_CREDITS_REQUEST_KEY = "extraCreditsDialogResult"
         private const val ANATOMY_REQUEST_KEY = "anatomySelectionResult"
+        private const val MENU_ID_SORT_OPTION_OFFSET = 1000
     }
 }

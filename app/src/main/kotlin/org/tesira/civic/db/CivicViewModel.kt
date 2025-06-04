@@ -396,15 +396,13 @@ class CivicViewModel(application: Application) :
                     totalExtraCredits: Int,
                     anatomyCardsToChoose: List<String>
                 ) {
-                    // Diese Methode wird im Hintergrund-Thread aufgerufen.
-                    // Aktualisiere LiveData im ViewModel auf dem Haupt-Thread mit postValue
-                    if (!anatomyCardsToChoose.isEmpty()) {
+                    if (totalExtraCredits > 0) {
+                        _showExtraCreditsDialogEvent.postValue(Event<Int>(totalExtraCredits))
+                    }
+                    if (anatomyCardsToChoose.isNotEmpty()) {
                         showAnatomyDialogEvent.postValue(
                             Event<List<String>>(anatomyCardsToChoose)
                         )
-                    }
-                    if (totalExtraCredits > 0) {
-                        _showExtraCreditsDialogEvent.postValue(Event<Int>(totalExtraCredits))
                     }
 
                     // Optional: LiveData Event auslösen, um Navigation zu signalisieren, falls keine Dialoge nötig sind
