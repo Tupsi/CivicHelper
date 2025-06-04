@@ -608,18 +608,18 @@ class CivicViewModel(application: Application) :
      * Nutzt deine bestehende Logik aus getChooserCards().
      */
     private fun getCardNamesForHeartSelection(selectionName: String): List<String> {
-        when (selectionName.lowercase(Locale.getDefault())) {
-            "treasury" -> return listOf<String>(*TREASURY)
-            "commodities" -> return listOf<String>(*COMMODITY_CARDS)
-            "cheaper" -> return listOf<String>(*CHEAPER_CIVILIZATION_CARDS)
-            "bend" -> return listOf<String>(*TO_BEND_THE_RULES)
-            "more" -> return listOf<String>(*MORE_TOKEN_ON_THE_MAP)
-            "mobility" -> return listOf<String>(*TOKEN_MOBILITY)
-            "cities" -> return listOf<String>(*CITIES)
-            "sea" -> return listOf<String>(*SEA_POWER)
-            "aggression" -> return listOf<String>(*AGGRESSION)
-            "defense" -> return listOf<String>(*DEFENSE)
-            else -> return listOf<String>()
+        return when (selectionName.lowercase(Locale.getDefault())) {
+            "treasury" -> listOf<String>(*TREASURY)
+            "commodities" -> listOf<String>(*COMMODITY_CARDS)
+            "cheaper" -> listOf<String>(*CHEAPER_CIVILIZATION_CARDS)
+            "bend" -> listOf<String>(*TO_BEND_THE_RULES)
+            "more" -> listOf<String>(*MORE_TOKEN_ON_THE_MAP)
+            "mobility" -> listOf<String>(*TOKEN_MOBILITY)
+            "cities" -> listOf<String>(*CITIES)
+            "sea" -> listOf<String>(*SEA_POWER)
+            "aggression" -> listOf<String>(*AGGRESSION)
+            "defense" -> listOf<String>(*DEFENSE)
+            else -> listOf<String>()
         }
     }
 
@@ -631,15 +631,15 @@ class CivicViewModel(application: Application) :
 
         // 2. Deine Logik zur Bestimmung der Spaltenanzahl
         // Beispiel: Wenn im Querformat und die Benutzereinstellung 1 ist, setze auf 2 Spalten.
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (this.columns <= 1) {
-                return 2 // Immer 2 Spalten im Querformat, wenn User 1 wollte
+                2 // Immer 2 Spalten im Querformat, wenn User 1 wollte
             } else {
-                return this.columns
+                this.columns
             }
         } else { // Portrait-Modus
             // Im Portrait-Modus, verwende die Benutzereinstellung
-            return this.columns
+            this.columns
         }
 
         // Alternative oder erweiterte Logik basierend auf screenWidthDp:
@@ -724,13 +724,13 @@ class CivicViewModel(application: Application) :
         fun getItemBackgroundColor(card: Card, res: Resources): Drawable? {
             var backgroundColor = 0
             if (card.group2 == null) {
-                when (card.group1) {
-                    CardColor.ORANGE -> backgroundColor = R.color.crafts
-                    CardColor.YELLOW -> backgroundColor = R.color.religion
-                    CardColor.RED -> backgroundColor = R.color.civic
-                    CardColor.GREEN -> backgroundColor = R.color.science
-                    CardColor.BLUE -> backgroundColor = R.color.arts
-                    else -> backgroundColor = R.color.purple_700
+                backgroundColor = when (card.group1) {
+                    CardColor.ORANGE -> R.color.crafts
+                    CardColor.YELLOW -> R.color.religion
+                    CardColor.RED -> R.color.civic
+                    CardColor.GREEN -> R.color.science
+                    CardColor.BLUE -> R.color.arts
+                    else -> R.color.purple_700
                 }
             } else {
                 when (card.name) {
