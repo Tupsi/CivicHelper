@@ -12,6 +12,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import org.tesira.civic.databinding.DialogCreditsBinding
+import org.tesira.civic.db.Card
+import org.tesira.civic.db.CardColor
 import org.tesira.civic.db.CivicViewModel
 
 /**
@@ -33,6 +35,8 @@ class DialogExtraCreditsFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         // 1. ViewModel beziehen
         if (activity != null) {
@@ -146,7 +150,26 @@ class DialogExtraCreditsFragment : DialogFragment() {
         builder.setPositiveButton(
             R.string.ok,
             DialogInterface.OnClickListener { dialogInterface: DialogInterface?, id: Int ->
-                mCivicViewModel.updateBonus(blue, green, orange, red, yellow)
+                val card = Card(
+                    name = "Extra Credits",
+                    creditsBlue = blue,
+                    creditsGreen = green,
+                    creditsOrange = orange,
+                    creditsRed = red,
+                    creditsYellow = yellow,
+                    family = 0,
+                    vp = 0,
+                    price = 0,
+                    group1 = CardColor.RED,
+                    group2 = null,
+                    bonusCard = null,
+                    bonus = 0,
+                    isBuyable = false,
+                    currentPrice = 0,
+                    buyingPrice = 0,
+                    hasHeart = false
+                )
+                mCivicViewModel.addBonus(card)
                 mCivicViewModel.requestPriceRecalculation()
 
                 val result = Bundle()
@@ -166,7 +189,11 @@ class DialogExtraCreditsFragment : DialogFragment() {
             dialogInstance.setOnShowListener(DialogInterface.OnShowListener { dialogInterface: DialogInterface? -> updateOkButtonState() })
         }
 
-        binding.spinnerblue.post(Runnable { binding.spinnerblue.setSelection(0) })
+        if (savedInstanceState != null) {
+            blue = savedInstanceState.getInt(STATE_BLUE, 0)
+            Log.d("ExtraCreditsDialog", "Restored blue: $blue")
+        }
+        binding.spinnerblue.post(Runnable { binding.spinnerblue.setSelection(items.indexOf(blue.toString())) })
         return dialogInstance
     }
 
@@ -207,9 +234,21 @@ class DialogExtraCreditsFragment : DialogFragment() {
         super.onDestroyView()
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(STATE_BLUE, blue)
+
+        Log.d("ExtraCreditsDialog", "Saving blue: $blue")
+    }
+
     companion object {
         private const val ARG_CREDITS = "arg_credits"
         private const val REQUEST_KEY = "extraCreditsDialogResult"
+        private const val STATE_BLUE = "state_blue"
 
         @JvmStatic
         fun newInstance(creditsAmount: Int): DialogExtraCreditsFragment {
