@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import org.tesira.civic.db.CivicViewModel
 
 /**
@@ -16,7 +16,7 @@ import org.tesira.civic.db.CivicViewModel
  * https://developer.android.com/guide/topics/ui/dialogs
  */
 class DialogAnatomyFragment : DialogFragment() {
-    private lateinit var mCivicViewModel: CivicViewModel
+    private val mCivicViewModel: CivicViewModel by activityViewModels()
     private lateinit var greenCardsArray: Array<String>
 
     override fun onStart() {
@@ -30,15 +30,6 @@ class DialogAnatomyFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (activity != null) {
-            mCivicViewModel =
-                ViewModelProvider(requireActivity()).get<CivicViewModel>(CivicViewModel::class.java)
-        } else {
-            Log.d("AnatomyDialogFragment", "Activity is null, cannot get ViewModel.")
-            dismissAllowingStateLoss()
-            return
-        }
 
         if (arguments != null) {
             val greenCardsList = requireArguments().getStringArrayList(ARG_GREEN_CARDS_LIST)

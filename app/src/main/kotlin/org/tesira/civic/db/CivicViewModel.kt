@@ -346,9 +346,17 @@ class CivicViewModel(application: Application) :
         val adder: (Int, Int) -> Int = { oldValue, valueToAdd -> oldValue + valueToAdd }
         if (card.creditsBlue != 0) currentBonuses.merge(CardColor.BLUE, card.creditsBlue, adder)
         if (card.creditsGreen != 0) currentBonuses.merge(CardColor.GREEN, card.creditsGreen, adder)
-        if (card.creditsOrange != 0) currentBonuses.merge(CardColor.ORANGE, card.creditsOrange, adder)
+        if (card.creditsOrange != 0) currentBonuses.merge(
+            CardColor.ORANGE,
+            card.creditsOrange,
+            adder
+        )
         if (card.creditsRed != 0) currentBonuses.merge(CardColor.RED, card.creditsRed, adder)
-        if (card.creditsYellow != 0) currentBonuses.merge(CardColor.YELLOW, card.creditsYellow, adder)
+        if (card.creditsYellow != 0) currentBonuses.merge(
+            CardColor.YELLOW,
+            card.creditsYellow,
+            adder
+        )
         cardBonus.value = currentBonuses
     }
 

@@ -8,8 +8,8 @@ import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,15 +25,13 @@ class InventoryFragment
  * fragment (e.g. upon screen orientation changes).
  */
     : Fragment() {
-    private lateinit var mCivicViewModel: CivicViewModel
+    private val mCivicViewModel: CivicViewModel by activityViewModels()
     private lateinit var adapter: InventoryAdapter
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mLayout: RecyclerView.LayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mCivicViewModel =
-            ViewModelProvider(requireActivity()).get<CivicViewModel>(CivicViewModel::class.java)
     }
 
     override fun onCreateView(

@@ -20,6 +20,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentResultListener
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -39,7 +40,7 @@ import org.tesira.civic.db.CivicViewModel
  * purchases list and returns the user back to the dashboard.
  */
 class BuyingFragment : Fragment() {
-    private lateinit var mCivicViewModel: CivicViewModel
+    private val mCivicViewModel: CivicViewModel by activityViewModels()
     private lateinit var tracker: SelectionTracker<String>
     private lateinit var binding: FragmentBuyingBinding
     private lateinit var mBuyingItemKeyProvider: BuyingItemKeyProvider
@@ -59,8 +60,6 @@ class BuyingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mCivicViewModel =
-            ViewModelProvider(requireActivity()).get<CivicViewModel>(CivicViewModel::class.java)
         sortingOptionsValues = resources.getStringArray(R.array.sort_values)
         sortingOptionsNames = resources.getStringArray(R.array.sort_entries)
 

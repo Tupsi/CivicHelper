@@ -16,8 +16,7 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
+import androidx.fragment.app.activityViewModels
 import org.tesira.civic.databinding.FragmentTipsBinding
 import org.tesira.civic.db.CivicViewModel
 import kotlin.math.max
@@ -30,12 +29,11 @@ import kotlin.math.min
  */
 class TipsFragment : Fragment() {
     private lateinit var binding: FragmentTipsBinding
-    private lateinit var civicViewModel: CivicViewModel
+    val civicViewModel: CivicViewModel by activityViewModels()
     private lateinit var scaleGestureDetector: ScaleGestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        civicViewModel = ViewModelProvider(requireActivity()).get<CivicViewModel>()
         scaleGestureDetector =
             ScaleGestureDetector(this.requireContext(), PinchToZoomGestureListener())
     }
