@@ -2,8 +2,8 @@
 
 # Helper App for Mega Civilization
 
-This is a tool for the board games Mega Civilization,
-Mega Empires and its two parts "The West" and "The East".
+This is a tool for the board games *Mega Civilization*,
+*Mega Empires* and its two parts *"The West"* and *"The East"*.
 
 The app is inspired by the player aids
 on [boardgamegeek](https://boardgamegeek.com/boardgame/184424/mega-civilization) for the games.
@@ -26,6 +26,6 @@ and the "What do you want" hearts are inspired by BillNC's
 
 **A big thank you to Nicholas M and BillNC for writing them!**
 
->This is not a war game. 
+> This is not a war game.
 
 This is still the first thing we explain to new people.
