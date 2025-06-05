@@ -24,40 +24,42 @@ import java.util.Locale
 
 class CivicViewModel(application: Application) :
     AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
+    private lateinit var buyableCardsMapObserver: Observer<MutableList<Card>>
+    private lateinit var tipsArray: Array<String>
+
     private val mRepository: CivicRepository = CivicRepository(application)
-    val treasure: MutableLiveData<Int> = MutableLiveData<Int>(0)
-    val remaining: MutableLiveData<Int> = MutableLiveData<Int>(0)
     private val vp = MutableLiveData<Int>(0)
-    var cardBonus: MutableLiveData<HashMap<CardColor, Int>> =
-        MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
     private val cities = MutableLiveData<Int>(0)
     private val mApplication: Application = application
     private val timeVp = MutableLiveData<Int>(0)
-    var librarySelected: Boolean = false
-    val allAdvancesNotBought: LiveData<MutableList<Card>>
     private val _currentSortingOrder = MutableLiveData<String>()
     private val _columns = MutableLiveData<Int>()
     private val showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
-    val calamityBonusListLiveData: LiveData<List<Calamity>> = mRepository.calamityBonusLiveData
     private val specialAbilitiesRawLiveData: LiveData<List<String>> =
         mRepository.specialAbilitiesLiveData
     private val immunitiesRawLiveData: LiveData<List<String>> = mRepository.immunitiesLiveData
     private val combinedSpecialsAndImmunitiesLiveData = MediatorLiveData<MutableList<String>>()
     private val _selectedTipIndex = MutableLiveData<Int>()
-    var selectedTipIndex: LiveData<Int> = _selectedTipIndex
     private val _astVersion = MutableLiveData<String>()
-    var astVersion: LiveData<String> = _astVersion
     private val _civNumber = MutableLiveData<String>()
-    var getCivNumber: LiveData<String> = _civNumber
-    private lateinit var tipsArray: Array<String>
     private val _showExtraCreditsDialogEvent = MutableLiveData<Event<Int>>()
     private val defaultPrefs: SharedPreferences
-    val cardsVpLiveData: LiveData<Int>
     private val totalVp = MediatorLiveData<Int>()
     private val buyableCardMap: MutableMap<String, Card> = HashMap<String, Card>()
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
-    private lateinit var buyableCardsMapObserver: Observer<MutableList<Card>>
     private val _isFinalizingPurchase = MutableLiveData(false)
+
+    var selectedTipIndex: LiveData<Int> = _selectedTipIndex
+    val treasure: MutableLiveData<Int> = MutableLiveData<Int>(0)
+    val remaining: MutableLiveData<Int> = MutableLiveData<Int>(0)
+    var librarySelected: Boolean = false
+    val allAdvancesNotBought: LiveData<MutableList<Card>>
+    var cardBonus: MutableLiveData<HashMap<CardColor, Int>> =
+        MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
+    val calamityBonusListLiveData: LiveData<List<Calamity>> = mRepository.calamityBonusLiveData
+    var astVersion: LiveData<String> = _astVersion
+    var getCivNumber: LiveData<String> = _civNumber
+    val cardsVpLiveData: LiveData<Int>
     val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
 
     fun getShowAnatomyDialogEvent(): LiveData<Event<List<String>>> {
@@ -87,6 +89,13 @@ class CivicViewModel(application: Application) :
             areBuyableCardsReady.value = true
         }
         allAdvancesNotBought.observeForever(buyableCardsMapObserver)
+    }
+
+    private fun getBuyableAdvanceByNameFromMap(name: String): Card? {
+        if (areBuyableCardsReady.value == true) {
+            return buyableCardMap[name]
+        }
+        return null
     }
 
     private fun setupCombinedSpecialsLiveData() {
@@ -190,13 +199,14 @@ class CivicViewModel(application: Application) :
         val red: Int = defaultPrefs.getInt(CardColor.RED.colorName, 0)
         val yellow: Int = defaultPrefs.getInt(CardColor.YELLOW.colorName, 0)
 
-        if (cardBonus.getValue() != null) {
-            cardBonus.getValue()!!.put(CardColor.BLUE, blue)
-            cardBonus.getValue()!!.put(CardColor.GREEN, green)
-            cardBonus.getValue()!!.put(CardColor.ORANGE, orange)
-            cardBonus.getValue()!!.put(CardColor.RED, red)
-            cardBonus.getValue()!!.put(CardColor.YELLOW, yellow)
-        }
+        val currentBonuses = cardBonus.value!!
+        currentBonuses.put(CardColor.BLUE, blue)
+        currentBonuses.put(CardColor.GREEN, green)
+        currentBonuses.put(CardColor.ORANGE, orange)
+        currentBonuses.put(CardColor.RED, red)
+        currentBonuses.put(CardColor.YELLOW, yellow)
+        cardBonus.value = currentBonuses
+
         userPreferenceForHeartCards.value = defaultPrefs.getString(PREF_KEY_HEART, "custom")
         setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0))
         setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME, 0))
@@ -274,6 +284,7 @@ class CivicViewModel(application: Application) :
         timeVp.value = 0
         vp.value = 0
         cardBonus.value = HashMap<CardColor, Int>()
+        cardBonus.value = cardBonus.value
         librarySelected = false
 
         defaultPrefs.edit { putInt(CardColor.BLUE.colorName, 0) }
@@ -291,34 +302,6 @@ class CivicViewModel(application: Application) :
 
 //        _newGameStartedEvent.value = Event(true)
         _navigateToCivilizationSelectionEvent.value = Event(Unit)
-    }
-
-    /**
-     * Updates the Bonus for all colors by adding the respective fields to cardBonus HashSet.
-     * @param blue additional bonus for blue cards.
-     * @param green additional bonus for green cards.
-     * @param orange additional bonus for orange cards.
-     * @param red additional bonus for red cards.
-     * @param yellow additional bonus for yellow cards.
-     */
-    fun updateBonus(blue: Int, green: Int, orange: Int, red: Int, yellow: Int) {
-        cardBonus.getValue()!!
-            .compute(CardColor.BLUE) { k: CardColor?, v: Int? -> if (v == null) blue else v + blue }
-        cardBonus.getValue()!!
-            .compute(CardColor.GREEN) { k: CardColor?, v: Int? -> if (v == null) green else v + green }
-        cardBonus.getValue()!!
-            .compute(CardColor.ORANGE) { k: CardColor?, v: Int? -> if (v == null) orange else v + orange }
-        cardBonus.getValue()!!
-            .compute(CardColor.RED) { k: CardColor?, v: Int? -> if (v == null) red else v + red }
-        cardBonus.getValue()!!
-            .compute(CardColor.YELLOW) { k: CardColor?, v: Int? -> if (v == null) yellow else v + yellow }
-    }
-
-    private fun getBuyableAdvanceByNameFromMap(name: String?): Card? {
-        if (java.lang.Boolean.TRUE == areBuyableCardsReady.getValue()) {
-            return buyableCardMap[name]
-        }
-        return null
     }
 
     /**
@@ -355,28 +338,27 @@ class CivicViewModel(application: Application) :
     }
 
     /**
+     * Updates the Bonus for all colors by adding the respective fields to cardBonus HashSet.
+     * @param card one of the civilization cards.
+     */
+    fun addBonus(card: Card) {
+        val currentBonuses = cardBonus.value!!
+        val adder: (Int, Int) -> Int = { oldValue, valueToAdd -> oldValue + valueToAdd }
+        if (card.creditsBlue != 0) currentBonuses.merge(CardColor.BLUE, card.creditsBlue, adder)
+        if (card.creditsGreen != 0) currentBonuses.merge(CardColor.GREEN, card.creditsGreen, adder)
+        if (card.creditsOrange != 0) currentBonuses.merge(CardColor.ORANGE, card.creditsOrange, adder)
+        if (card.creditsRed != 0) currentBonuses.merge(CardColor.RED, card.creditsRed, adder)
+        if (card.creditsYellow != 0) currentBonuses.merge(CardColor.YELLOW, card.creditsYellow, adder)
+        cardBonus.value = currentBonuses
+    }
+
+    /**
      * Adds the bonuses of a bought card to the cardBonus HashSet.
      * @param name The name of the bought card.
      */
-    fun addBonus(name: String?) {
-        val adv = getBuyableAdvanceByNameFromMap(name)
-        updateBonus(
-            adv!!.creditsBlue,
-            adv.creditsGreen,
-            adv.creditsOrange,
-            adv.creditsRed,
-            adv.creditsYellow
-        )
-    }
-
-    private fun addSingleCardBonusToTotal(card: Card) {
-        updateBonus(
-            card.creditsBlue,
-            card.creditsGreen,
-            card.creditsOrange,
-            card.creditsRed,
-            card.creditsYellow
-        )
+    fun addBonus(name: String) {
+        val card = getBuyableAdvanceByNameFromMap(name)
+        addBonus(card!!)
     }
 
     val blue: Int
@@ -449,7 +431,7 @@ class CivicViewModel(application: Application) :
             // Füge die Boni der ausgewählten grünen Karte hinzu.
             // Du brauchst eine Methode, die die Boni einer einzelnen Karte zu `cardBonus` addiert.
             // Das könnte eine angepasste Version von `updateBonus` sein oder eine neue Methode.
-            addSingleCardBonusToTotal(card) // Implementiere diese Methode
+            addBonus(card)
             saveBonus() // Speichere die aktualisierten Boni
         }
 
