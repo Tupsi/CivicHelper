@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar: Toolbar = binding.toolbar
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
         invalidateOptionsMenu()
 
         val initialPaddingLeft = toolbar.paddingLeft
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 setOf(
                     R.id.homeFragment,
                     R.id.buyingFragment,
-                    R.id.purchasesFragment,
+                    R.id.inventoryFragment,
                     R.id.tipsFragment,
                     R.id.settingsFragment,
                     R.id.aboutFragment
