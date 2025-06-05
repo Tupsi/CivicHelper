@@ -10,7 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import org.tesira.civic.databinding.DialogCreditsBinding
 import org.tesira.civic.db.Card
 import org.tesira.civic.db.CardColor
@@ -25,7 +25,7 @@ class DialogExtraCreditsFragment : DialogFragment() {
     private lateinit var binding: DialogCreditsBinding
     private lateinit var items: Array<String>
     private lateinit var dialogInstance: AlertDialog
-    private lateinit var mCivicViewModel: CivicViewModel
+    private val mCivicViewModel: CivicViewModel by activityViewModels()
     private var initialCredits = 0
     private var blue = 0
     private var green = 0
@@ -36,18 +36,6 @@ class DialogExtraCreditsFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        // 1. ViewModel beziehen
-        if (activity != null) {
-            mCivicViewModel =
-                ViewModelProvider(requireActivity()).get<CivicViewModel>(CivicViewModel::class.java)
-        } else {
-            Log.e("ExtraCreditsDialog", "Activity is null, cannot get ViewModel.")
-            dismissAllowingStateLoss()
-            return
-        }
-
-        // 2. Argumente abrufen
         if (arguments != null) {
             this.initialCredits = requireArguments().getInt(ARG_CREDITS, 0)
             if (this.initialCredits == 0 && requireArguments().getInt(ARG_CREDITS, -1) == -1) {
@@ -67,12 +55,12 @@ class DialogExtraCreditsFragment : DialogFragment() {
         }
 
         items = when (initialCredits) {
-            10 -> arrayOf<String>("0", "5", "10")
-            20 -> arrayOf<String>("0", "5", "10", "15", "20")
-            30 -> arrayOf<String>("0", "5", "10", "15", "20", "25", "30")
+            10 -> arrayOf("0", "5", "10")
+            20 -> arrayOf("0", "5", "10", "15", "20")
+            30 -> arrayOf("0", "5", "10", "15", "20", "25", "30")
             else -> {
                 // Fallback, falls 'initialCredits' einen unerwarteten Wert hat
-                arrayOf<String>("0")
+                arrayOf("0")
             }
         }
     }

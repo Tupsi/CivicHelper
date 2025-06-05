@@ -14,8 +14,8 @@ import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.tesira.civic.databinding.FragmentHomeBinding
@@ -31,7 +31,7 @@ import java.util.Objects
  */
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var mCivicViewModel: CivicViewModel
+    private val mCivicViewModel: CivicViewModel by activityViewModels()
     private lateinit var mHomeCalamityAdapter: HomeCalamityAdapter
     private lateinit var mHomeSpecialsAdapter: HomeSpecialsAdapter
     private val cityIds: List<Int> = listOf(
@@ -50,8 +50,6 @@ class HomeFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        mCivicViewModel =
-            ViewModelProvider(requireActivity()).get<CivicViewModel>(CivicViewModel::class.java)
         val rootView: View = binding.getRoot()
 
         // Speichere die ursprünglichen Padding-Werte der View, auf die die Insets angewendet werden
