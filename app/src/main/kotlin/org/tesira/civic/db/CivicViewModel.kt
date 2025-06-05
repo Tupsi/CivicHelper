@@ -48,6 +48,7 @@ class CivicViewModel(application: Application) :
     private val buyableCardMap: MutableMap<String, Card> = HashMap<String, Card>()
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
     private val _isFinalizingPurchase = MutableLiveData(false)
+    private val _showCredits = MutableLiveData<Boolean>()
 
     var selectedTipIndex: LiveData<Int> = _selectedTipIndex
     val treasure: MutableLiveData<Int> = MutableLiveData<Int>(0)
@@ -61,6 +62,7 @@ class CivicViewModel(application: Application) :
     var getCivNumber: LiveData<String> = _civNumber
     val cardsVpLiveData: LiveData<Int>
     val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
+    val showCredits: LiveData<Boolean> = _showCredits
 
     fun getShowAnatomyDialogEvent(): LiveData<Event<List<String>>> {
         return showAnatomyDialogEvent
@@ -217,6 +219,7 @@ class CivicViewModel(application: Application) :
 
         tipsArray = mApplication.resources.getStringArray(R.array.tips)
         _selectedTipIndex.value = _civNumber.value?.toIntOrNull()?.minus(1)
+        _showCredits.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_CREDITS, true)
     }
 
     fun getCities(): Int {
@@ -584,6 +587,11 @@ class CivicViewModel(application: Application) :
             if (_astVersion.getValue() == null || _astVersion.getValue() != newAstVersion) {
                 _astVersion.value = newAstVersion
             }
+        } else if (PREF_KEY_SHOW_CREDITS == key) {
+            val newShowCredits = sharedPreferences.getBoolean(key, true)
+            if (_showCredits.value == null || _showCredits.value != newShowCredits) {
+                _showCredits.value = newShowCredits
+            }
         }
     }
 
@@ -724,6 +732,7 @@ class CivicViewModel(application: Application) :
         private const val PREF_KEY_HEART = "heart"
         private const val PREF_KEY_COLUMNS = "columns"
         private const val PREF_KEY_AST = "ast"
+        private const val PREF_KEY_SHOW_CREDITS = "showCredits"
 
         @JvmStatic
         fun getItemBackgroundColor(card: Card, res: Resources): Drawable? {

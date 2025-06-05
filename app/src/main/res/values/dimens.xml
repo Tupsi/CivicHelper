@@ -10,4 +10,6 @@
     <dimen name="bar_text_size">12sp</dimen>
     <dimen name="button_text_size">12sp</dimen>
     <dimen name="dialog_text">16sp</dimen>
+    <dimen name="card_credits_weight">30dp</dimen>
+    <dimen name="card_credits_spacer">2dp</dimen>
 </resources>
