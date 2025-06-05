@@ -37,7 +37,6 @@ class DialogExtraCreditsFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
 
 
-
         // 1. ViewModel beziehen
         if (activity != null) {
             mCivicViewModel =
@@ -241,8 +240,6 @@ class DialogExtraCreditsFragment : DialogFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(STATE_BLUE, blue)
-
-        Log.d("ExtraCreditsDialog", "Saving blue: $blue")
     }
 
     companion object {
