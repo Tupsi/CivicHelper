@@ -29,3 +29,9 @@ and the "What do you want" hearts are inspired by BillNC's
 > This is not a war game.
 
 This is still the first thing we explain to new people.
+
+## Screenshots
+![Dashboard](./img/Dashboard.jpg)
+![Buying](./img/Buying.jpg)![Anatomy](./img/Anatomy.jpg)![Extra_Credits](./img/Extra_Credits.jpg)
+![Inventory](./img/Inventory.jpg)![Settings](./img/Settings.jpg)
+![Tips](./img/Tips.jpg)![About](./img/About.jpg)
