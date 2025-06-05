@@ -1,5 +1,5 @@
 val roomVersion: String = "2.7.1"
-val lifecycleVersion: String = "2.9.0"
+val lifecycleVersion: String = "2.9.1"
 val navigationVersion: String = "2.9.0"
 
 plugins {
@@ -17,8 +17,8 @@ android {
         applicationId = "org.tesira.civic"
         minSdk = 28
         targetSdk = 35
-        versionCode = 32
-        versionName = "1.2.32"
+        versionCode = 33
+        versionName = "1.2.33"
     }
 
     buildTypes {
@@ -68,7 +68,7 @@ dependencies {
 //    implementation("androidx.databinding:databinding-runtime:8.10.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.gridlayout:gridlayout:1.1.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.annotation:annotation:1.9.1")
 
     implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
