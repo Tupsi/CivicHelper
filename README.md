@@ -31,7 +31,7 @@ and the "What do you want" hearts are inspired by BillNC's
 This is still the first thing we explain to new people.
 
 ## Screenshots
-![Dashboard](./img/Dashboard.jpg)
-![Buying](./img/Buying.jpg)![Anatomy](./img/Anatomy.jpg)![Extra_Credits](./img/Extra_Credits.jpg)
-![Inventory](./img/Inventory.jpg)![Settings](./img/Settings.jpg)
-![Tips](./img/Tips.jpg)![About](./img/About.jpg)
+<img src="./img/Dashboard.jpg" alt="Dashboard" width="200"/><img src="./img/Buying.jpg" alt="Buying" width="200"/>
+<img src="./img/Anatomy.jpg" alt="Anatomy" width="200"/><img src="./img/Extra_Credits.jpg" alt="Extra_Credits" width="200"/>
+<img src="./img/Inventory.jpg" alt="Inventory" width="200"/><img src="./img/Settings.jpg" alt="Settings" width="200"/>
+<img src="./img/Tips.jpg" alt="Tips" width="200"/><img src="./img/About.jpg" alt="About" width="200"/>
