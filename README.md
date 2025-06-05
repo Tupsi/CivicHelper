@@ -1,6 +1,6 @@
 ![Civic Helper](./app/src/main/ic_launcher-playstore.png)
 
-# Helper App for Mega Civilization
+# Civic Helper
 
 This is a tool for the board games *Mega Civilization*,
 *Mega Empires* and its two parts *"The West"* and *"The East"*.
