@@ -24,7 +24,10 @@
     <!-- Preference Titles -->
     <string name="pref_civilization">Civilization</string>
     <string name="pref_sorting">Sorting of civilization advances</string>
-    <string name="layout_header">Layout of Purchase Screen</string>
+    <string name="pref_credits">Show credits on cards</string>
+    <string name="pref_credits_on">Yes</string>
+    <string name="pref_credits_off">No</string>
+    <string name="layout_header">Layout</string>
     <string name="layout_title">Layout</string>
     <string name="columns_title">Number of columns</string>
     <!-- Menu Names -->
@@ -79,5 +82,8 @@
     <string name="special_abilities_and_immunities">Special Abilities and Immunities</string>
     <string name="calamity_effects_overview">Calamity Effects Overview</string>
     <string name="sort_by">Sort by:</string>
+    <string name="clear">Clear</string>
+    <string name="buy">Buy</string>
+    <string name="family">Family</string>
 
 </resources>

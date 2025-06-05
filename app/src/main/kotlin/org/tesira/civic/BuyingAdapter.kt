@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
@@ -37,6 +39,15 @@ class BuyingAdapter(
         val vpItemView: TextView = itemView.findViewById<TextView>(R.id.vp)
         val mCardView: View = itemView.findViewById<View>(R.id.card)
         val mHeartView: ImageView = itemView.findViewById<ImageView>(R.id.heart)
+
+        val bonusLayout: LinearLayout = itemView.findViewById<LinearLayout>(R.id.bonusLayout)
+        val textViewBonusBlue: TextView = itemView.findViewById<TextView>(R.id.textViewBonusBlue)
+        val textViewBonusGreen: TextView = itemView.findViewById<TextView>(R.id.textViewBonusGreen)
+        val textViewBonusOrange: TextView =
+            itemView.findViewById<TextView>(R.id.textViewBonusOrange)
+        val textViewBonusRed: TextView = itemView.findViewById<TextView>(R.id.textViewBonusRed)
+        val textViewBonusYellow: TextView =
+            itemView.findViewById<TextView>(R.id.textViewBonusYellow)
 
         val itemDetails: ItemDetailsLookup.ItemDetails<String>
             get() = BuyingItemDetails(
@@ -98,6 +109,77 @@ class BuyingAdapter(
         }
         viewHolder.mHeartView.visibility =
             if (items[position].hasHeart) View.VISIBLE else View.INVISIBLE
+
+        fun setupSingleBonusTextView(
+            textView: TextView,
+            creditValue: Int,
+            backgroundColorResId: Int,
+            textColor: Int
+        ) {
+            if (creditValue > 0) {
+                textView.text = creditValue.toString()
+                textView.setBackgroundColor(
+                    ContextCompat.getColor(
+                        viewHolder.itemView.context,
+                        backgroundColorResId
+                    )
+                )
+                textView.setTextColor(textColor)
+                textView.visibility = View.VISIBLE // Nur diesen TextView sichtbar machen
+            } else {
+                textView.visibility = View.GONE // Diesen TextView ausblenden, wenn Bonus 0 ist
+            }
+        }
+
+        val textColorOnDark = Color.WHITE
+        val textColorOnLight = Color.BLACK
+
+
+        // Blau
+        setupSingleBonusTextView(
+            viewHolder.textViewBonusBlue,
+            current.creditsBlue,
+            R.color.arts, // Deine Farbressource
+            textColorOnDark
+        )
+
+        // Grün
+        setupSingleBonusTextView(
+            viewHolder.textViewBonusGreen,
+            current.creditsGreen,
+            R.color.science, // Deine Farbressource
+            textColorOnLight
+        )
+
+        // Orange
+        setupSingleBonusTextView(
+            viewHolder.textViewBonusOrange,
+            current.creditsOrange,
+            R.color.crafts, // Deine Farbressource
+            textColorOnDark
+        )
+
+        // Rot
+        setupSingleBonusTextView(
+            viewHolder.textViewBonusRed,
+            current.creditsRed,
+            R.color.civic, // Deine Farbressource
+            textColorOnDark
+        )
+
+        // Gelb
+        setupSingleBonusTextView(
+            viewHolder.textViewBonusYellow,
+            current.creditsYellow,
+            R.color.religion, // Deine Farbressource
+            textColorOnLight
+        )
+
+        if (mCivicViewModel.showCredits.value!!) {
+            viewHolder.bonusLayout.visibility = View.VISIBLE
+        } else {
+            viewHolder.bonusLayout.visibility = View.GONE
+        }
     }
 
     override fun getItemCount(): Int {
