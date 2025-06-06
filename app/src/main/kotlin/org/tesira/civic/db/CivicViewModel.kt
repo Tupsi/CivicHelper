@@ -215,7 +215,7 @@ class CivicViewModel(application: Application) :
         userPreferenceForHeartCards.value = defaultPrefs.getString(PREF_KEY_HEART, "custom")
         setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0))
         setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME, 0))
-        _columns.value = defaultPrefs.getString(PREF_KEY_COLUMNS, "1")!!.toInt()
+        _columns.value = defaultPrefs.getString(PREF_KEY_COLUMNS, "0")!!.toInt()
         _currentSortingOrder.value = (defaultPrefs.getString(PREF_KEY_SORT, "name"))!!
         _astVersion.value = defaultPrefs.getString(PREF_KEY_AST, "basic")
         _civNumber.value = defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set")
@@ -647,19 +647,24 @@ class CivicViewModel(application: Application) :
         val configuration = context.resources.configuration
         val screenWidthDp = configuration.screenWidthDp // Aktuelle Bildschirmbreite in dp
         val orientation = configuration.orientation // Aktuelle Orientierung
-        // 2. Deine Logik zur Bestimmung der Spaltenanzahl
-        // Beispiel: Wenn im Querformat und die Benutzereinstellung 1 ist, setze auf 2 Spalten.
-        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (this.columns <= 1) {
-//                2 // Immer 2 Spalten im Querformat, wenn User 1 wollte
-                screenWidthDp / 200
-            } else {
-                this.columns
-            }
-        } else { // Portrait-Modus
-            // Im Portrait-Modus, verwende die Benutzereinstellung
-            this.columns
+        Log.d("CivicViewModel", "calculateColumnCount: $screenWidthDp, orientation: $orientation, columns: $columns")
+        return if (columns == 0) {
+            screenWidthDp / 180
+        } else {
+            columns
         }
+
+//        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            if (this.columns <= 1) {
+////                2 // Immer 2 Spalten im Querformat, wenn User 1 wollte
+//                screenWidthDp / 200
+//            } else {
+//                this.columns
+//            }
+//        } else { // Portrait-Modus
+//            // Im Portrait-Modus, verwende die Benutzereinstellung
+//            this.columns
+//        }
 
         // Alternative oder erweiterte Logik basierend auf screenWidthDp:
         // (Diese kannst du mit der obigen Orientierungslogik kombinieren oder stattdessen verwenden)
