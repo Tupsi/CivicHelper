@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.tesira.civic.databinding.ItemRowInventoryBinding
 import org.tesira.civic.db.Card
-import org.tesira.civic.db.CardColor
 import org.tesira.civic.db.CivicViewModel
 
 /**
@@ -54,10 +53,8 @@ class InventoryAdapter(private val mCivicViewModel: CivicViewModel) : RecyclerVi
         binding.vp.text = item.vp.toString()
         binding.heart.visibility = if (item.hasHeart) View.VISIBLE else View.INVISIBLE
 
-        when (item.group1) {
-            CardColor.YELLOW, CardColor.GREEN -> binding.name.setTextColor(textColorOnLight)
-            else -> binding.name.setTextColor(textColorOnDark)
-        }
+        val textColor = CivicViewModel.Companion.getTextColor(item)
+        binding.name.setTextColor(textColor)
 
         if (item.bonus > 0) {
             binding.familybonus.visibility = View.VISIBLE
@@ -99,7 +96,6 @@ class InventoryAdapter(private val mCivicViewModel: CivicViewModel) : RecyclerVi
                 textView.visibility = View.GONE // Diesen TextView ausblenden, wenn Bonus 0 ist
             }
         }
-
 
         // Blau
         setupSingleBonusTextView(
