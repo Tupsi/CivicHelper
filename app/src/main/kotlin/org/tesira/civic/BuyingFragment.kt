@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.selection.ItemKeyProvider
 import androidx.recyclerview.selection.SelectionTracker
@@ -40,7 +39,7 @@ import org.tesira.civic.db.CivicViewModel
  * purchases list and returns the user back to the dashboard.
  */
 class BuyingFragment : Fragment() {
-    private val mCivicViewModel: CivicViewModel by activityViewModels()
+    internal val mCivicViewModel: CivicViewModel by activityViewModels()
     private lateinit var tracker: SelectionTracker<String>
     private lateinit var binding: FragmentBuyingBinding
     private lateinit var mBuyingItemKeyProvider: BuyingItemKeyProvider
@@ -129,10 +128,19 @@ class BuyingFragment : Fragment() {
             mRecyclerView.setLayoutManager(mLayout)
         }
 
-        mAdapter = BuyingAdapter(ArrayList<Card>(), mCivicViewModel)
+        mAdapter = BuyingAdapter(mCivicViewModel)
         mRecyclerView.setAdapter(mAdapter)
-        mTreasureInput = rootView.findViewById<EditText?>(R.id.treasure)
-        mRemainingText = rootView.findViewById<TextView?>(R.id.moneyleft)
+        mTreasureInput = binding.treasure
+        mRemainingText = binding.moneyleft
+
+        mTreasureInput?.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                // Verzögere die Selektion leicht, um sicherzustellen, dass das EditText bereit ist
+                view.post {
+                    (view as? EditText)?.selectAll()
+                }
+            }
+        }
 
         mCivicViewModel.allAdvancesNotBought.observe(
             getViewLifecycleOwner(),
@@ -157,15 +165,36 @@ class BuyingFragment : Fragment() {
         }
 
         // close SoftKeyboard on Enter
-        mTreasureInput!!.setOnEditorActionListener(TextView.OnEditorActionListener { v: TextView?, keyCode: Int, event: KeyEvent? ->
-            mCivicViewModel.treasure.value = calculateInput(mTreasureInput!!.text.toString())
+        mTreasureInput?.setOnEditorActionListener(TextView.OnEditorActionListener { v, keyCode, event ->
+            if (event == null || event.action == KeyEvent.ACTION_UP || keyCode == KeyEvent.KEYCODE_ENTER) { // Sicherstellen, dass es ein "UP"-Event ist oder nur Enter ohne Event
+                mCivicViewModel.treasure.value = calculateInput(mTreasureInput!!.text.toString())
 
-            // hide virtual keyboard on enter
+                // Tastatur verstecken
+                val imm =
+                    requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(mTreasureInput!!.windowToken, 0)
+
+                // Fokus entfernen
+                mTreasureInput!!.clearFocus() // Wichtig: Fokus explizit entfernen
+                binding.root.requestFocus() // Optional: Fokus auf ein anderes Element lenken (z.B. das Root-Layout)
+                return@OnEditorActionListener true
+            }
+            false
+        })
+
+        mRecyclerView.setOnTouchListener { _, _ ->
+            // EditText verliert Fokus
+            mTreasureInput?.clearFocus()
+            // Root erhält Fokus, damit der Cursor verschwindet
+            binding.root.requestFocus()
+
+            // Tastatur schließen
             val imm =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(mTreasureInput!!.windowToken, 0)
-            true
-        })
+            imm.hideSoftInputFromWindow(mTreasureInput?.windowToken, 0)
+
+            false  // Touch-Event soll weiterhin an RecyclerView weitergegeben werden
+        }
 
         // button which finalizes the buy process
         binding.btnBuy.setOnClickListener(View.OnClickListener btnBuyClickListener@{ v: View? ->
@@ -356,6 +385,7 @@ class BuyingFragment : Fragment() {
         if (mCivicViewModel.treasure.value!! < 0) {
             mCivicViewModel.treasure.value = 0
         }
+
     }
 
     private fun focusTreasureInputAndShowKeyboard() {

@@ -23,14 +23,10 @@ import org.tesira.civic.db.CivicViewModel
  * set a "what do I want?" preference.
  */
 class BuyingAdapter(
-    /**
-     * Returns the current list of cards displayed by the adapter.
-     * This is needed by MyItemKeyProvider.
-     * @return The current list of Card objects.
-     */
-    val items: MutableList<Card>, private val mCivicViewModel: CivicViewModel
+    private val mCivicViewModel: CivicViewModel
 ) : RecyclerView.Adapter<BuyingAdapter.ViewHolder?>() {
     private lateinit var tracker: SelectionTracker<String>
+    val items: MutableList<Card> = mutableListOf()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameItemView: TextView = itemView.findViewById<TextView>(R.id.name)

@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.tesira.civic.databinding.ItemRowInventoryBinding
 import org.tesira.civic.db.Card
@@ -15,7 +17,8 @@ import org.tesira.civic.db.CivicViewModel
  * [androidx.recyclerview.widget.RecyclerView.Adapter] that can display a [org.tesira.civic.db.Card].
  * Shows all Civilization Advances and highlights already purchases ones.
  */
-class InventoryAdapter : RecyclerView.Adapter<InventoryAdapter.ViewHolder?>() {
+class InventoryAdapter(private val mCivicViewModel: CivicViewModel) :
+    RecyclerView.Adapter<InventoryAdapter.ViewHolder?>() {
     private var mValues: MutableList<Card> = mutableListOf()
 
     /**
@@ -37,32 +40,102 @@ class InventoryAdapter : RecyclerView.Adapter<InventoryAdapter.ViewHolder?>() {
         )
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mItem = item
-        holder.binding.name.text = item.name
-        holder.binding.name.background = CivicViewModel.Companion.getItemBackgroundColor(
+        viewHolder.mItem = item
+        val binding = viewHolder.binding
+        binding.name.text = item.name
+        binding.name.background = CivicViewModel.Companion.getItemBackgroundColor(
             item,
-            holder.itemView.resources
+            viewHolder.itemView.resources
         )
-        holder.binding.price.text = item.price.toString()
-        holder.binding.vp.text = item.vp.toString()
-        holder.binding.heart.visibility = if (item.hasHeart) View.VISIBLE else View.INVISIBLE
+        binding.price.text = item.price.toString()
+        binding.vp.text = item.vp.toString()
+        binding.heart.visibility = if (item.hasHeart) View.VISIBLE else View.INVISIBLE
 
-        if (holder.mItem.bonus > 0) {
-            holder.binding.familybonus.visibility = View.VISIBLE
+        if (viewHolder.mItem.bonus > 0) {
+            binding.familybonus.visibility = View.VISIBLE
             val bonusText = "+${item.bonus} to ${item.bonusCard}"
-            holder.binding.familybonus.text = bonusText
+            binding.familybonus.text = bonusText
         } else {
-            holder.binding.familybonus.visibility = View.INVISIBLE
+            binding.familybonus.visibility = View.INVISIBLE
         }
 
         when (item.group1) {
-            CardColor.YELLOW, CardColor.GREEN -> holder.binding.name.setTextColor(
+            CardColor.YELLOW, CardColor.GREEN -> binding.name.setTextColor(
                 Color.BLACK
             )
 
-            else -> holder.binding.name.setTextColor(Color.WHITE)
+            else -> binding.name.setTextColor(Color.WHITE)
+        }
+        fun setupSingleBonusTextView(
+            textView: TextView,
+            creditValue: Int,
+            backgroundColorResId: Int,
+            textColor: Int
+        ) {
+            if (creditValue > 0) {
+                textView.text = creditValue.toString()
+                textView.setBackgroundColor(
+                    ContextCompat.getColor(
+                        viewHolder.itemView.context,
+                        backgroundColorResId
+                    )
+                )
+                textView.setTextColor(textColor)
+                textView.visibility = View.VISIBLE // Nur diesen TextView sichtbar machen
+            } else {
+                textView.visibility = View.GONE // Diesen TextView ausblenden, wenn Bonus 0 ist
+            }
+        }
+
+        val textColorOnDark = Color.WHITE
+        val textColorOnLight = Color.BLACK
+
+        // Blau
+        setupSingleBonusTextView(
+            binding.textViewBonusBlue,
+            item.creditsBlue,
+            R.color.arts,
+            textColorOnDark
+        )
+
+        // Grün
+        setupSingleBonusTextView(
+            binding.textViewBonusGreen,
+            item.creditsGreen,
+            R.color.science,
+            textColorOnLight
+        )
+
+        // Orange
+        setupSingleBonusTextView(
+            binding.textViewBonusOrange,
+            item.creditsOrange,
+            R.color.crafts,
+            textColorOnDark
+        )
+
+        // Rot
+        setupSingleBonusTextView(
+            binding.textViewBonusRed,
+            item.creditsRed,
+            R.color.civic,
+            textColorOnDark
+        )
+
+        // Gelb
+        setupSingleBonusTextView(
+            binding.textViewBonusYellow,
+            item.creditsYellow,
+            R.color.religion,
+            textColorOnLight
+        )
+
+        if (mCivicViewModel.showCredits.value!!) {
+            binding.bonusLayout.visibility = View.VISIBLE
+        } else {
+            binding.bonusLayout.visibility = View.GONE
         }
     }
 
