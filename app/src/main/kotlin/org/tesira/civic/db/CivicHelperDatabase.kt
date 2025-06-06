@@ -128,11 +128,8 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                                 }
                             }
                             for (x in 0..<element2.getElementsByTagName("effect").length) {
-                                val effect = element2.getElementsByTagName("effect")
-                                    .item(x).attributes.item(0).textContent
-                                val value =
-                                    element2.getElementsByTagName("effect")
-                                        .item(x).textContent.toInt()
+                                val effect = element2.getElementsByTagName("effect").item(x).attributes.item(0).textContent
+                                val value = element2.getElementsByTagName("effect").item(x).textContent.toInt()
                                 val newEffect = Effect(advance = name, name = effect, value = value)
                                 dao.insertEffect(newEffect)
                             }
@@ -143,7 +140,7 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                                 0, false, price, 0, false
                             )
 
-                            dao.insert(civic)
+                            dao.insertCard(civic)
                             for (x in 0..<element2.getElementsByTagName("special").length) {
                                 val abilityText =
                                     element2.getElementsByTagName("special").item(x).textContent

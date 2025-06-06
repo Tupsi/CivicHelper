@@ -17,8 +17,7 @@ import org.tesira.civic.db.CivicViewModel
  * [androidx.recyclerview.widget.RecyclerView.Adapter] that can display a [org.tesira.civic.db.Card].
  * Shows all Civilization Advances and highlights already purchases ones.
  */
-class InventoryAdapter(private val mCivicViewModel: CivicViewModel) :
-    RecyclerView.Adapter<InventoryAdapter.ViewHolder?>() {
+class InventoryAdapter(private val mCivicViewModel: CivicViewModel) : RecyclerView.Adapter<InventoryAdapter.ViewHolder?>() {
     private var mValues: MutableList<Card> = mutableListOf()
 
     /**
@@ -41,6 +40,8 @@ class InventoryAdapter(private val mCivicViewModel: CivicViewModel) :
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+        val textColorOnDark = Color.WHITE
+        val textColorOnLight = Color.BLACK
         val item = mValues[position]
         viewHolder.mItem = item
         val binding = viewHolder.binding
@@ -53,7 +54,12 @@ class InventoryAdapter(private val mCivicViewModel: CivicViewModel) :
         binding.vp.text = item.vp.toString()
         binding.heart.visibility = if (item.hasHeart) View.VISIBLE else View.INVISIBLE
 
-        if (viewHolder.mItem.bonus > 0) {
+        when (item.group1) {
+            CardColor.YELLOW, CardColor.GREEN -> binding.name.setTextColor(textColorOnLight)
+            else -> binding.name.setTextColor(textColorOnDark)
+        }
+
+        if (item.bonus > 0) {
             binding.familybonus.visibility = View.VISIBLE
             val bonusText = "+${item.bonus} to ${item.bonusCard}"
             binding.familybonus.text = bonusText
@@ -61,13 +67,18 @@ class InventoryAdapter(private val mCivicViewModel: CivicViewModel) :
             binding.familybonus.visibility = View.INVISIBLE
         }
 
-        when (item.group1) {
-            CardColor.YELLOW, CardColor.GREEN -> binding.name.setTextColor(
-                Color.BLACK
-            )
-
-            else -> binding.name.setTextColor(Color.WHITE)
+        if (item.price == 0) {
+            binding.price.visibility = View.GONE
+        } else {
+            binding.price.visibility = View.VISIBLE
         }
+
+        if (item.vp == 0) {
+            binding.vp.visibility = View.GONE
+        } else {
+            binding.vp.visibility = View.VISIBLE
+        }
+
         fun setupSingleBonusTextView(
             textView: TextView,
             creditValue: Int,
@@ -89,8 +100,6 @@ class InventoryAdapter(private val mCivicViewModel: CivicViewModel) :
             }
         }
 
-        val textColorOnDark = Color.WHITE
-        val textColorOnLight = Color.BLACK
 
         // Blau
         setupSingleBonusTextView(
@@ -143,9 +152,7 @@ class InventoryAdapter(private val mCivicViewModel: CivicViewModel) :
         return mValues.size
     }
 
-    inner class ViewHolder(val binding: ItemRowInventoryBinding) : RecyclerView.ViewHolder(
-        binding.root
-    ) {
+    inner class ViewHolder(val binding: ItemRowInventoryBinding) : RecyclerView.ViewHolder(binding.root) {
         lateinit var mItem: Card
 
         override fun toString(): String {

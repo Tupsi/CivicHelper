@@ -170,10 +170,11 @@ class BuyingFragment : Fragment() {
         mTreasureInput?.setOnEditorActionListener(TextView.OnEditorActionListener { v, keyCode, event ->
             if (event == null || event.action == KeyEvent.ACTION_UP || keyCode == KeyEvent.KEYCODE_ENTER) { // Sicherstellen, dass es ein "UP"-Event ist oder nur Enter ohne Event
                 mCivicViewModel.treasure.value = calculateInput(mTreasureInput!!.text.toString())
-
+                if (mCivicViewModel.remaining.value!! < 0) {
+                    tracker.clearSelection()
+                }
                 // Tastatur verstecken
-                val imm =
-                    requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(mTreasureInput!!.windowToken, 0)
 
                 // Fokus entfernen

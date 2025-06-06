@@ -16,7 +16,7 @@ class BuyingSelectionPredicate(
     override fun canSetStateForKey(key: String, nextState: Boolean): Boolean {
         // check if there is still enough treasure to buy the new selected card
 
-        val itemList = adapter.items // Greife auf die Liste vom Adapter zu
+        val itemList = adapter.mValues // Greife auf die Liste vom Adapter zu
         var adv: Card? = null
         for (card in itemList) {
             if (key == card.name) {

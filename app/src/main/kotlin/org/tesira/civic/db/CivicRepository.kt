@@ -153,7 +153,7 @@ class CivicRepository(application: Application) {
         val purchasesForBonus = mCivicDao.getPurchasesForFamilyBonus()
         for (cardLoop in purchasesForBonus) {
             val bonusTo = mCivicDao.getAdvanceByNameToCard(cardLoop.bonusCard!!)
-            var newCurrent = bonusTo.currentPrice - cardLoop.bonus
+            var newCurrent = bonusTo!!.currentPrice - cardLoop.bonus
             if (newCurrent < 0) newCurrent = 0
             mCivicDao.updateCurrentPrice(bonusTo.name, newCurrent)
         }
@@ -185,6 +185,10 @@ class CivicRepository(application: Application) {
             mCivicDao.setHeartsForCards(cardNames)
             callback?.onComplete()
         }
+    }
+
+    fun insertCard(card: Card) {
+        repositoryExecutor.execute { mCivicDao.insertCard(card) }
     }
 
     companion object {

@@ -6,13 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
+import org.tesira.civic.databinding.ItemRowPurchasablesBinding
 import org.tesira.civic.db.Card
 import org.tesira.civic.db.CardColor
 import org.tesira.civic.db.CivicViewModel
@@ -22,89 +21,66 @@ import org.tesira.civic.db.CivicViewModel
  * Checks if there is enough treasure, otherwise grays out the item. Sets a heart if user has
  * set a "what do I want?" preference.
  */
-class BuyingAdapter(
-    private val mCivicViewModel: CivicViewModel
-) : RecyclerView.Adapter<BuyingAdapter.ViewHolder?>() {
+class BuyingAdapter(private val mCivicViewModel: CivicViewModel) : RecyclerView.Adapter<BuyingAdapter.ViewHolder?>() {
     private lateinit var tracker: SelectionTracker<String>
-    val items: MutableList<Card> = mutableListOf()
-
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val nameItemView: TextView = itemView.findViewById<TextView>(R.id.name)
-        val priceItemView: TextView = itemView.findViewById<TextView>(R.id.price)
-        val bonusItemView: TextView = itemView.findViewById<TextView>(R.id.familybonus)
-        val vpItemView: TextView = itemView.findViewById<TextView>(R.id.vp)
-        val mCardView: View = itemView.findViewById<View>(R.id.card)
-        val mHeartView: ImageView = itemView.findViewById<ImageView>(R.id.heart)
-
-        val bonusLayout: LinearLayout = itemView.findViewById<LinearLayout>(R.id.bonusLayout)
-        val textViewBonusBlue: TextView = itemView.findViewById<TextView>(R.id.textViewBonusBlue)
-        val textViewBonusGreen: TextView = itemView.findViewById<TextView>(R.id.textViewBonusGreen)
-        val textViewBonusOrange: TextView =
-            itemView.findViewById<TextView>(R.id.textViewBonusOrange)
-        val textViewBonusRed: TextView = itemView.findViewById<TextView>(R.id.textViewBonusRed)
-        val textViewBonusYellow: TextView =
-            itemView.findViewById<TextView>(R.id.textViewBonusYellow)
-
-        val itemDetails: ItemDetailsLookup.ItemDetails<String>
-            get() = BuyingItemDetails(
-                bindingAdapterPosition,
-                nameItemView.text.toString()
-            )
-    }
+    val mValues: MutableList<Card> = mutableListOf()
 
     fun setSelectionTracker(tracker: SelectionTracker<String>) {
         this.tracker = tracker
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.item_row_purchasables, viewGroup, false)
-        return ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(
+            ItemRowPurchasablesBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+        )
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val current = items[position]
-        val name = current.name
-        val price = current.currentPrice
-        val res = viewHolder.itemView.resources
-        val isSelected = tracker.isSelected(name)
-        viewHolder.nameItemView.text = name
-        viewHolder.nameItemView.background =
-            CivicViewModel.Companion.getItemBackgroundColor(current, res)
-        viewHolder.priceItemView.text = current.currentPrice.toString()
-        viewHolder.vpItemView.text = current.vp.toString()
-        viewHolder.mCardView.isActivated = isSelected
+        val textColorOnDark = Color.WHITE
+        val textColorOnLight = Color.BLACK
+        val item = mValues[position]
+        viewHolder.mItem = item
+        val binding = viewHolder.binding
+        val isSelected = tracker.isSelected(item.name)
+        binding.name.text = item.name
+        binding.name.background = CivicViewModel.Companion.getItemBackgroundColor(
+            item,
+            viewHolder.itemView.resources
+        )
+        binding.price.text = item.price.toString()
+        binding.price.text = item.currentPrice.toString()
+        binding.vp.text = item.vp.toString()
+        binding.card.isActivated = isSelected
+        binding.heart.visibility = if (item.hasHeart) View.VISIBLE else View.INVISIBLE
+
         // auto select all gets which have costs are reduced from bonus to zero
-        if (!isSelected && price == 0) {
-            tracker.select(name)
+        if (!isSelected && item.currentPrice == 0) {
+            tracker.select(item.name)
         } else {
             // can we buy the card?
-            if (!isSelected && mCivicViewModel.remaining.getValue()!! < price) {
-                viewHolder.mCardView.alpha = 0.25f
+            if (!isSelected && mCivicViewModel.remaining.getValue()!! < item.currentPrice) {
+                binding.card.alpha = 0.25f
             } else {
-                viewHolder.mCardView.alpha = 1f
+                binding.card.alpha = 1f
             }
         }
 
         // adjust color of name depending on background, so it is readable
-        when (current.group1) {
-            CardColor.YELLOW, CardColor.GREEN -> viewHolder.nameItemView.setTextColor(
-                Color.BLACK
-            )
-
-            else -> viewHolder.nameItemView.setTextColor(Color.WHITE)
+        when (item.group1) {
+            CardColor.YELLOW, CardColor.GREEN -> binding.name.setTextColor(textColorOnLight)
+            else -> binding.name.setTextColor(textColorOnDark)
         }
 
         // put the family bonus on the card
-        if (current.bonus > 0) {
-            viewHolder.bonusItemView.visibility = View.VISIBLE
-            val bonus = "+" + current.bonus + " to " + current.bonusCard
-            viewHolder.bonusItemView.text = bonus
+        if (item.bonus > 0) {
+            binding.familybonus.visibility = View.VISIBLE
+            val bonusText = "+${item.bonus} to ${item.bonusCard}"
+            binding.familybonus.text = bonusText
         } else {
-            viewHolder.bonusItemView.visibility = View.INVISIBLE
+            binding.familybonus.visibility = View.INVISIBLE
         }
-        viewHolder.mHeartView.visibility =
-            if (items[position].hasHeart) View.VISIBLE else View.INVISIBLE
 
         fun setupSingleBonusTextView(
             textView: TextView,
@@ -121,65 +97,61 @@ class BuyingAdapter(
                     )
                 )
                 textView.setTextColor(textColor)
-                textView.visibility = View.VISIBLE // Nur diesen TextView sichtbar machen
+                textView.visibility = View.VISIBLE
             } else {
                 textView.visibility = View.GONE // Diesen TextView ausblenden, wenn Bonus 0 ist
             }
         }
 
-        val textColorOnDark = Color.WHITE
-        val textColorOnLight = Color.BLACK
-
-
         // Blau
         setupSingleBonusTextView(
-            viewHolder.textViewBonusBlue,
-            current.creditsBlue,
-            R.color.arts, // Deine Farbressource
+            binding.textViewBonusBlue,
+            item.creditsBlue,
+            R.color.arts,
             textColorOnDark
         )
 
         // Grün
         setupSingleBonusTextView(
-            viewHolder.textViewBonusGreen,
-            current.creditsGreen,
-            R.color.science, // Deine Farbressource
+            binding.textViewBonusGreen,
+            item.creditsGreen,
+            R.color.science,
             textColorOnLight
         )
 
         // Orange
         setupSingleBonusTextView(
-            viewHolder.textViewBonusOrange,
-            current.creditsOrange,
-            R.color.crafts, // Deine Farbressource
+            binding.textViewBonusOrange,
+            item.creditsOrange,
+            R.color.crafts,
             textColorOnDark
         )
 
         // Rot
         setupSingleBonusTextView(
-            viewHolder.textViewBonusRed,
-            current.creditsRed,
-            R.color.civic, // Deine Farbressource
+            binding.textViewBonusRed,
+            item.creditsRed,
+            R.color.civic,
             textColorOnDark
         )
 
         // Gelb
         setupSingleBonusTextView(
-            viewHolder.textViewBonusYellow,
-            current.creditsYellow,
-            R.color.religion, // Deine Farbressource
+            binding.textViewBonusYellow,
+            item.creditsYellow,
+            R.color.religion,
             textColorOnLight
         )
 
         if (mCivicViewModel.showCredits.value!!) {
-            viewHolder.bonusLayout.visibility = View.VISIBLE
+            binding.bonusLayout.visibility = View.VISIBLE
         } else {
-            viewHolder.bonusLayout.visibility = View.GONE
+            binding.bonusLayout.visibility = View.GONE
         }
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return mValues.size
     }
 
     /**
@@ -191,9 +163,18 @@ class BuyingAdapter(
     fun changeList(newList: MutableList<Card>) {
         val saveSelection = Bundle()
         tracker.onSaveInstanceState(saveSelection)
-        items.clear()
-        items.addAll(newList)
+        mValues.clear()
+        mValues.addAll(newList)
         notifyDataSetChanged()
         tracker.onRestoreInstanceState(saveSelection)
+    }
+
+    class ViewHolder(val binding: ItemRowPurchasablesBinding) : RecyclerView.ViewHolder(binding.root) {
+        lateinit var mItem: Card
+        val itemDetails: ItemDetailsLookup.ItemDetails<String>
+            get() = BuyingItemDetails(
+                bindingAdapterPosition,
+                binding.name.text.toString()
+            )
     }
 }
