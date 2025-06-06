@@ -5,8 +5,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.util.Log
+
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.AndroidViewModel
@@ -739,6 +742,17 @@ class CivicViewModel(application: Application) :
 
         @JvmStatic
         fun getItemBackgroundColor(card: Card, res: Resources): Drawable? {
+
+            val gradient = GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                intArrayOf(
+                    ResourcesCompat.getColor(res, R.color.arts, null),
+                    ResourcesCompat.getColor(res, R.color.science, null),
+                    ResourcesCompat.getColor(res, R.color.crafts, null),
+                    ResourcesCompat.getColor(res, R.color.civic, null),
+                    ResourcesCompat.getColor(res, R.color.religion, null)
+                )
+            )
             var backgroundColor = 0
             if (card.group2 == null) {
                 backgroundColor = when (card.group1) {
@@ -762,10 +776,35 @@ class CivicViewModel(application: Application) :
                     "Monument" -> backgroundColor = R.drawable.monument_background
                     "Written Record Extra Credits" -> backgroundColor = R.drawable.written_record_background
                     "Monument Extra Credits" -> backgroundColor = R.drawable.monument_background
-                    "Extra Credits WR & Monument" -> backgroundColor = R.drawable.extra_credits_background
+                    "Extra Credits WR & Monument" -> return gradient
+                    //"Extra Credits WR & Monument" -> backgroundColor = R.drawable.extra_credits_background
                 }
             }
             return ResourcesCompat.getDrawable(res, backgroundColor, null)
+        }
+
+        fun getTextColor(card: Card): Int {
+            var textColor: Int = when (card.group1) {
+                CardColor.YELLOW, CardColor.GREEN -> Color.BLACK
+                else -> Color.WHITE
+            }
+
+            textColor = when (card.name) {
+                "Engineering" -> Color.DKGRAY
+                "Literacy" -> Color.LTGRAY
+                "Mathematics" -> Color.LTGRAY
+                "Monument" -> Color.DKGRAY
+                "Mysticism" -> Color.DKGRAY
+                "Philosophy" -> Color.DKGRAY
+                "Theocracy" -> Color.DKGRAY
+                "Wonder of the World" -> Color.WHITE
+                "Written Record" -> Color.WHITE
+                "Extra Credits WR & Monument" -> Color.DKGRAY
+                "Written Record Extra Credits" -> Color.WHITE
+                "Monument Extra Credits" -> Color.DKGRAY
+                else -> textColor
+            }
+            return textColor
         }
     }
 }

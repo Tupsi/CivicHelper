@@ -72,6 +72,8 @@ class BuyingAdapter(private val mCivicViewModel: CivicViewModel) : RecyclerView.
             CardColor.YELLOW, CardColor.GREEN -> binding.name.setTextColor(textColorOnLight)
             else -> binding.name.setTextColor(textColorOnDark)
         }
+        val textColor = CivicViewModel.Companion.getTextColor(item)
+        binding.name.setTextColor(textColor)
 
         // put the family bonus on the card
         if (item.bonus > 0) {

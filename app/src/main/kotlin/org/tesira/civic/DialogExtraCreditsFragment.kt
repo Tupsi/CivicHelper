@@ -139,7 +139,7 @@ class DialogExtraCreditsFragment : DialogFragment() {
             DialogInterface.OnClickListener { dialogInterface: DialogInterface?, id: Int ->
                 var name = "Extra Credits WR & Monument"
                 // die Wahl der Farbe ist im Moment nicht relevant, weil der Hintergrund im ViewModel selektiert wird nach name für diese Ausnahmen
-                var group1 = CardColor.BLUE
+                var group1 = CardColor.YELLOW
                 var group2 = CardColor.YELLOW
                 when (initialCredits) {
                     10 -> {
@@ -198,7 +198,6 @@ class DialogExtraCreditsFragment : DialogFragment() {
 
         if (savedInstanceState != null) {
             blue = savedInstanceState.getInt(STATE_BLUE, 0)
-            Log.d("ExtraCreditsDialog", "Restored blue: $blue")
         }
         binding.spinnerblue.post(Runnable { binding.spinnerblue.setSelection(items.indexOf(blue.toString())) })
         return dialogInstance
