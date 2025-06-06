@@ -29,7 +29,7 @@
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            app:defaultValue="1"
+            app:defaultValue="0"
             app:key="columns"
             app:entries="@array/columns_entries"
             app:entryValues="@array/columns_values"
