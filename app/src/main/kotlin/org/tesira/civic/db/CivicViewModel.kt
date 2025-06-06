@@ -3,7 +3,6 @@ package org.tesira.civic.db
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -583,7 +582,7 @@ class CivicViewModel(application: Application) :
             }
             // Number of columns
         } else if (PREF_KEY_COLUMNS == key) {
-            val newColumns = sharedPreferences.getString(key, "1")!!.toInt()
+            val newColumns = sharedPreferences.getString(key, "0")!!.toInt()
             if (_columns.getValue() == null || _columns.getValue() != newColumns) {
                 _columns.value = newColumns
             }
@@ -646,8 +645,7 @@ class CivicViewModel(application: Application) :
         // 1. Hole die aktuelle Gerätekonfiguration
         val configuration = context.resources.configuration
         val screenWidthDp = configuration.screenWidthDp // Aktuelle Bildschirmbreite in dp
-        val orientation = configuration.orientation // Aktuelle Orientierung
-        Log.d("CivicViewModel", "calculateColumnCount: $screenWidthDp, orientation: $orientation, columns: $columns")
+//        val orientation = configuration.orientation // Aktuelle Orientierung
         return if (columns == 0) {
             screenWidthDp / 180
         } else {
