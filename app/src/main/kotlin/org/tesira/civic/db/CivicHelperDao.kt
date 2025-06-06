@@ -10,7 +10,10 @@ import org.tesira.civic.Calamity
 @Dao
 interface CivicHelperDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(civilizationAdvance: Card)
+    fun insertCard(civilizationAdvance: Card)
+
+    @Query("DELETE FROM cards WHERE name = :name")
+    fun deleteCard(name: String)
 
     @Query("DELETE FROM cards")
     fun deleteAllCards()
@@ -37,7 +40,7 @@ interface CivicHelperDao {
     fun updateBonus(name: String, newBonus: Int)
 
     @Query("SELECT * FROM cards WHERE name = :name ")
-    fun getAdvanceByNameToCard(name: String): Card
+    fun getAdvanceByNameToCard(name: String): Card?
 
     @Query(
         "SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL ORDER BY " +
@@ -64,7 +67,7 @@ interface CivicHelperDao {
     @Query("DELETE FROM purchases")
     fun deleteAllPurchases()
 
-    @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL AND cards.vp < 6")
+    @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL AND cards.vp IN (1,3)")
     fun getPurchasesForFamilyBonus(): List<Card>
 
     @Query("UPDATE cards SET currentPrice = :current WHERE name = :name")
@@ -108,4 +111,17 @@ interface CivicHelperDao {
 
     @Query("UPDATE cards SET hasHeart = 1 WHERE name IN (:cardNames)")
     fun setHeartsForCards(cardNames: List<String>)
+
+    @Query(
+        """
+    UPDATE cards 
+    SET creditsBlue   = creditsBlue   + :blue,
+        creditsGreen  = creditsGreen  + :green,
+        creditsOrange = creditsOrange + :orange,
+        creditsRed    = creditsRed    + :red,
+        creditsYellow = creditsYellow + :yellow
+    WHERE name = :cardName
+"""
+    )
+    fun addCreditsToCard(cardName: String, blue: Int, green: Int, orange: Int, red: Int, yellow: Int)
 }

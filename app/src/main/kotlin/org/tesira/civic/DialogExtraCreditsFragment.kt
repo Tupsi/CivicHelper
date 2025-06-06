@@ -137,8 +137,26 @@ class DialogExtraCreditsFragment : DialogFragment() {
         builder.setPositiveButton(
             R.string.ok,
             DialogInterface.OnClickListener { dialogInterface: DialogInterface?, id: Int ->
+                var name = "Extra Credits WR & Monument"
+                // die Wahl der Farbe ist im Moment nicht relevant, weil der Hintergrund im ViewModel selektiert wird nach name für diese Ausnahmen
+                var group1 = CardColor.BLUE
+                var group2 = CardColor.YELLOW
+                when (initialCredits) {
+                    10 -> {
+                        name = "Written Record Extra Credits"
+                        group1 = CardColor.RED
+                        group2 = CardColor.GREEN
+                    }
+
+                    20 -> {
+                        name = "Monument Extra Credits"
+                        group1 = CardColor.ORANGE
+                        group2 = CardColor.YELLOW
+                    }
+                }
+
                 val card = Card(
-                    name = "Extra Credits",
+                    name = name,
                     creditsBlue = blue,
                     creditsGreen = green,
                     creditsOrange = orange,
@@ -147,8 +165,8 @@ class DialogExtraCreditsFragment : DialogFragment() {
                     family = 0,
                     vp = 0,
                     price = 0,
-                    group1 = CardColor.RED,
-                    group2 = null,
+                    group1 = group1,
+                    group2 = group2,
                     bonusCard = null,
                     bonus = 0,
                     isBuyable = false,
@@ -156,8 +174,10 @@ class DialogExtraCreditsFragment : DialogFragment() {
                     buyingPrice = 0,
                     hasHeart = false
                 )
+                mCivicViewModel.insertPurchase(card.name)
                 mCivicViewModel.addBonus(card)
                 mCivicViewModel.requestPriceRecalculation()
+                mCivicViewModel.insertCard(card)
 
                 val result = Bundle()
                 // Keine spezifischen Daten benötigt, leeres Bundle ist ok

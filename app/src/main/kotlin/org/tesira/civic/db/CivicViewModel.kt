@@ -253,6 +253,10 @@ class CivicViewModel(application: Application) :
         mRepository.insertPurchase(purchase)
     }
 
+    fun insertCard(card: Card) {
+        mRepository.insertCard(card)
+    }
+
     fun setSortingOrder(order: String) {
         if (order != _currentSortingOrder.getValue()) {
             _currentSortingOrder.value = order
@@ -299,7 +303,6 @@ class CivicViewModel(application: Application) :
         defaultPrefs.edit { putInt(PREF_KEY_CITIES, 0) }
         defaultPrefs.edit { putInt(PREF_KEY_TIME, 0) }
         defaultPrefs.edit { putInt(PREF_KEY_TREASURE, 0) }
-//        defaultPrefs.edit { putString(PREF_KEY_HEART, "custom") }
         defaultPrefs.edit { remove(PREF_KEY_HEART) }
         defaultPrefs.edit { remove(PREF_KEY_CIVILIZATION) }
 
@@ -754,11 +757,12 @@ class CivicViewModel(application: Application) :
                     "Written Record" -> backgroundColor = R.drawable.written_record_background
                     "Theocracy" -> backgroundColor = R.drawable.theocracy_background
                     "Literacy" -> backgroundColor = R.drawable.literacy_background
-                    "Wonder of the World" -> backgroundColor =
-                        R.drawable.wonders_of_the_world_background
-
+                    "Wonder of the World" -> backgroundColor = R.drawable.wonders_of_the_world_background
                     "Philosophy" -> backgroundColor = R.drawable.philosophy_background
                     "Monument" -> backgroundColor = R.drawable.monument_background
+                    "Written Record Extra Credits" -> backgroundColor = R.drawable.written_record_background
+                    "Monument Extra Credits" -> backgroundColor = R.drawable.monument_background
+                    "Extra Credits WR & Monument" -> backgroundColor = R.drawable.extra_credits_background
                 }
             }
             return ResourcesCompat.getDrawable(res, backgroundColor, null)
