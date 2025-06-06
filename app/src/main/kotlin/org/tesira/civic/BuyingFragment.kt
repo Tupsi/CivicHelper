@@ -1,5 +1,6 @@
 package org.tesira.civic
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
@@ -89,6 +90,7 @@ class BuyingFragment : Fragment() {
             })
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -182,18 +184,14 @@ class BuyingFragment : Fragment() {
             false
         })
 
-        mRecyclerView.setOnTouchListener { _, _ ->
-            // EditText verliert Fokus
+        mRecyclerView.setOnTouchListener { v, _ ->
             mTreasureInput?.clearFocus()
-            // Root erhält Fokus, damit der Cursor verschwindet
             binding.root.requestFocus()
 
-            // Tastatur schließen
-            val imm =
-                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(mTreasureInput?.windowToken, 0)
-
-            false  // Touch-Event soll weiterhin an RecyclerView weitergegeben werden
+            v.performClick()
+            false
         }
 
         // button which finalizes the buy process
