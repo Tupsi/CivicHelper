@@ -645,14 +645,14 @@ class CivicViewModel(application: Application) :
     fun calculateColumnCount(context: Context): Int {
         // 1. Hole die aktuelle Gerätekonfiguration
         val configuration = context.resources.configuration
-//        val screenWidthDp = configuration.screenWidthDp // Aktuelle Bildschirmbreite in dp
+        val screenWidthDp = configuration.screenWidthDp // Aktuelle Bildschirmbreite in dp
         val orientation = configuration.orientation // Aktuelle Orientierung
-
         // 2. Deine Logik zur Bestimmung der Spaltenanzahl
         // Beispiel: Wenn im Querformat und die Benutzereinstellung 1 ist, setze auf 2 Spalten.
         return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (this.columns <= 1) {
-                2 // Immer 2 Spalten im Querformat, wenn User 1 wollte
+//                2 // Immer 2 Spalten im Querformat, wenn User 1 wollte
+                screenWidthDp / 200
             } else {
                 this.columns
             }
