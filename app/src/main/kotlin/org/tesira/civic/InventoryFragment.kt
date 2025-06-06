@@ -71,7 +71,7 @@ class InventoryFragment
         }
 
         // Set the adapter
-        adapter = InventoryAdapter()
+        adapter = InventoryAdapter(mCivicViewModel)
         mRecyclerView.setAdapter(adapter)
 
         // LiveData beobachten und Adapter aktualisieren
