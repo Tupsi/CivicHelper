@@ -14,6 +14,10 @@
         android:icon="@drawable/ic_inventory"
         android:title="@string/menu_item_purchases" />
     <item
+        android:id="@+id/allCardsFragment"
+        android:icon="@drawable/ic_all_cards"
+        android:title="@string/menu_item_all_cards" />
+    <item
         android:id="@+id/tipsFragment"
         android:icon="@drawable/ic_lightbulb"
         android:title="@string/menu_item_tips" />

@@ -24,11 +24,17 @@
         android:orderInCategory="20" />
 
     <item
+        android:id="@+id/allCardsFragment"
+        android:icon="@drawable/ic_all_cards"
+        app:showAsAction="always"
+        android:orderInCategory="30"
+        android:title="@string/menu_item_all_cards" />
+
+    <item
         android:id="@+id/tipsFragment"
         android:icon="@drawable/ic_lightbulb"
         android:title="@string/menu_item_tips"
-        app:showAsAction="always"
-        android:orderInCategory="30" />
+        android:orderInCategory="35" />
 
     <item
         android:id="@+id/menu_newGame"

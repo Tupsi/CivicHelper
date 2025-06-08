@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
                     R.id.homeFragment,
                     R.id.buyingFragment,
                     R.id.inventoryFragment,
+                    R.id.allCardsFragment,
                     R.id.tipsFragment,
                     R.id.settingsFragment,
                     R.id.aboutFragment

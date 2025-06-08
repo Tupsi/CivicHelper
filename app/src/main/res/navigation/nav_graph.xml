@@ -9,27 +9,13 @@
         android:id="@+id/homeFragment"
         android:name="org.tesira.civic.HomeFragment"
         android:label="@string/menu_item_home"
-        tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_homeFragment_to_buyingFragment"
-            app:destination="@id/buyingFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_purchasesFragment"
-            app:destination="@id/inventoryFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_tipsFragment"
-            app:destination="@id/tipsFragment" />
-    <!-- Wenn du von Home auch zu Settings/About/Tips direkt navigieren könntest, hier Aktionen hinzufügen -->
-    </fragment>
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/buyingFragment"
         android:name="org.tesira.civic.BuyingFragment"
         android:label="@string/menu_item_buying"
-        tools:layout="@layout/fragment_buying">
-        <!-- Keine direkten Aktionen von hier zu anderen Fragmenten laut deiner Beschreibung -->
-        <!-- Navigation zu anderen Zielen erfolgt über den Drawer -->
-    </fragment>
+        tools:layout="@layout/fragment_buying" />
 
     <fragment
         android:id="@+id/inventoryFragment"
@@ -53,5 +39,11 @@
         android:id="@+id/settingsFragment"
         android:name="org.tesira.civic.SettingsFragment"
         android:label="@string/menu_item_settings" />
+
+    <fragment
+        android:id="@+id/allCardsFragment"
+        android:name="org.tesira.civic.AllCardsFragment"
+        android:label="@string/menu_item_all_cards"
+        tools:layout="@layout/fragment_all_cards" />
 
 </navigation>

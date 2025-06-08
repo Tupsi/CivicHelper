@@ -66,6 +66,8 @@ class CivicViewModel(application: Application) :
     val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
     val showCredits: LiveData<Boolean> = _showCredits
 
+    val allCardsWithDetails: LiveData<List<CardWithDetails>> = mRepository.getAllCardsWithDetails()
+
     fun getShowAnatomyDialogEvent(): LiveData<Event<List<String>>> {
         return showAnatomyDialogEvent
     }
