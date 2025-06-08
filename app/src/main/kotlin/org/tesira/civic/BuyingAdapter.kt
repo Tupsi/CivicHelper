@@ -49,7 +49,7 @@ class BuyingAdapter(private val mCivicViewModel: CivicViewModel) : RecyclerView.
             item,
             viewHolder.itemView.resources
         )
-        binding.price.text = item.price.toString()
+//        binding.price.text = item.price.toString()
         binding.price.text = item.currentPrice.toString()
         binding.vp.text = item.vp.toString()
         binding.card.isActivated = isSelected

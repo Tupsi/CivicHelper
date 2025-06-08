@@ -39,6 +39,7 @@
     <string name="menu_item_about">About</string>
     <string name="menu_item_home"> </string>
     <string name="menu_item_purchases">Inventory</string>
+    <string name="menu_item_all_cards">Library</string>"
 
     <!-- Buying Fragment-->
     <string name="remaining_treasure">remaining :</string>
@@ -85,5 +86,11 @@
     <string name="clear">Clear</string>
     <string name="buy">Buy</string>
     <string name="family">Family</string>
+
+    <!-- AllCards Fragment -->
+    <string name="effects">Effects:</string>
+    <string name="specials">Specials:</string>
+    <string name="immunities">Immunities:</string>
+    <string name="search">Search...</string>
 
 </resources>

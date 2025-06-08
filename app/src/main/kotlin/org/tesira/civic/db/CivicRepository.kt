@@ -53,6 +53,10 @@ class CivicRepository(application: Application) {
         return mCivicDao.getAllAdvancesNotBoughtLiveData(sortingOrder)
     }
 
+    fun getAllCardsWithDetails(): LiveData<List<CardWithDetails>> {
+        return mCivicDao.getAllCardsWithDetails()
+    }
+
     val calamityBonusLiveData: LiveData<List<Calamity>>
         get() = mCivicDao.getCalamityBonusLiveData()
     val specialAbilitiesLiveData: LiveData<List<String>>

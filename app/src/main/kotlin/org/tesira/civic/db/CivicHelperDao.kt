@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import org.tesira.civic.Calamity
 
 @Dao
@@ -124,4 +125,12 @@ interface CivicHelperDao {
 """
     )
     fun addCreditsToCard(cardName: String, blue: Int, green: Int, orange: Int, red: Int, yellow: Int)
+
+    @Transaction // Wichtig für @Relation, um atomar ausgeführt zu werden
+    @Query("SELECT * FROM cards WHERE name = :cardName")
+    fun getCardWithDetailsByName(cardName: String): LiveData<CardWithDetails?> // Oder Flow, oder einfach CardWithDetails?
+
+    @Transaction
+    @Query("SELECT * FROM cards")
+    fun getAllCardsWithDetails(): LiveData<List<CardWithDetails>> // Oder Flow, oder List<CardWithDetails>
 }
