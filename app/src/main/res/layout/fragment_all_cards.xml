@@ -8,7 +8,7 @@
 
     <!-- Button zum Sortieren -->
     <Button
-        android:id="@+id/buttonSortAllCards"
+        android:id="@+id/btnSortAllCards"
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,10 +29,10 @@
         android:layout_marginEnd="8dp"
         android:hint="@string/search"
         app:endIconMode="clear_text"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonSortAllCards"
-        app:layout_constraintEnd_toStartOf="@+id/buttonSortAllCards"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSortAllCards"
+        app:layout_constraintEnd_toStartOf="@+id/btnSortAllCards"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/buttonSortAllCards">
+        app:layout_constraintTop_toTopOf="@+id/btnSortAllCards">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextSearchAllCards"
@@ -49,7 +49,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/buttonSortAllCards"
+        app:layout_constraintTop_toBottomOf="@+id/btnSortAllCards"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:text="Lade Karten..."
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/buttonSortAllCards"
+        app:layout_constraintTop_toBottomOf="@+id/btnSortAllCards"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

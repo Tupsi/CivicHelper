@@ -28,7 +28,6 @@ class CivicViewModel(application: Application) :
     AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
     private lateinit var buyableCardsMapObserver: Observer<MutableList<Card>>
     private lateinit var tipsArray: Array<String>
-
     private val mRepository: CivicRepository = CivicRepository(application)
     private val vp = MutableLiveData<Int>(0)
     private val cities = MutableLiveData<Int>(0)
@@ -37,43 +36,107 @@ class CivicViewModel(application: Application) :
     private val _currentSortingOrder = MutableLiveData<String>()
     private val _columns = MutableLiveData<Int>()
     private val showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
-    private val specialAbilitiesRawLiveData: LiveData<List<String>> =
-        mRepository.specialAbilitiesLiveData
+    private val specialAbilitiesRawLiveData: LiveData<List<String>> = mRepository.specialAbilitiesLiveData
     private val immunitiesRawLiveData: LiveData<List<String>> = mRepository.immunitiesLiveData
     private val combinedSpecialsAndImmunitiesLiveData = MediatorLiveData<MutableList<String>>()
     private val _selectedTipIndex = MutableLiveData<Int>()
     private val _astVersion = MutableLiveData<String>()
     private val _civNumber = MutableLiveData<String>()
     private val _showExtraCreditsDialogEvent = MutableLiveData<Event<Int>>()
-    private val defaultPrefs: SharedPreferences
+    private val defaultPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(mApplication)
     private val totalVp = MediatorLiveData<Int>()
     private val buyableCardMap: MutableMap<String, Card> = HashMap<String, Card>()
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
     private val _isFinalizingPurchase = MutableLiveData(false)
     private val _showCredits = MutableLiveData<Boolean>()
+    private val _pendingExtraCredits = MutableLiveData<Int?>()
+    private val userPreferenceForHeartCards = MutableLiveData<String?>()
+    private val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = mRepository.getAllCardsWithDetailsUnsorted()
+    private val _navigateToDashboardEvent = MutableLiveData<Event<Boolean>>()
+    private val _navigateToCivilizationSelectionEvent = MutableLiveData<Event<Unit>>()
+    private val _selectedCardKeysForState = MutableLiveData<MutableSet<String?>?>(mutableSetOf<String?>())
 
+    val selectedCardKeysForState: LiveData<MutableSet<String?>?> get() = _selectedCardKeysForState
     var selectedTipIndex: LiveData<Int> = _selectedTipIndex
     val treasure: MutableLiveData<Int> = MutableLiveData<Int>(0)
     val remaining: MutableLiveData<Int> = MutableLiveData<Int>(0)
     var librarySelected: Boolean = false
     val allAdvancesNotBought: LiveData<MutableList<Card>>
-    var cardBonus: MutableLiveData<HashMap<CardColor, Int>> =
-        MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
+    var cardBonus: MutableLiveData<HashMap<CardColor, Int>> = MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
     val calamityBonusListLiveData: LiveData<List<Calamity>> = mRepository.calamityBonusLiveData
     var astVersion: LiveData<String> = _astVersion
     var getCivNumber: LiveData<String> = _civNumber
     val cardsVpLiveData: LiveData<Int>
     val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
     val showCredits: LiveData<Boolean> = _showCredits
+    val allCardsWithDetails: LiveData<List<CardWithDetails>>
+    val showExtraCreditsDialogEvent: LiveData<Event<Int>> get() = _showExtraCreditsDialogEvent
+    val currentSortingOrder: LiveData<String> get() = _currentSortingOrder
+    val inventoryAsCardLiveData: LiveData<List<Card>> get() = mRepository.inventoryAsCardLiveData
+    val navigateToDashboardEvent: LiveData<Event<Boolean>> get() = _navigateToDashboardEvent
+    val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>> get() = _navigateToCivilizationSelectionEvent
+    val blue: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.BLUE, 0)
+    val green: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.GREEN, 0)
+    val orange: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.ORANGE, 0)
+    val red: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.RED, 0)
+    val yellow: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.YELLOW, 0)
 
-    val allCardsWithDetails: LiveData<List<CardWithDetails>> = mRepository.getAllCardsWithDetails()
+    init {
+        defaultPrefs.registerOnSharedPreferenceChangeListener(this)
+        allCardsWithDetails = _currentSortingOrder.switchMap { sortOrder ->
+            allCardsUnsortedOnce.map { unsortedList ->
+//                Log.d("CivicViewModel", "Sortiere allCards. Unsortierte Liste vorhanden (Größe: ${unsortedList?.size ?: 0}). SortOrder: $sortOrder")
+                if (unsortedList.isEmpty()) {
+                    emptyList()
+                } else {
+                    sortCardList(unsortedList, sortOrder)
+                }
+            }
+        }
+        cardsVpLiveData = mRepository.cardsVp
+        setupTotalVpMediator()
+        loadData()
+        allAdvancesNotBought = _currentSortingOrder
+            .switchMap { order: String ->
+                mRepository.getAllAdvancesNotBoughtLiveData(order).map { it.toMutableList() }
+            }
+
+        setupCombinedSpecialsLiveData()
+        setupBuyableCardsObserver()
+    }
+
+    fun loadData() {
+
+        val blue: Int = defaultPrefs.getInt(CardColor.BLUE.colorName, 0)
+        val green: Int = defaultPrefs.getInt(CardColor.GREEN.colorName, 0)
+        val orange: Int = defaultPrefs.getInt(CardColor.ORANGE.colorName, 0)
+        val red: Int = defaultPrefs.getInt(CardColor.RED.colorName, 0)
+        val yellow: Int = defaultPrefs.getInt(CardColor.YELLOW.colorName, 0)
+
+        val currentBonuses = cardBonus.value!!
+        currentBonuses.put(CardColor.BLUE, blue)
+        currentBonuses.put(CardColor.GREEN, green)
+        currentBonuses.put(CardColor.ORANGE, orange)
+        currentBonuses.put(CardColor.RED, red)
+        currentBonuses.put(CardColor.YELLOW, yellow)
+        cardBonus.value = currentBonuses
+
+        userPreferenceForHeartCards.value = defaultPrefs.getString(PREF_KEY_HEART, "custom")
+        setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0))
+        setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME, 0))
+        _columns.value = defaultPrefs.getString(PREF_KEY_COLUMNS, "0")!!.toInt()
+        _currentSortingOrder.value = (defaultPrefs.getString(PREF_KEY_SORT, "name"))!!
+        _astVersion.value = defaultPrefs.getString(PREF_KEY_AST, "basic")
+        _civNumber.value = defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set")
+
+        tipsArray = mApplication.resources.getStringArray(R.array.tips)
+        _selectedTipIndex.value = _civNumber.value?.toIntOrNull()?.minus(1)
+        _showCredits.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_CREDITS, true)
+    }
 
     fun getShowAnatomyDialogEvent(): LiveData<Event<List<String>>> {
         return showAnatomyDialogEvent
     }
-
-    val showExtraCreditsDialogEvent: LiveData<Event<Int>>
-        get() = _showExtraCreditsDialogEvent
 
     fun setAstVersion(version: String) {
         _astVersion.value = version
@@ -198,33 +261,6 @@ class CivicViewModel(application: Application) :
     val columns: Int
         get() = _columns.getValue()!!
 
-    fun loadData() {
-        val blue: Int = defaultPrefs.getInt(CardColor.BLUE.colorName, 0)
-        val green: Int = defaultPrefs.getInt(CardColor.GREEN.colorName, 0)
-        val orange: Int = defaultPrefs.getInt(CardColor.ORANGE.colorName, 0)
-        val red: Int = defaultPrefs.getInt(CardColor.RED.colorName, 0)
-        val yellow: Int = defaultPrefs.getInt(CardColor.YELLOW.colorName, 0)
-
-        val currentBonuses = cardBonus.value!!
-        currentBonuses.put(CardColor.BLUE, blue)
-        currentBonuses.put(CardColor.GREEN, green)
-        currentBonuses.put(CardColor.ORANGE, orange)
-        currentBonuses.put(CardColor.RED, red)
-        currentBonuses.put(CardColor.YELLOW, yellow)
-        cardBonus.value = currentBonuses
-
-        userPreferenceForHeartCards.value = defaultPrefs.getString(PREF_KEY_HEART, "custom")
-        setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0))
-        setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME, 0))
-        _columns.value = defaultPrefs.getString(PREF_KEY_COLUMNS, "0")!!.toInt()
-        _currentSortingOrder.value = (defaultPrefs.getString(PREF_KEY_SORT, "name"))!!
-        _astVersion.value = defaultPrefs.getString(PREF_KEY_AST, "basic")
-        _civNumber.value = defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set")
-
-        tipsArray = mApplication.resources.getStringArray(R.array.tips)
-        _selectedTipIndex.value = _civNumber.value?.toIntOrNull()?.minus(1)
-        _showCredits.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_CREDITS, true)
-    }
 
     fun getCities(): Int {
         return (if (cities.getValue() != null) cities.getValue() else 0)!!
@@ -241,7 +277,6 @@ class CivicViewModel(application: Application) :
         mRepository.recalculateCurrentPricesAsync(cardBonus)
     }
 
-    private val userPreferenceForHeartCards = MutableLiveData<String?>()
     fun getTimeVp(): Int {
         return timeVp.getValue()!!
     }
@@ -266,20 +301,6 @@ class CivicViewModel(application: Application) :
             _currentSortingOrder.value = order
         }
     }
-
-    val currentSortingOrder: LiveData<String>
-        get() = _currentSortingOrder
-
-    val inventoryAsCardLiveData: LiveData<List<Card>>
-        get() = mRepository.inventoryAsCardLiveData
-
-    private val _navigateToDashboardEvent = MutableLiveData<Event<Boolean>>()
-    val navigateToDashboardEvent: LiveData<Event<Boolean>>
-        get() = _navigateToDashboardEvent
-
-    private val _navigateToCivilizationSelectionEvent = MutableLiveData<Event<Unit>>()
-    val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>>
-        get() = _navigateToCivilizationSelectionEvent
 
     /**
      * Performs the core logic for starting a new game.
@@ -379,17 +400,6 @@ class CivicViewModel(application: Application) :
         addBonus(card!!)
     }
 
-    val blue: Int
-        get() = cardBonus.getValue()!!.getOrDefault(CardColor.BLUE, 0)
-    val green: Int
-        get() = cardBonus.getValue()!!.getOrDefault(CardColor.GREEN, 0)
-    val orange: Int
-        get() = cardBonus.getValue()!!.getOrDefault(CardColor.ORANGE, 0)
-    val red: Int
-        get() = cardBonus.getValue()!!.getOrDefault(CardColor.RED, 0)
-    val yellow: Int
-        get() = cardBonus.getValue()!!.getOrDefault(CardColor.YELLOW, 0)
-
     /**
      * Orchestrates the purchase process. Delegates the database operations to the Repository
      * and handles the UI responses (dialogs) based on the results.
@@ -436,8 +446,6 @@ class CivicViewModel(application: Application) :
                 }
             })
     }
-
-    private val _pendingExtraCredits = MutableLiveData<Int?>()
 
     fun onAnatomyCardSelected(selectedGreenCardName: String) {
         // 1. Verarbeite die ausgewählte grüne Karte (Boni hinzufügen etc.)
@@ -500,27 +508,38 @@ class CivicViewModel(application: Application) :
         fun onPurchaseFailed(errorMessage: String) // Optional: Fehlerbehandlung
     }
 
-    private val _selectedCardKeysForState =
-        MutableLiveData<MutableSet<String?>?>(mutableSetOf<String?>())
+    private fun sortCardList(list: List<CardWithDetails>, sortOrder: String): List<CardWithDetails> {
+//        Log.d("CivicViewModel", "sortCardList called with sortOrder: $sortOrder. List size: ${list.size}")
 
-    init {
-        librarySelected = false
-        defaultPrefs = PreferenceManager.getDefaultSharedPreferences(mApplication)
-        defaultPrefs.registerOnSharedPreferenceChangeListener(this)
-        cardsVpLiveData = mRepository.cardsVp
-        setupTotalVpMediator()
-        loadData()
-        allAdvancesNotBought = _currentSortingOrder
-            .switchMap { order: String ->
-                mRepository.getAllAdvancesNotBoughtLiveData(order).map { it.toMutableList() }
+
+        // Log.d("CivicViewModel", "Criterion: $criterion, isAscending: $isAscending") // Optional für Debugging
+
+        return when (sortOrder) {
+            "family" -> list.sortedBy { it.card.family }
+            "name" -> list.sortedBy { it.card.name }
+            "currentPrice" -> {
+                val comparator = compareBy<CardWithDetails> { it.card.price }.thenBy { it.card.name }
+                list.sortedWith(comparator)
             }
 
-        setupCombinedSpecialsLiveData()
-        setupBuyableCardsObserver()
-    }
+            "color" -> {
+                val comparator = compareBy<CardWithDetails> { it.card.group1?.ordinal }.thenBy { it.card.price }
+                list.sortedWith(comparator)
+            }
 
-    val selectedCardKeysForState: LiveData<MutableSet<String?>?>
-        get() = _selectedCardKeysForState
+            "vp" -> {
+                val comparator = compareBy<CardWithDetails> { it.card.vp }.thenBy { it.card.price }
+                list.sortedWith(comparator)
+            }
+
+            "heart" -> {
+                val comparator = compareByDescending<CardWithDetails> { it.card.hasHeart }.thenBy { it.card.price }.thenBy { it.card.name }
+                list.sortedWith(comparator)
+            }
+
+            else -> list.sortedBy { it.card.name }
+        }
+    }
 
     // NEU: Methode, um die Auswahl aus dem Fragment im ViewModel zu aktualisieren
     fun updateSelectionState(currentSelection: MutableSet<String?>?) {
