@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.tesira.civic.db.CardWithDetails
-import org.tesira.civic.R // Für den Zugriff auf Layout-Ressourcen
 import org.tesira.civic.databinding.ItemCardDetailRowBinding
 import org.tesira.civic.db.CardColor
 import org.tesira.civic.db.CivicViewModel

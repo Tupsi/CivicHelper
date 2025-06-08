@@ -555,12 +555,9 @@ class BuyingFragment : Fragment() {
         menuInfo: ContextMenu.ContextMenuInfo?
     ) {
         super.onCreateContextMenu(menu, v, menuInfo)
-        if (v.id == binding.btnSort.id) { // Stelle sicher, dass es der btnSort ist
-            menu.setHeaderTitle(getString(R.string.sort_by)) // Titel für das Kontextmenü
-            // Füge Menüeinträge dynamisch basierend auf deinen sortingOptions hinzu
+        if (v.id == binding.btnSort.id) {
+            menu.setHeaderTitle(getString(R.string.sort_by))
             sortingOptionsNames.forEachIndexed { index, name ->
-                // Die itemId muss ein eindeutiger Integer sein.
-                // Wir verwenden den Index + einen Offset als itemId.
                 menu.add(Menu.NONE, MENU_ID_SORT_OPTION_OFFSET + index, index, name)
             }
         }
