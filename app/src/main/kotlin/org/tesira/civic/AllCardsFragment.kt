@@ -27,6 +27,7 @@ class AllCardsFragment : Fragment() {
     private lateinit var allCardsAdapter: AllCardsAdapter
     private lateinit var sortingOptionsValues: Array<String>
     private lateinit var sortingOptionsNames: Array<String>
+    private var sortOrderChangedByUser = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -88,8 +89,10 @@ class AllCardsFragment : Fragment() {
 
                 // Aktualisiere den Adapter mit den neuen Daten
                 allCardsAdapter.submitList(cards) {
-                    if (binding.recyclerViewAllCards.isVisible && cards.isNotEmpty()) {
+                    if (sortOrderChangedByUser && binding.recyclerViewAllCards.isVisible && cards.isNotEmpty()) {
+//                        binding.recyclerViewAllCards.smoothScrollToPosition(0)
                         binding.recyclerViewAllCards.scrollToPosition(0)
+                        sortOrderChangedByUser = false
                     }
                 }
 
@@ -120,6 +123,7 @@ class AllCardsFragment : Fragment() {
                 }
             })
         binding.btnSortAllCards.setOnClickListener {
+            sortOrderChangedByUser = true
             cycleNextSortOrder()
         }
     }

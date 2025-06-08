@@ -9,7 +9,7 @@
     <!-- Button zum Sortieren -->
     <Button
         android:id="@+id/btnSortAllCards"
-        style="?attr/materialButtonOutlinedStyle"
+        style="@style/BuyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
