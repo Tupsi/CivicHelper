@@ -66,7 +66,7 @@ class CivicViewModel(application: Application) :
     val calamityBonusListLiveData: LiveData<List<Calamity>> = mRepository.calamityBonusLiveData
     var astVersion: LiveData<String> = _astVersion
     var getCivNumber: LiveData<String> = _civNumber
-    val cardsVpLiveData: LiveData<Int>
+    val cardsVpLiveData: LiveData<Int> = mRepository.cardsVp
     val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
     val showCredits: LiveData<Boolean> = _showCredits
     val allCardsWithDetails: LiveData<List<CardWithDetails>>
@@ -81,8 +81,12 @@ class CivicViewModel(application: Application) :
     val red: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.RED, 0)
     val yellow: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.YELLOW, 0)
 
+    private val _searchQuery = MutableLiveData<String>("")
+    val searchQuery: LiveData<String> get() = _searchQuery
+
     init {
         defaultPrefs.registerOnSharedPreferenceChangeListener(this)
+        loadData()
         allCardsWithDetails = _currentSortingOrder.switchMap { sortOrder ->
             allCardsUnsortedOnce.map { unsortedList ->
 //                Log.d("CivicViewModel", "Sortiere allCards. Unsortierte Liste vorhanden (Größe: ${unsortedList?.size ?: 0}). SortOrder: $sortOrder")
@@ -93,14 +97,12 @@ class CivicViewModel(application: Application) :
                 }
             }
         }
-        cardsVpLiveData = mRepository.cardsVp
-        setupTotalVpMediator()
-        loadData()
         allAdvancesNotBought = _currentSortingOrder
             .switchMap { order: String ->
                 mRepository.getAllAdvancesNotBoughtLiveData(order).map { it.toMutableList() }
             }
 
+        setupTotalVpMediator()
         setupCombinedSpecialsLiveData()
         setupBuyableCardsObserver()
     }
