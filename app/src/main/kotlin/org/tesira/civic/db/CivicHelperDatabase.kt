@@ -17,7 +17,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 @Database(
     entities = [Card::class, Purchase::class, Effect::class, SpecialAbility::class, Immunity::class],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -32,9 +32,7 @@ abstract class CivicHelperDatabase : RoomDatabase() {
         private const val NUMBER_OF_FAMILIES = 17
         private const val FILENAME = "advances.xml"
 
-        val databaseWriteExecutor: ExecutorService = Executors.newFixedThreadPool(
-            NUMBER_OF_THREADS
-        )
+        val databaseWriteExecutor: ExecutorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS)
 
         @JvmStatic
         fun getDatabase(context: Context): CivicHelperDatabase? {
@@ -49,6 +47,7 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                         )
                             .addCallback(createRoomDatabaseCallback(appContext))
                             .addMigrations(MIGRATION_2_3)
+                            .addMigrations(MIGRATION_3_4)
                             // .fallbackToDestructiveMigration()
                             // .allowMainThreadQueries()
                             .build()
@@ -87,12 +86,13 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                 context.assets.open(FILENAME).use { inputStream ->
                     val dbFactory = DocumentBuilderFactory.newInstance()
                     val dBuilder = dbFactory.newDocumentBuilder()
-                    val doc = dBuilder.parse(inputStream) // Parse direkt den inputStream
+                    val doc = dBuilder.parse(inputStream)
                     doc.documentElement.normalize()
                     val nList = doc.getElementsByTagName("advance")
+                    Log.d("DATABASE", "importCivicsFromXML: " + nList.length + " advances found.")
                     for (i in 0..<nList.length) {
                         val node = nList.item(i)
-                        // Log.d("DATABASE", "importCivicsFromXML: " + node.getNodeName());
+                        Log.d("DATABASE", "importCivicsFromXML: " + node.getNodeName());
                         if (node.nodeType == Node.ELEMENT_NODE) {
                             val color = arrayOfNulls<CardColor>(2)
                             val credits = IntArray(5)
@@ -101,11 +101,16 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                             }
                             val element2 = node as Element
                             val name = element2.getElementsByTagName("name").item(0).textContent
-                            val family =
-                                element2.getElementsByTagName("family").item(0).textContent.toInt()
+                            val infoNodeList = element2.getElementsByTagName("info")
+                            val info: String?
+                            if (infoNodeList.length > 0 && infoNodeList.item(0) != null) {
+                                info = infoNodeList.item(0).textContent
+                            } else {
+                                info = null
+                            }
+                            val family = element2.getElementsByTagName("family").item(0).textContent.toInt()
                             val vp = element2.getElementsByTagName("vp").item(0).textContent.toInt()
-                            val price =
-                                element2.getElementsByTagName("price").item(0).textContent.toInt()
+                            val price = element2.getElementsByTagName("price").item(0).textContent.toInt()
                             for (x in 0..<element2.getElementsByTagName("group").length) {
                                 color[x] = CardColor.valueOf(
                                     element2.getElementsByTagName("group").item(x).textContent
@@ -134,13 +139,12 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                                 dao.insertEffect(newEffect)
                             }
                             val civic = Card(
-                                name, family, vp, price,
-                                color[0], color[1], credits[0],
-                                credits[1], credits[2], credits[3], credits[4], null,
-                                0, false, price, 0, false
+                                name, family, vp, price, color[0], color[1], credits[0], credits[1], credits[2], credits[3], credits[4], null,
+                                0, false, price, 0, false, info
                             )
 
                             dao.insertCard(civic)
+                            Log.d("DATABASE", "importCivicsFromXML: " + civic.name + " inserted.")
                             for (x in 0..<element2.getElementsByTagName("special").length) {
                                 val abilityText =
                                     element2.getElementsByTagName("special").item(x).textContent
@@ -170,6 +174,45 @@ abstract class CivicHelperDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Hilfsmethode, um zu prüfen, ob eine Spalte in einer Tabelle existiert.
+         * @param db Die SupportSQLiteDatabase-Instanz.
+         * @param tableName Der Name der Tabelle.
+         * @param columnName Der Name der zu prüfenden Spalte.
+         * @return true, wenn die Spalte existiert, sonst false.
+         */
+        internal fun isColumnExists(
+            db: SupportSQLiteDatabase,
+            tableName: String,
+            columnName: String
+        ): Boolean {
+            var cursor: Cursor? = null
+            try {
+                // PRAGMA table_info gibt Informationen über die Spalten einer Tabelle zurück.
+                // Wir verwenden LIKE, um sicherzustellen, dass wir bei Groß-/Kleinschreibungsproblemen
+                // (obwohl SQLite meist case-insensitive für Bezeichner ist) keine Probleme bekommen.
+                // Besser ist es, exakte Namen zu verwenden, wenn möglich.
+                cursor = db.query("PRAGMA table_info($tableName)")
+                val nameColumnIndex = cursor.getColumnIndex("name")
+                if (nameColumnIndex >= 0) {
+                    while (cursor.moveToNext()) {
+                        if (columnName.equals(
+                                cursor.getString(nameColumnIndex),
+                                ignoreCase = true
+                            )
+                        ) {
+                            return true // Spalte gefunden
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                // Logge den Fehler oder handle ihn, falls nötig
+                Log.e("MigrationUtil", "Error checking if column exists", e)
+            } finally {
+                cursor?.close()
+            }
+            return false // Spalte nicht gefunden
+        }
 
         private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -180,45 +223,12 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                     db.execSQL("ALTER TABLE cards ADD COLUMN hasHeart INTEGER NOT NULL DEFAULT 0")
                 }
             }
-
-            /**
-             * Hilfsmethode, um zu prüfen, ob eine Spalte in einer Tabelle existiert.
-             * @param db Die SupportSQLiteDatabase-Instanz.
-             * @param tableName Der Name der Tabelle.
-             * @param columnName Der Name der zu prüfenden Spalte.
-             * @return true, wenn die Spalte existiert, sonst false.
-             */
-            private fun isColumnExists(
-                db: SupportSQLiteDatabase,
-                tableName: String,
-                columnName: String
-            ): Boolean {
-                var cursor: Cursor? = null
-                try {
-                    // PRAGMA table_info gibt Informationen über die Spalten einer Tabelle zurück.
-                    // Wir verwenden LIKE, um sicherzustellen, dass wir bei Groß-/Kleinschreibungsproblemen
-                    // (obwohl SQLite meist case-insensitive für Bezeichner ist) keine Probleme bekommen.
-                    // Besser ist es, exakte Namen zu verwenden, wenn möglich.
-                    cursor = db.query("PRAGMA table_info($tableName)")
-                    val nameColumnIndex = cursor.getColumnIndex("name")
-                    if (nameColumnIndex >= 0) {
-                        while (cursor.moveToNext()) {
-                            if (columnName.equals(
-                                    cursor.getString(nameColumnIndex),
-                                    ignoreCase = true
-                                )
-                            ) {
-                                return true // Spalte gefunden
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    // Logge den Fehler oder handle ihn, falls nötig
-                    Log.e("MigrationUtil", "Error checking if column exists", e)
-                } finally {
-                    cursor?.close()
+        }
+        private val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                if (!isColumnExists(db, "cards", "info")) {
+                    db.execSQL("ALTER TABLE cards ADD COLUMN info TEXT")
                 }
-                return false // Spalte nicht gefunden
             }
         }
     }

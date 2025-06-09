@@ -172,7 +172,8 @@ class DialogExtraCreditsFragment : DialogFragment() {
                     isBuyable = false,
                     currentPrice = 0,
                     buyingPrice = 0,
-                    hasHeart = false
+                    hasHeart = false,
+                    info = null
                 )
                 mCivicViewModel.insertPurchase(card.name)
                 mCivicViewModel.addBonus(card)

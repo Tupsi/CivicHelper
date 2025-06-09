@@ -37,7 +37,7 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
             val card = cardWithDetails.card
             val effects = cardWithDetails.effects
             val immunities = cardWithDetails.immunities
-            val specials = cardWithDetails.specialAbilities // Annahme: Deine Entität heißt so
+            val specials = cardWithDetails.specialAbilities
 
             // Basis-Karteninformationen binden
             binding.name.text = card.name
@@ -123,6 +123,20 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
                 textColorOnLight
             )
 
+            if (!card.info.isNullOrEmpty()) {
+                binding.infosTitle.visibility = View.VISIBLE
+                binding.infos.visibility = View.VISIBLE
+                // Schritt 1: Ersetze eventuelle literale "\\n" durch echte "\n" (falls nötig, wie zuvor)
+                val infoWithNewlines = card.info.replace("\\n", "\n")
+
+                // Schritt 2: Jede Zeile trimmen, um führende/nachfolgende Leerzeichen von der Einrückung zu entfernen
+                val trimmedLines = infoWithNewlines.lines().map { it.trim() }.joinToString("\n")
+
+                binding.infos.text = trimmedLines
+            } else {
+                binding.infosTitle.visibility = View.GONE
+                binding.infos.visibility = View.GONE
+            }
 
             // Effekte anzeigen
             if (effects.isNotEmpty()) {

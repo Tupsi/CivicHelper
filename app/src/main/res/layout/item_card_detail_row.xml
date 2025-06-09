@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardDetails"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
+    android:layout_height="wrap_content"
     android:layout_marginTop="2dp"
     android:layout_marginStart="2dp"
     android:background="@drawable/item_background">
@@ -14,6 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/price_background"
         android:gravity="center"
@@ -21,7 +22,9 @@
         android:textColor="@android:color/white"
         android:textSize="@dimen/card_text_size"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/immunities"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         tools:text="235"
         tools:ignore="SelectableText" />
 
@@ -173,6 +176,43 @@
             tools:visibility="visible" />
 
     </LinearLayout>
+    <TextView
+        android:id="@+id/infosTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="4dp"
+        android:textStyle="bold"
+        android:text="@string/infos"
+        android:gravity="top|start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bonusLayout"
+        app:layout_constraintBottom_toTopOf="@+id/infos"
+        android:textAppearance="?attr/textAppearanceCaption" />
+
+    <TextView
+        android:id="@+id/infos"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="top|start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/infosTitle"
+        app:layout_constraintBottom_toTopOf="@+id/effectsTitle"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constrainedHeight="true"
+        android:ellipsize="end"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeMaxTextSize="14sp"
+        app:autoSizeStepGranularity="1sp"
+        android:textAppearance="?attr/textAppearanceCaption"
+        tools:text="you can do anything"
+        tools:ignore="SelectableText" />
 
     <TextView
         android:id="@+id/effectsTitle"
@@ -186,7 +226,7 @@
         android:gravity="top|start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bonusLayout"
+        app:layout_constraintTop_toBottomOf="@+id/infos"
         app:layout_constraintBottom_toTopOf="@+id/effects"
         android:textAppearance="?attr/textAppearanceCaption" />
 
@@ -201,6 +241,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/effectsTitle"
         app:layout_constraintBottom_toTopOf="@+id/specialsTitle"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constrainedHeight="true"
         android:ellipsize="end"
         app:autoSizeTextType="uniform"
         app:autoSizeMinTextSize="8sp"
@@ -235,8 +277,10 @@
         android:gravity="top|start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/effects"
-        app:layout_constraintBottom_toTopOf="@+id/immunities"
+        app:layout_constraintTop_toBottomOf="@+id/specialsTitle"
+        app:layout_constraintBottom_toTopOf="@+id/immunitiesTitle"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constrainedHeight="true"
         android:ellipsize="end"
         app:autoSizeTextType="uniform"
         app:autoSizeMinTextSize="8sp"
@@ -275,6 +319,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/immunitiesTitle"
         app:layout_constraintBottom_toTopOf="@+id/price"
+        app:layout_constraintVertical_bias="0.0"
         android:ellipsize="end"
         app:autoSizeTextType="uniform"
         app:autoSizeMinTextSize="8sp"
