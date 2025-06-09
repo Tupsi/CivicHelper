@@ -38,8 +38,16 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="org.tesira.civic.SettingsFragment"
-        android:label="@string/menu_item_settings" />
-
+        android:label="@string/menu_item_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_customCardSelectionFragment"
+            app:destination="@id/customCardSelectionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/customCardSelectionFragment"
+        android:name="org.tesira.civic.CustomCardSelectionFragment"
+        android:label="@string/title_select_custom_cards"
+        tools:layout="@layout/fragment_custom_card_selection" />
     <fragment
         android:id="@+id/allCardsFragment"
         android:name="org.tesira.civic.AllCardsFragment"

@@ -16,7 +16,6 @@ import android.widget.TextView
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -107,11 +106,18 @@ class AllCardsFragment : Fragment() {
                 binding.recyclerViewAllCards.visibility = View.VISIBLE
 
                 allCardsAdapter.submitList(cards) {
+                    binding.recyclerViewAllCards.scrollToPosition(0)
+//                    Log.d("AllCardsFragment", "Scroll to top triggered")
+//                    Log.d("AllCardsFragment", "Current list size: ${cards.size}")
+//                    Log.d("AllCardsFragment", "sortOderChanged: $sortOrderChangedByUser")
+//                    Log.d("AllCardsFragment", "binding.recyclerViewAllCards.isVisible: ${binding.recyclerViewAllCards.isVisible}")
                     // Scroll zum Anfang, wenn die Sortierung durch den Benutzer geändert wurde
-                    if (sortOrderChangedByUser && binding.recyclerViewAllCards.isVisible && cards.isNotEmpty()) {
-                        binding.recyclerViewAllCards.scrollToPosition(0)
-                        sortOrderChangedByUser = false
-                    }
+
+                    // zu kompliziert gedacht, sortOrderChangedByUser kann wohl raus
+//                    if (sortOrderChangedByUser && binding.recyclerViewAllCards.isVisible && cards.isNotEmpty()) {
+//                        binding.recyclerViewAllCards.scrollToPosition(0)
+//                        sortOrderChangedByUser = false
+//                    }
                     // Kein automatisches Scrollen zum Anfang bei reiner Suchtextänderung
                 }
             }
@@ -182,7 +188,6 @@ class AllCardsFragment : Fragment() {
         }
 
         binding.btnSortAllCards.setOnClickListener {
-            sortOrderChangedByUser = true
             cycleNextSortOrder()
         }
     }
@@ -196,6 +201,7 @@ class AllCardsFragment : Fragment() {
     }
 
     private fun applyNewSortOrder(sortValue: String) {
+        sortOrderChangedByUser = true
         civicViewModel.setSortingOrder(sortValue)
     }
 

@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.util.Log
-
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.AndroidViewModel
@@ -23,7 +22,6 @@ import org.tesira.civic.Calamity
 import org.tesira.civic.Event
 import org.tesira.civic.R
 import java.util.Locale
-import kotlin.text.lowercase
 
 class CivicViewModel(application: Application) :
     AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -45,6 +43,7 @@ class CivicViewModel(application: Application) :
     private val userPreferenceForHeartCards = MutableLiveData<String?>()
     private val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = mRepository.getAllCardsWithDetailsUnsorted()
     private val _pendingExtraCredits = MutableLiveData<Int?>()
+    private val _customCardSelectionForHeart = MutableLiveData<Set<String>>(emptySet())
 
     private val _isFinalizingPurchase = MutableLiveData(false)
     val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
@@ -183,6 +182,13 @@ class CivicViewModel(application: Application) :
         tipsArray = mApplication.resources.getStringArray(R.array.tips)
         _selectedTipIndex.value = _civNumber.value?.toIntOrNull()?.minus(1)
         _showCredits.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_CREDITS, true)
+
+        _customCardSelectionForHeart.value = defaultPrefs.getStringSet(
+            PREF_KEY_CUSTOM_HEART_CARDS,
+            emptySet()
+        ) ?: emptySet()
+        Log.d("CivicViewModel", "Loaded initial custom heart selection: ${_customCardSelectionForHeart.value?.size} items")
+
     }
 
     fun getShowAnatomyDialogEvent(): LiveData<Event<List<String>>> {
@@ -683,6 +689,17 @@ class CivicViewModel(application: Application) :
                 processHeartPreferenceChange(newHeartSelection)
             }
             // Number of columns
+        } else if (key == PREF_KEY_CUSTOM_HEART_CARDS) {
+            // Die Custom-Liste selbst wurde geändert.
+            val newCustomSet = sharedPreferences.getStringSet(key, emptySet()) ?: emptySet()
+            if (_customCardSelectionForHeart.value != newCustomSet) {
+                _customCardSelectionForHeart.value = newCustomSet
+                Log.d("CivicViewModel", "onSharedPreferenceChanged: Custom selection updated from prefs. Size: ${newCustomSet.size}")
+                // Wenn "custom" gerade aktiv ist, müssen wir die Herzen in der DB aktualisieren.
+                if (userPreferenceForHeartCards.value == "custom") {
+                    processHeartPreferenceChange("custom")
+                }
+            }
         } else if (PREF_KEY_COLUMNS == key) {
             val newColumns = sharedPreferences.getString(key, "0")!!.toInt()
             if (_columns.getValue() == null || _columns.getValue() != newColumns) {
@@ -700,6 +717,22 @@ class CivicViewModel(application: Application) :
                 _showCredits.value = newShowCredits
             }
         }
+    }
+
+    fun customHeartSettingsUpdated() {
+        // 1. Lade die neue Custom-Auswahl aus den SharedPreferences
+        _customCardSelectionForHeart.value = defaultPrefs.getStringSet(
+            PREF_KEY_CUSTOM_HEART_CARDS,
+            emptySet()
+        ) ?: emptySet()
+        Log.d("CivicViewModel", "customHeartSettingsUpdated: New custom selection size: ${_customCardSelectionForHeart.value?.size}")
+
+        // 2. Wenn die aktuelle "Heart"-Einstellung "custom" ist,
+        //    dann die DB mit der neuen Custom-Liste aktualisieren.
+        if (userPreferenceForHeartCards.value == "custom") {
+            processHeartPreferenceChange("custom")
+        }
+        // Kein expliziter Trigger für Mediator nötig, wenn er auf Room-Änderungen lauscht.
     }
 
     private fun processHeartPreferenceChange(selectionName: String) {
@@ -739,6 +772,7 @@ class CivicViewModel(application: Application) :
             "sea" -> listOf<String>(*SEA_POWER)
             "aggression" -> listOf<String>(*AGGRESSION)
             "defense" -> listOf<String>(*DEFENSE)
+            "custom" -> _customCardSelectionForHeart.value?.toList() ?: listOf<String>()
             else -> listOf<String>()
         }
     }
@@ -840,10 +874,11 @@ class CivicViewModel(application: Application) :
         private const val PREF_KEY_CITIES = "cities"
         private const val PREF_KEY_TIME = "time"
         private const val PREF_KEY_TREASURE = "treasure"
-        private const val PREF_KEY_HEART = "heart"
+        internal const val PREF_KEY_HEART = "heart"
         private const val PREF_KEY_COLUMNS = "columns"
         private const val PREF_KEY_AST = "ast"
         private const val PREF_KEY_SHOW_CREDITS = "showCredits"
+        internal const val PREF_KEY_CUSTOM_HEART_CARDS = "pref_key_select_custom_cards"
 
         @JvmStatic
         fun getItemBackgroundColor(card: Card, res: Resources): Drawable? {

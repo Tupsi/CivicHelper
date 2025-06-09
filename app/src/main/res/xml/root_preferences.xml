@@ -44,12 +44,21 @@
             app:defaultValue="true" />
 
         <ListPreference
-            app:defaultValue="custom"
             app:key="heart"
             app:entries="@array/heart_entries"
             app:entryValues="@array/heart_values"
             app:title="@string/prefs_chooser_title"
+            app:summary="%s"
             app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            app:key="pref_key_select_custom_cards"
+            app:title="@string/title_select_custom_cards"
+            app:summary="@string/summary_select_custom_cards"
+            app:dependency="heart">
+            <!-- Wir können die Sichtbarkeit später programmatisch steuern,
+                 sodass diese nur klickbar/sichtbar ist, wenn heart_category == "custom" -->
+        </Preference>
 
     </PreferenceCategory>
 
