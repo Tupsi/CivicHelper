@@ -23,6 +23,7 @@ import org.tesira.civic.Calamity
 import org.tesira.civic.Event
 import org.tesira.civic.R
 import java.util.Locale
+import kotlin.text.lowercase
 
 class CivicViewModel(application: Application) :
     AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -33,70 +34,118 @@ class CivicViewModel(application: Application) :
     private val cities = MutableLiveData<Int>(0)
     private val mApplication: Application = application
     private val timeVp = MutableLiveData<Int>(0)
-    private val _currentSortingOrder = MutableLiveData<String>()
-    private val _columns = MutableLiveData<Int>()
     private val showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
     private val specialAbilitiesRawLiveData: LiveData<List<String>> = mRepository.specialAbilitiesLiveData
     private val immunitiesRawLiveData: LiveData<List<String>> = mRepository.immunitiesLiveData
     private val combinedSpecialsAndImmunitiesLiveData = MediatorLiveData<MutableList<String>>()
-    private val _selectedTipIndex = MutableLiveData<Int>()
-    private val _astVersion = MutableLiveData<String>()
-    private val _civNumber = MutableLiveData<String>()
-    private val _showExtraCreditsDialogEvent = MutableLiveData<Event<Int>>()
     private val defaultPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(mApplication)
     private val totalVp = MediatorLiveData<Int>()
     private val buyableCardMap: MutableMap<String, Card> = HashMap<String, Card>()
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
-    private val _isFinalizingPurchase = MutableLiveData(false)
-    private val _showCredits = MutableLiveData<Boolean>()
-    private val _pendingExtraCredits = MutableLiveData<Int?>()
     private val userPreferenceForHeartCards = MutableLiveData<String?>()
     private val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = mRepository.getAllCardsWithDetailsUnsorted()
-    private val _navigateToDashboardEvent = MutableLiveData<Event<Boolean>>()
-    private val _navigateToCivilizationSelectionEvent = MutableLiveData<Event<Unit>>()
-    private val _selectedCardKeysForState = MutableLiveData<MutableSet<String?>?>(mutableSetOf<String?>())
+    private val _pendingExtraCredits = MutableLiveData<Int?>()
 
-    val selectedCardKeysForState: LiveData<MutableSet<String?>?> get() = _selectedCardKeysForState
+    private val _isFinalizingPurchase = MutableLiveData(false)
+    val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
+    private val _showCredits = MutableLiveData<Boolean>()
+    val showCredits: LiveData<Boolean> = _showCredits
+    private val _selectedTipIndex = MutableLiveData<Int>()
     var selectedTipIndex: LiveData<Int> = _selectedTipIndex
+    private val _astVersion = MutableLiveData<String>()
+    var astVersion: LiveData<String> = _astVersion
+    private val _civNumber = MutableLiveData<String>()
+    var getCivNumber: LiveData<String> = _civNumber
+    private val _showExtraCreditsDialogEvent = MutableLiveData<Event<Int>>()
+    val showExtraCreditsDialogEvent: LiveData<Event<Int>> get() = _showExtraCreditsDialogEvent
+    private val _columns = MutableLiveData<Int>()
+    private val _navigateToDashboardEvent = MutableLiveData<Event<Boolean>>()
+    val navigateToDashboardEvent: LiveData<Event<Boolean>> get() = _navigateToDashboardEvent
+    private val _navigateToCivilizationSelectionEvent = MutableLiveData<Event<Unit>>()
+    val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>> get() = _navigateToCivilizationSelectionEvent
+    private val _selectedCardKeysForState = MutableLiveData<MutableSet<String?>?>(mutableSetOf<String?>())
+    val selectedCardKeysForState: LiveData<MutableSet<String?>?> get() = _selectedCardKeysForState
+
+    private val _currentSortingOrder = MutableLiveData<String>()
+    val currentSortingOrder: LiveData<String> get() = _currentSortingOrder
+    private val _searchQuery = MutableLiveData<String>("")
+    val searchQuery: LiveData<String> get() = _searchQuery
+
     val treasure: MutableLiveData<Int> = MutableLiveData<Int>(0)
     val remaining: MutableLiveData<Int> = MutableLiveData<Int>(0)
-    var librarySelected: Boolean = false
-    val allAdvancesNotBought: LiveData<MutableList<Card>>
-    var cardBonus: MutableLiveData<HashMap<CardColor, Int>> = MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
     val calamityBonusListLiveData: LiveData<List<Calamity>> = mRepository.calamityBonusLiveData
-    var astVersion: LiveData<String> = _astVersion
-    var getCivNumber: LiveData<String> = _civNumber
     val cardsVpLiveData: LiveData<Int> = mRepository.cardsVp
-    val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
-    val showCredits: LiveData<Boolean> = _showCredits
-    val allCardsWithDetails: LiveData<List<CardWithDetails>>
-    val showExtraCreditsDialogEvent: LiveData<Event<Int>> get() = _showExtraCreditsDialogEvent
-    val currentSortingOrder: LiveData<String> get() = _currentSortingOrder
     val inventoryAsCardLiveData: LiveData<List<Card>> get() = mRepository.inventoryAsCardLiveData
-    val navigateToDashboardEvent: LiveData<Event<Boolean>> get() = _navigateToDashboardEvent
-    val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>> get() = _navigateToCivilizationSelectionEvent
     val blue: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.BLUE, 0)
     val green: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.GREEN, 0)
     val orange: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.ORANGE, 0)
     val red: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.RED, 0)
     val yellow: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.YELLOW, 0)
 
-    private val _searchQuery = MutableLiveData<String>("")
-    val searchQuery: LiveData<String> get() = _searchQuery
+    var librarySelected: Boolean = false
+    var cardBonus: MutableLiveData<HashMap<CardColor, Int>> = MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
+
+    val allAdvancesNotBought: LiveData<MutableList<Card>>
+    val allCardsWithDetails: LiveData<List<CardWithDetails>>
+
 
     init {
         defaultPrefs.registerOnSharedPreferenceChangeListener(this)
         loadData()
-        allCardsWithDetails = _currentSortingOrder.switchMap { sortOrder ->
-            allCardsUnsortedOnce.map { unsortedList ->
-//                Log.d("CivicViewModel", "Sortiere allCards. Unsortierte Liste vorhanden (Größe: ${unsortedList?.size ?: 0}). SortOrder: $sortOrder")
-                if (unsortedList.isEmpty()) {
-                    emptyList()
+//        allCardsWithDetails = _currentSortingOrder.switchMap { sortOrder ->
+//            allCardsUnsortedOnce.map { unsortedList ->
+////                Log.d("CivicViewModel", "Sortiere allCards. Unsortierte Liste vorhanden (Größe: ${unsortedList?.size ?: 0}). SortOrder: $sortOrder")
+//                if (unsortedList.isEmpty()) {
+//                    emptyList()
+//                } else {
+//                    sortCardList(unsortedList, sortOrder)
+//                }
+//            }
+//        }
+
+        allCardsWithDetails = MediatorLiveData<List<CardWithDetails>>().apply {
+            var currentUnsortedList: List<CardWithDetails>? = null
+            var currentSortOrder: String? = _currentSortingOrder.value // Nur noch ein Sortierparameter
+            var currentQuery: String? = _searchQuery.value
+
+            fun updateFilterAndSort() {
+                val unsortedList = currentUnsortedList
+                val sortOrder = currentSortOrder
+                val query = currentQuery
+
+                if (unsortedList != null && sortOrder != null && query != null) {
+                    Log.d("CivicViewModel", "updateFilterAndSort triggered. Query: '$query', SortOrder: $sortOrder, Unsorted Size: ${unsortedList.size}")
+
+                    // 1. Filtern basierend auf dem Suchbegriff
+                    val filteredList = filterCardList(unsortedList, query)
+                    Log.d("CivicViewModel", "Filtered list size: ${filteredList.size}")
+
+                    // 2. Sortieren der gefilterten Liste basierend auf dem kombinierten Sortier-String
+                    value = sortCardList(filteredList, sortOrder) // sortCardList braucht nur noch den sortOrder
+                    Log.d("CivicViewModel", "Final sorted list size for allCardsWithDetails: ${this.value?.size}")
                 } else {
-                    sortCardList(unsortedList, sortOrder)
+                    Log.d("CivicViewModel", "updateFilterAndSort skipped. Unsorted: ${unsortedList != null}, SortOrder: ${sortOrder != null}, Query: ${query != null}")
                 }
             }
+
+            addSource(allCardsUnsortedOnce) { list ->
+                Log.d("CivicViewModel", "allCardsUnsortedOnce changed. Size: ${list?.size}")
+                currentUnsortedList = list
+                updateFilterAndSort()
+            }
+            addSource(_currentSortingOrder) { sortOrder -> // Beobachtet nur noch _currentSortingOrder
+                Log.d("CivicViewModel", "_currentSortingOrder changed to: $sortOrder")
+                currentSortOrder = sortOrder
+                updateFilterAndSort()
+            }
+            // addSource für _isCurrentSortAscending entfällt
+            addSource(_searchQuery) { query ->
+                Log.d("CivicViewModel", "_searchQuery changed to: '$query'")
+                currentQuery = query
+                updateFilterAndSort()
+            }
         }
+
         allAdvancesNotBought = _currentSortingOrder
             .switchMap { order: String ->
                 mRepository.getAllAdvancesNotBoughtLiveData(order).map { it.toMutableList() }
@@ -127,7 +176,7 @@ class CivicViewModel(application: Application) :
         setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0))
         setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME, 0))
         _columns.value = defaultPrefs.getString(PREF_KEY_COLUMNS, "0")!!.toInt()
-        _currentSortingOrder.value = (defaultPrefs.getString(PREF_KEY_SORT, "name"))!!
+        _currentSortingOrder.value = defaultPrefs.getString(PREF_KEY_SORT, "name") ?: "name"
         _astVersion.value = defaultPrefs.getString(PREF_KEY_AST, "basic")
         _civNumber.value = defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set")
 
@@ -298,9 +347,39 @@ class CivicViewModel(application: Application) :
         mRepository.insertCard(card)
     }
 
-    fun setSortingOrder(order: String) {
-        if (order != _currentSortingOrder.getValue()) {
-            _currentSortingOrder.value = order
+    fun setSortingOrder(newSortOrder: String) {
+        if (_currentSortingOrder.value != newSortOrder) {
+            _currentSortingOrder.value = newSortOrder
+            // will ich das speichern? Dann wärs kein Setting mehr oder?
+            // defaultPrefs.edit {putString(PREF_KEY_SORT, _currentSortingOrder.value)}
+        }
+    }
+
+    fun setSearchQuery(query: String) {
+        // Verhindere unnötige Updates, wenn sich der Query nicht wirklich ändert
+        val trimmedQuery = query.trim()
+        if (_searchQuery.value != trimmedQuery) {
+            _searchQuery.value = trimmedQuery
+        }
+    }
+
+    private fun filterCardList(listToFilter: List<CardWithDetails>, query: String): List<CardWithDetails> {
+        if (query.isBlank()) {
+            return listToFilter
+        }
+        val lowerCaseQuery = query.lowercase()
+        return listToFilter.filter { cardWithDetails ->
+            val card = cardWithDetails.card
+            val effectsText = cardWithDetails.effects.joinToString(separator = " ") { it.name }
+            val specialsText = cardWithDetails.specialAbilities.joinToString(separator = " ") { it.ability }
+            val immunitiesText = cardWithDetails.immunities.joinToString(separator = " ") { it.immunity }
+
+            card.name.lowercase().contains(lowerCaseQuery) ||
+//                    card.group1?.toString()?.lowercase()?.contains(lowerCaseQuery) == true ||
+//                    card.group2?.toString()?.lowercase()?.contains(lowerCaseQuery) == true ||
+                    effectsText.lowercase().contains(lowerCaseQuery) ||
+                    specialsText.lowercase().contains(lowerCaseQuery) ||
+                    immunitiesText.lowercase().contains(lowerCaseQuery)
         }
     }
 
