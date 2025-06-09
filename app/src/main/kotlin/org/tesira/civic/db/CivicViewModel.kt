@@ -128,18 +128,18 @@ class CivicViewModel(application: Application) :
             }
 
             addSource(allCardsUnsortedOnce) { list ->
-                Log.d("CivicViewModel", "allCardsUnsortedOnce changed. Size: ${list?.size}")
+//                Log.d("CivicViewModel", "allCardsUnsortedOnce changed. Size: ${list?.size}")
                 currentUnsortedList = list
                 updateFilterAndSort()
             }
             addSource(_currentSortingOrder) { sortOrder -> // Beobachtet nur noch _currentSortingOrder
-                Log.d("CivicViewModel", "_currentSortingOrder changed to: $sortOrder")
+//                Log.d("CivicViewModel", "_currentSortingOrder changed to: $sortOrder")
                 currentSortOrder = sortOrder
                 updateFilterAndSort()
             }
             // addSource für _isCurrentSortAscending entfällt
             addSource(_searchQuery) { query ->
-                Log.d("CivicViewModel", "_searchQuery changed to: '$query'")
+//                Log.d("CivicViewModel", "_searchQuery changed to: '$query'")
                 currentQuery = query
                 updateFilterAndSort()
             }
@@ -187,7 +187,7 @@ class CivicViewModel(application: Application) :
             PREF_KEY_CUSTOM_HEART_CARDS,
             emptySet()
         ) ?: emptySet()
-        Log.d("CivicViewModel", "Loaded initial custom heart selection: ${_customCardSelectionForHeart.value?.size} items")
+//        Log.d("CivicViewModel", "Loaded initial custom heart selection: ${_customCardSelectionForHeart.value?.size} items")
 
     }
 
@@ -383,6 +383,7 @@ class CivicViewModel(application: Application) :
             card.name.lowercase().contains(lowerCaseQuery) ||
 //                    card.group1?.toString()?.lowercase()?.contains(lowerCaseQuery) == true ||
 //                    card.group2?.toString()?.lowercase()?.contains(lowerCaseQuery) == true ||
+                    card.info?.lowercase()?.contains(lowerCaseQuery) == true ||
                     effectsText.lowercase().contains(lowerCaseQuery) ||
                     specialsText.lowercase().contains(lowerCaseQuery) ||
                     immunitiesText.lowercase().contains(lowerCaseQuery)
@@ -725,7 +726,7 @@ class CivicViewModel(application: Application) :
             PREF_KEY_CUSTOM_HEART_CARDS,
             emptySet()
         ) ?: emptySet()
-        Log.d("CivicViewModel", "customHeartSettingsUpdated: New custom selection size: ${_customCardSelectionForHeart.value?.size}")
+//        Log.d("CivicViewModel", "customHeartSettingsUpdated: New custom selection size: ${_customCardSelectionForHeart.value?.size}")
 
         // 2. Wenn die aktuelle "Heart"-Einstellung "custom" ist,
         //    dann die DB mit der neuen Custom-Liste aktualisieren.

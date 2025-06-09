@@ -101,4 +101,5 @@
     <string name="summary_select_custom_cards_disabled_hint">select custom in preferences first.</string>
     <string name="selection_saved">Selection saved</string>
     <string name="selection_cleared">Selection cleared</string>
+    <string name="infos">Infos:</string>
 </resources>

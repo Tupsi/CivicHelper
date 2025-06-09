@@ -58,5 +58,8 @@ data class Card(
     val buyingPrice: Int,
 
     @ColumnInfo(name = "hasHeart")
-    val hasHeart: Boolean
+    val hasHeart: Boolean,
+
+    @ColumnInfo(name = "info")
+    val info: String?
 )
