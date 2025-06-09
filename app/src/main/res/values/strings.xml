@@ -92,5 +92,7 @@
     <string name="specials">Specials:</string>
     <string name="immunities">Immunities:</string>
     <string name="search">Search...</string>
+    <string name="placeholder_no_cards_available">no cards found!</string>
+    <string name="placeholder_no_search_results_found">no cards found!</string>
 
 </resources>
