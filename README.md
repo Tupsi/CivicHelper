@@ -30,7 +30,15 @@ and the "What do you want" hearts are inspired by BillNC's
 
 This is still the first thing we explain to new people.
 
+## Install
+
+You can find the app on
+the [Google Playstore](https://play.google.com/store/apps/details?id=org.tesira.civic) or compile it
+yourself.
+I used Android Studio and the files you need should all be in this github.
+
 ## Screenshots
+
 <img src="./img/Dashboard.jpg" alt="Dashboard" width="200"/><img src="./img/Buying.jpg" alt="Buying" width="200"/>
 <img src="./img/Anatomy.jpg" alt="Anatomy" width="200"/><img src="./img/Extra_Credits.jpg" alt="Extra_Credits" width="200"/>
 <img src="./img/Inventory.jpg" alt="Inventory" width="200"/><img src="./img/Settings.jpg" alt="Settings" width="200"/>
