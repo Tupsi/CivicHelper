@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.tesira.civic.databinding.FragmentAllCardsBinding
 import org.tesira.civic.db.CivicViewModel
@@ -34,10 +35,7 @@ class AllCardsFragment : Fragment() {
     private lateinit var sortingOptionsNames: Array<String>
     private var sortOrderChangedByUser = false
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAllCardsBinding.inflate(inflater, container, false)
         val rootView: View = binding.root
         val initialPaddingLeft = rootView.paddingLeft
@@ -80,7 +78,13 @@ class AllCardsFragment : Fragment() {
         allCardsAdapter = AllCardsAdapter()
 
         binding.recyclerViewAllCards.apply {
-            layoutManager = LinearLayoutManager(context)
+            val actualColumnCount = civicViewModel.calculateColumnCount(context)
+            layoutManager = if (actualColumnCount <= 1) {
+                LinearLayoutManager(context)
+            } else {
+                GridLayoutManager(context, actualColumnCount)
+            }
+//            layoutManager = LinearLayoutManager(context)
             adapter = allCardsAdapter
             // Optional: ItemDecoration für Abstände zwischen Elementen
             if (itemDecorationCount == 0) {
@@ -90,6 +94,11 @@ class AllCardsFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+
+        civicViewModel.showCredits.observe(viewLifecycleOwner) { isVisible ->
+            allCardsAdapter.setShowCredits(isVisible)
+        }
+
         civicViewModel.allCardsWithDetails.observe(viewLifecycleOwner) { cards -> // Keine Notwendigkeit für expliziten Observer-Typ
             if (cards.isNullOrEmpty()) {
                 binding.textViewPlaceholder.visibility = View.VISIBLE

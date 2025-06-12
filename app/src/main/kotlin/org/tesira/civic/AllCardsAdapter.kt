@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,8 +17,18 @@ import org.tesira.civic.db.CardWithDetails
 import org.tesira.civic.databinding.ItemCardDetailRowBinding
 import org.tesira.civic.db.CardColor
 import org.tesira.civic.db.CivicViewModel
+import kotlin.getValue
 
 class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHolder>(CardDiffCallback()) {
+
+    private var shouldShowCreditsLayout: Boolean = false
+
+    fun setShowCredits(isVisible: Boolean) {
+        if (shouldShowCreditsLayout != isVisible) {
+            shouldShowCreditsLayout = isVisible
+            notifyDataSetChanged() // Einfachste Art, alle Views neu zu binden
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
         val binding = ItemCardDetailRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -26,12 +37,12 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         val cardWithDetails = getItem(position)
-        holder.bind(cardWithDetails)
+        holder.bind(cardWithDetails, shouldShowCreditsLayout)
     }
 
     inner class CardViewHolder(private val binding: ItemCardDetailRowBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(cardWithDetails: CardWithDetails) {
+        fun bind(cardWithDetails: CardWithDetails, showCredits: Boolean) {
             val textColorOnDark = Color.WHITE
             val textColorOnLight = Color.BLACK
             val card = cardWithDetails.card
@@ -199,7 +210,11 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
                 binding.immunitiesTitle.visibility = View.GONE
                 binding.immunities.visibility = View.GONE
             }
-            // TODO: Weitere Kartendetails binden (z.B. family, color, was auch immer in `card` ist)
+            if (showCredits) {
+                binding.bonusLayout.visibility = View.VISIBLE
+            } else {
+                binding.bonusLayout.visibility = View.GONE
+            }
         }
     }
 
