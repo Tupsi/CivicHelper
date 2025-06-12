@@ -1,30 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Civic Helper</string>
-    <string name="about_version">Version: 1.00</string>
-    <string name="about_text">
-        This is a helper app for the board games Mega Civilization,
-        Western Empires and Eastern Empires.\n\n
+    <string name="about_version">Version: %1$s</string>
+    <string name="about_text"><![CDATA[
+        <p>
+        This is a tool for the board games <b<><i>Mega Civilization</i></b>,
+        <b<><i>Mega Empires</i></b> and its two parts <b<><i>\"The West\"</i></b> and
+        <b<><i>\"The East\"</i></b>.</p>
+        <p>The app is inspired by the player aids on
+        <a href="https://boardgamegeek.com/boardgame/184424/mega-civilization">boardgamegeek.com</a> for the games.
         It helps you track which civilization advances you already bought and
         what color bonuses you have accumulated when you buy the next time. The cost mentioned in
-        the buy screen already has the best bonus subtracted from the original price.\n
-        Supports cards with special buying bonuses like Anatomy, Library, Monument and Written Records.\n\n
-        The start screen acts as a dashboard and tracks the current color bonuses, victory points
-        and calamity effects you have because of the civilization advances you already bought.
+        the buy screen already has the best bonus subtracted from the original price.</p>
+        The start screen acts as a dashboard and tracks the current number of cities, color bonuses, victory points, A.S.T.
+        and effects from advances you bought.
+        The buying process supports cards with special buying bonuses like Anatomy, Library, Monument and Written Records.
+        <p>The included Tips are taken from the <a href="https://boardgamegeek.com/filepage/125855/beginners-guide-for-the-different-nations">Beginner\'s Guide</a> and
+        the \"What do you want\" hearts are inspired by BillNC\'s <a href="https://boardgamegeek.com/filepage/218745/mega-civilization-civilization-advances-chooser">Civilization Advances Chooser</a>.</p>
+        <p><b>A big thank you to Nicholas M and BillNC for writing them!</b></p>
+        ]]>
     </string>
     <string name="money">Treasure</string>
     <!-- Preference Titles -->
     <string name="pref_civilization">Civilization</string>
     <string name="pref_sorting">Sorting of civilization advances</string>
-    <string name="layout_header">Layout of Purchase Screen</string>
+    <string name="pref_credits">Show credits on cards</string>
+    <string name="pref_credits_on">Yes</string>
+    <string name="pref_credits_off">No</string>
+    <string name="layout_header">Layout</string>
     <string name="layout_title">Layout</string>
     <string name="columns_title">Number of columns</string>
     <!-- Menu Names -->
-    <string name="item_preferences">Preferences</string>
-    <string name="item_about">About</string>
-    <string name="item_advances">Buy Advances</string>
+    <string name="menu_item_settings">Settings</string>
+    <string name="menu_item_buying">Buying</string>
     <string name="item_search">Search</string>
+    <string name="menu_new_game">New Game</string>
+    <string name="menu_item_tips">Tips</string>
+    <string name="menu_item_about">About</string>
+    <string name="menu_item_home"> </string>
+    <string name="menu_item_purchases">Inventory</string>
+    <string name="menu_item_all_cards">Library</string>"
 
-    <!-- Buying Advances Fragment-->
+    <!-- Buying Fragment-->
     <string name="remaining_treasure">remaining :</string>
 
     <!-- Credits Dialog -->
@@ -32,32 +49,57 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="creditsinput">Credits Input</string>
+    <string name="current">current</string>
     <string name="blue">Blue</string>
     <string name="red">Red</string>
     <string name="orange">Orange</string>
     <string name="yellow">Yellow</string>
     <string name="green">Green</string>
     <string name="remaining_credits">Remaining Credits : </string>
+
     <!-- Anatomy Dialog -->
     <string name="dialog_anatomy">You bought the Anatomy Advance, pick the extra science card.</string>
     <string name="element_text">special ability</string>
     <string name="calamitytext">Calamitytext</string>
     <string name="value">value</string>
-    <string name="item_purchases">Purchases</string>
     <string name="pref_ast">AST Version</string>
     <string name="prefs_chooser_title">What do you want?</string>
-    <string name="menu_item_tips">Tips</string>
-    <string name="item_tips">Tips</string>
     <string name="spinner_select_civilization">Select Civilization</string>
     <string name="tv_vp">VP: %1$d</string>
-    <string name="tv_ast">A.S.T. ranking order: %1$s</string>
+    <string name="tv_ast">A.S.T. order: %1$s</string>
     <string name="reset_tv_civic">set civic in prefs!</string>
     <string name="no_war_game">\n\n\n
-        General Hints:\n\
-        This is not a wargame. Don\'t attack unless you are sure you gain something from the attack.\n\
-        Try only to turn in complete sets of commodities.\n\n
-        Advancing on the AST is very important. Check out the goals before purchasing advances.\n\n
-        Don\'t be too afraid of calamities! If you can complete a set, it\'s usually worth to do so even if you are reasonably sure you will get a calamity.\n\n
+        General Hints:\n\n
+        This is not a war game. Don\'t attack unless you are sure you gain something from the attack.
+        Try only to turn in complete sets of commodities.
+        Advancing on the AST is very important. Check out the goals before purchasing advances.
+        Don\'t be too afraid of calamities! If you can complete a set, it\'s usually worth to do so even if you are reasonably sure you will get a calamity.
     </string>
+    <string name="tips_text_combined">%1$s %2$s</string>
+    <string name="favorite">Favorite</string>
+    <string name="about_header_desc">picture about the app</string>
+    <string name="no_cards_selected">No cards selected!</string>
+    <string name="colorbonus">Color Bonus</string>
+    <string name="special_abilities_and_immunities">Special Abilities and Immunities</string>
+    <string name="calamity_effects_overview">Calamity Effects Overview</string>
+    <string name="sort_by">Sort by:</string>
+    <string name="clear">Clear</string>
+    <string name="buy">Buy</string>
+    <string name="family">Family</string>
 
+    <!-- AllCards Fragment -->
+    <string name="effects">Effects:</string>
+    <string name="specials">Specials:</string>
+    <string name="immunities">Immunities:</string>
+    <string name="search">Search...</string>
+    <string name="placeholder_no_cards_available">no cards found!</string>
+    <string name="placeholder_no_search_results_found">no cards found!</string>
+    <string name="title_select_custom_cards">Custom cards</string>
+    <string name="summary_select_custom_cards">Select your cards</string>
+    <string name="save_selection">Save</string>
+    <string name="no_cards_available_for_selection">no cards found</string>
+    <string name="summary_select_custom_cards_disabled_hint">select custom in preferences first.</string>
+    <string name="selection_saved">Selection saved</string>
+    <string name="selection_cleared">Selection cleared</string>
+    <string name="infos">Infos:</string>
 </resources>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayoutRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="3dp">
+
+    <!-- Horizontales LinearLayout für die obere Steuerung -->
+    <!-- Füllt die Breite des ConstraintLayout -->
+    <LinearLayout
+        android:id="@+id/top_controls_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <EditText
+            android:id="@+id/treasure"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:ems="3"
+            android:hint="@string/money"
+            android:inputType="phone"
+            android:textSize="14sp"
+            android:minHeight="48dp"
+            android:gravity="end|center_vertical"
+            android:selectAllOnFocus="true"
+            android:importantForAutofill="no"
+            tools:text="000" />
+
+        <Button
+            android:id="@+id/btnClear"
+            android:text="@string/clear"
+            style="@style/BuyButton" />
+
+        <Button
+            android:id="@+id/btnBuy"
+            android:text="@string/buy"
+            style="@style/BuyButton" />
+
+        <Button
+            android:id="@+id/btnSort"
+            android:text="@string/family"
+            style="@style/BuyButton" />
+
+        <TextView
+            android:id="@+id/moneyleft"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:textIsSelectable="false"
+            tools:text="000"
+            android:textSize="14sp"
+            android:gravity="end|center_vertical"
+            android:layout_marginStart="8dp"
+            android:minHeight="48dp" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/purchasable_cards"
+        android:name="org.tesira.civic.AdvancesFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layoutManager="LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_controls_layout"
+        tools:context="org.tesira.civic.BuyingFragment"
+        tools:listitem="@layout/item_row_purchasables"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:clipToPadding="false" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="org.tesira.civic.HomeFragment"
+        android:label="@string/menu_item_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/buyingFragment"
+        android:name="org.tesira.civic.BuyingFragment"
+        android:label="@string/menu_item_buying"
+        tools:layout="@layout/fragment_buying" />
+
+    <fragment
+        android:id="@+id/inventoryFragment"
+        android:name="org.tesira.civic.InventoryFragment"
+        android:label="@string/menu_item_purchases"
+        tools:layout="@layout/fragment_inventory" />
+
+    <fragment
+        android:id="@+id/tipsFragment"
+        android:name="org.tesira.civic.TipsFragment"
+        android:label="@string/menu_item_tips"
+        tools:layout="@layout/fragment_tips" />
+
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="org.tesira.civic.AboutFragment"
+        android:label="@string/menu_item_about"
+        tools:layout="@layout/fragment_about" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="org.tesira.civic.SettingsFragment"
+        android:label="@string/menu_item_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_customCardSelectionFragment"
+            app:destination="@id/customCardSelectionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/customCardSelectionFragment"
+        android:name="org.tesira.civic.CustomCardSelectionFragment"
+        android:label="@string/title_select_custom_cards"
+        tools:layout="@layout/fragment_custom_card_selection" />
+    <fragment
+        android:id="@+id/allCardsFragment"
+        android:name="org.tesira.civic.AllCardsFragment"
+        android:label="@string/menu_item_all_cards"
+        tools:layout="@layout/fragment_all_cards" />
+
+</navigation>

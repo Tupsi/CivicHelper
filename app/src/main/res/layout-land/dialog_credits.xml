@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Horizontale Guidelines für Spaltentrennung (alternativ prozentuale Breiten) -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_col_1_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_col_2_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.55" />
+
+
+        <!-- Zeile 0: Remaining Credits -->
+        <TextView
+            android:id="@+id/textviewremaining"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/remaining_credits"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@+id/creditsremaining" />
+
+        <TextView
+            android:id="@+id/creditsremaining"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/dialog_text"
+            android:textAlignment="textEnd"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textviewremaining"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="100" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_row0_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="textviewremaining,creditsremaining" />
+
+        <!-- Zeile 1: Spaltenüberschriften -->
+        <TextView
+            android:id="@+id/header_col0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textIsSelectable="false"
+            android:textStyle="bold"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row0_end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_1_end"
+            tools:text="Color" /> <!-- Optional: Überschrift für erste Spalte -->
+
+        <TextView
+            android:id="@+id/textcurrent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/current"
+            android:textAlignment="textEnd"
+            android:textSize="@dimen/dialog_text"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row0_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_1_end"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_2_end"
+            app:layout_constraintHorizontal_bias="1.0"
+            tools:text="Current" />
+
+        <TextView
+            android:id="@+id/header_col2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textAlignment="textEnd"
+            android:textIsSelectable="false"
+            android:textStyle="bold"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row0_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_2_end"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Input" /> <!-- Optional: Überschrift für dritte Spalte -->
+
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_row1_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="header_col0,textcurrent,header_col2" />
+
+        <!-- Ab hier die Farbzeilen. Ich zeige exemplarisch "Blue" und "Green".
+             Die anderen folgen demselben Muster. -->
+
+        <!-- Zeile 2: Blue -->
+        <TextView
+            android:id="@+id/textblue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/blue"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row1_end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_1_end"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bonusblue" />
+
+        <TextView
+            android:id="@+id/bonusblue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="textEnd"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row1_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_1_end"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_2_end"
+            app:layout_constraintHorizontal_bias="1.0"
+            tools:text="100" />
+
+        <Spinner
+            android:id="@+id/spinnerblue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/creditsinput"
+            android:minHeight="48dp"
+            android:layout_marginStart="32dp"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row1_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_2_end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bonusblue"
+            tools:ignore="DuplicateSpeakableTextCheck" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_row_blue_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="textblue,bonusblue,spinnerblue" />
+
+        <!-- Zeile 3: Green -->
+        <TextView
+            android:id="@+id/textgreen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/green"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_blue_end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_1_end"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bonusgreen" />
+
+        <TextView
+            android:id="@+id/bonusgreen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="textEnd"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_blue_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_1_end"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_2_end"
+            app:layout_constraintHorizontal_bias="1.0"
+            tools:text="100" />
+
+        <Spinner
+            android:id="@+id/spinnergreen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/creditsinput"
+            android:minHeight="48dp"
+            android:layout_marginStart="32dp"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_blue_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_2_end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bonusgreen" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_row_green_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="textgreen,bonusgreen,spinnergreen" />
+
+        <!-- Zeile 4: Orange (analog zu Blue/Green, unter barrier_row_green_end) -->
+        <TextView
+            android:id="@+id/textorange"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/orange"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_green_end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_1_end"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bonusorange" />
+
+        <TextView
+            android:id="@+id/bonusorange"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="textEnd"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_green_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_1_end"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_2_end"
+            app:layout_constraintHorizontal_bias="1.0"
+            tools:text="100" />
+
+        <Spinner
+            android:id="@+id/spinnerorange"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/creditsinput"
+            android:minHeight="48dp"
+            android:layout_marginStart="32dp"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_green_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_2_end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bonusorange" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_row_orange_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="textorange,bonusorange,spinnerorange" />
+
+
+        <!-- Zeile 5: Red (analog, unter barrier_row_orange_end) -->
+        <TextView
+            android:id="@+id/textred"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/red"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_orange_end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_1_end"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bonusred" />
+
+        <TextView
+            android:id="@+id/bonusred"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="textEnd"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_orange_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_1_end"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_2_end"
+            app:layout_constraintHorizontal_bias="1.0"
+            tools:text="100" />
+
+        <Spinner
+            android:id="@+id/spinnerred"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/creditsinput"
+            android:minHeight="48dp"
+            android:layout_marginStart="32dp"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_orange_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_2_end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bonusred" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_row_red_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="textred,bonusred,spinnerred" />
+
+
+        <!-- Zeile 6: Yellow (analog, unter barrier_row_red_end) -->
+        <TextView
+            android:id="@+id/textyellow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/yellow"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_red_end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_1_end"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bonusyellow" />
+
+        <TextView
+            android:id="@+id/bonusyellow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="textEnd"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/dialog_text"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_red_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_1_end"
+            app:layout_constraintEnd_toStartOf="@id/guideline_col_2_end"
+            app:layout_constraintHorizontal_bias="1.0"
+            tools:text="100" />
+
+        <Spinner
+            android:id="@+id/spinneryellow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/creditsinput"
+            android:minHeight="48dp"
+            android:layout_marginStart="32dp"
+            app:layout_constraintTop_toBottomOf="@id/barrier_row_red_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_col_2_end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@+id/bonusyellow" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

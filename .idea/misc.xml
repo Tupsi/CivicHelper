@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable-night/card_selected.xml" value="0.3345" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable-night/checkbox_background.xml" value="0.228" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable-night/item_background.xml" value="0.3345" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable-night/specials_background.xml" value="0.3345" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable-notnight/generic_background.xml" value="0.3345" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/card_selected.xml" value="0.214" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/cardbackground.xml" value="0.2885" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/checkbox_background.xml" value="0.3475" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/engineering_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/generic_background.xml" value="0.1685" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/ic_baseline_favorite_24.xml" value="0.121" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.3415" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1945" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.118" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/ic_search_black_24dp.xml" value="0.2885" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/ic_shield.xml" value="0.3475" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/item_background.xml" value="0.2755" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/literacy_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/mathematics_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/monument_background.xml" value="0.2365" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/mysticism_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/name_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/nav_header.xml" value="0.2585" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/philosophy_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/price_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/price_background_expensive.xml" value="0.214" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/rules.xml" value="0.303" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/specials_background.xml" value="0.3345" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/theocracy_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/wonders_of_the_world_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/drawable/written_record_background.xml" value="0.287" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout-land/fragment_home.xml" value="0.33818342151675485" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout-land/home_fragment.xml" value="0.33818342151675485" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout-night/nav_header.xml" value="0.2210144927536232" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout-w500dp-port/fragment_home.xml" value="0.6" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout-w500dp/fragment_home.xml" value="0.353515625" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout-w600dp/fragment_home.xml" value="0.18854166666666666" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout-w800dp/fragment_home.xml" value="0.3333333333333333" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/activity_main.xml" value="0.3489583333333333" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/dialog_credits.xml" value="0.2916666666666667" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_about.xml" value="0.34375" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_advances.xml" value="0.4588541666666667" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_advances_list.xml" value="0.3333333333333333" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_home.xml" value="0.4466666666666667" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_item.xml" value="0.2484375" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_item_list.xml" value="0.2484375" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_purchases.xml" value="0.26063829787234044" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/fragment_tips.xml" value="0.4005208333333333" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/item_row.xml" value="0.5" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/item_row_advances.xml" value="0.3723958333333333" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/item_row_calamity.xml" value="0.4466666666666667" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/item_row_purchases.xml" value="0.4466666666666667" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/item_row_specials.xml" value="0.31476449275362317" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/nav_header.xml" value="0.31431159420289856" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/layout/test.xml" value="0.28532608695652173" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/menu/navdrawer_menu.xml" value="0.340625" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/menu/options_menu.xml" value="0.34375" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/menu/time_menu.xml" value="0.5375" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.118" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.118" />
+        <entry key="..\:/code/CivicHelper/app/src/main/res/xml/root_preferences.xml" value="0.33958333333333335" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

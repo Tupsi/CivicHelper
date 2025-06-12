@@ -4,7 +4,8 @@
         <item>Names</item>
         <item>Price</item>
         <item>Color</item>
-        <item>Victory Points</item>
+        <item>VP</item>
+        <item>Heart</item>
     </string-array>
 
     <string-array name="sort_values">
@@ -13,6 +14,7 @@
         <item>currentPrice</item>
         <item>color</item>
         <item>vp</item>
+        <item>heart</item>
     </string-array>
 
     <string-array name="civilizations_entries">
@@ -56,6 +58,7 @@
         <item>18</item>
     </string-array>
     <string-array name="columns_entries">
+        <item>Auto</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -63,6 +66,7 @@
         <item>5</item>
     </string-array>
     <string-array name="columns_values">
+        <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -77,6 +81,15 @@
         <item>basic</item>
         <item>expert</item>
     </string-array>
+    <string-array name="credits_entries">"
+        <item>No</item>
+        <item>Yes</item>
+    </string-array>
+    <string-array name="credits_values">"
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
     <string-array name="heart_entries">
         <item>Custom</item>
         <item>Treasury</item>

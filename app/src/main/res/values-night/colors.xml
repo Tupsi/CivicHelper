@@ -4,4 +4,16 @@
     <color name="calamity_green">#43a047</color>
     <color name="item_name">#dddddd</color>
     <color name="drawer_header">#303030</color>
+
+    <color name="toolbar_background">#222222</color>
+    <color name="toolbar_elements">#FF43a047</color>   <!-- Tint für Icons -->
+
+    <color name="md_theme_surface">#121212</color>
+    <color name="md_theme_onSurface">#FFFFFF</color>
+
+    <color name="md_theme_primary">#ff42a047</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_secondary">#33691e</color>
+    <color name="md_theme_onSecondary">#000000</color>
+
 </resources>

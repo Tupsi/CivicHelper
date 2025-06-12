@@ -1,42 +1,48 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".AboutFragment">
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/AboutImage"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/nav_header"
+        android:contentDescription="@string/about_header_desc" />
+
+    <!-- tvAboutText kommt jetzt zuerst und ist unter AboutImage -->
+    <TextView
+        android:id="@+id/tvAboutText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/about_text"
+        android:textSize="14sp"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintTop_toBottomOf="@id/AboutImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tvAboutVersion" />
 
     <TextView
         android:id="@+id/tvAboutVersion"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:paddingTop="20dp"
-        android:text="@string/about_text"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAboutText"
-        app:layout_constraintVertical_bias="0.05" />
-
-    <TextView
-        android:id="@+id/tvAboutText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="55dp"
-        android:layout_marginBottom="498dp"
         android:text="@string/about_version"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.048" />
+        app:layout_constraintStart_toStartOf="parent" />
+    <!-- Optional: app:layout_constraintEnd_toEndOf="parent" wenn zentriert oder rechts sein soll -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
