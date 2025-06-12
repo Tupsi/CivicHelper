@@ -17,8 +17,8 @@ android {
         applicationId = "org.tesira.civic"
         minSdk = 28
         targetSdk = 35
-        versionCode = 41
-        versionName = "1.6.42"
+        versionCode = 42
+        versionName = "1.6.42a"
     }
 
     buildTypes {
@@ -58,8 +58,6 @@ android {
     }
 
 }
-
-
 
 dependencies {
 //    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.21")
