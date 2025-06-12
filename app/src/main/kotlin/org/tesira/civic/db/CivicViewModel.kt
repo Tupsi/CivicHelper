@@ -42,6 +42,7 @@ class CivicViewModel(application: Application) :
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
     private val userPreferenceForHeartCards = MutableLiveData<String?>()
     private val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = mRepository.getAllCardsWithDetailsUnsorted()
+    private val allPurchasedCardsWithDetailsOnce: LiveData<List<CardWithDetails>> = mRepository.getAllPurchasedCardsWithDetailsUnsorted()
     private val _pendingExtraCredits = MutableLiveData<Int?>()
     private val _customCardSelectionForHeart = MutableLiveData<Set<String>>(emptySet())
 
@@ -86,21 +87,11 @@ class CivicViewModel(application: Application) :
 
     val allAdvancesNotBought: LiveData<MutableList<Card>>
     val allCardsWithDetails: LiveData<List<CardWithDetails>>
-
+    val allPurchasedCardsWithDetails: LiveData<List<CardWithDetails>>
 
     init {
         defaultPrefs.registerOnSharedPreferenceChangeListener(this)
         loadData()
-//        allCardsWithDetails = _currentSortingOrder.switchMap { sortOrder ->
-//            allCardsUnsortedOnce.map { unsortedList ->
-////                Log.d("CivicViewModel", "Sortiere allCards. Unsortierte Liste vorhanden (Größe: ${unsortedList?.size ?: 0}). SortOrder: $sortOrder")
-//                if (unsortedList.isEmpty()) {
-//                    emptyList()
-//                } else {
-//                    sortCardList(unsortedList, sortOrder)
-//                }
-//            }
-//        }
 
         allCardsWithDetails = MediatorLiveData<List<CardWithDetails>>().apply {
             var currentUnsortedList: List<CardWithDetails>? = null
@@ -128,6 +119,49 @@ class CivicViewModel(application: Application) :
             }
 
             addSource(allCardsUnsortedOnce) { list ->
+//                Log.d("CivicViewModel", "allCardsUnsortedOnce changed. Size: ${list?.size}")
+                currentUnsortedList = list
+                updateFilterAndSort()
+            }
+            addSource(_currentSortingOrder) { sortOrder -> // Beobachtet nur noch _currentSortingOrder
+//                Log.d("CivicViewModel", "_currentSortingOrder changed to: $sortOrder")
+                currentSortOrder = sortOrder
+                updateFilterAndSort()
+            }
+            // addSource für _isCurrentSortAscending entfällt
+            addSource(_searchQuery) { query ->
+//                Log.d("CivicViewModel", "_searchQuery changed to: '$query'")
+                currentQuery = query
+                updateFilterAndSort()
+            }
+        }
+
+        allPurchasedCardsWithDetails = MediatorLiveData<List<CardWithDetails>>().apply {
+            var currentUnsortedList: List<CardWithDetails>? = null
+            var currentSortOrder: String? = _currentSortingOrder.value // Nur noch ein Sortierparameter
+            var currentQuery: String? = _searchQuery.value
+
+            fun updateFilterAndSort() {
+                val unsortedList = currentUnsortedList
+                val sortOrder = currentSortOrder
+                val query = currentQuery
+
+                if (unsortedList != null && sortOrder != null && query != null) {
+                    Log.d("CivicViewModel", "updateFilterAndSort triggered. Query: '$query', SortOrder: $sortOrder, Unsorted Size: ${unsortedList.size}")
+
+                    // 1. Filtern basierend auf dem Suchbegriff
+                    val filteredList = filterCardList(unsortedList, query)
+                    Log.d("CivicViewModel", "Filtered list size: ${filteredList.size}")
+
+                    // 2. Sortieren der gefilterten Liste basierend auf dem kombinierten Sortier-String
+                    value = sortCardList(filteredList, sortOrder) // sortCardList braucht nur noch den sortOrder
+                    Log.d("CivicViewModel", "Final sorted list size for allCardsWithDetails: ${this.value?.size}")
+                } else {
+                    Log.d("CivicViewModel", "updateFilterAndSort skipped. Unsorted: ${unsortedList != null}, SortOrder: ${sortOrder != null}, Query: ${query != null}")
+                }
+            }
+
+            addSource(allPurchasedCardsWithDetailsOnce) { list ->
 //                Log.d("CivicViewModel", "allCardsUnsortedOnce changed. Size: ${list?.size}")
                 currentUnsortedList = list
                 updateFilterAndSort()
@@ -784,7 +818,7 @@ class CivicViewModel(application: Application) :
         val screenWidthDp = configuration.screenWidthDp // Aktuelle Bildschirmbreite in dp
 //        val orientation = configuration.orientation // Aktuelle Orientierung
         return if (columns == 0) {
-            screenWidthDp / 180
+            screenWidthDp / 300
         } else {
             columns
         }
