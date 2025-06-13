@@ -32,18 +32,22 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     private val immunitiesRawLiveData: LiveData<List<String>> = repository.immunitiesLiveData
     private val combinedSpecialsAndImmunitiesLiveData = MediatorLiveData<MutableList<String>>()
     private val defaultPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
-    private val totalVp = MediatorLiveData<Int>()
     private val buyableCardMap: MutableMap<String, Card> = HashMap<String, Card>()
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
-    private val userPreferenceForHeartCards = MutableLiveData<String?>()
+    private val _userPreferenceForHeartCards = MutableLiveData<String?>()
     private val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = repository.getAllCardsWithDetailsUnsorted()
     private val allPurchasedCardsWithDetailsOnce: LiveData<List<CardWithDetails>> = repository.getAllPurchasedCardsWithDetailsUnsorted()
+    private val _totalVp = MediatorLiveData<Int>(0)
+    val totalVp: LiveData<Int> = _totalVp
     private val _pendingExtraCredits = MutableLiveData<Int?>()
     private val _customCardSelectionForHeart = MutableLiveData<Set<String>>(emptySet())
-    private val vp = MutableLiveData<Int>(0)
-    private val cities = MutableLiveData<Int>(0)
-    private val timeVp = MutableLiveData<Int>(0)
-    private val showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
+    private val _columns = MutableLiveData<Int>(0)
+    private val _vp = MutableLiveData<Int>(0)
+    private val _cities = MutableLiveData<Int>(0)
+    val cities: LiveData<Int> = _cities
+    private val _timeVp = MutableLiveData<Int>(0)
+    val timeVp: LiveData<Int> = _timeVp
+    private val _showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
 
     private val _isFinalizingPurchase = MutableLiveData(false)
     val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
@@ -54,31 +58,30 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     private val _astVersion = MutableLiveData<String>()
     var astVersion: LiveData<String> = _astVersion
     private val _civNumber = MutableLiveData<String>()
-    var getCivNumber: LiveData<String> = _civNumber
+    val civNumber: LiveData<String> = _civNumber
     private val _showExtraCreditsDialogEvent = MutableLiveData<Event<Int>>()
-    val showExtraCreditsDialogEvent: LiveData<Event<Int>> get() = _showExtraCreditsDialogEvent
-    private val _columns = MutableLiveData<Int>()
+    val showExtraCreditsDialogEvent: LiveData<Event<Int>> = _showExtraCreditsDialogEvent
     private val _navigateToDashboardEvent = MutableLiveData<Event<Boolean>>()
-    val navigateToDashboardEvent: LiveData<Event<Boolean>> get() = _navigateToDashboardEvent
+    val navigateToDashboardEvent: LiveData<Event<Boolean>> = _navigateToDashboardEvent
     private val _navigateToCivilizationSelectionEvent = MutableLiveData<Event<Unit>>()
-    val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>> get() = _navigateToCivilizationSelectionEvent
+    val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>> = _navigateToCivilizationSelectionEvent
     private val _selectedCardKeysForState = MutableLiveData<MutableSet<String?>?>(mutableSetOf<String?>())
-    val selectedCardKeysForState: LiveData<MutableSet<String?>?> get() = _selectedCardKeysForState
+    val selectedCardKeysForState: LiveData<MutableSet<String?>?> = _selectedCardKeysForState
     private val _currentSortingOrder = MutableLiveData<String>()
-    val currentSortingOrder: LiveData<String> get() = _currentSortingOrder
+    val currentSortingOrder: LiveData<String> = _currentSortingOrder
     private val _searchQuery = MutableLiveData<String>("")
-    val searchQuery: LiveData<String> get() = _searchQuery
+    val searchQuery: LiveData<String> = _searchQuery
 
     val treasure: MutableLiveData<Int> = MutableLiveData<Int>(0)
     val remaining: MutableLiveData<Int> = MutableLiveData<Int>(0)
     val calamityBonusListLiveData: LiveData<List<Calamity>> = repository.calamityBonusLiveData
     val cardsVpLiveData: LiveData<Int> = repository.cardsVp
     val inventoryAsCardLiveData: LiveData<List<Card>> get() = repository.inventoryAsCardLiveData
-    val blue: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.BLUE, 0)
-    val green: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.GREEN, 0)
-    val orange: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.ORANGE, 0)
-    val red: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.RED, 0)
-    val yellow: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.YELLOW, 0)
+    val blue: Int get() = cardBonus.value!!.getOrDefault(CardColor.BLUE, 0)
+    val green: Int get() = cardBonus.value!!.getOrDefault(CardColor.GREEN, 0)
+    val orange: Int get() = cardBonus.value!!.getOrDefault(CardColor.ORANGE, 0)
+    val red: Int get() = cardBonus.value!!.getOrDefault(CardColor.RED, 0)
+    val yellow: Int get() = cardBonus.value!!.getOrDefault(CardColor.YELLOW, 0)
 
     var librarySelected: Boolean = false
     var cardBonus: MutableLiveData<HashMap<CardColor, Int>> = MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
@@ -203,21 +206,20 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         currentBonuses.put(CardColor.YELLOW, yellow)
         cardBonus.value = currentBonuses
 
-        userPreferenceForHeartCards.value = defaultPrefs.getString(PREF_KEY_HEART, "custom")
-        setCities(defaultPrefs.getInt(PREF_KEY_CITIES, 0))
-        setTimeVp(defaultPrefs.getInt(PREF_KEY_TIME, 0))
+        _userPreferenceForHeartCards.value = defaultPrefs.getString(PREF_KEY_HEART, "custom")
+        _cities.value = defaultPrefs.getInt(PREF_KEY_CITIES, 0)
+        _timeVp.value = defaultPrefs.getInt(PREF_KEY_TIME, 0)
         _columns.value = defaultPrefs.getString(PREF_KEY_COLUMNS, "0")!!.toInt()
         _currentSortingOrder.value = defaultPrefs.getString(PREF_KEY_SORT, "name") ?: "name"
         _astVersion.value = defaultPrefs.getString(PREF_KEY_AST, "basic")
         _civNumber.value = defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set")
-//        _tipsArray = mApplication.resources.getStringArray(R.array.tips)
         _selectedTipIndex.value = _civNumber.value?.toIntOrNull()?.minus(1)
         _showCredits.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_CREDITS, true)
         _customCardSelectionForHeart.value = defaultPrefs.getStringSet(PREF_KEY_CUSTOM_HEART_CARDS, emptySet()) ?: emptySet()
     }
 
     fun getShowAnatomyDialogEvent(): LiveData<Event<List<String>>> {
-        return showAnatomyDialogEvent
+        return _showAnatomyDialogEvent
     }
 
     fun setAstVersion(version: String) {
@@ -268,20 +270,11 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             )
         }
 
-        combinedSpecialsAndImmunitiesLiveData.addSource(
-            specialAbilitiesRawLiveData,
-            abilitiesObserver
-        )
-        combinedSpecialsAndImmunitiesLiveData.addSource(
-            immunitiesRawLiveData,
-            immunitiesObserver
-        )
+        combinedSpecialsAndImmunitiesLiveData.addSource(specialAbilitiesRawLiveData, abilitiesObserver)
+        combinedSpecialsAndImmunitiesLiveData.addSource(immunitiesRawLiveData, immunitiesObserver)
     }
 
-    private fun combineAndSetData(
-        abilities: List<String>,
-        immunities: List<String>
-    ) {
+    private fun combineAndSetData(abilities: List<String>, immunities: List<String>) {
         val combinedList: MutableList<String> = ArrayList<String>()
         if (abilities.isNotEmpty()) {
             combinedList.add("___Special Abilities")
@@ -301,73 +294,42 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     private fun setupTotalVpMediator() {
-        totalVp.value = 0
-
-        // Quelle 1: cardsVpFromDao
-        totalVp.addSource<Int?>(
-            this.cardsVpLiveData,
-            Observer { cardsVal: Int? ->  // Parameter umbenannt zur Klarheit
-                val currentCardsVp = cardsVal ?: 0
-                val currentCitiesVp = (if (cities.getValue() != null) cities.getValue() else 0)!!
-                val currentTimeVp = (if (timeVp.getValue() != null) timeVp.getValue() else 0)!!
-                totalVp.value = currentCardsVp + currentCitiesVp + currentTimeVp
-            })
+        _totalVp.value = 0
+        // Quelle 1: cardsVpLiveData
+        _totalVp.addSource(this.cardsVpLiveData) { cardsVal: Int? ->
+            val currentCardsVp = cardsVal ?: 0
+            val currentCitiesVp = _cities.value ?: 0
+            val currentTimeVp = _timeVp.value ?: 0
+            _totalVp.value = currentCardsVp + currentCitiesVp + currentTimeVp
+        }
 
         // Quelle 2: cities LiveData
-        totalVp.addSource<Int?>(
-            cities,
-            Observer { cityVal: Int? ->  // Parameter umbenannt zur Klarheit
-                val currentCardsVp: Int =
-                    (if (cardsVpLiveData.getValue() != null) cardsVpLiveData.getValue() else 0)!!
-                val currentCitiesVp = cityVal ?: 0
-                val currentTimeVp = (if (timeVp.getValue() != null) timeVp.getValue() else 0)!!
-                totalVp.value = currentCardsVp + currentCitiesVp + currentTimeVp
-            })
+        _totalVp.addSource(_cities) { cityVal: Int? ->
+            val currentCardsVp = cardsVpLiveData.value ?: 0
+            val currentCitiesVp = cityVal ?: 0
+            val currentTimeVp = _timeVp.value ?: 0
+            _totalVp.value = currentCardsVp + currentCitiesVp + currentTimeVp
+        }
 
-        // Quelle 3: timeVp LiveData
-        totalVp.addSource<Int?>(
-            timeVp,
-            Observer { timeVal: Int? ->  // Parameter umbenannt zur Klarheit
-                val currentCardsVp: Int =
-                    (if (cardsVpLiveData.getValue() != null) cardsVpLiveData.getValue() else 0)!!
-                val currentCitiesVp = (if (cities.getValue() != null) cities.getValue() else 0)!!
-                val currentTimeVp = timeVal ?: 0
-                totalVp.value = currentCardsVp + currentCitiesVp + currentTimeVp
-            })
+        // Quelle 3: timeVp LiveData (hier schon optimiert in deinem Originalcode [1])
+        _totalVp.addSource(_timeVp) { timeVal: Int? ->
+            val currentCardsVp = cardsVpLiveData.value ?: 0
+            val currentCitiesVp = _cities.value ?: 0
+            val currentTimeVp = timeVal ?: 0
+            _totalVp.value = currentCardsVp + currentCitiesVp + currentTimeVp
+        }
     }
-
-    fun getTotalVp(): LiveData<Int?> {
-        return totalVp
-    }
-
-    val columns: Int
-        get() = _columns.getValue()!!
-
-
-    fun getCities(): Int {
-        return (if (cities.getValue() != null) cities.getValue() else 0)!!
-    }
-
-    val citiesLive: LiveData<Int?>
-        get() = cities
 
     fun setCities(value: Int) {
-        cities.value = value
+        _cities.value = value
+    }
+
+    fun setTimeVp(value: Int) {
+        _timeVp.value = value
     }
 
     fun requestPriceRecalculation() {
         repository.recalculateCurrentPricesAsync(cardBonus)
-    }
-
-    fun getTimeVp(): Int {
-        return timeVp.getValue()!!
-    }
-
-    val timeVpLive: LiveData<Int?>
-        get() = timeVp
-
-    fun setTimeVp(value: Int) {
-        timeVp.value = value
     }
 
     fun insertPurchase(purchase: String) {
@@ -425,9 +387,9 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         repository.resetDB(application.applicationContext)
         treasure.value = 0
         remaining.value = 0
-        cities.value = 0
-        timeVp.value = 0
-        vp.value = 0
+        _cities.value = 0
+        _timeVp.value = 0
+        _vp.value = 0
         cardBonus.value = HashMap<CardColor, Int>()
         cardBonus.value = cardBonus.value
         librarySelected = false
@@ -444,7 +406,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         defaultPrefs.edit { remove(PREF_KEY_HEART) }
         defaultPrefs.edit { remove(PREF_KEY_CIVILIZATION) }
 
-//        _newGameStartedEvent.value = Event(true)
         _navigateToCivilizationSelectionEvent.value = Event(Unit)
     }
 
@@ -475,7 +436,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                 }
             }
         }
-        val currentTreasure: Int = (if (treasure.getValue() != null) treasure.getValue() else 0)!!
+        val currentTreasure: Int = treasure.value ?: 0
         this.remaining.value = currentTreasure - newTotalCost // remaining wird hier aktualisiert
     }
 
@@ -527,7 +488,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                             _pendingExtraCredits.postValue(totalExtraCredits)
                         }
                         // Zeige ZUERST den Anatomy-Dialog
-                        showAnatomyDialogEvent.postValue(Event(anatomyCardsToChoose))
+                        _showAnatomyDialogEvent.postValue(Event(anatomyCardsToChoose))
                     } else if (totalExtraCredits > 0) {
                         // Keine Anatomy-Karten, zeige direkt den ExtraCredits-Dialog
                         _showExtraCreditsDialogEvent.postValue(Event(totalExtraCredits))
@@ -579,14 +540,14 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     fun saveBonus() {
         Log.d("CivicViewModel", "Saving bonus to SharedPreferences.")
         // HashMap Save
-        for (entry in this.cardBonus.getValue()!!.entries) {
+        for (entry in this.cardBonus.value!!.entries) {
             defaultPrefs.edit { putInt(entry.key.colorName, entry.value) }
         }
     }
 
     fun saveData() {
-        defaultPrefs.edit { putInt(PREF_KEY_CITIES, getCities()) }
-        defaultPrefs.edit { putInt(PREF_KEY_TIME, getTimeVp()) }
+        defaultPrefs.edit { putInt(PREF_KEY_CITIES, _cities.value ?: 0) }
+        defaultPrefs.edit { putInt(PREF_KEY_TIME, _timeVp.value ?: 0) }
     }
 
     /**
@@ -612,10 +573,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     private fun sortCardList(list: List<CardWithDetails>, sortOrder: String): List<CardWithDetails> {
-//        Log.d("CivicViewModel", "sortCardList called with sortOrder: $sortOrder. List size: ${list.size}")
-
-
-        // Log.d("CivicViewModel", "Criterion: $criterion, isAscending: $isAscending") // Optional für Debugging
 
         return when (sortOrder) {
             "family" -> list.sortedBy { it.card.family }
@@ -644,7 +601,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         }
     }
 
-    // NEU: Methode, um die Auswahl aus dem Fragment im ViewModel zu aktualisieren
     fun updateSelectionState(currentSelection: MutableSet<String?>?) {
         if (currentSelection == null) {
             _selectedCardKeysForState.value = mutableSetOf<String?>()
@@ -653,7 +609,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         }
     }
 
-    // NEU oder ANPASSEN: Methode, um die gespeicherte Auswahl zu löschen
     fun clearCurrentSelectionState() {
         _selectedCardKeysForState.value = mutableSetOf<String?>()
         // Die calculateTotal-Logik sollte idealerweise durch den SelectionTracker-Observer
@@ -684,24 +639,24 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         if (PREF_KEY_CIVILIZATION == key) {
             val civicNumber = sharedPreferences.getString(key, "1")!!.toInt()
             val newCivNumber: String = sharedPreferences.getString(key, "not set")!!
-            if (_civNumber.getValue() == null || _civNumber.getValue() != newCivNumber) {
+            if (_civNumber.value == null || _civNumber.value != newCivNumber) {
                 _civNumber.value = newCivNumber
             }
             val newIndex = civicNumber - 1
-            if (_selectedTipIndex.getValue() == null || _selectedTipIndex.getValue() != newIndex) {
+            if (_selectedTipIndex.value == null || _selectedTipIndex.value != newIndex) {
                 _selectedTipIndex.value = newIndex
             }
             // Sorting of cards (buying)
         } else if (PREF_KEY_SORT == key) {
             val newSortingOrder: String = sharedPreferences.getString(key, "name")!!
-            if (_currentSortingOrder.getValue() == null || _currentSortingOrder.getValue() != newSortingOrder) {
+            if (_currentSortingOrder.value == null || _currentSortingOrder.value != newSortingOrder) {
                 _currentSortingOrder.value = newSortingOrder
             }
             // What do you want
         } else if (PREF_KEY_HEART == key) {
             val newHeartSelection: String = sharedPreferences.getString(key, "custom")!!
-            if (userPreferenceForHeartCards.getValue() == null || userPreferenceForHeartCards.getValue() != newHeartSelection) {
-                userPreferenceForHeartCards.value = newHeartSelection
+            if (_userPreferenceForHeartCards.value == null || _userPreferenceForHeartCards.value != newHeartSelection) {
+                _userPreferenceForHeartCards.value = newHeartSelection
                 processHeartPreferenceChange(newHeartSelection)
             }
             // Number of columns
@@ -712,19 +667,19 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                 _customCardSelectionForHeart.value = newCustomSet
                 Log.d("CivicViewModel", "onSharedPreferenceChanged: Custom selection updated from prefs. Size: ${newCustomSet.size}")
                 // Wenn "custom" gerade aktiv ist, müssen wir die Herzen in der DB aktualisieren.
-                if (userPreferenceForHeartCards.value == "custom") {
+                if (_userPreferenceForHeartCards.value == "custom") {
                     processHeartPreferenceChange("custom")
                 }
             }
         } else if (PREF_KEY_COLUMNS == key) {
             val newColumns = sharedPreferences.getString(key, "0")!!.toInt()
-            if (_columns.getValue() == null || _columns.getValue() != newColumns) {
+            if (_columns.value == null || _columns.value != newColumns) {
                 _columns.value = newColumns
             }
             // Game Version
         } else if (PREF_KEY_AST == key) {
             val newAstVersion: String = sharedPreferences.getString(key, "basic")!!
-            if (_astVersion.getValue() == null || _astVersion.getValue() != newAstVersion) {
+            if (_astVersion.value == null || _astVersion.value != newAstVersion) {
                 _astVersion.value = newAstVersion
             }
         } else if (PREF_KEY_SHOW_CREDITS == key) {
@@ -745,7 +700,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
         // 2. Wenn die aktuelle "Heart"-Einstellung "custom" ist,
         //    dann die DB mit der neuen Custom-Liste aktualisieren.
-        if (userPreferenceForHeartCards.value == "custom") {
+        if (_userPreferenceForHeartCards.value == "custom") {
             processHeartPreferenceChange("custom")
         }
         // Kein expliziter Trigger für Mediator nötig, wenn er auf Room-Änderungen lauscht.
@@ -798,10 +753,11 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         val configuration = context.resources.configuration
         val screenWidthDp = configuration.screenWidthDp // Aktuelle Bildschirmbreite in dp
 //        val orientation = configuration.orientation // Aktuelle Orientierung
-        return if (columns == 0) {
+        val currentColumns = _columns.value ?: 0
+        return if (currentColumns == 0) {
             screenWidthDp / 300
         } else {
-            columns
+            currentColumns
         }
 
 //        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {

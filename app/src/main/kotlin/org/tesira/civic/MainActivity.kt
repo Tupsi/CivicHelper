@@ -124,7 +124,16 @@ class MainActivity : AppCompatActivity() {
             showNewGameDialog()
             return true
         }
-        return onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
+
+        // Defensive Prüfung für lateinit var
+        if (this::navController.isInitialized) {
+            // Nur versuchen zu navigieren, wenn der NavController bereit ist
+            return onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
+        } else {
+            // NavController ist nicht bereit, vielleicht einen Fehler loggen oder einfach als nicht behandelt zurückgeben
+            Log.w("MainActivity", "onOptionsItemSelected: navController ist nicht initialisiert.")
+            return super.onOptionsItemSelected(item)
+        }
     }
 
     private fun showNewGameDialog() {

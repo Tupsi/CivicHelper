@@ -31,7 +31,7 @@ import java.util.Objects
  */
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private val mCivicViewModel: CivicViewModel by activityViewModels()
+    private val civicViewModel: CivicViewModel by activityViewModels()
     private lateinit var mHomeCalamityAdapter: HomeCalamityAdapter
     private lateinit var mHomeSpecialsAdapter: HomeSpecialsAdapter
     private val cityIds: List<Int> = listOf(
@@ -101,18 +101,13 @@ class HomeFragment : Fragment() {
 //        restoreCityButton(mCivicViewModel.getCities())
         binding.tvCivilization.text = getString(
             R.string.tv_ast,
-            mCivicViewModel.getCivNumber.getValue()
+            civicViewModel.civNumber.getValue()
         )
         registerForContextMenu(binding.tvCivilization)
 
-        mCivicViewModel.getTotalVp().observe(
-            getViewLifecycleOwner(),
-            Observer { newTotalVp: Int? ->
-                binding.tvVp.text = getString(
-                    R.string.tv_vp,
-                    Objects.requireNonNullElse<Int?>(newTotalVp, 0)
-                )
-            })
+        civicViewModel.totalVp.observe(getViewLifecycleOwner()) { newTotalVp ->
+            binding.tvVp.text = getString(R.string.tv_vp, newTotalVp)
+        }
         registerForContextMenu(binding.tvTime)
         registerForContextMenu(binding.tvAST)
         return rootView
@@ -123,7 +118,7 @@ class HomeFragment : Fragment() {
      */
     internal fun restoreCityButton(cities: Int) {
         if (cities >= 0 && cities < cityIds.size) {
-            val button = binding.getRoot().findViewById<RadioButton?>(cityIds[cities])
+            val button = binding.root.findViewById<RadioButton?>(cityIds[cities])
             if (button != null) {
                 button.isChecked = true
             }
@@ -143,20 +138,20 @@ class HomeFragment : Fragment() {
                 binding.tvCivilization.setText(getString(R.string.tv_ast,"not set"));
             }
         });*/
-        mCivicViewModel.calamityBonusListLiveData.observe(
+        civicViewModel.calamityBonusListLiveData.observe(
             getViewLifecycleOwner(),
             Observer { calamities: List<Calamity> ->
                 currentCalamities = calamities
                 mHomeCalamityAdapter.submitCalamityList(calamities)
             })
 
-        mCivicViewModel.getCombinedSpecialsAndImmunitiesLiveData()
+        civicViewModel.getCombinedSpecialsAndImmunitiesLiveData()
             .observe(getViewLifecycleOwner(), Observer { combinedList: List<String> ->
                 currentSpecialsAndImmunities = combinedList
                 mHomeSpecialsAdapter.submitSpecialsList(combinedList)
             })
 
-        mCivicViewModel.cardBonus.observe(
+        civicViewModel.cardBonus.observe(
             getViewLifecycleOwner(),
             Observer { cardBonusMap: HashMap<CardColor, Int> ->
 
@@ -172,41 +167,39 @@ class HomeFragment : Fragment() {
                 binding.bonusYellow.setBackgroundResource(R.color.religion)
             })
         // Observer für Cities
-        mCivicViewModel.citiesLive.observe(getViewLifecycleOwner(), object : Observer<Int?> {
-            override fun onChanged(cities: Int?) {
-                if (cities != null) {
-                    currentCities = cities
-                    restoreCityButton(currentCities)
+        civicViewModel.cities.observe(getViewLifecycleOwner()) { citiesValue ->
+            citiesValue?.let { nonNullCities ->
+                currentCities = nonNullCities
+                restoreCityButton(nonNullCities)
+                checkASTInternal()
+            }
+        }
+        civicViewModel.cardsVpLiveData.observe(getViewLifecycleOwner()) { vpValue: Int? ->
+            vpValue?.let { nonNullVp ->
+                currentCardsVp = nonNullVp
+                if (civicViewModel.cities.value != null && currentAllPurchases.isNotEmpty()) {
                     checkASTInternal()
                 }
             }
-        })
-        mCivicViewModel.cardsVpLiveData.observe(getViewLifecycleOwner(), Observer { vp: Int? ->
-            if (vp != null) {
-                currentCardsVp = vp
-                // Wenn alle anderen benötigten Daten auch schon da sind, checkAST ausführen
-                if (mCivicViewModel.citiesLive.getValue() != null && !currentAllPurchases.isEmpty()) {
-                    checkASTInternal()
-                }
-            }
-        })
+        }
 
-        mCivicViewModel.inventoryAsCardLiveData.observe(
-            getViewLifecycleOwner(),
-            Observer { purchases: List<Card> ->
-                currentAllPurchases = purchases
-                // Wenn alle anderen benötigten Daten auch schon da sind, checkAST ausführen
-                if (mCivicViewModel.citiesLive.getValue() != null && currentCardsVp != 0 /* oder eine andere Logik */) {
-                    checkASTInternal()
-                }
-            })
+        civicViewModel.inventoryAsCardLiveData.observe(getViewLifecycleOwner()) { purchases ->
+            currentAllPurchases = purchases
+            // Wenn alle anderen benötigten Daten auch schon da sind, checkAST ausführen
+            if (civicViewModel.cities.value != null && currentCardsVp != 0) {
+                checkASTInternal()
+            }
+        }
 
         // Observer für Time
-        mCivicViewModel.timeVpLive.observe(
-            getViewLifecycleOwner(),
-            Observer { value: Int? ->
-                binding.tvTime.text = CivicViewModel.Companion.TIME_TABLE[value!! / 5]
-            })
+        civicViewModel.timeVp.observe(getViewLifecycleOwner()) { value: Int ->
+            val index = value / 5
+            if (CivicViewModel.Companion.TIME_TABLE.indices.contains(index)) {
+                binding.tvTime.text = CivicViewModel.Companion.TIME_TABLE[index]
+            } else {
+                binding.tvTime.text = "-"
+            }
+        }
     }
 
     private fun setAstStatus(textView: TextView, achieved: Boolean) {
@@ -224,7 +217,7 @@ class HomeFragment : Fragment() {
      * the background on the dashboard of the respective info textview
      */
     internal fun checkASTInternal() {
-        val ast = mCivicViewModel.astVersion.getValue()
+        val ast = civicViewModel.astVersion.value
         val astMarkerText: String?
         val countAllPurchases = currentAllPurchases.size
         var countSize100 = 0
@@ -292,7 +285,7 @@ class HomeFragment : Fragment() {
 
         val index = cityIds.indexOf(view.id)
         if (index != -1) {
-            mCivicViewModel.setCities(index)
+            civicViewModel.setCities(index)
         }
     }
 
@@ -304,7 +297,7 @@ class HomeFragment : Fragment() {
         super.onCreateContextMenu(menu, v, menuInfo)
         if (v.id == R.id.tvTime) {
             var timeTableLength = CivicViewModel.Companion.TIME_TABLE.size
-            if ("basic" == mCivicViewModel.astVersion.getValue()) {
+            if ("basic" == civicViewModel.astVersion.getValue()) {
                 timeTableLength--
             }
             for (i in 0..<timeTableLength) {
@@ -326,7 +319,7 @@ class HomeFragment : Fragment() {
     override fun onContextItemSelected(item: MenuItem): Boolean {
         if (item.groupId == 0) {
             // Time Menu
-            mCivicViewModel.setTimeVp(item.itemId)
+            civicViewModel.setTimeVp(item.itemId)
             binding.tvTime.text = item.title
             return true
         } else if (item.groupId == 1) {
@@ -334,14 +327,14 @@ class HomeFragment : Fragment() {
             val values = resources.getStringArray(R.array.civilizations_values)
             if (item.itemId < values.size) {
                 val selectedValue = values[item.itemId]
-                mCivicViewModel.setCivNumber(selectedValue)
+                civicViewModel.setCivNumber(selectedValue)
                 binding.tvCivilization.text = getString(R.string.tv_ast, selectedValue)
                 return true
             }
         } else if (item.groupId == 2) {
             // AST Menu
             val entries = resources.getStringArray(R.array.ast_values)
-            mCivicViewModel.setAstVersion(entries[item.itemId])
+            civicViewModel.setAstVersion(entries[item.itemId])
             checkASTInternal()
             return true
         }
