@@ -15,6 +15,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.application
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.preference.PreferenceManager
@@ -23,28 +24,26 @@ import org.tesira.civic.Event
 import org.tesira.civic.R
 import java.util.Locale
 
-class CivicViewModel(application: Application) :
-    AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
+class CivicViewModel(application: Application) : AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
     private lateinit var buyableCardsMapObserver: Observer<MutableList<Card>>
-    private lateinit var tipsArray: Array<String>
-    private val mRepository: CivicRepository = CivicRepository(application)
-    private val vp = MutableLiveData<Int>(0)
-    private val cities = MutableLiveData<Int>(0)
-    private val mApplication: Application = application
-    private val timeVp = MutableLiveData<Int>(0)
-    private val showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
-    private val specialAbilitiesRawLiveData: LiveData<List<String>> = mRepository.specialAbilitiesLiveData
-    private val immunitiesRawLiveData: LiveData<List<String>> = mRepository.immunitiesLiveData
+    private val repository: CivicRepository = CivicRepository(application)
+    private val _tipsArray: Array<String> = application.resources.getStringArray(R.array.tips)
+    private val specialAbilitiesRawLiveData: LiveData<List<String>> = repository.specialAbilitiesLiveData
+    private val immunitiesRawLiveData: LiveData<List<String>> = repository.immunitiesLiveData
     private val combinedSpecialsAndImmunitiesLiveData = MediatorLiveData<MutableList<String>>()
-    private val defaultPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(mApplication)
+    private val defaultPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
     private val totalVp = MediatorLiveData<Int>()
     private val buyableCardMap: MutableMap<String, Card> = HashMap<String, Card>()
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
     private val userPreferenceForHeartCards = MutableLiveData<String?>()
-    private val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = mRepository.getAllCardsWithDetailsUnsorted()
-    private val allPurchasedCardsWithDetailsOnce: LiveData<List<CardWithDetails>> = mRepository.getAllPurchasedCardsWithDetailsUnsorted()
+    private val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = repository.getAllCardsWithDetailsUnsorted()
+    private val allPurchasedCardsWithDetailsOnce: LiveData<List<CardWithDetails>> = repository.getAllPurchasedCardsWithDetailsUnsorted()
     private val _pendingExtraCredits = MutableLiveData<Int?>()
     private val _customCardSelectionForHeart = MutableLiveData<Set<String>>(emptySet())
+    private val vp = MutableLiveData<Int>(0)
+    private val cities = MutableLiveData<Int>(0)
+    private val timeVp = MutableLiveData<Int>(0)
+    private val showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
 
     private val _isFinalizingPurchase = MutableLiveData(false)
     val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
@@ -65,7 +64,6 @@ class CivicViewModel(application: Application) :
     val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>> get() = _navigateToCivilizationSelectionEvent
     private val _selectedCardKeysForState = MutableLiveData<MutableSet<String?>?>(mutableSetOf<String?>())
     val selectedCardKeysForState: LiveData<MutableSet<String?>?> get() = _selectedCardKeysForState
-
     private val _currentSortingOrder = MutableLiveData<String>()
     val currentSortingOrder: LiveData<String> get() = _currentSortingOrder
     private val _searchQuery = MutableLiveData<String>("")
@@ -73,9 +71,9 @@ class CivicViewModel(application: Application) :
 
     val treasure: MutableLiveData<Int> = MutableLiveData<Int>(0)
     val remaining: MutableLiveData<Int> = MutableLiveData<Int>(0)
-    val calamityBonusListLiveData: LiveData<List<Calamity>> = mRepository.calamityBonusLiveData
-    val cardsVpLiveData: LiveData<Int> = mRepository.cardsVp
-    val inventoryAsCardLiveData: LiveData<List<Card>> get() = mRepository.inventoryAsCardLiveData
+    val calamityBonusListLiveData: LiveData<List<Calamity>> = repository.calamityBonusLiveData
+    val cardsVpLiveData: LiveData<Int> = repository.cardsVp
+    val inventoryAsCardLiveData: LiveData<List<Card>> get() = repository.inventoryAsCardLiveData
     val blue: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.BLUE, 0)
     val green: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.GREEN, 0)
     val orange: Int get() = cardBonus.getValue()!!.getOrDefault(CardColor.ORANGE, 0)
@@ -181,7 +179,7 @@ class CivicViewModel(application: Application) :
 
         allAdvancesNotBought = _currentSortingOrder
             .switchMap { order: String ->
-                mRepository.getAllAdvancesNotBoughtLiveData(order).map { it.toMutableList() }
+                repository.getAllAdvancesNotBoughtLiveData(order).map { it.toMutableList() }
             }
 
         setupTotalVpMediator()
@@ -212,17 +210,10 @@ class CivicViewModel(application: Application) :
         _currentSortingOrder.value = defaultPrefs.getString(PREF_KEY_SORT, "name") ?: "name"
         _astVersion.value = defaultPrefs.getString(PREF_KEY_AST, "basic")
         _civNumber.value = defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set")
-
-        tipsArray = mApplication.resources.getStringArray(R.array.tips)
+//        _tipsArray = mApplication.resources.getStringArray(R.array.tips)
         _selectedTipIndex.value = _civNumber.value?.toIntOrNull()?.minus(1)
         _showCredits.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_CREDITS, true)
-
-        _customCardSelectionForHeart.value = defaultPrefs.getStringSet(
-            PREF_KEY_CUSTOM_HEART_CARDS,
-            emptySet()
-        ) ?: emptySet()
-//        Log.d("CivicViewModel", "Loaded initial custom heart selection: ${_customCardSelectionForHeart.value?.size} items")
-
+        _customCardSelectionForHeart.value = defaultPrefs.getStringSet(PREF_KEY_CUSTOM_HEART_CARDS, emptySet()) ?: emptySet()
     }
 
     fun getShowAnatomyDialogEvent(): LiveData<Event<List<String>>> {
@@ -365,7 +356,7 @@ class CivicViewModel(application: Application) :
     }
 
     fun requestPriceRecalculation() {
-        mRepository.recalculateCurrentPricesAsync(cardBonus)
+        repository.recalculateCurrentPricesAsync(cardBonus)
     }
 
     fun getTimeVp(): Int {
@@ -380,11 +371,11 @@ class CivicViewModel(application: Application) :
     }
 
     fun insertPurchase(purchase: String) {
-        mRepository.insertPurchase(purchase)
+        repository.insertPurchase(purchase)
     }
 
     fun insertCard(card: Card) {
-        mRepository.insertCard(card)
+        repository.insertCard(card)
     }
 
     fun setSortingOrder(newSortOrder: String) {
@@ -429,9 +420,9 @@ class CivicViewModel(application: Application) :
      * This includes resetting persistent data and ViewModel state.
      */
     fun startNewGameProcess() {
-        mRepository.deleteInventory()
-        mRepository.resetCurrentPrice()
-        mRepository.resetDB(mApplication.applicationContext)
+        repository.deleteInventory()
+        repository.resetCurrentPrice()
+        repository.resetDB(application.applicationContext)
         treasure.value = 0
         remaining.value = 0
         cities.value = 0
@@ -463,14 +454,12 @@ class CivicViewModel(application: Application) :
      * @param selection Currently selected cards from the View.  <-- PARAMETER TYP ANGEPASST
      */
     fun calculateTotal(selection: Iterable<String>) {
-        if (java.lang.Boolean.TRUE != areBuyableCardsReady.getValue()) {
-            val currentTreasure: Int =
-                (if (treasure.getValue() != null) treasure.getValue() else 0)!!
-            this.remaining.value =
-                currentTreasure
+        val cardsReady: Boolean? = areBuyableCardsReady.value
+        if (cardsReady != true) {
+            val currentTreasure: Int = treasure.value ?: 0
+            this.remaining.value = currentTreasure
             return
         }
-
         var newTotalCost = 0
         val iterator: Iterator<String> = selection.iterator()
         if (iterator.hasNext()) {
@@ -499,17 +488,9 @@ class CivicViewModel(application: Application) :
         val adder: (Int, Int) -> Int = { oldValue, valueToAdd -> oldValue + valueToAdd }
         if (card.creditsBlue != 0) currentBonuses.merge(CardColor.BLUE, card.creditsBlue, adder)
         if (card.creditsGreen != 0) currentBonuses.merge(CardColor.GREEN, card.creditsGreen, adder)
-        if (card.creditsOrange != 0) currentBonuses.merge(
-            CardColor.ORANGE,
-            card.creditsOrange,
-            adder
-        )
+        if (card.creditsOrange != 0) currentBonuses.merge(CardColor.ORANGE, card.creditsOrange, adder)
         if (card.creditsRed != 0) currentBonuses.merge(CardColor.RED, card.creditsRed, adder)
-        if (card.creditsYellow != 0) currentBonuses.merge(
-            CardColor.YELLOW,
-            card.creditsYellow,
-            adder
-        )
+        if (card.creditsYellow != 0) currentBonuses.merge(CardColor.YELLOW, card.creditsYellow, adder)
         cardBonus.value = currentBonuses
     }
 
@@ -531,7 +512,7 @@ class CivicViewModel(application: Application) :
     fun processPurchases(selectedCardNames: List<String>) {
         _isFinalizingPurchase.value = true
         // Rufe die asynchrone Methode im Repository auf
-        mRepository.processPurchasesAndRecalculatePricesAsync(
+        repository.processPurchasesAndRecalculatePricesAsync(
             selectedCardNames, cardBonus,
             object : PurchaseCompletionCallback {
                 override fun onPurchaseCompleted(
@@ -682,14 +663,14 @@ class CivicViewModel(application: Application) :
     }
 
     fun setSelectedTipIndex(index: Int) {
-        if (index >= 0 && (index < tipsArray.size)) {
+        if (index >= 0 && (index < _tipsArray.size)) {
             _selectedTipIndex.value = index
         }
     }
 
     fun getTipForIndex(index: Int): String? {
-        if (index >= 0 && index < tipsArray.size) {
-            return tipsArray[index]
+        if (index >= 0 && index < _tipsArray.size) {
+            return _tipsArray[index]
         }
         Log.w(
             "CivicViewModel",
@@ -775,10 +756,10 @@ class CivicViewModel(application: Application) :
 
         // Wichtig: Diese Datenbankoperationen sollten in einem Hintergrundthread ausgeführt werden.
         // mRepository sollte Methoden anbieten, die dies intern tun (z.B. mit Coroutinen oder AsyncTask).
-        mRepository.resetAllCardsHeartStatusAsync(CivicRepository.RepositoryCallback {
+        repository.resetAllCardsHeartStatusAsync(CivicRepository.RepositoryCallback {
             // Dieser Callback wird ausgeführt, nachdem alle Herzen zurückgesetzt wurden.
             if (cardNamesToMarkAsHeart.isNotEmpty()) {
-                mRepository.setCardsAsHeartAsync(
+                repository.setCardsAsHeartAsync(
                     cardNamesToMarkAsHeart,
                     CivicRepository.RepositoryCallback {
                     })
@@ -915,7 +896,7 @@ class CivicViewModel(application: Application) :
         private const val PREF_KEY_SHOW_CREDITS = "showCredits"
         internal const val PREF_KEY_CUSTOM_HEART_CARDS = "pref_key_select_custom_cards"
 
-        @JvmStatic
+        //@JvmStatic
         fun getItemBackgroundColor(card: Card, res: Resources): Drawable? {
 
             val gradient = GradientDrawable(

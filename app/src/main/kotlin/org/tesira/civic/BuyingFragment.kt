@@ -141,6 +141,8 @@ class BuyingFragment : Fragment() {
                 view.post {
                     (view as? EditText)?.selectAll()
                 }
+            } else {
+                mCivicViewModel.treasure.value = calculateInput(mTreasureInput!!.text.toString())
             }
         }
 

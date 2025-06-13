@@ -255,7 +255,7 @@ class DialogExtraCreditsFragment : DialogFragment() {
         private const val REQUEST_KEY = "extraCreditsDialogResult"
         private const val STATE_BLUE = "state_blue"
 
-        @JvmStatic
+        //@JvmStatic
         fun newInstance(creditsAmount: Int): DialogExtraCreditsFragment {
             val fragment = DialogExtraCreditsFragment()
             val args = Bundle()

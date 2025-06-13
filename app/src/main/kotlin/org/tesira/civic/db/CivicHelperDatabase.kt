@@ -34,7 +34,7 @@ abstract class CivicHelperDatabase : RoomDatabase() {
 
         val databaseWriteExecutor: ExecutorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS)
 
-        @JvmStatic
+        //        @JvmStatic
         fun getDatabase(context: Context): CivicHelperDatabase? {
 //        Log.v("DATABASE", "in getDatabase");
             val appContext = context.applicationContext
@@ -74,7 +74,7 @@ abstract class CivicHelperDatabase : RoomDatabase() {
          * Imports all civilization advances from file into the database to be used in the RecyclerView.
          * Calculates and adds the special family bonus.
          */
-        @JvmStatic
+//        @JvmStatic
         @Synchronized
         fun importCivicsFromXML(context: Context) {
             val dao = INSTANCE?.civicDao()
@@ -89,10 +89,10 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                     val doc = dBuilder.parse(inputStream)
                     doc.documentElement.normalize()
                     val nList = doc.getElementsByTagName("advance")
-                    Log.d("DATABASE", "importCivicsFromXML: " + nList.length + " advances found.")
+//                    Log.d("DATABASE", "importCivicsFromXML: " + nList.length + " advances found.")
                     for (i in 0..<nList.length) {
                         val node = nList.item(i)
-                        Log.d("DATABASE", "importCivicsFromXML: " + node.getNodeName());
+//                        Log.d("DATABASE", "importCivicsFromXML: " + node.getNodeName())
                         if (node.nodeType == Node.ELEMENT_NODE) {
                             val color = arrayOfNulls<CardColor>(2)
                             val credits = IntArray(5)
@@ -102,11 +102,10 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                             val element2 = node as Element
                             val name = element2.getElementsByTagName("name").item(0).textContent
                             val infoNodeList = element2.getElementsByTagName("info")
-                            val info: String?
-                            if (infoNodeList.length > 0 && infoNodeList.item(0) != null) {
-                                info = infoNodeList.item(0).textContent
+                            val info: String? = if (infoNodeList.length > 0 && infoNodeList.item(0) != null) {
+                                infoNodeList.item(0).textContent
                             } else {
-                                info = null
+                                null
                             }
                             val family = element2.getElementsByTagName("family").item(0).textContent.toInt()
                             val vp = element2.getElementsByTagName("vp").item(0).textContent.toInt()
