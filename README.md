@@ -37,6 +37,50 @@ the [Google Playstore](https://play.google.com/store/apps/details?id=org.tesira.
 yourself.
 I used Android Studio and the files you need should all be in this github.
 
+## How To Use It
+
+### Home
+
+The home screen acts as a dashboard, where you can select your number of cities, change the year the
+game is (long press the date) and have a quick overview of effects and abilities you got through
+buying advances. Long press on the A.S.T. head lets you choose between the basic and expert game
+version. Beneath you have colour indicators showing you, if you meet the criteria for the eras you
+move through during the game.
+
+### Buying
+
+With the other icons in the action bar, you can navigate to the buying screen to
+buy more advances. The app already subtracts the best bonus for every card, so what you see in the
+buying screen is not the original price, but always your best price. If you ever get an advance down
+to zero due to your accumulated bonuses, it will be auto select next time you enter the screen.
+Pressing the button to the right cycles through different ways to sort the list. Long press it to
+get a list of options. The app supports Library, Anatomy, Monument and Written Record, for extra
+credits on select or choosing your extra advance.
+
+### Inventory
+
+Shows you every advance you already bought with a full text search if you are looking for something
+specific.
+
+### Library
+
+Basically like your Inventory screen, but always shows all advances available in the game.
+
+### Tips
+
+Some info about the civilization you play and what advances you might have to buy in order to make
+it work.
+
+### New Game
+
+Starts a new game by resetting everything back to zero and lets you select your civilization.
+
+### Settings
+
+The "What do you want" section lets you choose different play style. It will show little hearts for
+you on the screens with a list of advances (buying, inventory and library) depending on what you
+select here. "Custom" lets you select your own advances.
+
 ## Screenshots
 
 <img src="./img/Dashboard.jpg" alt="Dashboard" width="200"/><img src="./img/Buying.jpg" alt="Buying" width="200"/>
