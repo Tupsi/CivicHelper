@@ -25,14 +25,14 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
     fun setShowCredits(isVisible: Boolean) {
         if (shouldShowCreditsLayout != isVisible) {
             shouldShowCreditsLayout = isVisible
-            notifyDataSetChanged() // Einfachste Art, alle Views neu zu binden
+            submitList(currentList.toList())
         }
     }
 
     fun setShowInfos(isVisible: Boolean) {
         if (shouldShowInfosLayout != isVisible) {
             shouldShowInfosLayout = isVisible
-            notifyDataSetChanged() // Einfachste Art, alle Views neu zu binden
+            submitList(currentList.toList())
         }
     }
 
@@ -198,7 +198,7 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
                 binding.specialsTitle.visibility = View.VISIBLE
                 binding.specials.visibility = View.VISIBLE
                 binding.specials.text = specials.joinToString(separator = "\n") { special ->
-                    "- ${special.ability}" // Passe die Formatierung an
+                    "- ${special.ability}"
                 }
             } else {
                 binding.specialsTitle.visibility = View.GONE
@@ -210,7 +210,7 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
                 binding.immunitiesTitle.visibility = View.VISIBLE
                 binding.immunities.visibility = View.VISIBLE
                 binding.immunities.text = immunities.joinToString(separator = "\n") { immunity ->
-                    "- ${immunity.immunity}" // Passe die Formatierung an
+                    "- ${immunity.immunity}"
                 }
             } else {
                 binding.immunitiesTitle.visibility = View.GONE
