@@ -102,4 +102,5 @@
     <string name="selection_saved">Selection saved</string>
     <string name="selection_cleared">Selection cleared</string>
     <string name="infos">Infos:</string>
+    <string name="pref_infos">Show infos on cards</string>
 </resources>

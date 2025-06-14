@@ -53,6 +53,8 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     val isFinalizingPurchase: LiveData<Boolean> = _isFinalizingPurchase
     private val _showCredits = MutableLiveData<Boolean>()
     val showCredits: LiveData<Boolean> = _showCredits
+    private val _showInfos = MutableLiveData<Boolean>()
+    val showInfos: LiveData<Boolean> = _showInfos
     private val _selectedTipIndex = MutableLiveData<Int>()
     var selectedTipIndex: LiveData<Int> = _selectedTipIndex
     private val _astVersion = MutableLiveData<String>()
@@ -215,6 +217,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         _civNumber.value = defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set")
         _selectedTipIndex.value = _civNumber.value?.toIntOrNull()?.minus(1)
         _showCredits.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_CREDITS, true)
+        _showInfos.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_INFOS, true)
         _customCardSelectionForHeart.value = defaultPrefs.getStringSet(PREF_KEY_CUSTOM_HEART_CARDS, emptySet()) ?: emptySet()
     }
 
@@ -687,6 +690,11 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             if (_showCredits.value == null || _showCredits.value != newShowCredits) {
                 _showCredits.value = newShowCredits
             }
+        } else if (PREF_KEY_SHOW_INFOS == key) {
+            val newShowInfos = sharedPreferences.getBoolean(key, true)
+            if (_showInfos.value == null || _showInfos.value != newShowInfos) {
+                _showInfos.value = newShowInfos
+            }
         }
     }
 
@@ -850,6 +858,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         private const val PREF_KEY_COLUMNS = "columns"
         private const val PREF_KEY_AST = "ast"
         private const val PREF_KEY_SHOW_CREDITS = "showCredits"
+        private const val PREF_KEY_SHOW_INFOS = "showInfos"
         internal const val PREF_KEY_CUSTOM_HEART_CARDS = "pref_key_select_custom_cards"
 
         //@JvmStatic

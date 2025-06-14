@@ -9,23 +9,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.tesira.civic.db.CardWithDetails
 import org.tesira.civic.databinding.ItemCardDetailRowBinding
 import org.tesira.civic.db.CardColor
+import org.tesira.civic.db.CardWithDetails
 import org.tesira.civic.db.CivicViewModel
-import kotlin.getValue
 
 class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHolder>(CardDiffCallback()) {
 
     private var shouldShowCreditsLayout: Boolean = false
+    private var shouldShowInfosLayout: Boolean = false
 
     fun setShowCredits(isVisible: Boolean) {
         if (shouldShowCreditsLayout != isVisible) {
             shouldShowCreditsLayout = isVisible
+            notifyDataSetChanged() // Einfachste Art, alle Views neu zu binden
+        }
+    }
+
+    fun setShowInfos(isVisible: Boolean) {
+        if (shouldShowInfosLayout != isVisible) {
+            shouldShowInfosLayout = isVisible
             notifyDataSetChanged() // Einfachste Art, alle Views neu zu binden
         }
     }
@@ -37,12 +43,12 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         val cardWithDetails = getItem(position)
-        holder.bind(cardWithDetails, shouldShowCreditsLayout)
+        holder.bind(cardWithDetails, shouldShowCreditsLayout, shouldShowInfosLayout)
     }
 
     inner class CardViewHolder(private val binding: ItemCardDetailRowBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(cardWithDetails: CardWithDetails, showCredits: Boolean) {
+        fun bind(cardWithDetails: CardWithDetails, showCredits: Boolean, showInfos: Boolean) {
             val textColorOnDark = Color.WHITE
             val textColorOnLight = Color.BLACK
             val card = cardWithDetails.card
@@ -141,7 +147,7 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
                 val infoWithNewlines = card.info.replace("\\n", "\n")
 
                 // Schritt 2: Jede Zeile trimmen, um führende/nachfolgende Leerzeichen von der Einrückung zu entfernen
-                val trimmedLines = infoWithNewlines.lines().map { it.trim() }.joinToString("\n")
+                val trimmedLines = infoWithNewlines.lines().joinToString("\n") { it.trim() }
 
                 binding.infos.text = trimmedLines
             } else {
@@ -214,6 +220,11 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
                 binding.bonusLayout.visibility = View.VISIBLE
             } else {
                 binding.bonusLayout.visibility = View.GONE
+            }
+            if (showInfos) {
+                binding.allDetailsSectionLayout.visibility = View.VISIBLE
+            } else {
+                binding.allDetailsSectionLayout.visibility = View.GONE
             }
         }
     }

@@ -43,6 +43,13 @@
             app:summaryOff="@string/pref_credits_off"
             app:defaultValue="true" />
 
+        <SwitchPreferenceCompat
+            app:key="showInfos"
+            app:title="@string/pref_infos"
+            app:summaryOn="@string/pref_credits_on"
+            app:summaryOff="@string/pref_credits_off"
+            app:defaultValue="true" />
+
         <ListPreference
             app:key="heart"
             app:entries="@array/heart_entries"
