@@ -24,14 +24,12 @@ import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.selection.ItemKeyProvider
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.tesira.civic.databinding.FragmentBuyingBinding
-import org.tesira.civic.db.Card
 import org.tesira.civic.db.CivicViewModel
 
 /**
@@ -40,16 +38,16 @@ import org.tesira.civic.db.CivicViewModel
  * purchases list and returns the user back to the dashboard.
  */
 class BuyingFragment : Fragment() {
-    internal val mCivicViewModel: CivicViewModel by activityViewModels()
+    internal val civicViewModel: CivicViewModel by activityViewModels()
     private lateinit var tracker: SelectionTracker<String>
     private lateinit var binding: FragmentBuyingBinding
-    private lateinit var mBuyingItemKeyProvider: BuyingItemKeyProvider
-    private lateinit var mRecyclerView: RecyclerView
-    private lateinit var mLayout: RecyclerView.LayoutManager
-    private lateinit var mAdapter: BuyingAdapter
+    private lateinit var buyingItemKeyProvider: BuyingItemKeyProvider
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var layout: RecyclerView.LayoutManager
+    private lateinit var adapter: BuyingAdapter
 
-    private var mTreasureInput: EditText? = null
-    private var mRemainingText: TextView? = null
+    private var treasureInput: EditText? = null
+    private var remainingText: TextView? = null
 
     private var numberDialogs = 0
     private lateinit var sortingOptionsValues: Array<String>
@@ -63,42 +61,33 @@ class BuyingFragment : Fragment() {
         sortingOptionsValues = resources.getStringArray(R.array.sort_values)
         sortingOptionsNames = resources.getStringArray(R.array.sort_entries)
 
-        getParentFragmentManager().setFragmentResultListener(
-            EXTRA_CREDITS_REQUEST_KEY,
-            this,
-            object : FragmentResultListener {
-                override fun onFragmentResult(requestKey: String, result: Bundle) {
-                    numberDialogs--
+        getParentFragmentManager().setFragmentResultListener(EXTRA_CREDITS_REQUEST_KEY, this, object : FragmentResultListener {
+            override fun onFragmentResult(requestKey: String, result: Bundle) {
+                numberDialogs--
+                returnToDashboard()
+            }
+        })
+
+        getParentFragmentManager().setFragmentResultListener(ANATOMY_REQUEST_KEY, this, object : FragmentResultListener {
+            override fun onFragmentResult(requestKey: String, result: Bundle) {
+                numberDialogs--
+
+                val selectedAnatomyCard = result.getString("selected_card_name")
+                if ("Written Record" == selectedAnatomyCard) {
+                    civicViewModel.triggerExtraCreditsDialog(10)
+                } else {
                     returnToDashboard()
                 }
-            })
-
-        getParentFragmentManager().setFragmentResultListener(
-            ANATOMY_REQUEST_KEY,
-            this,
-            object : FragmentResultListener {
-                override fun onFragmentResult(requestKey: String, result: Bundle) {
-                    numberDialogs--
-
-                    val selectedAnatomyCard = result.getString("selected_card_name")
-                    if ("Written Record" == selectedAnatomyCard) {
-                        mCivicViewModel.triggerExtraCreditsDialog(10)
-                    } else {
-                        returnToDashboard()
-                    }
-                }
-            })
+            }
+        })
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentBuyingBinding.inflate(inflater, container, false)
         val rootView: View = binding.getRoot()
-        mRecyclerView = binding.purchasableCards
+        recyclerView = binding.purchasableCards
 
         val initialPaddingLeft = rootView.paddingLeft
         val initialPaddingTop = rootView.paddingTop
@@ -120,43 +109,41 @@ class BuyingFragment : Fragment() {
 
         ViewCompat.requestApplyInsets(rootView)
 
-        val actualColumnCount = mCivicViewModel.calculateColumnCount(rootView.context)
+        val actualColumnCount = civicViewModel.calculateColumnCount(rootView.context)
 
         if (actualColumnCount <= 1) {
-            mLayout = LinearLayoutManager(rootView.context)
-            mRecyclerView.setLayoutManager(mLayout)
+            layout = LinearLayoutManager(rootView.context)
+            recyclerView.setLayoutManager(layout)
         } else {
-            mLayout = GridLayoutManager(rootView.context, actualColumnCount)
-            mRecyclerView.setLayoutManager(mLayout)
+            layout = GridLayoutManager(rootView.context, actualColumnCount)
+            recyclerView.setLayoutManager(layout)
         }
 
-        mAdapter = BuyingAdapter(mCivicViewModel)
-        mRecyclerView.setAdapter(mAdapter)
-        mTreasureInput = binding.treasure
-        mRemainingText = binding.moneyleft
+        adapter = BuyingAdapter(civicViewModel)
+        recyclerView.setAdapter(adapter)
+        treasureInput = binding.treasure
+        remainingText = binding.moneyleft
 
-        mTreasureInput?.setOnFocusChangeListener { view, hasFocus ->
+        treasureInput?.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 // Verzögere die Selektion leicht, um sicherzustellen, dass das EditText bereit ist
                 view.post {
                     (view as? EditText)?.selectAll()
                 }
             } else {
-                mCivicViewModel.treasure.value = calculateInput(mTreasureInput!!.text.toString())
+                civicViewModel.treasure.value = calculateInput(treasureInput!!.text.toString())
             }
         }
 
-        mCivicViewModel.allAdvancesNotBought.observe(
-            getViewLifecycleOwner(),
-            Observer { cards: MutableList<Card> ->
-                mAdapter.changeList(cards)
-                if (savedSelectionState != null) {
-                    tracker.onRestoreInstanceState(savedSelectionState)
-                    savedSelectionState = null
-                }
-            })
+        civicViewModel.allPurchasableCardsWithDetails.observe(viewLifecycleOwner) { cards ->
+            adapter.submitList(cards)
+            if (savedSelectionState != null) {
+                tracker.onRestoreInstanceState(savedSelectionState)
+                savedSelectionState = null
+            }
+        }
 
-        mCivicViewModel.currentSortingOrder.observe(
+        civicViewModel.currentSortingOrder.observe(
             getViewLifecycleOwner(),
             Observer { order: String? ->
                 if (order != null) {
@@ -169,30 +156,30 @@ class BuyingFragment : Fragment() {
         }
 
         // close SoftKeyboard on Enter
-        mTreasureInput?.setOnEditorActionListener(TextView.OnEditorActionListener { v, keyCode, event ->
+        treasureInput?.setOnEditorActionListener(TextView.OnEditorActionListener { v, keyCode, event ->
             if (event == null || event.action == KeyEvent.ACTION_UP || keyCode == KeyEvent.KEYCODE_ENTER) { // Sicherstellen, dass es ein "UP"-Event ist oder nur Enter ohne Event
-                mCivicViewModel.treasure.value = calculateInput(mTreasureInput!!.text.toString())
-                if (mCivicViewModel.remaining.value!! < 0) {
+                civicViewModel.treasure.value = calculateInput(treasureInput!!.text.toString())
+                if (civicViewModel.remaining.value!! < 0) {
                     tracker.clearSelection()
                 }
                 // Tastatur verstecken
                 val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(mTreasureInput!!.windowToken, 0)
+                imm.hideSoftInputFromWindow(treasureInput!!.windowToken, 0)
 
                 // Fokus entfernen
-                mTreasureInput!!.clearFocus() // Wichtig: Fokus explizit entfernen
+                treasureInput!!.clearFocus() // Wichtig: Fokus explizit entfernen
                 binding.root.requestFocus() // Optional: Fokus auf ein anderes Element lenken (z.B. das Root-Layout)
                 return@OnEditorActionListener true
             }
             false
         })
 
-        mRecyclerView.setOnTouchListener { v, _ ->
-            mTreasureInput?.clearFocus()
+        recyclerView.setOnTouchListener { v, _ ->
+            treasureInput?.clearFocus()
             binding.root.requestFocus()
 
             val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(mTreasureInput?.windowToken, 0)
+            imm.hideSoftInputFromWindow(treasureInput?.windowToken, 0)
             v.performClick()
             false
         }
@@ -208,16 +195,16 @@ class BuyingFragment : Fragment() {
                 selectedCardNames.add(name)
             }
             for (name in selectedCardNames) {
-                mCivicViewModel.addBonus(name)
+                civicViewModel.addBonus(name)
             }
-            mCivicViewModel.saveBonus()
-            mCivicViewModel.processPurchases(selectedCardNames)
+            civicViewModel.saveBonus()
+            civicViewModel.processPurchases(selectedCardNames)
         })
 
         // button to clear the current selection of cards
         binding.btnClear.setOnClickListener(View.OnClickListener { v: View? ->
             tracker.clearSelection()
-            mCivicViewModel.clearCurrentSelectionState()
+            civicViewModel.clearCurrentSelectionState()
         })
         return rootView
     }
@@ -225,7 +212,7 @@ class BuyingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         registerForContextMenu(binding.btnSort)
-        mCivicViewModel.getShowAnatomyDialogEvent()
+        civicViewModel.getShowAnatomyDialogEvent()
             .observe(getViewLifecycleOwner(), Observer { event: Event<List<String>> ->
                 val anatomyCardsToShow = event.getContentIfNotHandled()
                 if (anatomyCardsToShow != null && !anatomyCardsToShow.isEmpty()) {
@@ -238,11 +225,11 @@ class BuyingFragment : Fragment() {
         binding.btnSort.setOnClickListener {
             cycleNextSortOrder()
         }
-        mCivicViewModel.currentSortingOrder.value?.let { currentSortValue ->
+        civicViewModel.currentSortingOrder.value?.let { currentSortValue ->
             updateSortButtonText(currentSortValue)
         }
 
-        mCivicViewModel.showExtraCreditsDialogEvent.observe(
+        civicViewModel.showExtraCreditsDialogEvent.observe(
             getViewLifecycleOwner(),
             Observer { event: Event<Int?>? ->
                 val extraCredits = event!!.getContentIfNotHandled()
@@ -253,7 +240,7 @@ class BuyingFragment : Fragment() {
                 }
             })
 
-        mCivicViewModel.navigateToDashboardEvent.observe(
+        civicViewModel.navigateToDashboardEvent.observe(
             getViewLifecycleOwner(),
             Observer { event ->
                 val shouldNavigate = event.getContentIfNotHandled()
@@ -262,42 +249,42 @@ class BuyingFragment : Fragment() {
                 }
             })
 
-        mBuyingItemKeyProvider = BuyingItemKeyProvider(ItemKeyProvider.SCOPE_MAPPED, mAdapter)
+        buyingItemKeyProvider = BuyingItemKeyProvider(adapter)
         tracker = SelectionTracker.Builder<String>(
             "my-selection-id",
-            mRecyclerView,
-            mBuyingItemKeyProvider,
-            BuyingItemDetailsLookup(mRecyclerView),
+            recyclerView,
+            buyingItemKeyProvider,
+            BuyingItemDetailsLookup(recyclerView),
             StorageStrategy.createStringStorage()
         )
-            .withSelectionPredicate(BuyingSelectionPredicate(mAdapter, mCivicViewModel))
+            .withSelectionPredicate(BuyingSelectionPredicate(adapter, civicViewModel))
             .build()
 
-        mAdapter.setSelectionTracker(tracker)
+        adapter.setSelectionTracker(tracker)
         tracker.addObserver(object : SelectionTracker.SelectionObserver<String>() {
             override fun onItemStateChanged(key: String, selected: Boolean) {
                 super.onItemStateChanged(key, selected)
 
-                mCivicViewModel.calculateTotal(tracker.getSelection())
-                val isFinalizing = mCivicViewModel.isFinalizingPurchase.value == true
+                civicViewModel.calculateTotal(tracker.getSelection())
+                val isFinalizing = civicViewModel.isFinalizingPurchase.value == true
 
                 if (!isFinalizing && key == "Library") {
                     if (selected) {
                         // Library was just selected
-                        if (!mCivicViewModel.librarySelected) { // Only add if it wasn't already selected
-                            mCivicViewModel.librarySelected = true
+                        if (!civicViewModel.librarySelected) { // Only add if it wasn't already selected
+                            civicViewModel.librarySelected = true
                             // Add the temporary treasure bonus
-                            mCivicViewModel.treasure.value =
-                                (mCivicViewModel.treasure.value ?: 0) + 40
+                            civicViewModel.treasure.value =
+                                (civicViewModel.treasure.value ?: 0) + 40
                             showToast("$key selected, temporary adding 40 treasure.")
                         }
                     } else {
                         // Library was just deselected
-                        if (mCivicViewModel.librarySelected) { // Only remove if it was previously selected
-                            mCivicViewModel.librarySelected = false // Reset the flag
+                        if (civicViewModel.librarySelected) { // Only remove if it was previously selected
+                            civicViewModel.librarySelected = false // Reset the flag
                             // Remove the temporary treasure bonus
-                            mCivicViewModel.treasure.value =
-                                (mCivicViewModel.treasure.value ?: 0) - 40
+                            civicViewModel.treasure.value =
+                                (civicViewModel.treasure.value ?: 0) - 40
                             showToast("$key deselected, removing the temporary 40 treasure.")
                         }
                     }
@@ -306,7 +293,7 @@ class BuyingFragment : Fragment() {
                 for (selectedKey in tracker.getSelection()) {
                     currentSelection.add(selectedKey)
                 }
-                mCivicViewModel.updateSelectionState(currentSelection)
+                civicViewModel.updateSelectionState(currentSelection)
             }
 
             override fun onSelectionRefresh() {
@@ -323,21 +310,21 @@ class BuyingFragment : Fragment() {
                 for (selectedKey in tracker.getSelection()) {
                     restoredSelection.add(selectedKey)
                 }
-                mCivicViewModel.updateSelectionState(restoredSelection)
+                civicViewModel.updateSelectionState(restoredSelection)
 
                 // When selection is restored, recalculate the total based on the restored selection.
-                mCivicViewModel.calculateTotal(tracker.getSelection())
+                civicViewModel.calculateTotal(tracker.getSelection())
 
                 var libraryIsNowSelected = false
                 if (!restoredSelection.isEmpty()) {
                     libraryIsNowSelected = restoredSelection.contains("Library")
                 }
-                mCivicViewModel.librarySelected = libraryIsNowSelected
+                civicViewModel.librarySelected = libraryIsNowSelected
             }
         })
 
         if (savedInstanceState == null) {
-            val selectionFromVm = mCivicViewModel.selectedCardKeysForState.getValue()
+            val selectionFromVm = civicViewModel.selectedCardKeysForState.getValue()
             if (selectionFromVm != null && !selectionFromVm.isEmpty()) {
                 if (tracker.getSelection().isEmpty && savedSelectionState == null) {
                     tracker.setItemsSelected(selectionFromVm, true)
@@ -345,20 +332,20 @@ class BuyingFragment : Fragment() {
             }
         }
 
-        mCivicViewModel.treasure.observe(getViewLifecycleOwner(), Observer { treasure: Int? ->
-            mTreasureInput!!.setText(treasure.toString())
-            if (treasure!! < mCivicViewModel.remaining.getValue()!!) {
-                mCivicViewModel.remaining.value = treasure
+        civicViewModel.treasure.observe(getViewLifecycleOwner(), Observer { treasure: Int? ->
+            treasureInput!!.setText(treasure.toString())
+            if (treasure!! < civicViewModel.remaining.getValue()!!) {
+                civicViewModel.remaining.value = treasure
                 tracker.clearSelection()
             } else if (tracker.getSelection().size() > 0) {
-                mCivicViewModel.calculateTotal(tracker.getSelection())
+                civicViewModel.calculateTotal(tracker.getSelection())
             } else {
-                mCivicViewModel.remaining.value = treasure
+                civicViewModel.remaining.value = treasure
             }
         })
 
-        mCivicViewModel.remaining.observe(getViewLifecycleOwner(), Observer { remaining: Int? ->
-            mRemainingText!!.text = remaining.toString()
+        civicViewModel.remaining.observe(getViewLifecycleOwner(), Observer { remaining: Int? ->
+            remainingText!!.text = remaining.toString()
             updateViews()
         })
 
@@ -383,30 +370,30 @@ class BuyingFragment : Fragment() {
         }
         rootView.viewTreeObserver.addOnGlobalLayoutListener(keyboardListener)
 
-        if (mCivicViewModel.treasure.value!! < 0) {
-            mCivicViewModel.treasure.value = 0
+        if (civicViewModel.treasure.value!! < 0) {
+            civicViewModel.treasure.value = 0
         }
 
     }
 
     private fun focusTreasureInputAndShowKeyboard() {
-        if (mTreasureInput != null && mTreasureInput!!.requestFocus()) {
+        if (treasureInput != null && treasureInput!!.requestFocus()) {
             // Fenster-Token ist manchmal erst nach einer kleinen Verzögerung verfügbar,
             // besonders wenn das Fragment gerade erst erstellt wird.
-            mTreasureInput!!.selectAll()
-            mTreasureInput!!.post(Runnable {
+            treasureInput!!.selectAll()
+            treasureInput!!.post(Runnable {
                 val imm =
                     requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.showSoftInput(mTreasureInput, InputMethodManager.SHOW_IMPLICIT)
+                imm?.showSoftInput(treasureInput, InputMethodManager.SHOW_IMPLICIT)
             })
         }
     }
 
     private fun hideKeyboard() {
-        if (mTreasureInput != null) {
+        if (treasureInput != null) {
             val imm =
                 requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-            imm?.hideSoftInputFromWindow(mTreasureInput!!.windowToken, 0)
+            imm?.hideSoftInputFromWindow(treasureInput!!.windowToken, 0)
         }
     }
 
@@ -433,7 +420,7 @@ class BuyingFragment : Fragment() {
      * are created fresh when coming back into view.
      */
     internal fun updateViews() {
-        val lm = mRecyclerView.layoutManager as LinearLayoutManager?
+        val lm = recyclerView.layoutManager as LinearLayoutManager?
         if (lm != null) {
             // Get adapter positions for first and last visible items on screen.
             val firstVisible = lm.findFirstVisibleItemPosition()
@@ -449,7 +436,7 @@ class BuyingFragment : Fragment() {
                     val price = priceText.text.toString().toInt()
                     val mCardView = visibleView.findViewById<View>(R.id.card)
                     if (!isSelected) {
-                        if (price > mCivicViewModel.remaining.getValue()!!) {
+                        if (price > civicViewModel.remaining.getValue()!!) {
                             mCardView.alpha = 0.25f
                         } else {
                             mCardView.alpha = 1.0f
@@ -463,8 +450,8 @@ class BuyingFragment : Fragment() {
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
         tracker.onSaveInstanceState(savedInstanceState)
-        if (mCivicViewModel.treasure.getValue() != null) {
-            mCivicViewModel.remaining.value = mCivicViewModel.treasure.value
+        if (civicViewModel.treasure.getValue() != null) {
+            civicViewModel.remaining.value = civicViewModel.treasure.value
         }
     }
 
@@ -474,7 +461,7 @@ class BuyingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val currentTreasure = mCivicViewModel.treasure.getValue()
+        val currentTreasure = civicViewModel.treasure.getValue()
         if (currentTreasure != null && currentTreasure == 0 && !treasureInputFocusedOnStart) {
             focusTreasureInputAndShowKeyboard()
             treasureInputFocusedOnStart = true // Setze das Flag, damit es nicht wiederholt wird,
@@ -517,10 +504,10 @@ class BuyingFragment : Fragment() {
     fun returnToDashboard() {
         // Nur zum Dashboard zurückkehren, wenn keine Dialoge mehr offen sind
         if (numberDialogs <= 0) {
-            mCivicViewModel.saveBonus()
+            civicViewModel.saveBonus()
             NavHostFragment.Companion.findNavController(this).popBackStack()
-            mCivicViewModel.treasure.value = 0
-            mCivicViewModel.remaining.value = 0
+            civicViewModel.treasure.value = 0
+            civicViewModel.remaining.value = 0
         }
     }
 
@@ -531,7 +518,7 @@ class BuyingFragment : Fragment() {
      */
     private fun cycleNextSortOrder() {
         val currentSortValue =
-            mCivicViewModel.currentSortingOrder.value ?: sortingOptionsValues.first()
+            civicViewModel.currentSortingOrder.value ?: sortingOptionsValues.first()
         val currentIndex = sortingOptionsValues.indexOf(currentSortValue)
         val nextIndex = (currentIndex + 1) % sortingOptionsValues.size
         val nextSortValue = sortingOptionsValues[nextIndex]
@@ -576,7 +563,7 @@ class BuyingFragment : Fragment() {
     }
 
     private fun applyNewSortOrder(sortValue: String) {
-        mCivicViewModel.setSortingOrder(sortValue)
+        civicViewModel.setSortingOrder(sortValue)
     }
 
     companion object {

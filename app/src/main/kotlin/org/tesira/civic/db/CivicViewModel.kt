@@ -16,8 +16,6 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.application
-import androidx.lifecycle.map
-import androidx.lifecycle.switchMap
 import androidx.preference.PreferenceManager
 import org.tesira.civic.Calamity
 import org.tesira.civic.Event
@@ -25,7 +23,6 @@ import org.tesira.civic.R
 import java.util.Locale
 
 class CivicViewModel(application: Application) : AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
-    private lateinit var buyableCardsMapObserver: Observer<MutableList<Card>>
     private val repository: CivicRepository = CivicRepository(application)
     private val _tipsArray: Array<String> = application.resources.getStringArray(R.array.tips)
     private val specialAbilitiesRawLiveData: LiveData<List<String>> = repository.specialAbilitiesLiveData
@@ -37,6 +34,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     private val _userPreferenceForHeartCards = MutableLiveData<String?>()
     private val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = repository.getAllCardsWithDetailsUnsorted()
     private val allPurchasedCardsWithDetailsOnce: LiveData<List<CardWithDetails>> = repository.getAllPurchasedCardsWithDetailsUnsorted()
+    private val allPurchasableCardsWithDetailsOnce: LiveData<List<CardWithDetails>> = repository.getAllPurchasableCardsWithDetailsUnsorted()
     private val _totalVp = MediatorLiveData<Int>(0)
     val totalVp: LiveData<Int> = _totalVp
     private val _pendingExtraCredits = MutableLiveData<Int?>()
@@ -88,14 +86,56 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     var librarySelected: Boolean = false
     var cardBonus: MutableLiveData<HashMap<CardColor, Int>> = MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
 
-    val allAdvancesNotBought: LiveData<MutableList<Card>>
     val allCardsWithDetails: LiveData<List<CardWithDetails>>
     val allPurchasedCardsWithDetails: LiveData<List<CardWithDetails>>
+    val allPurchasableCardsWithDetails: LiveData<List<CardWithDetails>>
 
     init {
         defaultPrefs.registerOnSharedPreferenceChangeListener(this)
         loadData()
 
+        allPurchasableCardsWithDetails = MediatorLiveData<List<CardWithDetails>>().apply {
+            var currentUnsortedList: List<CardWithDetails>? = null
+            var currentSortOrder: String? = _currentSortingOrder.value
+            var currentQuery: String? = _searchQuery.value
+
+            fun updateFilterAndSort() {
+                val unsortedList = currentUnsortedList
+                val sortOrder = currentSortOrder
+                // nicht genutzt im Moment
+                //val query = currentQuery
+                val query = ""
+
+                if (unsortedList != null && sortOrder != null && query != null) {
+                    Log.d("CivicViewModel", "updateFilterAndSort triggered. Query: '$query', SortOrder: $sortOrder, Unsorted Size: ${unsortedList.size}")
+
+                    // 1. Filtern basierend auf dem Suchbegriff
+                    val filteredList = filterCardList(unsortedList, query)
+                    Log.d("CivicViewModel", "Filtered list size: ${filteredList.size}")
+
+                    // 2. Sortieren der gefilterten Liste basierend auf dem kombinierten Sortier-String
+                    value = sortCardList(filteredList, sortOrder) // sortCardList braucht nur noch den sortOrder
+                    Log.d("CivicViewModel", "Final sorted list size for allCardsWithDetails: ${this.value?.size}")
+                } else {
+                    Log.d("CivicViewModel", "updateFilterAndSort skipped. Unsorted: ${unsortedList != null}, SortOrder: ${sortOrder != null}, Query: ${query != null}")
+                }
+            }
+
+            addSource(allPurchasableCardsWithDetailsOnce) { list ->
+                currentUnsortedList = list
+                updateFilterAndSort()
+            }
+            addSource(_currentSortingOrder) { sortOrder -> // Beobachtet nur noch _currentSortingOrder
+                currentSortOrder = sortOrder
+                updateFilterAndSort()
+            }
+            addSource(_searchQuery) { query ->
+                currentQuery = query
+                updateFilterAndSort()
+            }
+
+
+        }
         allCardsWithDetails = MediatorLiveData<List<CardWithDetails>>().apply {
             var currentUnsortedList: List<CardWithDetails>? = null
             var currentSortOrder: String? = _currentSortingOrder.value // Nur noch ein Sortierparameter
@@ -138,10 +178,9 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                 updateFilterAndSort()
             }
         }
-
         allPurchasedCardsWithDetails = MediatorLiveData<List<CardWithDetails>>().apply {
             var currentUnsortedList: List<CardWithDetails>? = null
-            var currentSortOrder: String? = _currentSortingOrder.value // Nur noch ein Sortierparameter
+            var currentSortOrder: String? = _currentSortingOrder.value
             var currentQuery: String? = _searchQuery.value
 
             fun updateFilterAndSort() {
@@ -165,31 +204,21 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             }
 
             addSource(allPurchasedCardsWithDetailsOnce) { list ->
-//                Log.d("CivicViewModel", "allCardsUnsortedOnce changed. Size: ${list?.size}")
                 currentUnsortedList = list
                 updateFilterAndSort()
             }
             addSource(_currentSortingOrder) { sortOrder -> // Beobachtet nur noch _currentSortingOrder
-//                Log.d("CivicViewModel", "_currentSortingOrder changed to: $sortOrder")
                 currentSortOrder = sortOrder
                 updateFilterAndSort()
             }
-            // addSource für _isCurrentSortAscending entfällt
             addSource(_searchQuery) { query ->
-//                Log.d("CivicViewModel", "_searchQuery changed to: '$query'")
                 currentQuery = query
                 updateFilterAndSort()
             }
         }
 
-        allAdvancesNotBought = _currentSortingOrder
-            .switchMap { order: String ->
-                repository.getAllAdvancesNotBoughtLiveData(order).map { it.toMutableList() }
-            }
-
         setupTotalVpMediator()
         setupCombinedSpecialsLiveData()
-        setupBuyableCardsObserver()
     }
 
     fun loadData() {
@@ -234,17 +263,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         _civNumber.value = civNumber
         _selectedTipIndex.value = civNumber.toIntOrNull()?.minus(1)
         defaultPrefs.edit { putString(PREF_KEY_CIVILIZATION, civNumber) }
-    }
-
-    private fun setupBuyableCardsObserver() {
-        buyableCardsMapObserver = Observer { cards: MutableList<Card> ->
-            buyableCardMap.clear()
-            for (card in cards) {
-                buyableCardMap.put(card.name, card)
-            }
-            areBuyableCardsReady.value = true
-        }
-        allAdvancesNotBought.observeForever(buyableCardsMapObserver)
     }
 
     private fun getBuyableAdvanceByNameFromMap(name: String): Card? {
@@ -418,19 +436,13 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
      * @param selection Currently selected cards from the View.  <-- PARAMETER TYP ANGEPASST
      */
     fun calculateTotal(selection: Iterable<String>) {
-        val cardsReady: Boolean? = areBuyableCardsReady.value
-        if (cardsReady != true) {
-            val currentTreasure: Int = treasure.value ?: 0
-            this.remaining.value = currentTreasure
-            return
-        }
         var newTotalCost = 0
         val iterator: Iterator<String> = selection.iterator()
         if (iterator.hasNext()) {
             for (name in selection) {
-                val adv = getBuyableAdvanceByNameFromMap(name)
+                val adv = allPurchasableCardsWithDetails.value?.firstOrNull { it.card.name == name }
                 if (adv != null) {
-                    newTotalCost += adv.currentPrice
+                    newTotalCost += adv.card.currentPrice
                 } else {
                     Log.e(
                         "CivicViewModel",
@@ -440,7 +452,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             }
         }
         val currentTreasure: Int = treasure.value ?: 0
-        this.remaining.value = currentTreasure - newTotalCost // remaining wird hier aktualisiert
+        this.remaining.value = currentTreasure - newTotalCost
     }
 
     /**
@@ -463,8 +475,10 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
      * @param name The name of the bought card.
      */
     fun addBonus(name: String) {
-        val card = getBuyableAdvanceByNameFromMap(name)
-        addBonus(card!!)
+        val cardWithDetails = allPurchasableCardsWithDetails.value?.firstOrNull { it.card.name == name }
+        if (cardWithDetails != null) {
+            addBonus(cardWithDetails.card)
+        }
     }
 
     /**
@@ -565,7 +579,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
     override fun onCleared() {
         super.onCleared()
-        allAdvancesNotBought.removeObserver(buyableCardsMapObserver)
+//        allAdvancesNotBought.removeObserver(buyableCardsMapObserver)
         defaultPrefs.unregisterOnSharedPreferenceChangeListener(this)
     }
 
@@ -700,11 +714,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
     fun customHeartSettingsUpdated() {
         // 1. Lade die neue Custom-Auswahl aus den SharedPreferences
-        _customCardSelectionForHeart.value = defaultPrefs.getStringSet(
-            PREF_KEY_CUSTOM_HEART_CARDS,
-            emptySet()
-        ) ?: emptySet()
-//        Log.d("CivicViewModel", "customHeartSettingsUpdated: New custom selection size: ${_customCardSelectionForHeart.value?.size}")
+        _customCardSelectionForHeart.value = defaultPrefs.getStringSet(PREF_KEY_CUSTOM_HEART_CARDS, emptySet()) ?: emptySet()
 
         // 2. Wenn die aktuelle "Heart"-Einstellung "custom" ist,
         //    dann die DB mit der neuen Custom-Liste aktualisieren.

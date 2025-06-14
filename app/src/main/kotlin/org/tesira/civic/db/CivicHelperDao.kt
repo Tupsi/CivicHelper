@@ -137,4 +137,8 @@ interface CivicHelperDao {
     @Transaction
     @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL")
     fun getAllPurchasedCardsWithDetailsUnsorted(): LiveData<List<CardWithDetails>>
+
+    @Transaction
+    @Query("SELECT cards.* FROM cards LEFT JOIN purchases on cards.name = purchases.name WHERE purchases.name IS NULL")
+    fun getAllPurchasableCardsWithDetailsUnsorted(): LiveData<List<CardWithDetails>>
 }

@@ -125,13 +125,16 @@ class MainActivity : AppCompatActivity() {
             return true
         }
 
-        // Defensive Prüfung für lateinit var
-        if (this::navController.isInitialized) {
-            // Nur versuchen zu navigieren, wenn der NavController bereit ist
-            return onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
+        if (::navController.isInitialized) {
+            try {
+                return onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Navigation error", e)
+                Toast.makeText(this, "Navigation failed. Please try again.", Toast.LENGTH_SHORT).show()
+                return super.onOptionsItemSelected(item)
+            }
         } else {
-            // NavController ist nicht bereit, vielleicht einen Fehler loggen oder einfach als nicht behandelt zurückgeben
-            Log.w("MainActivity", "onOptionsItemSelected: navController ist nicht initialisiert.")
+            Log.w("MainActivity", "navController is not initialized.")
             return super.onOptionsItemSelected(item)
         }
     }

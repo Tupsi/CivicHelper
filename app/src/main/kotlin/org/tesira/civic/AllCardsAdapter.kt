@@ -96,49 +96,15 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
                     textView.setTextColor(textColor)
                     textView.visibility = View.VISIBLE
                 } else {
-                    textView.visibility = View.GONE // Diesen TextView ausblenden, wenn Bonus 0 ist
+                    textView.visibility = View.GONE
                 }
             }
 
-            // Blau
-            setupSingleBonusTextView(
-                binding.textViewBonusBlue,
-                card.creditsBlue,
-                R.color.arts,
-                textColorOnDark
-            )
-
-            // Grün
-            setupSingleBonusTextView(
-                binding.textViewBonusGreen,
-                card.creditsGreen,
-                R.color.science,
-                textColorOnLight
-            )
-
-            // Orange
-            setupSingleBonusTextView(
-                binding.textViewBonusOrange,
-                card.creditsOrange,
-                R.color.crafts,
-                textColorOnDark
-            )
-
-            // Rot
-            setupSingleBonusTextView(
-                binding.textViewBonusRed,
-                card.creditsRed,
-                R.color.civic,
-                textColorOnDark
-            )
-
-            // Gelb
-            setupSingleBonusTextView(
-                binding.textViewBonusYellow,
-                card.creditsYellow,
-                R.color.religion,
-                textColorOnLight
-            )
+            setupSingleBonusTextView(binding.textViewBonusBlue, card.creditsBlue, R.color.arts, textColorOnDark)
+            setupSingleBonusTextView(binding.textViewBonusGreen, card.creditsGreen, R.color.science, textColorOnLight)
+            setupSingleBonusTextView(binding.textViewBonusOrange, card.creditsOrange, R.color.crafts, textColorOnDark)
+            setupSingleBonusTextView(binding.textViewBonusRed, card.creditsRed, R.color.civic, textColorOnDark)
+            setupSingleBonusTextView(binding.textViewBonusYellow, card.creditsYellow, R.color.religion, textColorOnLight)
 
             if (!card.info.isNullOrEmpty()) {
                 binding.infosTitle.visibility = View.VISIBLE
@@ -232,14 +198,10 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
     // DiffUtil.ItemCallback für effiziente Updates der Liste
     class CardDiffCallback : DiffUtil.ItemCallback<CardWithDetails>() {
         override fun areItemsTheSame(oldItem: CardWithDetails, newItem: CardWithDetails): Boolean {
-            // Überprüfe auf Basis einer eindeutigen ID (z.B. Kartenname)
             return oldItem.card.name == newItem.card.name
         }
 
         override fun areContentsTheSame(oldItem: CardWithDetails, newItem: CardWithDetails): Boolean {
-            // Überprüfe, ob sich der Inhalt geändert hat.
-            // Dies kann detaillierter sein, wenn nötig, aber für den Anfang reicht oft ein Vergleich
-            // der Objekte, wenn sie Datenklassen sind.
             return oldItem == newItem
         }
     }
