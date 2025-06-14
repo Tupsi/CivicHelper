@@ -373,7 +373,13 @@ class BuyingFragment : Fragment() {
         if (civicViewModel.treasure.value!! < 0) {
             civicViewModel.treasure.value = 0
         }
+        civicViewModel.showCredits.observe(viewLifecycleOwner) { isVisible ->
+            adapter.setShowCredits(isVisible)
+        }
 
+        civicViewModel.showInfos.observe(viewLifecycleOwner) { isVisible ->
+            adapter.setShowInfos(isVisible)
+        }
     }
 
     private fun focusTreasureInputAndShowKeyboard() {
@@ -434,7 +440,7 @@ class BuyingFragment : Fragment() {
                     val name = nameText.text.toString()
                     val isSelected = tracker.isSelected(name)
                     val price = priceText.text.toString().toInt()
-                    val mCardView = visibleView.findViewById<View>(R.id.card)
+                    val mCardView = visibleView.findViewById<View>(R.id.cardDetails)
                     if (!isSelected) {
                         if (price > civicViewModel.remaining.getValue()!!) {
                             mCardView.alpha = 0.25f

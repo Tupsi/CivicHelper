@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,8 +17,9 @@ import org.tesira.civic.databinding.ItemCardDetailRowBinding
 import org.tesira.civic.db.CardColor
 import org.tesira.civic.db.CardWithDetails
 import org.tesira.civic.db.CivicViewModel
+import org.tesira.civic.utils.SelectableItemViewHolder
 
-class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHolder>(CardDiffCallback()) {
+open class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHolder>(CardDiffCallback()) {
 
     private var shouldShowCreditsLayout: Boolean = false
     private var shouldShowInfosLayout: Boolean = false
@@ -46,9 +48,12 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
         holder.bind(cardWithDetails, shouldShowCreditsLayout, shouldShowInfosLayout)
     }
 
-    inner class CardViewHolder(private val binding: ItemCardDetailRowBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CardViewHolder(internal val binding: ItemCardDetailRowBinding) : RecyclerView.ViewHolder(binding.root), SelectableItemViewHolder {
+
+        private var currentItem: CardWithDetails? = null
 
         fun bind(cardWithDetails: CardWithDetails, showCredits: Boolean, showInfos: Boolean) {
+            this.currentItem = cardWithDetails
             val textColorOnDark = Color.WHITE
             val textColorOnLight = Color.BLACK
             val card = cardWithDetails.card
@@ -192,6 +197,15 @@ class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardViewHol
             } else {
                 binding.allDetailsSectionLayout.visibility = View.GONE
             }
+        }
+
+        override fun getItemDetails(): ItemDetailsLookup.ItemDetails<String>? {
+            val item = currentItem
+
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION && item != null) {
+                return BuyingItemDetails(bindingAdapterPosition, item.card.name)
+            }
+            return null
         }
     }
 
