@@ -22,7 +22,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -119,7 +118,7 @@ class BuyingFragment : Fragment() {
             recyclerView.setLayoutManager(layout)
         }
 
-        adapter = BuyingAdapter(civicViewModel)
+        adapter = BuyingAdapter()
         recyclerView.setAdapter(adapter)
         treasureInput = binding.treasure
         remainingText = binding.moneyleft
@@ -136,20 +135,22 @@ class BuyingFragment : Fragment() {
         }
 
         civicViewModel.allPurchasableCardsWithDetails.observe(viewLifecycleOwner) { cards ->
-            adapter.submitList(cards)
+            adapter.submitList(cards) {
+                if ((binding.purchasableCards.adapter?.itemCount ?: 0) > 0) { // Zusätzliche Prüfung, ob die Liste nicht leer ist
+                    binding.purchasableCards.scrollToPosition(0)
+                }
+            }
             if (savedSelectionState != null) {
                 tracker.onRestoreInstanceState(savedSelectionState)
                 savedSelectionState = null
             }
         }
 
-        civicViewModel.currentSortingOrder.observe(
-            getViewLifecycleOwner(),
-            Observer { order: String? ->
-                if (order != null) {
-                    updateSortButtonText(order)
-                }
-            })
+        civicViewModel.currentSortingOrder.observe(viewLifecycleOwner) { order ->
+            if (order != null) {
+                updateSortButtonText(order)
+            }
+        }
 
         if (savedInstanceState != null) {
             savedSelectionState = savedInstanceState
@@ -212,15 +213,14 @@ class BuyingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         registerForContextMenu(binding.btnSort)
-        civicViewModel.getShowAnatomyDialogEvent()
-            .observe(getViewLifecycleOwner(), Observer { event: Event<List<String>> ->
-                val anatomyCardsToShow = event.getContentIfNotHandled()
-                if (anatomyCardsToShow != null && !anatomyCardsToShow.isEmpty()) {
-                    numberDialogs++
-                    DialogAnatomyFragment.Companion.newInstance(anatomyCardsToShow)
-                        .show(getParentFragmentManager(), "Anatomy")
-                }
-            })
+        civicViewModel.getShowAnatomyDialogEvent().observe(viewLifecycleOwner) { event ->
+            val anatomyCardsToShow = event.getContentIfNotHandled()
+            if (anatomyCardsToShow != null && !anatomyCardsToShow.isEmpty()) {
+                numberDialogs++
+                DialogAnatomyFragment.Companion.newInstance(anatomyCardsToShow)
+                    .show(getParentFragmentManager(), "Anatomy")
+            }
+        }
 
         binding.btnSort.setOnClickListener {
             cycleNextSortOrder()
@@ -229,25 +229,21 @@ class BuyingFragment : Fragment() {
             updateSortButtonText(currentSortValue)
         }
 
-        civicViewModel.showExtraCreditsDialogEvent.observe(
-            getViewLifecycleOwner(),
-            Observer { event: Event<Int?>? ->
-                val extraCredits = event!!.getContentIfNotHandled()
-                if (extraCredits != null && extraCredits > 0) {
-                    numberDialogs++
-                    DialogExtraCreditsFragment.Companion.newInstance(extraCredits)
-                        .show(getParentFragmentManager(), "ExtraCredits")
-                }
-            })
+        civicViewModel.showExtraCreditsDialogEvent.observe(viewLifecycleOwner) { event ->
+            val extraCredits = event!!.getContentIfNotHandled()
+            if (extraCredits != null && extraCredits > 0) {
+                numberDialogs++
+                DialogExtraCreditsFragment.Companion.newInstance(extraCredits)
+                    .show(getParentFragmentManager(), "ExtraCredits")
+            }
+        }
 
-        civicViewModel.navigateToDashboardEvent.observe(
-            getViewLifecycleOwner(),
-            Observer { event ->
-                val shouldNavigate = event.getContentIfNotHandled()
-                if (shouldNavigate == true) {
-                    returnToDashboard()
-                }
-            })
+        civicViewModel.navigateToDashboardEvent.observe(viewLifecycleOwner) { event ->
+            val shouldNavigate = event.getContentIfNotHandled()
+            if (shouldNavigate == true) {
+                returnToDashboard()
+            }
+        }
 
         buyingItemKeyProvider = BuyingItemKeyProvider(adapter)
         tracker = SelectionTracker.Builder<String>(
@@ -265,7 +261,7 @@ class BuyingFragment : Fragment() {
             override fun onItemStateChanged(key: String, selected: Boolean) {
                 super.onItemStateChanged(key, selected)
 
-                civicViewModel.calculateTotal(tracker.getSelection())
+                civicViewModel.calculateTotal(tracker.selection)
                 val isFinalizing = civicViewModel.isFinalizingPurchase.value == true
 
                 if (!isFinalizing && key == "Library") {
@@ -290,7 +286,7 @@ class BuyingFragment : Fragment() {
                     }
                 }
                 val currentSelection: MutableSet<String?> = HashSet<String?>()
-                for (selectedKey in tracker.getSelection()) {
+                for (selectedKey in tracker.selection) {
                     currentSelection.add(selectedKey)
                 }
                 civicViewModel.updateSelectionState(currentSelection)
@@ -307,13 +303,13 @@ class BuyingFragment : Fragment() {
             override fun onSelectionRestored() {
                 super.onSelectionRestored()
                 val restoredSelection: MutableSet<String?> = HashSet<String?>()
-                for (selectedKey in tracker.getSelection()) {
+                for (selectedKey in tracker.selection) {
                     restoredSelection.add(selectedKey)
                 }
                 civicViewModel.updateSelectionState(restoredSelection)
 
                 // When selection is restored, recalculate the total based on the restored selection.
-                civicViewModel.calculateTotal(tracker.getSelection())
+                civicViewModel.calculateTotal(tracker.selection)
 
                 var libraryIsNowSelected = false
                 if (!restoredSelection.isEmpty()) {
@@ -324,30 +320,31 @@ class BuyingFragment : Fragment() {
         })
 
         if (savedInstanceState == null) {
-            val selectionFromVm = civicViewModel.selectedCardKeysForState.getValue()
+            val selectionFromVm = civicViewModel.selectedCardKeysForState.value
             if (selectionFromVm != null && !selectionFromVm.isEmpty()) {
-                if (tracker.getSelection().isEmpty && savedSelectionState == null) {
+                if (tracker.selection.isEmpty && savedSelectionState == null) {
                     tracker.setItemsSelected(selectionFromVm, true)
                 }
             }
         }
 
-        civicViewModel.treasure.observe(getViewLifecycleOwner(), Observer { treasure: Int? ->
+        civicViewModel.treasure.observe(viewLifecycleOwner) { treasure ->
             treasureInput!!.setText(treasure.toString())
-            if (treasure!! < civicViewModel.remaining.getValue()!!) {
+            if (treasure!! < civicViewModel.remaining.value!!) {
                 civicViewModel.remaining.value = treasure
                 tracker.clearSelection()
-            } else if (tracker.getSelection().size() > 0) {
-                civicViewModel.calculateTotal(tracker.getSelection())
+            } else if (tracker.selection.size() > 0) {
+                civicViewModel.calculateTotal(tracker.selection)
             } else {
                 civicViewModel.remaining.value = treasure
             }
-        })
+        }
 
-        civicViewModel.remaining.observe(getViewLifecycleOwner(), Observer { remaining: Int? ->
+        civicViewModel.remaining.observe(viewLifecycleOwner) { remaining ->
             remainingText!!.text = remaining.toString()
+            adapter.setRemaining(remaining)
             updateViews()
-        })
+        }
 
         val rootView = requireActivity().window.decorView.rootView
         keyboardListener = object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -435,17 +432,13 @@ class BuyingFragment : Fragment() {
                 // Find the view that corresponds to this position in the adapter.
                 val visibleView = lm.findViewByPosition(i)
                 if (visibleView != null) {
-                    val priceText = visibleView.findViewById<TextView>(R.id.price)
-                    val nameText = visibleView.findViewById<TextView>(R.id.name)
-                    val name = nameText.text.toString()
-                    val isSelected = tracker.isSelected(name)
-                    val price = priceText.text.toString().toInt()
-                    val mCardView = visibleView.findViewById<View>(R.id.cardDetails)
+                    val price = visibleView.findViewById<TextView>(R.id.price).text.toString().toInt()
+                    val isSelected = visibleView.isActivated
                     if (!isSelected) {
-                        if (price > civicViewModel.remaining.getValue()!!) {
-                            mCardView.alpha = 0.25f
+                        if (price > civicViewModel.remaining.value!!) {
+                            visibleView.alpha = 0.25f
                         } else {
-                            mCardView.alpha = 1.0f
+                            visibleView.alpha = 1.0f
                         }
                     }
                 }

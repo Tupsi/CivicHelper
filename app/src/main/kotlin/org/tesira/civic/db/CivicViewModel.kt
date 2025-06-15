@@ -18,8 +18,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.application
 import androidx.preference.PreferenceManager
 import org.tesira.civic.Calamity
-import org.tesira.civic.Event
 import org.tesira.civic.R
+import org.tesira.civic.utils.Event
 import java.util.Locale
 
 class CivicViewModel(application: Application) : AndroidViewModel(application), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -896,17 +896,17 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                 }
             } else {
                 when (card.name) {
-                    "Engineering" -> backgroundColor = R.drawable.engineering_background
-                    "Mathematics" -> backgroundColor = R.drawable.mathematics_background
-                    "Mysticism" -> backgroundColor = R.drawable.mysticism_background
-                    "Written Record" -> backgroundColor = R.drawable.written_record_background
-                    "Theocracy" -> backgroundColor = R.drawable.theocracy_background
-                    "Literacy" -> backgroundColor = R.drawable.literacy_background
-                    "Wonder of the World" -> backgroundColor = R.drawable.wonders_of_the_world_background
-                    "Philosophy" -> backgroundColor = R.drawable.philosophy_background
-                    "Monument" -> backgroundColor = R.drawable.monument_background
-                    "Written Record Extra Credits" -> backgroundColor = R.drawable.written_record_background
-                    "Monument Extra Credits" -> backgroundColor = R.drawable.monument_background
+                    "Engineering" -> backgroundColor = R.drawable.bg_engineering
+                    "Mathematics" -> backgroundColor = R.drawable.bg_mathematics
+                    "Mysticism" -> backgroundColor = R.drawable.bg_mysticism
+                    "Written Record" -> backgroundColor = R.drawable.bg_written_record
+                    "Theocracy" -> backgroundColor = R.drawable.bg_theocracy
+                    "Literacy" -> backgroundColor = R.drawable.bg_literacy
+                    "Wonder of the World" -> backgroundColor = R.drawable.bg_wonder_of_the_world
+                    "Philosophy" -> backgroundColor = R.drawable.bg_philosophy
+                    "Monument" -> backgroundColor = R.drawable.bg_monument
+                    "Written Record Extra Credits" -> backgroundColor = R.drawable.bg_written_record
+                    "Monument Extra Credits" -> backgroundColor = R.drawable.bg_monument
                     "Extra Credits WR & Monument" -> return gradient
                     //"Extra Credits WR & Monument" -> backgroundColor = R.drawable.extra_credits_background
                 }

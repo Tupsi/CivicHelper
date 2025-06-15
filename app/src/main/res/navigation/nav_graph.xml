@@ -21,7 +21,7 @@
         android:id="@+id/inventoryFragment"
         android:name="org.tesira.civic.InventoryFragment"
         android:label="@string/menu_item_purchases"
-        tools:layout="@layout/fragment_inventory" />
+        tools:layout="@layout/fragment_all_cards" />
 
     <fragment
         android:id="@+id/tipsFragment"

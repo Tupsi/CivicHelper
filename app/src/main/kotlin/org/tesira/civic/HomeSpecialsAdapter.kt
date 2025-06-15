@@ -33,7 +33,7 @@ class HomeSpecialsAdapter : RecyclerView.Adapter<HomeSpecialsAdapter.ViewHolder?
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textView!!.text = localDataSet[position]
-        viewHolder.textView.setBackgroundResource(R.drawable.specials_background)
+        viewHolder.textView.setBackgroundResource(R.drawable.bg_specials)
         if (viewHolder.textView.text.toString().startsWith("_")) {
             viewHolder.textView.setTypeface(viewHolder.textView.typeface, Typeface.BOLD)
         }

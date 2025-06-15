@@ -1,12 +1,8 @@
-// Event.kt
-package org.tesira.civic
+package org.tesira.civic.utils
 
 /**
  * Used as a wrapper for data that is exposed via a LiveData that represents a one-time event,
  * like a snackbar message.
- * <p>
- * This class is copied from the Google samples:
- * https://github.com/android/architecture-samples/blob/dev-todo-mvvm-live/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/Event.kt
  */
 open class Event<out T>(private val content: T) {
 

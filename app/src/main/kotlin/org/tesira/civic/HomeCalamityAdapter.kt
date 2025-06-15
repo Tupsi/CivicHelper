@@ -44,8 +44,8 @@ class HomeCalamityAdapter(private val mContext: Context) :
         if (item.bonus.toInt() == -99) {
             holder.bonus.text = " "
         }
-        holder.calamity.setBackgroundResource(R.drawable.specials_background)
-        holder.bonus.setBackgroundResource(R.drawable.specials_background)
+        holder.calamity.setBackgroundResource(R.drawable.bg_specials)
+        holder.bonus.setBackgroundResource(R.drawable.bg_specials)
     }
 
     override fun getItemCount(): Int {
