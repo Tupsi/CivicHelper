@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?><!-- res/drawable/custom_fully_transparent_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#00000000" /> <!-- Alpha=00, RGB beliebig, da unsichtbar -->
+</shape>

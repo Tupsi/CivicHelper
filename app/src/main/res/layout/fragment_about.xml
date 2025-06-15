@@ -6,12 +6,12 @@
     <ImageView
         android:id="@+id/AboutImage"
         android:layout_width="0dp"
-        android:layout_height="120dp"
-        android:scaleType="centerCrop"
+        android:layout_height="160dp"
+        android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/nav_header"
+        app:srcCompat="@drawable/banner"
         android:contentDescription="@string/about_header_desc" />
 
     <!-- tvAboutText kommt jetzt zuerst und ist unter AboutImage -->
