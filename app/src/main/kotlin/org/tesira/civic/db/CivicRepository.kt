@@ -14,7 +14,7 @@ import java.util.concurrent.Executors
 import kotlin.math.max
 
 class CivicRepository(application: Application) {
-    private var mCivicDao: CivicHelperDao
+    private var civicDao: CivicHelperDao
 
     private val repositoryExecutor: ExecutorService = Executors.newFixedThreadPool(
         NUMBER_OF_THREADS
@@ -22,62 +22,62 @@ class CivicRepository(application: Application) {
 
     init {
         val db = getDatabase(application)
-        mCivicDao = db!!.civicDao()
+        civicDao = db!!.civicDao()
     }
 
     fun deleteInventory() {
-        repositoryExecutor.execute { mCivicDao.deleteAllPurchases() }
+        repositoryExecutor.execute { civicDao.deleteAllPurchases() }
     }
 
     // Methode zum Einfügen eines Kaufs nur mit Namen (wird nur für den extra Anatomy Kauf verwendet)
     fun insertPurchase(name: String) {
-        repositoryExecutor.execute { mCivicDao.insertPurchase(Purchase(name)) }
+        repositoryExecutor.execute { civicDao.insertPurchase(Purchase(name)) }
     }
 
     fun resetDB(context: Context) {
         repositoryExecutor.execute {
-            mCivicDao.deleteAllCards()
-            mCivicDao.deleteAllEffects()
-            mCivicDao.deleteAllSpecials()
-            mCivicDao.deleteAllImmunities()
+            civicDao.deleteAllCards()
+            civicDao.deleteAllEffects()
+            civicDao.deleteAllSpecials()
+            civicDao.deleteAllImmunities()
             // Stelle sicher, dass importCivicsFromXML eine synchrone Operation ist
             importCivicsFromXML(context)
         }
     }
 
     fun resetCurrentPrice() {
-        repositoryExecutor.execute { mCivicDao.resetCurrentPrice() }
+        repositoryExecutor.execute { civicDao.resetCurrentPrice() }
     }
 
     fun getAllAdvancesNotBoughtLiveData(sortingOrder: String): LiveData<List<Card>> {
-        return mCivicDao.getAllAdvancesNotBoughtLiveData(sortingOrder)
+        return civicDao.getAllAdvancesNotBoughtLiveData(sortingOrder)
     }
 
     fun getAllCardsWithDetailsUnsorted(): LiveData<List<CardWithDetails>> {
-        return mCivicDao.getAllCardsWithDetailsUnsorted()
+        return civicDao.getAllCardsWithDetailsUnsorted()
     }
 
     fun getAllPurchasedCardsWithDetailsUnsorted(): LiveData<List<CardWithDetails>> {
-        return mCivicDao.getAllPurchasedCardsWithDetailsUnsorted()
+        return civicDao.getAllPurchasedCardsWithDetailsUnsorted()
     }
 
     fun getAllPurchasableCardsWithDetailsUnsorted(): LiveData<List<CardWithDetails>> {
-        return mCivicDao.getAllPurchasableCardsWithDetailsUnsorted()
+        return civicDao.getAllPurchasableCardsWithDetailsUnsorted()
     }
 
     val calamityBonusLiveData: LiveData<List<Calamity>>
-        get() = mCivicDao.getCalamityBonusLiveData()
+        get() = civicDao.getCalamityBonusLiveData()
     val specialAbilitiesLiveData: LiveData<List<String>>
-        get() = mCivicDao.getSpecialAbilitiesLiveData()
+        get() = civicDao.getSpecialAbilitiesLiveData()
     val immunitiesLiveData: LiveData<List<String>>
-        get() = mCivicDao.getImmunitiesLiveData()
+        get() = civicDao.getImmunitiesLiveData()
     val inventoryAsCardLiveData: LiveData<List<Card>>
-        get() = mCivicDao.getInventoryAsCardLiveData()
+        get() = civicDao.getInventoryAsCardLiveData()
     val cardsVp: LiveData<Int>
         /**
          * Returns the victory points of all bought cards in the database.
          */
-        get() = mCivicDao.cardsVp()
+        get() = civicDao.cardsVp()
 
     fun recalculateCurrentPricesAsync(currentBonus: MutableLiveData<HashMap<CardColor, Int>>) {
         repositoryExecutor.execute {
@@ -105,11 +105,11 @@ class CivicRepository(application: Application) {
             try {
                 for (name in selectedKeys) {
                     // 1. Kauf einfügen
-                    mCivicDao.insertPurchase(Purchase(name)) // Synchron im Hintergrund-Thread
+                    civicDao.insertPurchase(Purchase(name)) // Synchron im Hintergrund-Thread
 
                     // 2. Extra Credits und spezielle Karten prüfen (Synchron im Hintergrund-Thread)
                     val creditEffects =
-                        mCivicDao.getEffect(name, "Credits")
+                        civicDao.getEffect(name, "Credits")
                     for (effect in creditEffects) {
                         totalExtraCredits += effect.value
                     }
@@ -124,7 +124,7 @@ class CivicRepository(application: Application) {
 
                 // 4. Wenn Anatomy gekauft wurde, alle grünen gratis Karten holen
                 if (boughtAnatomy) {
-                    anatomyCardsToChoose = mCivicDao.getAnatomyCards()
+                    anatomyCardsToChoose = civicDao.getAnatomyCards()
                 }
                 // 4. Callback aufrufen, um das ViewModel zu benachrichtigen
                 callback.onPurchaseCompleted(totalExtraCredits, anatomyCardsToChoose)
@@ -146,7 +146,7 @@ class CivicRepository(application: Application) {
         )
 
         // Aktualisiere die Preise basierend auf den aktuellen Boni
-        val allCards = mCivicDao.getAdvancesByName() // Synchron im Hintergrund-Thread
+        var allCards = civicDao.getAdvancesByName() // Synchron im Hintergrund-Thread
         for (cardLoop in allCards) {
             var newCurrent: Int
             if (cardLoop.group2 == null) {
@@ -157,17 +157,18 @@ class CivicRepository(application: Application) {
                 newCurrent = (cardLoop.price - max(group1.toDouble(), group2.toDouble())).toInt()
             }
             if (newCurrent < 0) newCurrent = 0
-            mCivicDao.updateCurrentPrice(cardLoop.name, newCurrent)
+            civicDao.updateCurrentPrice(cardLoop.name, newCurrent)
         }
 
         // Special family bonus (prüft gekaufte Karten und aktualisiert Preise basierend auf deren bonusCard und bonus)
         // muss nur für Karten gemacht werden die 1 oder 3 VP geben. Karten mit 6 VP haben so einen Bonus nicht
-        val purchasesForBonus = mCivicDao.getPurchasesForFamilyBonus()
+        val purchasesForBonus = civicDao.getPurchasesForFamilyBonus()
+        allCards = civicDao.getAdvancesByName()
         for (cardLoop in purchasesForBonus) {
-            val bonusTo = mCivicDao.getAdvanceByNameToCard(cardLoop.bonusCard!!)
+            val bonusTo = allCards.find { it.name == cardLoop.bonusCard }
             var newCurrent = bonusTo!!.currentPrice - cardLoop.bonus
             if (newCurrent < 0) newCurrent = 0
-            mCivicDao.updateCurrentPrice(bonusTo.name, newCurrent)
+            civicDao.updateCurrentPrice(bonusTo.name, newCurrent)
         }
         Log.d(
             "CivicRepository",
@@ -181,7 +182,7 @@ class CivicRepository(application: Application) {
 
     fun resetAllCardsHeartStatusAsync(callback: RepositoryCallback?) {
         repositoryExecutor.execute {
-            mCivicDao.resetAllHearts()
+            civicDao.resetAllHearts()
             callback?.onComplete()
         }
     }
@@ -194,13 +195,13 @@ class CivicRepository(application: Application) {
             return
         }
         repositoryExecutor.execute {
-            mCivicDao.setHeartsForCards(cardNames)
+            civicDao.setHeartsForCards(cardNames)
             callback?.onComplete()
         }
     }
 
     fun insertCard(card: Card) {
-        repositoryExecutor.execute { mCivicDao.insertCard(card) }
+        repositoryExecutor.execute { civicDao.insertCard(card) }
     }
 
     companion object {

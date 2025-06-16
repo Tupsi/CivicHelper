@@ -86,10 +86,7 @@ interface CivicHelperDao {
     @Query("SELECT * FROM effects WHERE name = :name AND advance = :advance ORDER BY advance ASC")
     fun getEffect(advance: String?, name: String?): List<Effect>
 
-    @Query("SELECT  effects.name AS calamity, SUM(effects.value) AS bonus FROM effects LEFT JOIN purchases on effects.advance = purchases.name WHERE purchases.name IS NOT NULL AND calamity NOT LIKE 'Credits%' AND calamity NOT LIKE 'FreeScience' GROUP BY effects.name ORDER BY calamity ASC")
-    fun getCalamityBonus(): List<Calamity>
-
-    @Query("SELECT  effects.name AS calamity, SUM(effects.value) AS bonus FROM effects LEFT JOIN purchases on effects.advance = purchases.name WHERE purchases.name IS NOT NULL AND calamity NOT LIKE 'Credits%' AND calamity NOT LIKE 'FreeScience' GROUP BY effects.name ORDER BY calamity ASC")
+    @Query("SELECT  effects.name AS calamity, SUM(effects.value) AS bonus FROM effects LEFT JOIN purchases on effects.advance = purchases.name WHERE purchases.name IS NOT NULL AND calamity NOT LIKE 'Credits%' AND calamity NOT LIKE 'FreeScience' GROUP BY effects.name HAVING SUM(effects.value) <> 0 ORDER BY calamity ASC")
     fun getCalamityBonusLiveData(): LiveData<List<Calamity>>
 
     @Insert
