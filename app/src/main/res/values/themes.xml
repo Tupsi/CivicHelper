@@ -18,6 +18,12 @@
 
         <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
 
+        <item name="android:statusBarColor">@color/md_theme_primary</item>"
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="android:navigationBarColor">@color/grey</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
     </style>
 
     <!-- 2. Ein einfacher Toolbar-Style, der die Theme-Attribute nutzt -->

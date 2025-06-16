@@ -13,8 +13,12 @@
 
         <item name="appToolbarTitleColor">@color/toolbar_elements</item>
         <item name="preferenceCategoryTitleTextColor">@color/md_theme_primary</item>
-        <item name="android:textColorLink">@color/md_theme_primary</item>"
+        <item name="android:textColorLink">@color/md_theme_primary</item>
 
+        <item name="android:statusBarColor">@color/md_theme_primary</item>"
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/dark_grey</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 
 </resources>
