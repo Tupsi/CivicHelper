@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.Menu
@@ -143,9 +142,8 @@ abstract class BaseCardListFragment : Fragment() {
                 binding.textViewPlaceholder.visibility = View.GONE
                 binding.recyclerViewAllCards.visibility = View.VISIBLE
                 allCardsAdapter.submitList(cards) {
-                    if (binding.recyclerViewAllCards.isVisible && cards.isNotEmpty()) {
+                    if (isAdded && view != null && _binding != null && binding.recyclerViewAllCards.isVisible && cards.isNotEmpty()) {
                         binding.recyclerViewAllCards.scrollToPosition(0)
-                        Log.d("BaseCardListFragment", "Scrolled to top after list update.")
                     }
                 }
             }
