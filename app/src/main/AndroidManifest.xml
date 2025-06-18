@@ -7,7 +7,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CivicHelper">
+        android:theme="@style/AppTheme">
         <activity
             android:name="org.tesira.civic.MainActivity"
             android:exported="true">

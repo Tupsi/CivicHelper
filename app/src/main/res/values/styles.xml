@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="RadioButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
+    <style name="RadioButtonStyle" parent="Widget.Material3.CompoundButton.RadioButton">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/black</item>
         <item name="android:padding">8dp</item>
@@ -14,7 +14,7 @@
         <item name="android:layout_marginStart">4dp</item>
     </style>
 
-    <style name="RadioButtonStyleLandscape" parent="Widget.AppCompat.CompoundButton.RadioButton">
+    <style name="RadioButtonStyleLandscape" parent="Widget.Material3.CompoundButton.RadioButton">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/black</item>
         <item name="android:padding">8dp</item>
@@ -44,23 +44,19 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">12sp</item>
     </style>
-    <style name="BuyButton" parent="Theme.Material3.DayNight">
+
+    <style name="BuyButton" parent="Widget.Material3.Button">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textSize">12sp</item>
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:minHeight">48dp</item>
-        <item name="backgroundTint">@color/toolbar_elements</item>
+        <item name="singleLine">true</item>
+        <item name="android:ellipsize">none</item>
+        <item name="android:maxLines">1</item>"
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
     </style>
 
-    <style name="Widget.MaterialComponents.Button" parent="Widget.AppCompat.Button">
-        <item name="enforceMaterialTheme">true</item>
-        <item name="enforceTextAppearance">true</item>
-        <item name="android:textAppearance">?attr/textAppearanceButton</item>
-        <item name="android:insetLeft">0dp</item>
-        <item name="android:insetRight">0dp</item>
-        <item name="cornerRadius">@null</item>
-        <item name="shapeAppearance">?attr/shapeAppearanceSmallComponent</item>
-    </style>
 </resources>

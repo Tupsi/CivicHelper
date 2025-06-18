@@ -18,16 +18,74 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <RadioButton android:id="@+id/radio_0" style="@style/RadioButtonStyle" android:text="0" />
-        <RadioButton android:id="@+id/radio_1" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="1" />
-        <RadioButton android:id="@+id/radio_2" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="2" />
-        <RadioButton android:id="@+id/radio_3" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="3" />
-        <RadioButton android:id="@+id/radio_4" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="4" />
-        <RadioButton android:id="@+id/radio_5" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="5" />
-        <RadioButton android:id="@+id/radio_6" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="6" />
-        <RadioButton android:id="@+id/radio_7" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="7" />
-        <RadioButton android:id="@+id/radio_8" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="8" />
-        <RadioButton android:id="@+id/radio_9" style="@style/RadioButtonStyle" android:layout_marginStart="4dp" android:text="9" />
+        <RadioButton
+            android:id="@+id/radio_0"
+            style="@style/RadioButtonStyle"
+            android:text="0"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/radio_1"
+            style="@style/RadioButtonStyle"
+            android:layout_marginStart="4dp"
+            android:text="1"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/radio_2"
+            style="@style/RadioButtonStyle"
+            android:layout_marginStart="4dp"
+            android:text="2"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/radio_3"
+            style="@style/RadioButtonStyle"
+            android:layout_marginStart="4dp"
+            android:text="3"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/radio_4"
+            style="@style/RadioButtonStyle"
+            android:layout_marginStart="4dp"
+            android:text="4"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/radio_5"
+            style="@style/RadioButtonStyle"
+            android:layout_marginStart="4dp"
+            android:text="5"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/radio_6"
+            style="@style/RadioButtonStyle"
+            android:layout_marginStart="4dp"
+            android:text="6"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/radio_7"
+            style="@style/RadioButtonStyle"
+            android:layout_marginStart="4dp"
+            android:text="7"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/radio_8"
+            style="@style/RadioButtonStyle"
+            android:layout_marginStart="4dp"
+            android:text="8"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/radio_9"
+            style="@style/RadioButtonStyle"
+            android:layout_marginStart="4dp"
+            android:text="9"
+            tools:ignore="HardcodedText" />
     </RadioGroup>
 
     <TextView
@@ -37,7 +95,8 @@
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toEndOf="@id/radioGroup"
         app:layout_constraintTop_toTopOf="@id/radioGroup"
-        app:layout_constraintBottom_toBottomOf="@id/radioGroup" />
+        app:layout_constraintBottom_toBottomOf="@id/radioGroup"
+        tools:ignore="SelectableText" />
 
     <TextView
         android:id="@+id/tvEBA"
@@ -46,7 +105,8 @@
         android:layout_marginStart="4dp"
         app:layout_constraintStart_toEndOf="@id/tvAST"
         app:layout_constraintTop_toTopOf="@id/tvAST"
-        app:layout_constraintBottom_toBottomOf="@id/tvAST" />
+        app:layout_constraintBottom_toBottomOf="@id/tvAST"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tvMBA"
@@ -55,7 +115,8 @@
         android:layout_marginStart="4dp"
         app:layout_constraintStart_toEndOf="@id/tvEBA"
         app:layout_constraintTop_toTopOf="@id/tvEBA"
-        app:layout_constraintBottom_toBottomOf="@id/tvEBA" />
+        app:layout_constraintBottom_toBottomOf="@id/tvEBA"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tvLBA"
@@ -64,7 +125,8 @@
         android:layout_marginStart="4dp"
         app:layout_constraintStart_toEndOf="@id/tvMBA"
         app:layout_constraintTop_toTopOf="@id/tvMBA"
-        app:layout_constraintBottom_toBottomOf="@id/tvMBA" />
+        app:layout_constraintBottom_toBottomOf="@id/tvMBA"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tvEIA"
@@ -73,7 +135,8 @@
         android:layout_marginStart="4dp"
         app:layout_constraintStart_toEndOf="@id/tvLBA"
         app:layout_constraintTop_toTopOf="@id/tvLBA"
-        app:layout_constraintBottom_toBottomOf="@id/tvLBA" />
+        app:layout_constraintBottom_toBottomOf="@id/tvLBA"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/tvLIA"
@@ -82,7 +145,8 @@
         android:layout_marginStart="4dp"
         app:layout_constraintStart_toEndOf="@id/tvEIA"
         app:layout_constraintTop_toTopOf="@id/tvEIA"
-        app:layout_constraintBottom_toBottomOf="@id/tvEIA" />
+        app:layout_constraintBottom_toBottomOf="@id/tvEIA"
+        tools:ignore="HardcodedText" />
 
     <LinearLayout
         android:id="@+id/secondRowContainer"
@@ -114,33 +178,67 @@
 
             <TextView
                 android:id="@+id/bonusBlue"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:minWidth="35dp" android:padding="4dp" android:gravity="center"
-                tools:text="B" android:textColor="#FFFFFF" android:background="#0000FF" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="35dp"
+                android:padding="4dp"
+                android:gravity="center"
+                tools:text="B"
+                android:textColor="#FFFFFF"
+                android:background="#0000FF"
+                tools:ignore="SelectableText" />
+
             <TextView
                 android:id="@+id/bonusGreen"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:minWidth="35dp" android:padding="4dp" android:layout_marginStart="4dp"
-                android:gravity="center" tools:text="G" android:textColor="#000000"
-                android:background="#00FF00" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="35dp"
+                android:padding="4dp"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                tools:text="G"
+                android:textColor="#000000"
+                android:background="#00FF00"
+                tools:ignore="SelectableText" />
+
             <TextView
                 android:id="@+id/bonusOrange"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:minWidth="35dp" android:padding="4dp" android:layout_marginStart="4dp"
-                android:gravity="center" tools:text="O" android:textColor="#FFFFFF"
-                android:background="#FFA500" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="35dp"
+                android:padding="4dp"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                tools:text="O"
+                android:textColor="#FFFFFF"
+                android:background="#FFA500"
+                tools:ignore="SelectableText" />
+
             <TextView
                 android:id="@+id/bonusRed"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:minWidth="35dp" android:padding="4dp" android:layout_marginStart="4dp"
-                android:gravity="center" tools:text="R" android:textColor="#FFFFFF"
-                android:background="#FF0000" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="35dp"
+                android:padding="4dp"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                tools:text="R"
+                android:textColor="#FFFFFF"
+                android:background="#FF0000"
+                tools:ignore="SelectableText" />
+
             <TextView
                 android:id="@+id/bonusYellow"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:minWidth="35dp" android:padding="4dp" android:layout_marginStart="4dp"
-                android:gravity="center" tools:text="Y" android:textColor="#000000"
-                android:background="#FFFF00" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="35dp"
+                android:padding="4dp"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                tools:text="Y"
+                android:textColor="#000000"
+                android:background="#FFFF00"
+                tools:ignore="SelectableText" />
         </LinearLayout>
 
         <TextView
@@ -150,7 +248,8 @@
             tools:text="A.S.T. rank order 00"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:layout_marginStart="32dp"/>
+            android:layout_marginStart="32dp"
+            tools:ignore="SelectableText" />
 
         <TextView
             android:id="@+id/tvTime"
@@ -159,7 +258,8 @@
             tools:text="8000BC"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:layout_marginStart="32dp"/>
+            android:layout_marginStart="32dp"
+            tools:ignore="SelectableText" />
 
         <TextView
             android:id="@+id/tvVp"
@@ -167,7 +267,8 @@
             android:layout_height="wrap_content"
             tools:text="VP: 000"
             android:textStyle="bold"
-            android:layout_marginStart="32dp"/>
+            android:layout_marginStart="32dp"
+            tools:ignore="SelectableText" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
@@ -205,7 +306,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline_main_split"
         tools:listitem="@layout/item_row_calamity"
-        tools:itemCount="5"/>
+        tools:itemCount="5" />
 
     <TextView
         android:id="@+id/tvSpecials"
@@ -235,6 +336,6 @@
         app:layout_constraintStart_toEndOf="@id/vertical_guideline_main_split"
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_row_specials"
-        tools:itemCount="5"/>
+        tools:itemCount="5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

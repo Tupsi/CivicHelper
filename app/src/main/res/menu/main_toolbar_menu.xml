@@ -21,6 +21,7 @@
     <item
         android:id="@+id/inventoryFragment"
         android:icon="@drawable/ic_inventory"
+        android:iconTint="?attr/colorOnPrimaryContainer"
         android:title="@string/menu_item_purchases"
         app:showAsAction="always"
         android:orderInCategory="20" />

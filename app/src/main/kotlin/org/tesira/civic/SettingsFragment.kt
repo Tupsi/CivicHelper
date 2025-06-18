@@ -52,6 +52,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     private fun updateCustomSelectionPreferenceVisibility() {
+        if (!isAdded) return
         val heartCategoryPreference: ListPreference? = findPreference(CivicViewModel.PREF_KEY_HEART)
         val customCardSelectionPreference: Preference? = findPreference(CivicViewModel.PREF_KEY_CUSTOM_HEART_CARDS)
 
@@ -81,7 +82,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onPause() {
         super.onPause()
-        preferenceScreen.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
+        preferenceScreen.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {

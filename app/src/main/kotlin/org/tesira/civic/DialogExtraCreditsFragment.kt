@@ -188,7 +188,7 @@ class DialogExtraCreditsFragment : DialogFragment() {
 
         dialogInstance = builder.create() // Verwende dialogInstance
         if (dialogInstance.window != null) {
-            dialogInstance.window!!.setWindowAnimations(R.style.DialogAnimation)
+//            dialogInstance.window!!.setWindowAnimations(R.style.DialogAnimation)
         }
 
         if (dialogInstance.isShowing) {
@@ -262,7 +262,7 @@ class DialogExtraCreditsFragment : DialogFragment() {
             args.putInt(ARG_CREDITS, creditsAmount)
             fragment.setArguments(args)
             fragment.setCancelable(false)
-            fragment.setStyle(STYLE_NORMAL, R.style.Theme_CivicHelper_Dialog)
+//            fragment.setStyle(STYLE_NORMAL, R.style.Theme_CivicHelper_Dialog)
             return fragment
         }
     }

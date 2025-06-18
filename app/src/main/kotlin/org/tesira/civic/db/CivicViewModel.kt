@@ -892,7 +892,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                     CardColor.RED -> R.color.civic
                     CardColor.GREEN -> R.color.science
                     CardColor.BLUE -> R.color.arts
-                    else -> R.color.purple_700
+                    else -> Color.WHITE
                 }
             } else {
                 when (card.name) {
@@ -908,7 +908,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                     "Written Record Extra Credits" -> backgroundColor = R.drawable.bg_written_record
                     "Monument Extra Credits" -> backgroundColor = R.drawable.bg_monument
                     "Extra Credits WR & Monument" -> return gradient
-                    //"Extra Credits WR & Monument" -> backgroundColor = R.drawable.extra_credits_background
                 }
             }
             return ResourcesCompat.getDrawable(res, backgroundColor, null)

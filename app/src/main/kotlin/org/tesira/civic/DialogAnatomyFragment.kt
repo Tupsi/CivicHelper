@@ -64,7 +64,7 @@ class DialogAnatomyFragment : DialogFragment() {
 
         val dialog: Dialog = builder.create()
         if (dialog.window != null) {
-            dialog.window!!.setWindowAnimations(R.style.DialogAnimation)
+//            dialog.window!!.setWindowAnimations(R.style.DialogAnimation)
         }
         return dialog
     }

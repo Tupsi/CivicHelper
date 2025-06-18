@@ -94,13 +94,13 @@
     <string name="search">Search...</string>
     <string name="placeholder_no_cards_available">no cards found!</string>
     <string name="placeholder_no_search_results_found">no cards found!</string>
-    <string name="title_select_custom_cards">Custom cards</string>
-    <string name="summary_select_custom_cards">Select your cards</string>
+    <string name="title_select_custom_cards"></string>
+    <string name="summary_select_custom_cards">Select your cards here ▶</string>
     <string name="save_selection">Save</string>
     <string name="no_cards_available_for_selection">no cards found</string>
     <string name="summary_select_custom_cards_disabled_hint">select custom in preferences first.</string>
-    <string name="selection_saved">Selection saved</string>
-    <string name="selection_cleared">Selection cleared</string>
+    <string name="selection_saved">Custom selection saved</string>
+    <string name="selection_cleared">Custom selection cleared</string>
     <string name="infos">Infos:</string>
     <string name="pref_infos">Show infos on cards</string>
 </resources>

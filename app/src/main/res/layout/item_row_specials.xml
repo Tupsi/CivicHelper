@@ -14,5 +14,5 @@
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
         android:text="@string/element_text"
-        android:textSize="12sp"/>
+        android:textSize="12sp" />
 </LinearLayout>
