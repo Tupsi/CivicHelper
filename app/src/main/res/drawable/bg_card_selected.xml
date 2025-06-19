@@ -1,9 +1,9 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/md_theme_primaryContainer" />
+    <solid android:color="@color/md_theme_tertiaryContainer" />
     <stroke
         android:width="5dp"
-        android:color="@color/md_theme_onPrimaryContainer" />
+        android:color="@color/md_theme_onTertiaryContainer" />
 
     <corners android:radius="0dp" />
 </shape>

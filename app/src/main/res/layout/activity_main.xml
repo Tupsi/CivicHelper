@@ -22,7 +22,6 @@
             app:navigationIconTint="?attr/colorOnPrimaryContainer"
             app:title="@string/app_name" />
 
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.drawerlayout.widget.DrawerLayout

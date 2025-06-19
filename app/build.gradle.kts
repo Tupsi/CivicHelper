@@ -17,8 +17,8 @@ android {
         applicationId = "org.tesira.civic"
         minSdk = 28
         targetSdk = 35
-        versionCode = 52
-        versionName = "1.9.13"
+        versionCode = 53
+        versionName = "1.9.14"
     }
 
     buildTypes {
