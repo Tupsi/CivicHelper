@@ -19,7 +19,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.tesira.civic.AllCardsAdapter
@@ -96,11 +95,6 @@ abstract class BaseCardListFragment : Fragment() {
                 GridLayoutManager(requireContext(), actualColumnCount)
             }
             adapter = allCardsAdapter
-            // ItemDecoration nur hinzufügen, wenn noch keine vorhanden ist und es ein LinearLayoutManager ist
-            // (oder eine anpassbare Logik, wenn GridLayout auch Dekorationen braucht)
-            if (itemDecorationCount == 0 && layoutManager is LinearLayoutManager) {
-                addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-            }
         }
     }
 
