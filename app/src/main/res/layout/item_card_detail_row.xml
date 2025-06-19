@@ -10,48 +10,6 @@
     android:background="@drawable/bg_item">
 
     <TextView
-        android:id="@+id/price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/bg_price"
-        android:gravity="center"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/card_text_size"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/allDetailsSectionLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:text="235"
-        tools:ignore="SelectableText" />
-
-    <TextView
-        android:id="@+id/familybonus"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"
-        app:layout_constraintStart_toEndOf="@+id/price"
-        app:layout_constraintEnd_toStartOf="@+id/vp"
-        app:layout_constraintBottom_toBottomOf="@+id/price"
-        app:layout_constraintTop_toTopOf="@+id/price"
-        android:maxLines="2"
-        android:ellipsize="end"
-        app:autoSizeTextType="uniform"
-        app:autoSizeMinTextSize="8sp"
-        app:autoSizeMaxTextSize="14sp"
-        app:autoSizeStepGranularity="1sp"
-        android:textAppearance="?attr/textAppearanceCaption"
-        tools:text="+20 to Cultural Ascendancy"
-        tools:ignore="SelectableText" />
-
-
-    <TextView
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -73,30 +31,16 @@
         tools:text="Name Platzhalter"
         tools:ignore="SelectableText" />
 
-    <TextView
-        android:id="@+id/vp"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/ic_shield"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="@dimen/card_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:text="VP"
-        tools:ignore="SelectableText" />
-
     <ImageView
         android:id="@+id/heart"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name"
+        app:layout_constraintBottom_toTopOf="@id/vp"
         app:srcCompat="@drawable/ic_heart"
         android:contentDescription="@string/favorite" />
 
@@ -182,13 +126,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        app:layout_constraintVertical_bias="0.0"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="4dp"
         app:layout_constraintTop_toBottomOf="@+id/bonusLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/price">
+        app:layout_constraintBottom_toTopOf="@+id/guideline_bottom_buttons">
 
         <TextView
             android:id="@+id/infosTitle"
@@ -288,5 +233,68 @@
             tools:text="you can do anything"
             tools:ignore="SelectableText" />
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_bottom_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="56dp" />
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_price"
+        android:gravity="center"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/card_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="235"
+        tools:ignore="SelectableText" />
+
+    <TextView
+        android:id="@+id/familybonus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@+id/price"
+        app:layout_constraintEnd_toStartOf="@+id/vp"
+        app:layout_constraintBottom_toBottomOf="@+id/price"
+        app:layout_constraintTop_toTopOf="@+id/price"
+        android:maxLines="2"
+        android:ellipsize="end"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeMaxTextSize="14sp"
+        app:autoSizeStepGranularity="1sp"
+        android:textAppearance="?attr/textAppearanceCaption"
+        tools:text="+20 to Cultural Ascendancy"
+        tools:ignore="SelectableText" />
+
+    <TextView
+        android:id="@+id/vp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/ic_shield"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="@dimen/card_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="VP"
+        tools:ignore="SelectableText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

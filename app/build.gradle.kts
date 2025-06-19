@@ -1,4 +1,4 @@
-val roomVersion: String = "2.7.1"
+val roomVersion: String = "2.7.2"
 val lifecycleVersion: String = "2.9.1"
 val navigationVersion: String = "2.9.0"
 
@@ -7,7 +7,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     //  https://github.com/google/ksp/releases
     id("com.google.devtools.ksp") version "2.1.21-2.0.1"
-    id("androidx.room") version "2.7.1"
+    id("androidx.room") version "2.7.2"
 }
 
 android {
@@ -17,8 +17,8 @@ android {
         applicationId = "org.tesira.civic"
         minSdk = 28
         targetSdk = 35
-        versionCode = 51
-        versionName = "1.9.12"
+        versionCode = 52
+        versionName = "1.9.13"
     }
 
     buildTypes {
