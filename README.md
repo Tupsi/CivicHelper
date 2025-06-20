@@ -83,7 +83,9 @@ select here. "Custom" lets you select your own advances.
 
 ## Screenshots
 
-<img src="./img/Dashboard.jpg" alt="Dashboard" width="200"/><img src="./img/Buying.jpg" alt="Buying" width="200"/>
+<img src="./img/Dashboard.jpg" alt="Dashboard" width="200"/><img src="./img/Dashboard2.jpg" alt="Dashboard" width="200"/>
+<img src="./img/Buying.jpg" alt="Buying" width="200"/><img src="./img/Library.jpg" alt="Library" width="200"/>
 <img src="./img/Anatomy.jpg" alt="Anatomy" width="200"/><img src="./img/Extra_Credits.jpg" alt="Extra_Credits" width="200"/>
 <img src="./img/Inventory.jpg" alt="Inventory" width="200"/><img src="./img/Settings.jpg" alt="Settings" width="200"/>
 <img src="./img/Tips.jpg" alt="Tips" width="200"/><img src="./img/About.jpg" alt="About" width="200"/>
+
