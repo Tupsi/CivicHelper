@@ -1,12 +1,15 @@
 package org.tesira.civic.utils
 
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
 
 /**
  * Checks if the device is currently in landscape orientation.
@@ -89,4 +92,20 @@ fun View.applyDefaultSystemBarInsetsAsPadding() {
 //        windowInsets
         WindowInsetsCompat.CONSUMED
     }
+}
+
+fun Fragment.hideKeyboard() {
+    view?.let { activity?.hideKeyboard(it) }
+}
+
+fun Activity.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+    inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+// Alternative, die versucht, das aktuelle Fokus-View zu nehmen, wenn keins übergeben wird
+fun Activity.hideKeyboard() {
+    val view = this.currentFocus ?: View(this) // Fallback auf eine Dummy-View
+    val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+    inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
 }

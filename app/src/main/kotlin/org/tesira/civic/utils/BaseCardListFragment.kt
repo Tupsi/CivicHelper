@@ -212,6 +212,14 @@ abstract class BaseCardListFragment : Fragment() {
         _binding = null
     }
 
+    override fun onPause() {
+        super.onPause()
+        // Es ist oft sicherer, die Tastatur nur zu schließen, wenn das Fragment
+        // tatsächlich verlassen wird und nicht nur pausiert (z.B. durch einen Dialog).
+        // Aber für die Navigation zu einem anderen Fragment ist onPause() oft ausreichend.
+        hideKeyboard()
+    }
+
     companion object {
         private const val MENU_ID_SORT_OPTION_OFFSET = 2000
     }
