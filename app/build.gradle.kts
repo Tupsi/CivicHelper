@@ -17,8 +17,8 @@ android {
         applicationId = "org.tesira.civic"
         minSdk = 28
         targetSdk = 35
-        versionCode = 53
-        versionName = "1.9.14"
+        versionCode = 55
+        versionName = "1.9.22"
     }
 
     buildTypes {
@@ -60,10 +60,8 @@ android {
 }
 
 dependencies {
-//    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.21")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.recyclerview:recyclerview-selection:1.2.0")
-//    implementation("androidx.databinding:databinding-runtime:8.10.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.gridlayout:gridlayout:1.1.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
@@ -79,18 +77,15 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-common:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:$lifecycleVersion")
-
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
-//    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
 
     // https://maven.google.com/web/index.html#com.google.android.material:material
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.activity:activity-ktx:1.10.1")
-//    implementation("androidx.paging:paging-runtime-ktx:3.3.6")
 }
 
 room {

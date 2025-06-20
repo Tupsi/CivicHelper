@@ -6,11 +6,12 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.WindowCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -30,8 +31,11 @@ class MainActivity : AppCompatActivity() {
     private val mCivicViewModel: CivicViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-//        this.enableEdgeToEdge()
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(getColor(R.color.md_theme_inversePrimary), getColor(R.color.md_theme_inversePrimary)),
+            navigationBarStyle = SystemBarStyle.auto(getColor(R.color.md_theme_inversePrimary), getColor(R.color.md_theme_inversePrimary))
+        )
+        //WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -41,32 +45,9 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(true)
         invalidateOptionsMenu()
 
-        val initialPaddingLeft = toolbar.paddingLeft
-//        val initialPaddingTopFromXml = toolbar.paddingTop
-        val initialPaddingRight = toolbar.paddingRight
-        val initialPaddingBottom = toolbar.paddingBottom
         binding.root.applyHorizontalSystemBarInsetsAsPadding()
-//        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view, windowInsets ->
-//            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            val newPaddingTop = systemBars.top // Standardmäßig nur die Insets für oben
-//            view.updatePadding(
-//                left = toolbar.paddingLeft + systemBars.left,
-//                top = systemBars.top,
-//                right = toolbar.paddingRight,
-//                bottom = toolbar.paddingBottom
-//            )
-//            view.setPadding(
-//                initialPaddingLeft + systemBars.left,
-//                newPaddingTop,
-//                initialPaddingRight + systemBars.right,
-//                initialPaddingBottom
-//            )
-//            windowInsets
-//        }
-//        ViewCompat.requestApplyInsets(toolbar)
 
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.myNavHostFragment) as? NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.myNavHostFragment) as? NavHostFragment
 
         if (navHostFragment == null) {
             Log.e(
