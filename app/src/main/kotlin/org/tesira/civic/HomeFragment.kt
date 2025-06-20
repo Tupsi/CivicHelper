@@ -10,9 +10,6 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.OnApplyWindowInsetsListener
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -22,7 +19,6 @@ import org.tesira.civic.databinding.FragmentHomeBinding
 import org.tesira.civic.db.Card
 import org.tesira.civic.db.CardColor
 import org.tesira.civic.db.CivicViewModel
-import java.util.Objects
 
 /**
  * Shows the Dashboard where you can check the number of cities,
@@ -44,37 +40,11 @@ class HomeFragment : Fragment() {
     private var currentCalamities: List<Calamity> = ArrayList<Calamity>()
     private var currentSpecialsAndImmunities: List<String> = ArrayList<String>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         val rootView: View = binding.getRoot()
-
-        // Speichere die ursprünglichen Padding-Werte der View, auf die die Insets angewendet werden
-        val initialPaddingLeft = rootView.paddingLeft
-        val initialPaddingTop = rootView.paddingTop
-        val initialPaddingRight = rootView.paddingRight
-        val initialPaddingBottom = rootView.paddingBottom
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(
-            rootView,
-            OnApplyWindowInsetsListener { v: View?, windowInsets: WindowInsetsCompat? ->
-                val systemBarInsets = windowInsets!!.getInsets(WindowInsetsCompat.Type.systemBars())
-                // Insets für die Tastatur, falls du auch darauf reagieren möchtest (hier nicht primär im Fokus)
-                // Insets imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
-
-                // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
-                v!!.setPadding(
-                    initialPaddingLeft + systemBarInsets.left,
-                    initialPaddingTop,
-                    initialPaddingRight + systemBarInsets.right,
-                    initialPaddingBottom + systemBarInsets.bottom
-                )
-                windowInsets
-            })
+//        binding.root.applyHorizontalSystemBarInsetsAsPadding()
 
         // RecylerView Calamity Effects
         var mRecyclerView = rootView.findViewById<RecyclerView>(R.id.listCalamity)

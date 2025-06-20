@@ -13,8 +13,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import org.tesira.civic.databinding.FragmentTipsBinding
@@ -38,33 +36,8 @@ class TipsFragment : Fragment() {
             ScaleGestureDetector(this.requireContext(), PinchToZoomGestureListener())
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentTipsBinding.inflate(inflater, container, false)
-        val rootView: View = binding.root
-
-        // Speichere die ursprünglichen Padding-Werte der View, auf die die Insets angewendet werden
-        val initialPaddingLeft = rootView.paddingLeft
-        val initialPaddingTop = rootView.paddingTop
-        val initialPaddingRight = rootView.paddingRight
-        val initialPaddingBottom = rootView.paddingBottom
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(rootView) { v: View, windowInsets: WindowInsetsCompat ->
-            val systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            // Wende die Systemleisten-Insets zusätzlich zum ursprünglichen Padding an
-            v.setPadding(
-                initialPaddingLeft + systemBarInsets.left,
-                initialPaddingTop,
-                initialPaddingRight + systemBarInsets.right,
-                initialPaddingBottom + systemBarInsets.bottom
-            )
-            windowInsets
-        }
-
-        //ViewCompat.requestApplyInsets(rootView)
 
         ArrayAdapter.createFromResource(
             requireContext(),
@@ -74,7 +47,7 @@ class TipsFragment : Fragment() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.tipsSpinner.adapter = adapter
         }
-        return rootView
+        return binding.root
     }
 
     @SuppressLint("ClickableViewAccessibility")

@@ -16,9 +16,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.OnApplyWindowInsetsListener
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.activityViewModels
@@ -87,26 +84,7 @@ class BuyingFragment : Fragment() {
         binding = FragmentBuyingBinding.inflate(inflater, container, false)
         val rootView: View = binding.getRoot()
         recyclerView = binding.purchasableCards
-
-        val initialPaddingLeft = rootView.paddingLeft
-        val initialPaddingTop = rootView.paddingTop
-        val initialPaddingRight = rootView.paddingRight
-        val initialPaddingBottom = rootView.paddingBottom
-
-        ViewCompat.setOnApplyWindowInsetsListener(
-            rootView,
-            OnApplyWindowInsetsListener { v: View?, windowInsets: WindowInsetsCompat? ->
-                val systemBarInsets = windowInsets!!.getInsets(WindowInsetsCompat.Type.systemBars())
-                v!!.setPadding(
-                    initialPaddingLeft + systemBarInsets.left,
-                    initialPaddingTop,
-                    initialPaddingRight + systemBarInsets.right,
-                    initialPaddingBottom + systemBarInsets.bottom
-                )
-                windowInsets
-            })
-
-        ViewCompat.requestApplyInsets(rootView)
+//        binding.root.applyHorizontalSystemBarInsetsAsPadding()
 
         val actualColumnCount = civicViewModel.calculateColumnCount(rootView.context)
 

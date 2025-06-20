@@ -19,6 +19,7 @@ import androidx.lifecycle.application
 import androidx.preference.PreferenceManager
 import org.tesira.civic.Calamity
 import org.tesira.civic.R
+import org.tesira.civic.SelectableCardItem
 import org.tesira.civic.utils.Event
 import java.util.Locale
 
@@ -32,7 +33,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     private val buyableCardMap: MutableMap<String, Card> = HashMap<String, Card>()
     private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
     private val _userPreferenceForHeartCards = MutableLiveData<String?>()
-    private val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = repository.getAllCardsWithDetailsUnsorted()
+    val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = repository.getAllCardsWithDetailsUnsorted()
     private val allPurchasedCardsWithDetailsOnce: LiveData<List<CardWithDetails>> = repository.getAllPurchasedCardsWithDetailsUnsorted()
     private val allPurchasableCardsWithDetailsOnce: LiveData<List<CardWithDetails>> = repository.getAllPurchasableCardsWithDetailsUnsorted()
     private val _totalVp = MediatorLiveData<Int>(0)
@@ -804,6 +805,20 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             return mColumnCountPreference; // Im Hochformat oder schmal, die Benutzereinstellung
         }
         */
+    }
+
+    fun loadSelectedCardNames(): Set<String> {
+        return defaultPrefs.getStringSet(PREF_KEY_CUSTOM_HEART_CARDS, emptySet()) ?: emptySet()
+    }
+
+    fun saveSelection(currentSelectableItems: List<SelectableCardItem>) {
+        val selectedNames = currentSelectableItems
+            .filter { it.isSelected }
+            .map { it.cardName }
+            .toSet()
+
+        defaultPrefs.edit { putStringSet(PREF_KEY_CUSTOM_HEART_CARDS, selectedNames) }
+        customHeartSettingsUpdated()
     }
 
     companion object {

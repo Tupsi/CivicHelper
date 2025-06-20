@@ -13,8 +13,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -55,7 +53,7 @@ abstract class BaseCardListFragment : Fragment() {
         _binding = FragmentAllCardsBinding.inflate(inflater, container, false)
         sortingOptionsValues = resources.getStringArray(R.array.sort_values)
         sortingOptionsNames = resources.getStringArray(R.array.sort_entries)
-        setupInsets(binding.root)
+//        binding.root.applyHorizontalSystemBarInsetsAsPadding()
         return binding.root
     }
 
@@ -67,24 +65,6 @@ abstract class BaseCardListFragment : Fragment() {
         setupSortButton()
         setupSearchInput()
         registerForContextMenu(getButton())
-    }
-
-    private fun setupInsets(rootView: View) {
-        val initialPaddingLeft = rootView.paddingLeft
-        val initialPaddingTop = rootView.paddingTop
-        val initialPaddingRight = rootView.paddingRight
-        val initialPaddingBottom = rootView.paddingBottom
-
-        ViewCompat.setOnApplyWindowInsetsListener(rootView) { v: View, windowInsets: WindowInsetsCompat ->
-            val systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(
-                initialPaddingLeft + systemBarInsets.left,
-                initialPaddingTop,
-                initialPaddingRight + systemBarInsets.right,
-                initialPaddingBottom + systemBarInsets.bottom
-            )
-            windowInsets
-        }
     }
 
     private fun setupRecyclerView() {

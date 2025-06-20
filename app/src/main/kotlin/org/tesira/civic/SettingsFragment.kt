@@ -4,9 +4,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -20,20 +17,20 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView: RecyclerView? = listView // listView ist eine Property von PreferenceFragmentCompat
-
-        recyclerView?.let { rv ->
-            // Deaktiviere das Clipping für die RecyclerView, damit sie unter die Systemleisten zeichnen kann
-            rv.clipToPadding = false
-
-            ViewCompat.setOnApplyWindowInsetsListener(rv) { v, insets ->
-                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                v.updatePadding(
-                    top = systemBars.top,
-                    bottom = systemBars.bottom
-                )
-                WindowInsetsCompat.CONSUMED
-            }
-        }
+//        recyclerView?.applyDefaultSystemBarInsetsAsPadding()
+//        recyclerView?.let { rv ->
+//            // Deaktiviere das Clipping für die RecyclerView, damit sie unter die Systemleisten zeichnen kann
+//            rv.clipToPadding = false
+//
+//            ViewCompat.setOnApplyWindowInsetsListener(rv) { v, insets ->
+//                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//                v.updatePadding(
+//                    top = systemBars.top,
+//                    bottom = systemBars.bottom
+//                )
+//                WindowInsetsCompat.CONSUMED
+//            }
+//        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
