@@ -49,17 +49,31 @@ abstract class BaseCardListFragment : Fragment() {
      * für die Kartenliste bereitzustellen.
      */
     abstract fun getCardsLiveData(): LiveData<List<CardWithDetails>>
+    abstract fun getButton(): View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAllCardsBinding.inflate(inflater, container, false)
-        val rootView: View = binding.root
+        sortingOptionsValues = resources.getStringArray(R.array.sort_values)
+        sortingOptionsNames = resources.getStringArray(R.array.sort_entries)
+        setupInsets(binding.root)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
+        observeViewModelData()
+        setupSortButton()
+        setupSearchInput()
+        registerForContextMenu(getButton())
+    }
+
+    private fun setupInsets(rootView: View) {
         val initialPaddingLeft = rootView.paddingLeft
         val initialPaddingTop = rootView.paddingTop
         val initialPaddingRight = rootView.paddingRight
         val initialPaddingBottom = rootView.paddingBottom
-
-        sortingOptionsValues = resources.getStringArray(R.array.sort_values)
-        sortingOptionsNames = resources.getStringArray(R.array.sort_entries)
 
         ViewCompat.setOnApplyWindowInsetsListener(rootView) { v: View, windowInsets: WindowInsetsCompat ->
             val systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -71,17 +85,6 @@ abstract class BaseCardListFragment : Fragment() {
             )
             windowInsets
         }
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setupRecyclerView()
-        observeViewModelData()
-        setupSortButton()
-        setupSearchInput()
-        registerForContextMenu(binding.btnSortAllCards)
     }
 
     private fun setupRecyclerView() {

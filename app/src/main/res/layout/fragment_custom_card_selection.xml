@@ -6,6 +6,45 @@
     android:layout_height="match_parent"
     tools:context="org.tesira.civic.CustomCardSelectionFragment">
 
+
+    <!-- Button zum Sortieren -->
+    <Button
+        android:id="@+id/btnSortAllCards"
+        style="@style/BuyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
+        tools:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Suchfeld -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutSearchAllCards"
+        style="?attr/textInputFilledStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:hint="@string/search"
+        app:endIconMode="clear_text"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSortAllCards"
+        app:layout_constraintEnd_toStartOf="@+id/btnSortAllCards"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnSortAllCards">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextSearchAllCards"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCustomCards"
         android:layout_width="0dp"
@@ -16,7 +55,7 @@
         app:layout_constraintBottom_toTopOf="@+id/buttonContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutSearchAllCards"
         tools:listitem="@layout/list_item_custom_card_selectable" />
 
     <LinearLayout
