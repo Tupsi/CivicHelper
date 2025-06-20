@@ -1,4 +1,4 @@
-<img src="./img/Feature_Graphic.webp" alt="Feature" width="600"/>
+<img src="./img/Feature_Graphic.webp" alt="Feature" width="800"/>
 
 # Civic Helper
 
