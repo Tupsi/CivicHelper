@@ -1,4 +1,4 @@
-![Civic Helper](./app/src/main/ic_launcher-playstore.png)
+<img src="./img/Feature_Graphic.webp" alt="Feature" width="600"/>
 
 # Civic Helper
 
