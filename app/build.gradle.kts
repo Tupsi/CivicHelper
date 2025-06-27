@@ -6,16 +6,17 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     //  https://github.com/google/ksp/releases
-    id("com.google.devtools.ksp") version "2.1.21-2.0.1"
+    id("com.google.devtools.ksp") version "2.2.0-2.0.2"
     id("androidx.room") version "2.7.2"
 }
 
 android {
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "org.tesira.civic"
         minSdk = 28
+        //noinspection OldTargetApi
         targetSdk = 35
         versionCode = 56
         versionName = "1.9.23"
@@ -49,12 +50,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs += listOf(
-            "-Xjvm-default=all",
-            "-Xjsr305=strict"
-        )
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+            freeCompilerArgs.addAll(
+                "-Xjvm-default=all",
+                "-Xjsr305=strict"
+            )
+        }
     }
 
 }
