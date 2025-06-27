@@ -53,14 +53,15 @@ android {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-            freeCompilerArgs.addAll(
-                "-Xjvm-default=all",
-                "-Xjsr305=strict"
-            )
+//            freeCompilerArgs.addAll(
+//                "-Xjvm-default=all",
+//                "-Xjsr305=strict"
+//            )
         }
     }
-
 }
+
+
 
 dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
