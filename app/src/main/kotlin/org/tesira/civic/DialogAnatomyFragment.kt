@@ -49,24 +49,21 @@ class DialogAnatomyFragment : DialogFragment() {
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle(R.string.dialog_anatomy)
         builder.setItems(
-            greenCardsArray,
-            DialogInterface.OnClickListener { dialogInterface: DialogInterface?, which: Int ->
-                val selectedGreenCard = greenCardsArray[which]
-                mCivicViewModel.onAnatomyCardSelected(selectedGreenCard)
-                mCivicViewModel.insertPurchase(selectedGreenCard)
-                mCivicViewModel.addBonus(selectedGreenCard)
-                mCivicViewModel.requestPriceRecalculation()
+            greenCardsArray
+        ) { dialogInterface: DialogInterface?, which: Int ->
+            val selectedGreenCard = greenCardsArray[which]
+            mCivicViewModel.onAnatomyCardSelected(selectedGreenCard)
+            mCivicViewModel.insertPurchase(selectedGreenCard)
+            mCivicViewModel.addBonus(selectedGreenCard)
+            mCivicViewModel.requestPriceRecalculation()
 
-                val result = Bundle()
-                result.putString("selected_card_name", selectedGreenCard)
-                getParentFragmentManager().setFragmentResult(REQUEST_KEY, result)
-                dismiss()
-            })
+            val result = Bundle()
+            result.putString("selected_card_name", selectedGreenCard)
+            getParentFragmentManager().setFragmentResult(REQUEST_KEY, result)
+            dismiss()
+        }
 
         val dialog: Dialog = builder.create()
-        if (dialog.window != null) {
-//            dialog.window!!.setWindowAnimations(R.style.DialogAnimation)
-        }
         return dialog
     }
 

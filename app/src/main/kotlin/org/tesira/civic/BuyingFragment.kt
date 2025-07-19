@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.ContextMenu
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -17,9 +18,9 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.GridLayoutManager
@@ -57,25 +58,21 @@ class BuyingFragment : Fragment() {
         sortingOptionsValues = resources.getStringArray(R.array.sort_values)
         sortingOptionsNames = resources.getStringArray(R.array.sort_entries)
 
-        getParentFragmentManager().setFragmentResultListener(EXTRA_CREDITS_REQUEST_KEY, this, object : FragmentResultListener {
-            override fun onFragmentResult(requestKey: String, result: Bundle) {
-                numberDialogs--
+        getParentFragmentManager().setFragmentResultListener(EXTRA_CREDITS_REQUEST_KEY, this) { requestKey, result ->
+            numberDialogs--
+            returnToDashboard()
+        }
+
+        getParentFragmentManager().setFragmentResultListener(ANATOMY_REQUEST_KEY, this) { requestKey, result ->
+            numberDialogs--
+
+            val selectedAnatomyCard = result.getString("selected_card_name")
+            if ("Written Record" == selectedAnatomyCard) {
+                civicViewModel.triggerExtraCreditsDialog(10)
+            } else {
                 returnToDashboard()
             }
-        })
-
-        getParentFragmentManager().setFragmentResultListener(ANATOMY_REQUEST_KEY, this, object : FragmentResultListener {
-            override fun onFragmentResult(requestKey: String, result: Bundle) {
-                numberDialogs--
-
-                val selectedAnatomyCard = result.getString("selected_card_name")
-                if ("Written Record" == selectedAnatomyCard) {
-                    civicViewModel.triggerExtraCreditsDialog(10)
-                } else {
-                    returnToDashboard()
-                }
-            }
-        })
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -169,7 +166,7 @@ class BuyingFragment : Fragment() {
                 showToast(getString(R.string.no_cards_selected))
                 return@btnBuyClickListener
             }
-            val selectedCardNames: MutableList<String> = ArrayList<String>()
+            val selectedCardNames: MutableList<String> = ArrayList()
             for (name in tracker.getSelection()) {
                 selectedCardNames.add(name)
             }
@@ -181,10 +178,10 @@ class BuyingFragment : Fragment() {
         })
 
         // button to clear the current selection of cards
-        binding.btnClear.setOnClickListener(View.OnClickListener { v: View? ->
+        binding.btnClear.setOnClickListener { v: View? ->
             tracker.clearSelection()
             civicViewModel.clearCurrentSelectionState()
-        })
+        }
         return rootView
     }
 
@@ -263,24 +260,16 @@ class BuyingFragment : Fragment() {
                         }
                     }
                 }
-                val currentSelection: MutableSet<String?> = HashSet<String?>()
+                val currentSelection: MutableSet<String?> = HashSet()
                 for (selectedKey in tracker.selection) {
                     currentSelection.add(selectedKey)
                 }
                 civicViewModel.updateSelectionState(currentSelection)
             }
 
-            override fun onSelectionRefresh() {
-                super.onSelectionRefresh()
-            }
-
-            override fun onSelectionChanged() {
-                super.onSelectionChanged()
-            }
-
             override fun onSelectionRestored() {
                 super.onSelectionRestored()
-                val restoredSelection: MutableSet<String?> = HashSet<String?>()
+                val restoredSelection: MutableSet<String?> = HashSet()
                 for (selectedKey in tracker.selection) {
                     restoredSelection.add(selectedKey)
                 }
@@ -359,14 +348,12 @@ class BuyingFragment : Fragment() {
 
     private fun focusTreasureInputAndShowKeyboard() {
         if (treasureInput != null && treasureInput!!.requestFocus()) {
-            // Fenster-Token ist manchmal erst nach einer kleinen Verzögerung verfügbar,
-            // besonders wenn das Fragment gerade erst erstellt wird.
             treasureInput!!.selectAll()
-            treasureInput!!.post(Runnable {
+            treasureInput!!.post {
                 val imm =
                     requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
                 imm?.showSoftInput(treasureInput, InputMethodManager.SHOW_IMPLICIT)
-            })
+            }
         }
     }
 
@@ -432,10 +419,6 @@ class BuyingFragment : Fragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun onResume() {
         super.onResume()
         val currentTreasure = civicViewModel.treasure.getValue()
@@ -450,14 +433,6 @@ class BuyingFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         hideKeyboard()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     override fun onDestroyView() {
@@ -478,16 +453,33 @@ class BuyingFragment : Fragment() {
      * Returns the application back to the dashboard, but checks first if another dialog
      * must be presented because special cards where bought.
      */
-    fun returnToDashboard() {
-        // Nur zum Dashboard zurückkehren, wenn keine Dialoge mehr offen sind
-        if (numberDialogs <= 0) {
-            civicViewModel.saveBonus()
-            NavHostFragment.Companion.findNavController(this).popBackStack()
-            civicViewModel.treasure.value = 0
-            civicViewModel.remaining.value = 0
+    private fun returnToDashboard() {
+        if (numberDialogs > 0) {
+            return
         }
+        view?.post {
+            if (!isAdded) {
+                return@post
+            }
+            try {
+                val navController = findNavController()
+                navController.navigate(
+                    R.id.homeFragment,
+                    null,
+                    NavOptions.Builder()
+                        .setPopUpTo(navController.graph.startDestinationId, true)
+                        .build()
+                )
+            } catch (e: IllegalStateException) {
+                Log.e("BuyingFragment", "view.post navigation failed (ISE)", e)
+                // Vorsicht mit Toast hier, Context könnte null sein, wenn !isAdded
+            } catch (e: IllegalArgumentException) {
+                Log.e("BuyingFragment", "view.post navigation failed (IAE)", e)
+            } catch (e: Exception) {
+                Log.e("BuyingFragment", "view.post navigation failed (Exception)", e)
+            }
+        } ?: Log.w("BuyingFragment", "View was null in returnToDashboard, cannot post navigation.")
     }
-
 
     /**
      * Schaltet zur nächsten Sortierreihenfolge im Zyklus weiter.

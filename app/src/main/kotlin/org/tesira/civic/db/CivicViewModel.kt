@@ -30,21 +30,21 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     private val immunitiesRawLiveData: LiveData<List<String>> = repository.immunitiesLiveData
     private val combinedSpecialsAndImmunitiesLiveData = MediatorLiveData<MutableList<String>>()
     private val defaultPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
-    private val buyableCardMap: MutableMap<String, Card> = HashMap<String, Card>()
-    private val areBuyableCardsReady = MutableLiveData<Boolean?>(false)
+    private val buyableCardMap: MutableMap<String, Card> = HashMap()
+    private val areBuyableCardsReady = MutableLiveData(false)
     private val _userPreferenceForHeartCards = MutableLiveData<String?>()
     val allCardsUnsortedOnce: LiveData<List<CardWithDetails>> = repository.getAllCardsWithDetailsUnsorted()
     private val allPurchasedCardsWithDetailsOnce: LiveData<List<CardWithDetails>> = repository.getAllPurchasedCardsWithDetailsUnsorted()
     private val allPurchasableCardsWithDetailsOnce: LiveData<List<CardWithDetails>> = repository.getAllPurchasableCardsWithDetailsUnsorted()
-    private val _totalVp = MediatorLiveData<Int>(0)
+    private val _totalVp = MediatorLiveData(0)
     val totalVp: LiveData<Int> = _totalVp
     private val _pendingExtraCredits = MutableLiveData<Int?>()
     private val _customCardSelectionForHeart = MutableLiveData<Set<String>>(emptySet())
-    private val _columns = MutableLiveData<Int>(0)
-    private val _vp = MutableLiveData<Int>(0)
-    private val _cities = MutableLiveData<Int>(0)
+    private val _columns = MutableLiveData(0)
+    private val _vp = MutableLiveData(0)
+    private val _cities = MutableLiveData(0)
     val cities: LiveData<Int> = _cities
-    private val _timeVp = MutableLiveData<Int>(0)
+    private val _timeVp = MutableLiveData(0)
     val timeVp: LiveData<Int> = _timeVp
     private val _showAnatomyDialogEvent = MutableLiveData<Event<List<String>>>()
 
@@ -66,11 +66,11 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     val navigateToDashboardEvent: LiveData<Event<Boolean>> = _navigateToDashboardEvent
     private val _navigateToCivilizationSelectionEvent = MutableLiveData<Event<Unit>>()
     val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>> = _navigateToCivilizationSelectionEvent
-    private val _selectedCardKeysForState = MutableLiveData<MutableSet<String?>?>(mutableSetOf<String?>())
+    private val _selectedCardKeysForState = MutableLiveData(mutableSetOf<String?>())
     val selectedCardKeysForState: LiveData<MutableSet<String?>?> = _selectedCardKeysForState
     private val _currentSortingOrder = MutableLiveData<String>()
     val currentSortingOrder: LiveData<String> = _currentSortingOrder
-    private val _searchQuery = MutableLiveData<String>("")
+    private val _searchQuery = MutableLiveData("")
     val searchQuery: LiveData<String> = _searchQuery
 
     val treasure: MutableLiveData<Int> = MutableLiveData<Int>(0)
@@ -85,7 +85,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     val yellow: Int get() = cardBonus.value!!.getOrDefault(CardColor.YELLOW, 0)
 
     var librarySelected: Boolean = false
-    var cardBonus: MutableLiveData<HashMap<CardColor, Int>> = MutableLiveData<HashMap<CardColor, Int>>(HashMap<CardColor, Int>())
+    var cardBonus: MutableLiveData<HashMap<CardColor, Int>> = MutableLiveData<HashMap<CardColor, Int>>(HashMap())
 
     val allCardsWithDetails: LiveData<List<CardWithDetails>>
     val allPurchasedCardsWithDetails: LiveData<List<CardWithDetails>>
@@ -107,7 +107,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                 //val query = currentQuery
                 val query = ""
 
-                if (unsortedList != null && sortOrder != null && query != null) {
+                if (unsortedList != null && sortOrder != null) {
                     Log.d("CivicViewModel", "updateFilterAndSort triggered. Query: '$query', SortOrder: $sortOrder, Unsorted Size: ${unsortedList.size}")
 
                     // 1. Filtern basierend auf dem Suchbegriff
@@ -118,7 +118,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                     value = sortCardList(filteredList, sortOrder) // sortCardList braucht nur noch den sortOrder
                     Log.d("CivicViewModel", "Final sorted list size for allCardsWithDetails: ${this.value?.size}")
                 } else {
-                    Log.d("CivicViewModel", "updateFilterAndSort skipped. Unsorted: ${unsortedList != null}, SortOrder: ${sortOrder != null}, Query: ${query != null}")
+                    Log.d("CivicViewModel", "updateFilterAndSort skipped. Unsorted: ${unsortedList != null}, SortOrder: ${sortOrder != null}, Query: $query")
                 }
             }
 
@@ -275,7 +275,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
     private fun setupCombinedSpecialsLiveData() {
         // Der Observer für Änderungen in specialAbilitiesRawLiveData
-        val abilitiesObserver = Observer<List<String>?> { abilities: List<String>? ->
+        val abilitiesObserver = Observer { abilities: List<String>? ->
             val currentImmunities = immunitiesRawLiveData.value
             combineAndSetData(
                 abilities ?: emptyList(),
@@ -284,7 +284,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         }
 
         // Der Observer für Änderungen in immunitiesRawLiveData
-        val immunitiesObserver = Observer<List<String>?> { immunities: List<String>? ->
+        val immunitiesObserver = Observer { immunities: List<String>? ->
             val currentAbilities = specialAbilitiesRawLiveData.value
             combineAndSetData(
                 currentAbilities ?: emptyList(),
@@ -297,7 +297,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     private fun combineAndSetData(abilities: List<String>, immunities: List<String>) {
-        val combinedList: MutableList<String> = ArrayList<String>()
+        val combinedList: MutableList<String> = ArrayList()
         if (abilities.isNotEmpty()) {
             combinedList.add("___Special Abilities")
             combinedList.addAll(abilities)
@@ -524,6 +524,9 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
      * @param selectedCardNames The names of the cards selected for purchase.
      */
     fun processPurchases(selectedCardNames: List<String>) {
+        // remove for testing
+        treasure.value = 0
+
         _isFinalizingPurchase.value = true
         // Rufe die asynchrone Methode im Repository auf
         repository.processPurchasesAndRecalculatePricesAsync(
@@ -610,7 +613,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
      * @param credits The number of extra credits to offer.
      */
     fun triggerExtraCreditsDialog(credits: Int) {
-        _showExtraCreditsDialogEvent.postValue(Event<Int>(credits))
+        _showExtraCreditsDialogEvent.postValue(Event(credits))
     }
 
     override fun onCleared() {
@@ -656,18 +659,14 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
     fun updateSelectionState(currentSelection: MutableSet<String?>?) {
         if (currentSelection == null) {
-            _selectedCardKeysForState.value = mutableSetOf<String?>()
+            _selectedCardKeysForState.value = mutableSetOf()
         } else {
-            _selectedCardKeysForState.value = HashSet<String?>(currentSelection)
+            _selectedCardKeysForState.value = HashSet(currentSelection)
         }
     }
 
     fun clearCurrentSelectionState() {
-        _selectedCardKeysForState.value = mutableSetOf<String?>()
-        // Die calculateTotal-Logik sollte idealerweise durch den SelectionTracker-Observer
-        // im Fragment ausgelöst werden, wenn der Tracker geleert wird.
-        // Wenn du hier explizit totalPrice etc. zurücksetzen willst:
-        // calculateTotal(Collections.emptySet());
+        _selectedCardKeysForState.value = mutableSetOf()
     }
 
     fun setSelectedTipIndex(index: Int) {
@@ -765,20 +764,20 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
         // Wichtig: Diese Datenbankoperationen sollten in einem Hintergrundthread ausgeführt werden.
         // mRepository sollte Methoden anbieten, die dies intern tun (z.B. mit Coroutinen oder AsyncTask).
-        repository.resetAllCardsHeartStatusAsync(CivicRepository.RepositoryCallback {
+        repository.resetAllCardsHeartStatusAsync {
             // Dieser Callback wird ausgeführt, nachdem alle Herzen zurückgesetzt wurden.
             if (cardNamesToMarkAsHeart.isNotEmpty()) {
                 repository.setCardsAsHeartAsync(
-                    cardNamesToMarkAsHeart,
-                    CivicRepository.RepositoryCallback {
-                    })
+                    cardNamesToMarkAsHeart
+                ) {
+                }
             } else {
                 Log.d(
                     "CivicViewModel",
                     "No specific cards to mark for heart selection: $selectionName or selection is 'custom'."
                 )
             }
-        })
+        }
     }
 
     /**
@@ -787,18 +786,18 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
      */
     private fun getCardNamesForHeartSelection(selectionName: String): List<String> {
         return when (selectionName.lowercase(Locale.getDefault())) {
-            "treasury" -> listOf<String>(*TREASURY)
-            "commodities" -> listOf<String>(*COMMODITY_CARDS)
-            "cheaper" -> listOf<String>(*CHEAPER_CIVILIZATION_CARDS)
-            "bend" -> listOf<String>(*TO_BEND_THE_RULES)
-            "more" -> listOf<String>(*MORE_TOKEN_ON_THE_MAP)
-            "mobility" -> listOf<String>(*TOKEN_MOBILITY)
-            "cities" -> listOf<String>(*CITIES)
-            "sea" -> listOf<String>(*SEA_POWER)
-            "aggression" -> listOf<String>(*AGGRESSION)
-            "defense" -> listOf<String>(*DEFENSE)
-            "custom" -> _customCardSelectionForHeart.value?.toList() ?: listOf<String>()
-            else -> listOf<String>()
+            "treasury" -> listOf(*TREASURY)
+            "commodities" -> listOf(*COMMODITY_CARDS)
+            "cheaper" -> listOf(*CHEAPER_CIVILIZATION_CARDS)
+            "bend" -> listOf(*TO_BEND_THE_RULES)
+            "more" -> listOf(*MORE_TOKEN_ON_THE_MAP)
+            "mobility" -> listOf(*TOKEN_MOBILITY)
+            "cities" -> listOf(*CITIES)
+            "sea" -> listOf(*SEA_POWER)
+            "aggression" -> listOf(*AGGRESSION)
+            "defense" -> listOf(*DEFENSE)
+            "custom" -> _customCardSelectionForHeart.value?.toList() ?: listOf()
+            else -> listOf()
         }
     }
 
@@ -865,20 +864,15 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         val cardNameToDelete = cardToDeleteDetails.card.name
         val cardObjectToDelete = cardToDeleteDetails.card // Das Card-Objekt der Hauptkarte
 
-        Log.d("CivicViewModel", "Attempting to delete card: $cardNameToDelete")
-
         // 1. Regulären Kauf aus 'purchases' löschen
         repository.deletePurchase(cardNameToDelete)
-        Log.d("CivicViewModel", "Deleted '$cardNameToDelete' from purchases.")
 
-        // 2. Boni der Hauptkarte entfernen und speichern (wird jetzt hier zentralisiert)
+        // 2. Boni der Hauptkarte entfernen
         removeBonus(cardObjectToDelete) // Nimmt die Boni aus cardBonus LiveData
-        Log.d("CivicViewModel", "Removed bonuses for main card '$cardNameToDelete'.")
 
         // 3. Sonderbehandlung für Written Record und Monument
         if (cardNameToDelete == WRITTEN_RECORD || cardNameToDelete == MONUMENT) {
             val extraCreditsCardName = cardNameToDelete + EXTRA_CREDITS_POSTFIX
-            Log.d("CivicViewModel", "Handling special card: '$cardNameToDelete'. Looking for extra credits card: '$extraCreditsCardName'")
 
             // 3a. Versuche, die "Extra Credits"-Karte aus der 'cards'-Tabelle zu laden, um ihre Boni zu entfernen
             val extraCreditsCardObject = repository.getCardByName(extraCreditsCardName)
@@ -886,31 +880,28 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             if (extraCreditsCardObject != null) {
                 // 3b. Boni der "Extra Credits"-Karte entfernen
                 removeBonus(extraCreditsCardObject)
-                Log.d("CivicViewModel", "Removed bonuses for extra credits card '$extraCreditsCardName'.")
 
                 // 3c. "Extra Credits"-Karte aus der 'cards'-Tabelle löschen
                 repository.deleteCardByName(extraCreditsCardName)
-                Log.d("CivicViewModel", "Deleted '$extraCreditsCardName' from cards table.")
             } else {
+                // should never happen
                 Log.d("CivicViewModel", "Extra credits card '$extraCreditsCardName' not found in cards table.")
             }
 
             // 3d. "Extra Credits"-Kauf (falls vorhanden) aus 'purchases' löschen
-            // Dies ist wichtig, falls die "Extra Credits"-Karte auch als separater Kauf erfasst wurde.
             repository.deletePurchase(extraCreditsCardName)
-            Log.d("CivicViewModel", "Attempted to delete '$extraCreditsCardName' from purchases (if it existed).")
         }
 
         // 4. Änderungen an den Boni speichern (nachdem alle Modifikationen abgeschlossen sind)
         saveBonus()
-        Log.d("CivicViewModel", "All bonuses saved after deletion process for '$cardNameToDelete'.")
     }
 
     companion object {
-        const val WRITTEN_RECORD = "Written Record"
-        const val MONUMENT = "Monument"
-        const val EXTRA_CREDITS_POSTFIX = " Extra Credits"
-        const val ANATOMY = "Anatomy"
+        const val WRITTEN_RECORD: String = "Written Record"
+        const val MONUMENT: String = "Monument"
+        const val EXTRA_CREDITS_POSTFIX: String = " Extra Credits"
+
+        //        const val ANATOMY = "Anatomy"
         val TREASURY: Array<String> = arrayOf(
             "Monarchy", "Coinage", "Trade Routes",
             "Politics", "Mining"
