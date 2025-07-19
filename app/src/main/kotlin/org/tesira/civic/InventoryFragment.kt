@@ -31,6 +31,16 @@ class InventoryFragment : BaseCardListFragment() {
         setupSwipeToDelete()
     }
 
+    fun isSpecificCardPresent(cardName: String): Boolean {
+        val currentCardList: List<CardWithDetails>? = getCardsLiveData().value
+        if (currentCardList != null) {
+            return currentCardList.any { cardWithDetails ->
+                cardWithDetails.card.name == cardName
+            }
+        }
+        return false
+    }
+
     private fun setupSwipeToDelete() {
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             0, // Wir unterstützen kein Drag & Drop, daher 0
@@ -47,11 +57,9 @@ class InventoryFragment : BaseCardListFragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    val cardToDeleteDetails = allCardsAdapter.currentList[position] // Hole die Karte vom Adapter
+                    val cardToDeleteDetails = allCardsAdapter.currentList[position]
                     val cardName = cardToDeleteDetails.card.name
-                    // Schritt 1: ViewModel informieren, die Karte zu löschen
-                    // (Die Implementierung von deletePurchasedCard im ViewModel folgt später)
-                    // Aufruf in einer Coroutine starten
+                    val bothExtras = isSpecificCardPresent(CivicViewModel.EXTRA_CREDITS_BOTH)
                     viewLifecycleOwner.lifecycleScope.launch {
                         civicViewModel.deletePurchasedCard(cardToDeleteDetails)
                     }
@@ -63,17 +71,21 @@ class InventoryFragment : BaseCardListFragment() {
                     if (cardName != CivicViewModel.WRITTEN_RECORD && cardName != CivicViewModel.MONUMENT) {
                         snackbar.setAction("Undo") {
                             viewLifecycleOwner.lifecycleScope.launch {
-                                // Logik zum Wiederherstellen der NORMALEN Karte:
+                                // Logik zum Wiederherstellen aller Karten ausser Monument/Written Record:
                                 // 1. Wieder in 'purchases' eintragen
-                                civicViewModel.insertPurchase(cardName) // Annahme: insertPurchase nimmt den Namen
+                                civicViewModel.insertPurchase(cardName)
                                 // 2. Boni der Hauptkarte wieder hinzufügen
-                                civicViewModel.addBonus(cardToDeleteDetails.card) // Benötigt das Card-Objekt
+                                civicViewModel.addBonus(cardToDeleteDetails.card)
                                 // 3. Änderungen an den Boni speichern
                                 civicViewModel.saveBonus()
                             }
                         }
                     } else {
-                        snackbar.setText("Card '$cardName' removed (Undo not available for this special card)")
+                        snackbar.setText("Card '$cardName' removed (Undo not available for this card)")
+                    }
+
+                    if (bothExtras) {
+                        snackbar.setText("You bought 'Monument' and 'Written Record' in the same round, removing both. (Undo not possible)")
                     }
                     snackbar.show()
                 }

@@ -855,28 +855,32 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         customHeartSettingsUpdated()
     }
 
-//    suspend fun deletePurchasedCard(cardToDelete: CardWithDetails) {
-//
-//        repository.deletePurchase(cardToDelete.card.name)
-//    }
-
     suspend fun deletePurchasedCard(cardToDeleteDetails: CardWithDetails) {
         val cardNameToDelete = cardToDeleteDetails.card.name
-        val cardObjectToDelete = cardToDeleteDetails.card // Das Card-Objekt der Hauptkarte
+        val cardObjectToDelete = cardToDeleteDetails.card
 
         // 1. Regulären Kauf aus 'purchases' löschen
         repository.deletePurchase(cardNameToDelete)
 
         // 2. Boni der Hauptkarte entfernen
-        removeBonus(cardObjectToDelete) // Nimmt die Boni aus cardBonus LiveData
+        removeBonus(cardObjectToDelete)
 
         // 3. Sonderbehandlung für Written Record und Monument
         if (cardNameToDelete == WRITTEN_RECORD || cardNameToDelete == MONUMENT) {
-            val extraCreditsCardName = cardNameToDelete + EXTRA_CREDITS_POSTFIX
+            var bothExtras = false
+            var extraCreditsCardName = cardNameToDelete + EXTRA_CREDITS_POSTFIX
 
             // 3a. Versuche, die "Extra Credits"-Karte aus der 'cards'-Tabelle zu laden, um ihre Boni zu entfernen
-            val extraCreditsCardObject = repository.getCardByName(extraCreditsCardName)
+            var extraCreditsCardObject = repository.getCardByName(extraCreditsCardName)
 
+            // falls extraCreditsCardObjet null ist könnten evtl. beide extra Karten zusammen gekauft worde sein, dann heisst die Karte anders
+            if (extraCreditsCardObject == null) {
+                extraCreditsCardName = EXTRA_CREDITS_BOTH
+                extraCreditsCardObject = repository.getCardByName(extraCreditsCardName)
+                if (extraCreditsCardObject != null) {
+                    bothExtras = true
+                }
+            }
             if (extraCreditsCardObject != null) {
                 // 3b. Boni der "Extra Credits"-Karte entfernen
                 removeBonus(extraCreditsCardObject)
@@ -890,16 +894,32 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
             // 3d. "Extra Credits"-Kauf (falls vorhanden) aus 'purchases' löschen
             repository.deletePurchase(extraCreditsCardName)
+
+            // 3e. wenn die Doppelbonikarte existiert müssen beide Extra Credits Karten gelöscht werden
+            if (bothExtras) {
+                repository.deletePurchase(MONUMENT)
+                repository.deletePurchase(WRITTEN_RECORD)
+                if (cardNameToDelete == WRITTEN_RECORD) {
+                    removeBonus(getCardByName(MONUMENT)!!)
+                } else {
+                    removeBonus(getCardByName(WRITTEN_RECORD)!!)
+                }
+            }
         }
 
         // 4. Änderungen an den Boni speichern (nachdem alle Modifikationen abgeschlossen sind)
         saveBonus()
     }
 
+    suspend fun getCardByName(name: String): Card? {
+        return repository.getCardByName(name)
+    }
+
     companion object {
         const val WRITTEN_RECORD: String = "Written Record"
         const val MONUMENT: String = "Monument"
         const val EXTRA_CREDITS_POSTFIX: String = " Extra Credits"
+        const val EXTRA_CREDITS_BOTH: String = "Extra Credits WR & Monument"
 
         //        const val ANATOMY = "Anatomy"
         val TREASURY: Array<String> = arrayOf(
