@@ -13,8 +13,8 @@ interface CivicHelperDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertCard(civilizationAdvance: Card)
 
-    @Query("DELETE FROM cards WHERE name = :name")
-    fun deleteCard(name: String)
+//    @Query("DELETE FROM cards WHERE name = :name")
+//    fun deleteCard(name: String)
 
     @Query("DELETE FROM cards")
     fun deleteAllCards()
@@ -65,11 +65,20 @@ interface CivicHelperDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertPurchase(purchase: Purchase)
 
+    @Query("DELETE FROM purchases WHERE name = :cardName") // Annahme: Die Spalte in 'purchases' heißt 'name'
+    suspend fun deletePurchase(cardName: String)
+
     @Query("DELETE FROM purchases")
     fun deleteAllPurchases()
 
     @Query("SELECT cards.* FROM cards LEFT JOIN purchases ON cards.name = purchases.name WHERE purchases.name NOT NULL AND cards.vp IN (1,3)")
     fun getPurchasesForFamilyBonus(): List<Card>
+
+    @Query("DELETE FROM cards WHERE name = :cardName")
+    suspend fun deleteCardByName(cardName: String)
+
+    @Query("SELECT * FROM cards WHERE name = :cardName LIMIT 1")
+    suspend fun getCardByName(cardName: String): Card?
 
     @Query("UPDATE cards SET currentPrice = :current WHERE name = :name")
     fun updateCurrentPrice(name: String, current: Int)

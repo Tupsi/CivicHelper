@@ -204,6 +204,18 @@ class CivicRepository(application: Application) {
         repositoryExecutor.execute { civicDao.insertCard(card) }
     }
 
+    suspend fun deletePurchase(cardName: String) {
+        civicDao.deletePurchase(cardName)
+    }
+
+    suspend fun deleteCardByName(cardName: String) {
+        civicDao.deleteCardByName(cardName)
+    }
+
+    suspend fun getCardByName(cardName: String): Card? {
+        return civicDao.getCardByName(cardName)
+    }
+
     companion object {
         private const val NUMBER_OF_THREADS = 4
     }

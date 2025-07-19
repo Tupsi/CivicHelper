@@ -412,8 +412,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         _cities.value = 0
         _timeVp.value = 0
         _vp.value = 0
-        cardBonus.value = HashMap<CardColor, Int>()
-        cardBonus.value = cardBonus.value
+        cardBonus.value = CardColor.entries.associateWith { 0 }.toMutableMap() as HashMap<CardColor, Int>
         librarySelected = false
 
         defaultPrefs.edit { putInt(CardColor.BLUE.colorName, 0) }
@@ -481,6 +480,42 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             addBonus(cardWithDetails.card)
         }
     }
+
+    /**
+     * Subtracts the bonuses of a specific card from the cardBonus HashMap.
+     * This is the core logic for bonus removal.
+     * @param card The card whose bonuses should be removed.
+     */
+    private fun removeActualBonuses(card: Card) {
+        val currentBonuses = cardBonus.value ?: return
+
+        // Wichtig: Eine neue HashMap erstellen, um LiveData zum Aktualisieren zu zwingen
+        val updatedBonuses = HashMap(currentBonuses)
+
+        val subtractor: (Int, Int) -> Int = { oldValue, valueToSubtract ->
+            val result = oldValue - valueToSubtract
+            if (result < 0) 0 else result
+        }
+
+        if (card.creditsBlue != 0) updatedBonuses.merge(CardColor.BLUE, card.creditsBlue, subtractor)
+        if (card.creditsGreen != 0) updatedBonuses.merge(CardColor.GREEN, card.creditsGreen, subtractor)
+        if (card.creditsOrange != 0) updatedBonuses.merge(CardColor.ORANGE, card.creditsOrange, subtractor)
+        if (card.creditsRed != 0) updatedBonuses.merge(CardColor.RED, card.creditsRed, subtractor)
+        if (card.creditsYellow != 0) updatedBonuses.merge(CardColor.YELLOW, card.creditsYellow, subtractor)
+
+        cardBonus.value = updatedBonuses // LiveData aktualisieren, um Observer zu benachrichtigen
+    }
+
+    /**
+     * Public method to remove the bonuses of a specific card from the total card bonuses.
+     * This is typically called when a card is "unsold" or removed from the inventory.
+     *
+     * @param card The card object whose bonuses are to be removed.
+     */
+    fun removeBonus(card: Card) {
+        removeActualBonuses(card)
+    }
+
 
     /**
      * Orchestrates the purchase process. Delegates the database operations to the Repository
@@ -821,7 +856,61 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         customHeartSettingsUpdated()
     }
 
+//    suspend fun deletePurchasedCard(cardToDelete: CardWithDetails) {
+//
+//        repository.deletePurchase(cardToDelete.card.name)
+//    }
+
+    suspend fun deletePurchasedCard(cardToDeleteDetails: CardWithDetails) {
+        val cardNameToDelete = cardToDeleteDetails.card.name
+        val cardObjectToDelete = cardToDeleteDetails.card // Das Card-Objekt der Hauptkarte
+
+        Log.d("CivicViewModel", "Attempting to delete card: $cardNameToDelete")
+
+        // 1. Regulären Kauf aus 'purchases' löschen
+        repository.deletePurchase(cardNameToDelete)
+        Log.d("CivicViewModel", "Deleted '$cardNameToDelete' from purchases.")
+
+        // 2. Boni der Hauptkarte entfernen und speichern (wird jetzt hier zentralisiert)
+        removeBonus(cardObjectToDelete) // Nimmt die Boni aus cardBonus LiveData
+        Log.d("CivicViewModel", "Removed bonuses for main card '$cardNameToDelete'.")
+
+        // 3. Sonderbehandlung für Written Record und Monument
+        if (cardNameToDelete == WRITTEN_RECORD || cardNameToDelete == MONUMENT) {
+            val extraCreditsCardName = cardNameToDelete + EXTRA_CREDITS_POSTFIX
+            Log.d("CivicViewModel", "Handling special card: '$cardNameToDelete'. Looking for extra credits card: '$extraCreditsCardName'")
+
+            // 3a. Versuche, die "Extra Credits"-Karte aus der 'cards'-Tabelle zu laden, um ihre Boni zu entfernen
+            val extraCreditsCardObject = repository.getCardByName(extraCreditsCardName)
+
+            if (extraCreditsCardObject != null) {
+                // 3b. Boni der "Extra Credits"-Karte entfernen
+                removeBonus(extraCreditsCardObject)
+                Log.d("CivicViewModel", "Removed bonuses for extra credits card '$extraCreditsCardName'.")
+
+                // 3c. "Extra Credits"-Karte aus der 'cards'-Tabelle löschen
+                repository.deleteCardByName(extraCreditsCardName)
+                Log.d("CivicViewModel", "Deleted '$extraCreditsCardName' from cards table.")
+            } else {
+                Log.d("CivicViewModel", "Extra credits card '$extraCreditsCardName' not found in cards table.")
+            }
+
+            // 3d. "Extra Credits"-Kauf (falls vorhanden) aus 'purchases' löschen
+            // Dies ist wichtig, falls die "Extra Credits"-Karte auch als separater Kauf erfasst wurde.
+            repository.deletePurchase(extraCreditsCardName)
+            Log.d("CivicViewModel", "Attempted to delete '$extraCreditsCardName' from purchases (if it existed).")
+        }
+
+        // 4. Änderungen an den Boni speichern (nachdem alle Modifikationen abgeschlossen sind)
+        saveBonus()
+        Log.d("CivicViewModel", "All bonuses saved after deletion process for '$cardNameToDelete'.")
+    }
+
     companion object {
+        const val WRITTEN_RECORD = "Written Record"
+        const val MONUMENT = "Monument"
+        const val EXTRA_CREDITS_POSTFIX = " Extra Credits"
+        const val ANATOMY = "Anatomy"
         val TREASURY: Array<String> = arrayOf(
             "Monarchy", "Coinage", "Trade Routes",
             "Politics", "Mining"

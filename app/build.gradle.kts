@@ -1,6 +1,6 @@
 val roomVersion: String = "2.7.2"
-val lifecycleVersion: String = "2.9.1"
-val navigationVersion: String = "2.9.0"
+val lifecycleVersion: String = "2.9.2"
+val navigationVersion: String = "2.9.2"
 
 plugins {
     id("com.android.application")
@@ -18,8 +18,8 @@ android {
         minSdk = 28
         //noinspection OldTargetApi
         targetSdk = 35
-        versionCode = 56
-        versionName = "1.9.23"
+        versionCode = 57
+        versionName = "1.10.01"
     }
 
     buildTypes {
@@ -90,6 +90,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.activity:activity-ktx:1.10.1")
+
+    implementation("it.xabaras.android:recyclerview-swipedecorator:1.4")
 }
 
 room {
