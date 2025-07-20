@@ -36,9 +36,9 @@ class HomeFragment : Fragment() {
     )
     private var currentCities = 0
     private var currentCardsVp = 0
-    private var currentAllPurchases: List<Card> = ArrayList<Card>()
-    private var currentCalamities: List<Calamity> = ArrayList<Calamity>()
-    private var currentSpecialsAndImmunities: List<String> = ArrayList<String>()
+    private var currentAllPurchases: List<Card> = ArrayList()
+    private var currentCalamities: List<Calamity> = ArrayList()
+    private var currentSpecialsAndImmunities: List<String> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
         mRecyclerView.setAdapter(mHomeCalamityAdapter)
 
         // RecyclerView Special Abilities
-        mRecyclerView = rootView.findViewById<RecyclerView>(R.id.listAbility)
+        mRecyclerView = rootView.findViewById(R.id.listAbility)
         mRecyclerView.setLayoutManager(LinearLayoutManager(rootView.context))
         mHomeSpecialsAdapter = HomeSpecialsAdapter()
         mRecyclerView.setAdapter(mHomeSpecialsAdapter)
@@ -97,17 +97,11 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupAstTooltips()
 
-        /*        mCivicViewModel.getNewGameStartedEvent().observe(getViewLifecycleOwner(), newGameEvent -> {
-            Boolean resetTriggered = newGameEvent.getContentIfNotHandled();
-            if (resetTriggered != null && resetTriggered) {
-                Log.d("HomeFragment", "Resetting HomeFragment UI elements.");
-                // Update UI elements that need resetting in HomeFragment
-                mHomeSpecialsAdapter.submitSpecialsList(currentSpecialsAndImmunities); // Update special abilities/immunities data in the adapter
-                mHomeCalamityAdapter.submitCalamityList(currentCalamities); // Update calamity data in the adapter
-                binding.tvCivilization.setText(getString(R.string.tv_ast,"not set"));
-            }
-        });*/
+        civicViewModel.astVersion.observe(viewLifecycleOwner) { astVersion ->
+            setupAstTooltips()
+        }
         civicViewModel.calamityBonusListLiveData.observe(
             getViewLifecycleOwner(),
             Observer { calamities: List<Calamity> ->
@@ -190,23 +184,14 @@ class HomeFragment : Fragment() {
         val ast = civicViewModel.astVersion.value
         val astMarkerText: String?
         val countAllPurchases = currentAllPurchases.size
-        var countSize100 = 0
-        var countSize200 = 0
+        val countSize100less = currentAllPurchases.count { it.price < 100 }
+        val countSize100plus = currentAllPurchases.count { it.price > 100 }
+        val countSize200plus = currentAllPurchases.count { it.price > 200 }
         val ebaAchieved: Boolean
         val mbaAchieved: Boolean
         val lbaAchieved: Boolean
         val eiaAchieved: Boolean
         val liaAchieved: Boolean
-
-        // count the number of cards which have a buying price greater 100 and 200
-        for (card in currentAllPurchases) {
-            if (card.price >= 100) {
-                countSize100++
-            }
-            if (card.price >= 200) {
-                countSize200++
-            }
-        }
 
         if ("basic" == ast) {
             astMarkerText = "AST (B)"
@@ -214,24 +199,24 @@ class HomeFragment : Fragment() {
             ebaAchieved = (currentCities >= 2)
             // MBA: 3 cities & 3 cards
             mbaAchieved = (currentCities >= 3 && countAllPurchases >= 3)
-            // LBA: 3 cities & 3 cards 100+
-            lbaAchieved = (currentCities >= 3 && countSize100 >= 3)
-            // EIA: 4 cities & 2 cards 200+
-            eiaAchieved = (currentCities >= 4 && countSize200 >= 2)
-            // LIA: 5 cities & 3 cards 200+
-            liaAchieved = (currentCities >= 5 && countSize200 >= 3)
+            // LBA: 3 cities & 3 cards > 100
+            lbaAchieved = (currentCities >= 3 && countSize100plus >= 3)
+            // EIA: 4 cities & 2 cards > 200
+            eiaAchieved = (currentCities >= 4 && countSize200plus >= 2)
+            // LIA: 5 cities & 3 cards > 200
+            liaAchieved = (currentCities >= 5 && countSize200plus >= 3)
         } else { // "expert" AST
             astMarkerText = "AST (E)"
-            // EBA: 2 cities
+            // EBA: 3 cities
             ebaAchieved = (currentCities >= 3)
             // MBA: 3 cities & 5 VP
             mbaAchieved = (currentCities >= 3 && currentCardsVp >= 5)
             // LBA: 4 cities & 12 cards
             lbaAchieved = (currentCities >= 4 && countAllPurchases >= 12)
-            // EIA: 5 cities & 10 cards 100+ & 38 VP
-            eiaAchieved = (currentCities >= 5 && countSize100 >= 10 && currentCardsVp >= 38)
-            // LIA: 6 cities & 17 cards 100+ & 56 VP
-            liaAchieved = (currentCities >= 6 && countSize100 >= 17 && currentCardsVp >= 56)
+            // EIA: 5 cities & 10 cards < 100 & 38 VP
+            eiaAchieved = (currentCities >= 5 && countSize100less >= 10 && currentCardsVp >= 38)
+            // LIA: 6 cities & 17 cards < 100 & 56 VP
+            liaAchieved = (currentCities >= 6 && countSize100less >= 17 && currentCardsVp >= 56)
         }
         binding.tvAST.text = astMarkerText
 
@@ -265,24 +250,31 @@ class HomeFragment : Fragment() {
         menuInfo: ContextMenu.ContextMenuInfo?
     ) {
         super.onCreateContextMenu(menu, v, menuInfo)
-        if (v.id == R.id.tvTime) {
-            var timeTableLength = CivicViewModel.Companion.TIME_TABLE.size
-            if ("basic" == civicViewModel.astVersion.getValue()) {
-                timeTableLength--
+        when (v.id) {
+            R.id.tvTime -> {
+                var timeTableLength = CivicViewModel.TIME_TABLE.size
+                if (civicViewModel.astVersion.value == "basic") {
+                    timeTableLength--
+                }
+                for (i in 0 until timeTableLength) { // 'until' is exclusive for the upper bound
+                    menu.add(0, i * 5, i, CivicViewModel.TIME_TABLE[i])
+                }
             }
-            for (i in 0..<timeTableLength) {
-                menu.add(0, i * 5, i, CivicViewModel.Companion.TIME_TABLE[i])
+
+            R.id.tvCivilization -> {
+                val context = requireContext()
+                val entries = context.resources.getStringArray(R.array.civilizations_entries)
+                val values = context.resources.getStringArray(R.array.civilizations_values)
+                values.indices.forEach { i -> // More idiomatic loop for indices
+                    menu.add(1, i, i, entries[i]) // Group 1 = Civilization
+                }
             }
-        } else if (v.id == R.id.tvCivilization) {
-            val context = requireContext()
-            val entries = context.resources.getStringArray(R.array.civilizations_entries)
-            val values = context.resources.getStringArray(R.array.civilizations_values)
-            for (i in values.indices) {
-                menu.add(1, i, i, entries[i]) // Group 1 = Civilization
+
+            R.id.tvAST -> {
+                val astEntries = resources.getStringArray(R.array.ast_entries)
+                menu.add(2, 0, 0, astEntries[0])
+                menu.add(2, 1, 1, astEntries[1])
             }
-        } else if (v.id == R.id.tvAST) {
-            menu.add(2, 0, 0, resources.getStringArray(R.array.ast_entries)[0])
-            menu.add(2, 1, 1, resources.getStringArray(R.array.ast_entries)[1])
         }
     }
 
@@ -309,5 +301,15 @@ class HomeFragment : Fragment() {
             return true
         }
         return super.onContextItemSelected(item)
+    }
+
+    private fun setupAstTooltips() {
+        if (!isAdded) return // Ensure fragment is attached
+
+        binding.tvEBA.tooltipText = civicViewModel.getAstStageTooltipText(CivicViewModel.AstStage.EBA)
+        binding.tvMBA.tooltipText = civicViewModel.getAstStageTooltipText(CivicViewModel.AstStage.MBA)
+        binding.tvLBA.tooltipText = civicViewModel.getAstStageTooltipText(CivicViewModel.AstStage.LBA)
+        binding.tvEIA.tooltipText = civicViewModel.getAstStageTooltipText(CivicViewModel.AstStage.EIA)
+        binding.tvLIA.tooltipText = civicViewModel.getAstStageTooltipText(CivicViewModel.AstStage.LIA)
     }
 }

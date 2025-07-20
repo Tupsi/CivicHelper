@@ -425,9 +425,11 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             PLAYER_COUNT_3 -> {
                 cardBonus.value = CardColor.entries.associateWith { 10 }.toMutableMap() as HashMap<CardColor, Int>
             }
+
             PLAYER_COUNT_4 -> {
                 cardBonus.value = CardColor.entries.associateWith { 5 }.toMutableMap() as HashMap<CardColor, Int>
             }
+
             PLAYER_COUNT_5_PLUS -> {
                 cardBonus.value = CardColor.entries.associateWith { 0 }.toMutableMap() as HashMap<CardColor, Int>
             }
@@ -938,6 +940,64 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         return repository.getCardByName(name)
     }
 
+    fun getAstStageTooltipText(stage: AstStage): String {
+        val currentAstType = _astVersion.value ?: "basic" // Default to basic if not set
+        //val stageTitle: String
+        val conditions: String
+
+        when (stage) {
+            AstStage.EBA -> {
+                //stageTitle = "Early Bronze Age"
+                conditions = if (currentAstType == "basic") {
+                    "2 Cities"
+                } else {
+                    "3 Cities"
+                }
+            }
+
+            AstStage.MBA -> {
+                //stageTitle = "Middle Bronze Age"
+                conditions = if (currentAstType == "basic") {
+                    "3 Cities\n3 Advances"
+                } else {
+                    "3 Cities\n5 VP in Advances"
+                }
+            }
+
+            AstStage.LBA -> {
+                //stageTitle = "Late Bronze Age"
+                conditions = if (currentAstType == "basic") {
+                    "3 Cities\n3 Advances > 100"
+                } else {
+                    "4 Cities\n12 Advances"
+                }
+            }
+
+            AstStage.EIA -> {
+                //stageTitle = "Early Iron Age"
+                conditions = if (currentAstType == "basic") {
+                    "4 Cities\n2 Advances > 200"
+                } else {
+                    "5 Cities\n10 Advances < 100\n38 VP in Advances"
+                }
+            }
+
+            AstStage.LIA -> {
+                //stageTitle = "Late Iron Age"
+                conditions = if (currentAstType == "basic") {
+                    "5 Cities\n3 Advances > 200"
+                } else {
+                    "6 Cities\n17 Advances < 100\n 56 VP in Advances"
+                }
+            }
+        }
+        // Tooltips handle \n for new lines
+        //  return "$stageTitle\n$conditions"
+        return conditions
+
+    }
+
+
     companion object {
         const val WRITTEN_RECORD: String = "Written Record"
         const val MONUMENT: String = "Monument"
@@ -1077,4 +1137,10 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             return textColor
         }
     }
+
+    enum class AstStage {
+        EBA, MBA, LBA, EIA, LIA
+    }
 }
+
+
