@@ -4,37 +4,24 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.recyclerview.widget.RecyclerView
 import org.tesira.civic.db.CivicViewModel
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
-
+    private val civicViewModel: CivicViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView: RecyclerView? = listView // listView ist eine Property von PreferenceFragmentCompat
-//        recyclerView?.applyDefaultSystemBarInsetsAsPadding()
-//        recyclerView?.let { rv ->
-//            // Deaktiviere das Clipping für die RecyclerView, damit sie unter die Systemleisten zeichnen kann
-//            rv.clipToPadding = false
-//
-//            ViewCompat.setOnApplyWindowInsetsListener(rv) { v, insets ->
-//                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//                v.updatePadding(
-//                    top = systemBars.top,
-//                    bottom = systemBars.bottom
-//                )
-//                WindowInsetsCompat.CONSUMED
-//            }
-//        }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        setPreferencesFromResource(R.xml.preferences, rootKey)
 
         val customCardSelectionPreference: Preference? = findPreference(CivicViewModel.PREF_KEY_CUSTOM_HEART_CARDS)
         customCardSelectionPreference?.setOnPreferenceClickListener {
@@ -46,6 +33,23 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             true
         }
         updateCustomSelectionPreferenceVisibility()
+
+        val playerCountPreference: ListPreference? = findPreference(CivicViewModel.PREF_KEY_PLAYER_COUNT)
+
+        playerCountPreference?.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { preference, newValue ->
+                val oldValue = preference.sharedPreferences?.getString(preference.key, "")
+                if (oldValue != newValue) {
+                    showPlayerCountChangeConfirmationDialog {
+                        preference.sharedPreferences?.edit {
+                            putString(preference.key, newValue.toString())
+                        }
+                        civicViewModel.startNewGameProcess()
+                    }
+                    return@OnPreferenceChangeListener false
+                }
+                true
+            }
     }
 
     private fun updateCustomSelectionPreferenceVisibility() {
@@ -86,5 +90,20 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         if (key == CivicViewModel.PREF_KEY_HEART) {
             updateCustomSelectionPreferenceVisibility()
         }
+    }
+
+    private fun showPlayerCountChangeConfirmationDialog(onConfirm: () -> Unit) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirm Player Count Change")
+            .setMessage("Changing the number of players will start a new game and your current progress will be lost. Are you sure you want to continue?")
+            .setPositiveButton("Yes, Start New Game") { dialog, which ->
+                onConfirm()
+            }
+            .setNegativeButton("Cancel") { dialog, which ->
+                // User cancelled. Do nothing. The preference value remains unchanged.
+                // The ListPreference will revert to showing the old value.
+            }
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show()
     }
 }

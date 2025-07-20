@@ -18,8 +18,8 @@ android {
         minSdk = 28
         //noinspection OldTargetApi
         targetSdk = 35
-        versionCode = 57
-        versionName = "1.10.01"
+        versionCode = 58
+        versionName = "1.11.01"
     }
 
     buildTypes {

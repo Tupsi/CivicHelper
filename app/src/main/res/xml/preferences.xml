@@ -17,6 +17,15 @@
             app:key="ast"
             app:useSimpleSummaryProvider="true" />
 
+        <ListPreference
+            app:key="pref_key_player_count"
+            app:title="Number of Players"
+            app:summary="Adds Startbonus for 3 and 4 players, has no effect on 5+"
+            app:entries="@array/player_count_entries"
+            app:entryValues="@array/player_count_values"
+            app:useSimpleSummaryProvider="true"
+            app:defaultValue="5" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/layout_header">
@@ -62,10 +71,7 @@
             app:key="pref_key_select_custom_cards"
             app:title="@string/title_select_custom_cards"
             app:summary="@string/summary_select_custom_cards"
-            app:dependency="heart">
-            <!-- Wir können die Sichtbarkeit später programmatisch steuern,
-                 sodass diese nur klickbar/sichtbar ist, wenn heart_category == "custom" -->
-        </Preference>
+            app:dependency="heart"></Preference>
 
     </PreferenceCategory>
 

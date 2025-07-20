@@ -266,4 +266,15 @@
             Metalworking, Diplomacy, Cultural Ascendancy, Military, Provincial Empire. When constructing wilderness cities, build them in \"1\" population areas and if possible, do not do it coastal.
         </item>
     </string-array>
+
+    <string-array name="player_count_entries">
+        <item>3</item>
+        <item>4</item>
+        <item>5 – 18</item>
+    </string-array>
+    <string-array name="player_count_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
 </resources>

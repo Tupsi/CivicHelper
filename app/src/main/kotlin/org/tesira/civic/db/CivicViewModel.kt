@@ -412,14 +412,32 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         _cities.value = 0
         _timeVp.value = 0
         _vp.value = 0
-        cardBonus.value = CardColor.entries.associateWith { 0 }.toMutableMap() as HashMap<CardColor, Int>
         librarySelected = false
+//        cardBonus.value = CardColor.entries.associateWith { 0 }.toMutableMap() as HashMap<CardColor, Int>
+//        defaultPrefs.edit { putInt(CardColor.BLUE.colorName, 0) }
+//        defaultPrefs.edit { putInt(CardColor.GREEN.colorName, 0) }
+//        defaultPrefs.edit { putInt(CardColor.ORANGE.colorName, 0) }
+//        defaultPrefs.edit { putInt(CardColor.RED.colorName, 0) }
+//        defaultPrefs.edit { putInt(CardColor.YELLOW.colorName, 0) }
 
-        defaultPrefs.edit { putInt(CardColor.BLUE.colorName, 0) }
-        defaultPrefs.edit { putInt(CardColor.GREEN.colorName, 0) }
-        defaultPrefs.edit { putInt(CardColor.ORANGE.colorName, 0) }
-        defaultPrefs.edit { putInt(CardColor.RED.colorName, 0) }
-        defaultPrefs.edit { putInt(CardColor.YELLOW.colorName, 0) }
+        val playerCountSetting = defaultPrefs.getString(PREF_KEY_PLAYER_COUNT, PLAYER_COUNT_5_PLUS)
+        when (playerCountSetting) {
+            PLAYER_COUNT_3 -> {
+                cardBonus.value = CardColor.entries.associateWith { 10 }.toMutableMap() as HashMap<CardColor, Int>
+            }
+            PLAYER_COUNT_4 -> {
+                cardBonus.value = CardColor.entries.associateWith { 5 }.toMutableMap() as HashMap<CardColor, Int>
+            }
+            PLAYER_COUNT_5_PLUS -> {
+                cardBonus.value = CardColor.entries.associateWith { 0 }.toMutableMap() as HashMap<CardColor, Int>
+            }
+        }
+        saveBonus()
+//        defaultPrefs.edit {
+//            cardBonus.value!!.forEach { (color, value) ->
+//                putInt(color.colorName, value)
+//            }
+//        }
 
         defaultPrefs.edit { putInt(PREF_KEY_CITIES, 0) }
         defaultPrefs.edit { putInt(PREF_KEY_TIME, 0) }
@@ -594,10 +612,15 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     fun saveBonus() {
-        Log.d("CivicViewModel", "Saving bonus to SharedPreferences.")
-        // HashMap Save
-        for (entry in this.cardBonus.value!!.entries) {
-            defaultPrefs.edit { putInt(entry.key.colorName, entry.value) }
+//        Log.d("CivicViewModel", "Saving bonus to SharedPreferences.")
+//        // HashMap Save
+//        for (entry in this.cardBonus.value!!.entries) {
+//            defaultPrefs.edit { putInt(entry.key.colorName, entry.value) }
+//        }
+        defaultPrefs.edit {
+            cardBonus.value!!.forEach { (color, value) ->
+                putInt(color.colorName, value)
+            }
         }
     }
 
@@ -985,8 +1008,10 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         private const val PREF_KEY_SHOW_CREDITS = "showCredits"
         private const val PREF_KEY_SHOW_INFOS = "showInfos"
         internal const val PREF_KEY_CUSTOM_HEART_CARDS = "pref_key_select_custom_cards"
-
-        //@JvmStatic
+        const val PREF_KEY_PLAYER_COUNT: String = "pref_key_player_count"
+        const val PLAYER_COUNT_3: String = "3"
+        const val PLAYER_COUNT_4: String = "4"
+        const val PLAYER_COUNT_5_PLUS: String = "5"
         fun getItemBackgroundColor(card: Card, res: Resources): Drawable? {
 
             val gradient = GradientDrawable(
