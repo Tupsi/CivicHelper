@@ -62,6 +62,8 @@ credits on select or choosing your extra advance.
 Shows you every advance you already bought with a full text search if you are looking for something
 specific.
 
+You can remove advances you get by swapping them left.
+
 ### Library
 
 Basically like your Inventory screen, but always shows all advances available in the game.
@@ -80,6 +82,9 @@ Starts a new game by resetting everything back to zero and lets you select your 
 The "What do you want" section lets you choose different play style. It will show little hearts for
 you on the screens with a list of advances (buying, inventory and library) depending on what you
 select here. "Custom" lets you select your own advances.
+
+The "Number of Players" option changes the starting credits in your game 
+(10 credits for 3, 5 credits for 4, 0 otherwise).
 
 ## Screenshots
 
