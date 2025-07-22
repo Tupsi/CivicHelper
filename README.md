@@ -75,7 +75,9 @@ it work.
 
 ### New Game
 
-Starts a new game by resetting everything back to zero and lets you select your civilization.
+Starts a new game by resetting everything back to zero and lets you select the number of players,
+the game version (basic or expert) and your civilization.
+
 
 ### Settings
 
