@@ -19,7 +19,7 @@ android {
         //noinspection OldTargetApi
         targetSdk = 35
         versionCode = 60
-        versionName = "1.11.03"
+        versionName = "1.11.05"
     }
 
     buildTypes {

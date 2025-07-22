@@ -44,7 +44,6 @@ class HomeFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         val rootView: View = binding.getRoot()
-//        binding.root.applyHorizontalSystemBarInsetsAsPadding()
 
         // RecylerView Calamity Effects
         var mRecyclerView = rootView.findViewById<RecyclerView>(R.id.listCalamity)
@@ -193,7 +192,7 @@ class HomeFragment : Fragment() {
         val eiaAchieved: Boolean
         val liaAchieved: Boolean
 
-        if ("basic" == ast) {
+        if (CivicViewModel.AST_BASIC == ast) {
             astMarkerText = "AST (B)"
             // EBA: 2 cities
             ebaAchieved = (currentCities >= 2)
@@ -205,7 +204,7 @@ class HomeFragment : Fragment() {
             eiaAchieved = (currentCities >= 4 && countSize200plus >= 2)
             // LIA: 5 cities & 3 cards > 200
             liaAchieved = (currentCities >= 5 && countSize200plus >= 3)
-        } else { // "expert" AST
+        } else { // expert AST
             astMarkerText = "AST (E)"
             // EBA: 3 cities
             ebaAchieved = (currentCities >= 3)
@@ -253,7 +252,7 @@ class HomeFragment : Fragment() {
         when (v.id) {
             R.id.tvTime -> {
                 var timeTableLength = CivicViewModel.TIME_TABLE.size
-                if (civicViewModel.astVersion.value == "basic") {
+                if (civicViewModel.astVersion.value == CivicViewModel.AST_BASIC) {
                     timeTableLength--
                 }
                 for (i in 0 until timeTableLength) { // 'until' is exclusive for the upper bound

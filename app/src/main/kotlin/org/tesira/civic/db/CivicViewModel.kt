@@ -29,7 +29,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     private val specialAbilitiesRawLiveData: LiveData<List<String>> = repository.specialAbilitiesLiveData
     private val immunitiesRawLiveData: LiveData<List<String>> = repository.immunitiesLiveData
     private val combinedSpecialsAndImmunitiesLiveData = MediatorLiveData<MutableList<String>>()
-    private val defaultPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
+    val defaultPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
     private val buyableCardMap: MutableMap<String, Card> = HashMap()
     private val areBuyableCardsReady = MutableLiveData(false)
     private val _userPreferenceForHeartCards = MutableLiveData<String?>()
@@ -64,8 +64,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     val showExtraCreditsDialogEvent: LiveData<Event<Int>> = _showExtraCreditsDialogEvent
     private val _navigateToDashboardEvent = MutableLiveData<Event<Boolean>>()
     val navigateToDashboardEvent: LiveData<Event<Boolean>> = _navigateToDashboardEvent
-    private val _navigateToCivilizationSelectionEvent = MutableLiveData<Event<Unit>>()
-    val navigateToCivilizationSelectionEvent: LiveData<Event<Unit>> = _navigateToCivilizationSelectionEvent
     private val _selectedCardKeysForState = MutableLiveData(mutableSetOf<String?>())
     val selectedCardKeysForState: LiveData<MutableSet<String?>?> = _selectedCardKeysForState
     private val _currentSortingOrder = MutableLiveData<String>()
@@ -90,6 +88,9 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     val allCardsWithDetails: LiveData<List<CardWithDetails>>
     val allPurchasedCardsWithDetails: LiveData<List<CardWithDetails>>
     val allPurchasableCardsWithDetails: LiveData<List<CardWithDetails>>
+
+    private val _showNewGameOptionsDialogEvent = MutableLiveData<Event<Unit>>()
+    val showNewGameOptionsDialogEvent: LiveData<Event<Unit>> = _showNewGameOptionsDialogEvent
 
     init {
         defaultPrefs.registerOnSharedPreferenceChangeListener(this)
@@ -225,12 +226,16 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         _timeVp.value = defaultPrefs.getInt(PREF_KEY_TIME, 0)
         _columns.value = defaultPrefs.getString(PREF_KEY_COLUMNS, "0")!!.toInt()
         _currentSortingOrder.value = defaultPrefs.getString(PREF_KEY_SORT, "name") ?: "name"
-        _astVersion.value = defaultPrefs.getString(PREF_KEY_AST, "basic")
+        _astVersion.value = defaultPrefs.getString(PREF_KEY_AST, AST_BASIC)
         _civNumber.value = defaultPrefs.getString(PREF_KEY_CIVILIZATION, "not set")
         _selectedTipIndex.value = _civNumber.value?.toIntOrNull()?.minus(1)
         _showCredits.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_CREDITS, true)
         _showInfos.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_INFOS, true)
         _customCardSelectionForHeart.value = defaultPrefs.getStringSet(PREF_KEY_CUSTOM_HEART_CARDS, emptySet()) ?: emptySet()
+    }
+
+    fun triggerNewGameOptionsDialog() {
+        _showNewGameOptionsDialogEvent.value = Event(Unit)
     }
 
     fun getShowAnatomyDialogEvent(): LiveData<Event<List<String>>> {
@@ -417,11 +422,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             putInt(PREF_KEY_CITIES, 0)
             putInt(PREF_KEY_TIME, 0)
             putInt(PREF_KEY_TREASURE, 0)
-//            remove(PREF_KEY_HEART)
-            remove(PREF_KEY_CIVILIZATION)
         }
-
-        _navigateToCivilizationSelectionEvent.value = Event(Unit)
     }
 
     /**
@@ -724,7 +725,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             }
             // Game Version
         } else if (PREF_KEY_AST == key) {
-            val newAstVersion: String = sharedPreferences.getString(key, "basic")!!
+            val newAstVersion: String = sharedPreferences.getString(key, AST_BASIC)!!
             if (_astVersion.value == null || _astVersion.value != newAstVersion) {
                 _astVersion.value = newAstVersion
             }
@@ -804,33 +805,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         } else {
             currentColumns
         }
-
-//        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            if (this.columns <= 1) {
-////                2 // Immer 2 Spalten im Querformat, wenn User 1 wollte
-//                screenWidthDp / 200
-//            } else {
-//                this.columns
-//            }
-//        } else { // Portrait-Modus
-//            // Im Portrait-Modus, verwende die Benutzereinstellung
-//            this.columns
-//        }
-
-        // Alternative oder erweiterte Logik basierend auf screenWidthDp:
-        // (Diese kannst du mit der obigen Orientierungslogik kombinieren oder stattdessen verwenden)
-        /*
-        if (screenWidthDp >= 600) { // Beispiel: typische Tablet-Breite oder sehr breites Querformat
-            if (mColumnCountPreference < 2) return 2; // Mindestens 2 Spalten
-            if (mColumnCountPreference < 3 && screenWidthDp >= 800) return 3; // Mindestens 3 Spalten auf sehr breiten Screens
-            return mColumnCountPreference; // Ansonsten Benutzereinstellung
-        } else if (screenWidthDp >= 480) { // Breiteres Smartphone im Querformat
-             if (mColumnCountPreference <= 1) return 2; // Mindestens 2 Spalten
-             return mColumnCountPreference;
-        } else { // Schmaleres Smartphone
-            return mColumnCountPreference; // Im Hochformat oder schmal, die Benutzereinstellung
-        }
-        */
     }
 
     fun loadSelectedCardNames(): Set<String> {
@@ -905,14 +879,14 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     fun getAstStageTooltipText(stage: AstStage): String {
-        val currentAstType = _astVersion.value ?: "basic" // Default to basic if not set
+        val currentAstType = _astVersion.value ?: AST_BASIC
         //val stageTitle: String
         val conditions: String
 
         when (stage) {
             AstStage.EBA -> {
                 //stageTitle = "Early Bronze Age"
-                conditions = if (currentAstType == "basic") {
+                conditions = if (currentAstType == AST_BASIC) {
                     "2 Cities"
                 } else {
                     "3 Cities"
@@ -921,7 +895,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
             AstStage.MBA -> {
                 //stageTitle = "Middle Bronze Age"
-                conditions = if (currentAstType == "basic") {
+                conditions = if (currentAstType == AST_BASIC) {
                     "3 Cities\n3 Advances"
                 } else {
                     "3 Cities\n5 VP in Advances"
@@ -930,7 +904,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
             AstStage.LBA -> {
                 //stageTitle = "Late Bronze Age"
-                conditions = if (currentAstType == "basic") {
+                conditions = if (currentAstType == AST_BASIC) {
                     "3 Cities\n3 Advances > 100"
                 } else {
                     "4 Cities\n12 Advances"
@@ -939,7 +913,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
             AstStage.EIA -> {
                 //stageTitle = "Early Iron Age"
-                conditions = if (currentAstType == "basic") {
+                conditions = if (currentAstType == AST_BASIC) {
                     "4 Cities\n2 Advances > 200"
                 } else {
                     "5 Cities\n10 Advances < 100\n38 VP in Advances"
@@ -948,7 +922,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
             AstStage.LIA -> {
                 //stageTitle = "Late Iron Age"
-                conditions = if (currentAstType == "basic") {
+                conditions = if (currentAstType == AST_BASIC) {
                     "5 Cities\n3 Advances > 200"
                 } else {
                     "6 Cities\n17 Advances < 100\n 56 VP in Advances"
@@ -963,6 +937,8 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
 
     companion object {
+        const val AST_BASIC: String = "basic"
+        const val AST_EXPERT: String = "expert"
         const val WRITTEN_RECORD: String = "Written Record"
         const val MONUMENT: String = "Monument"
         const val EXTRA_CREDITS_POSTFIX: String = " Extra Credits"
@@ -1021,14 +997,14 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             "1200 BC", "800 BC", "0", "400 AD"
         )
 
-        private const val PREF_KEY_CIVILIZATION = "civilization"
+        const val PREF_KEY_CIVILIZATION: String = "civilization"
         private const val PREF_KEY_SORT = "sort"
         private const val PREF_KEY_CITIES = "cities"
         private const val PREF_KEY_TIME = "time"
         private const val PREF_KEY_TREASURE = "treasure"
         internal const val PREF_KEY_HEART = "heart"
         private const val PREF_KEY_COLUMNS = "columns"
-        private const val PREF_KEY_AST = "ast"
+        const val PREF_KEY_AST: String = "ast"
         private const val PREF_KEY_SHOW_CREDITS = "showCredits"
         private const val PREF_KEY_SHOW_INFOS = "showInfos"
         internal const val PREF_KEY_CUSTOM_HEART_CARDS = "pref_key_select_custom_cards"

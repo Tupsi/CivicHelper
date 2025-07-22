@@ -45,6 +45,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                             putString(preference.key, newValue.toString())
                         }
                         civicViewModel.startNewGameProcess()
+                        findNavController().navigate(R.id.homeFragment)
                     }
                     return@OnPreferenceChangeListener false
                 }

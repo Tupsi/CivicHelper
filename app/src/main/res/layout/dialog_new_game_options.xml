@@ -1,0 +1,90 @@
+<!-- res/layout/dialog_new_game_options.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Number of Players:"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_marginBottom="8dp"
+        tools:ignore="HardcodedText" />
+
+    <RadioGroup
+        android:id="@+id/rg_player_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/rb_players_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/rb_players_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/rb_players_5_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5-18"
+            tools:ignore="HardcodedText" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AST Version:"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_marginBottom="8dp"
+        tools:ignore="HardcodedText" />
+
+    <RadioGroup
+        android:id="@+id/rg_ast_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/rb_ast_basic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Basic"
+            tools:ignore="HardcodedText" />
+
+        <RadioButton
+            android:id="@+id/rb_ast_expert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expert"
+            tools:ignore="HardcodedText" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Civilization:"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_marginBottom="8dp"
+        tools:ignore="HardcodedText" />
+
+    <Spinner
+        android:id="@+id/spinner_civilization"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp" />
+
+</LinearLayout>
