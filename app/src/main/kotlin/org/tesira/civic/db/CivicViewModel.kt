@@ -103,20 +103,15 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             fun updateFilterAndSort() {
                 val unsortedList = currentUnsortedList
                 val sortOrder = currentSortOrder
-                // nicht genutzt im Moment
+                // filter nicht genutzt im Buy Screen
                 //val query = currentQuery
                 val query = ""
-
                 if (unsortedList != null && sortOrder != null) {
-                    Log.d("CivicViewModel", "updateFilterAndSort triggered. Query: '$query', SortOrder: $sortOrder, Unsorted Size: ${unsortedList.size}")
-
                     // 1. Filtern basierend auf dem Suchbegriff
                     val filteredList = filterCardList(unsortedList, query)
-                    Log.d("CivicViewModel", "Filtered list size: ${filteredList.size}")
 
                     // 2. Sortieren der gefilterten Liste basierend auf dem kombinierten Sortier-String
                     value = sortCardList(filteredList, sortOrder) // sortCardList braucht nur noch den sortOrder
-                    Log.d("CivicViewModel", "Final sorted list size for allCardsWithDetails: ${this.value?.size}")
                 } else {
                     Log.d("CivicViewModel", "updateFilterAndSort skipped. Unsorted: ${unsortedList != null}, SortOrder: ${sortOrder != null}, Query: $query")
                 }
@@ -126,7 +121,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                 currentUnsortedList = list
                 updateFilterAndSort()
             }
-            addSource(_currentSortingOrder) { sortOrder -> // Beobachtet nur noch _currentSortingOrder
+            addSource(_currentSortingOrder) { sortOrder ->
                 currentSortOrder = sortOrder
                 updateFilterAndSort()
             }
@@ -139,7 +134,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         }
         allCardsWithDetails = MediatorLiveData<List<CardWithDetails>>().apply {
             var currentUnsortedList: List<CardWithDetails>? = null
-            var currentSortOrder: String? = _currentSortingOrder.value // Nur noch ein Sortierparameter
+            var currentSortOrder: String? = _currentSortingOrder.value
             var currentQuery: String? = _searchQuery.value
 
             fun updateFilterAndSort() {
@@ -148,33 +143,25 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                 val query = currentQuery
 
                 if (unsortedList != null && sortOrder != null && query != null) {
-                    Log.d("CivicViewModel", "updateFilterAndSort triggered. Query: '$query', SortOrder: $sortOrder, Unsorted Size: ${unsortedList.size}")
-
                     // 1. Filtern basierend auf dem Suchbegriff
                     val filteredList = filterCardList(unsortedList, query)
-                    Log.d("CivicViewModel", "Filtered list size: ${filteredList.size}")
-
                     // 2. Sortieren der gefilterten Liste basierend auf dem kombinierten Sortier-String
                     value = sortCardList(filteredList, sortOrder) // sortCardList braucht nur noch den sortOrder
-                    Log.d("CivicViewModel", "Final sorted list size for allCardsWithDetails: ${this.value?.size}")
                 } else {
                     Log.d("CivicViewModel", "updateFilterAndSort skipped. Unsorted: ${unsortedList != null}, SortOrder: ${sortOrder != null}, Query: ${query != null}")
                 }
             }
 
             addSource(allCardsUnsortedOnce) { list ->
-//                Log.d("CivicViewModel", "allCardsUnsortedOnce changed. Size: ${list?.size}")
                 currentUnsortedList = list
                 updateFilterAndSort()
             }
             addSource(_currentSortingOrder) { sortOrder -> // Beobachtet nur noch _currentSortingOrder
-//                Log.d("CivicViewModel", "_currentSortingOrder changed to: $sortOrder")
                 currentSortOrder = sortOrder
                 updateFilterAndSort()
             }
             // addSource für _isCurrentSortAscending entfällt
             addSource(_searchQuery) { query ->
-//                Log.d("CivicViewModel", "_searchQuery changed to: '$query'")
                 currentQuery = query
                 updateFilterAndSort()
             }
@@ -190,15 +177,10 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                 val query = currentQuery
 
                 if (unsortedList != null && sortOrder != null && query != null) {
-                    Log.d("CivicViewModel", "updateFilterAndSort triggered. Query: '$query', SortOrder: $sortOrder, Unsorted Size: ${unsortedList.size}")
-
                     // 1. Filtern basierend auf dem Suchbegriff
                     val filteredList = filterCardList(unsortedList, query)
-                    Log.d("CivicViewModel", "Filtered list size: ${filteredList.size}")
-
                     // 2. Sortieren der gefilterten Liste basierend auf dem kombinierten Sortier-String
                     value = sortCardList(filteredList, sortOrder) // sortCardList braucht nur noch den sortOrder
-                    Log.d("CivicViewModel", "Final sorted list size for allCardsWithDetails: ${this.value?.size}")
                 } else {
                     Log.d("CivicViewModel", "updateFilterAndSort skipped. Unsorted: ${unsortedList != null}, SortOrder: ${sortOrder != null}, Query: ${query != null}")
                 }
@@ -406,19 +388,14 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     fun startNewGameProcess() {
         repository.deleteInventory()
         repository.resetCurrentPrice()
-        repository.resetDB(application.applicationContext)
+        val cardNamesToMarkAsHeart: List<String> = getCardNamesForHeartSelection(_userPreferenceForHeartCards.value!!)
+        repository.resetDB(application.applicationContext, cardNamesToMarkAsHeart)
         treasure.value = 0
         remaining.value = 0
         _cities.value = 0
         _timeVp.value = 0
         _vp.value = 0
         librarySelected = false
-//        cardBonus.value = CardColor.entries.associateWith { 0 }.toMutableMap() as HashMap<CardColor, Int>
-//        defaultPrefs.edit { putInt(CardColor.BLUE.colorName, 0) }
-//        defaultPrefs.edit { putInt(CardColor.GREEN.colorName, 0) }
-//        defaultPrefs.edit { putInt(CardColor.ORANGE.colorName, 0) }
-//        defaultPrefs.edit { putInt(CardColor.RED.colorName, 0) }
-//        defaultPrefs.edit { putInt(CardColor.YELLOW.colorName, 0) }
 
         val playerCountSetting = defaultPrefs.getString(PREF_KEY_PLAYER_COUNT, PLAYER_COUNT_5_PLUS)
         when (playerCountSetting) {
@@ -435,17 +412,14 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             }
         }
         saveBonus()
-//        defaultPrefs.edit {
-//            cardBonus.value!!.forEach { (color, value) ->
-//                putInt(color.colorName, value)
-//            }
-//        }
 
-        defaultPrefs.edit { putInt(PREF_KEY_CITIES, 0) }
-        defaultPrefs.edit { putInt(PREF_KEY_TIME, 0) }
-        defaultPrefs.edit { putInt(PREF_KEY_TREASURE, 0) }
-        defaultPrefs.edit { remove(PREF_KEY_HEART) }
-        defaultPrefs.edit { remove(PREF_KEY_CIVILIZATION) }
+        defaultPrefs.edit {
+            putInt(PREF_KEY_CITIES, 0)
+            putInt(PREF_KEY_TIME, 0)
+            putInt(PREF_KEY_TREASURE, 0)
+//            remove(PREF_KEY_HEART)
+            remove(PREF_KEY_CIVILIZATION)
+        }
 
         _navigateToCivilizationSelectionEvent.value = Event(Unit)
     }
@@ -614,11 +588,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     fun saveBonus() {
-//        Log.d("CivicViewModel", "Saving bonus to SharedPreferences.")
-//        // HashMap Save
-//        for (entry in this.cardBonus.value!!.entries) {
-//            defaultPrefs.edit { putInt(entry.key.colorName, entry.value) }
-//        }
         defaultPrefs.edit {
             cardBonus.value!!.forEach { (color, value) ->
                 putInt(color.colorName, value)
@@ -787,8 +756,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     private fun processHeartPreferenceChange(selectionName: String) {
         val cardNamesToMarkAsHeart: List<String> = getCardNamesForHeartSelection(selectionName)
 
-        // Wichtig: Diese Datenbankoperationen sollten in einem Hintergrundthread ausgeführt werden.
-        // mRepository sollte Methoden anbieten, die dies intern tun (z.B. mit Coroutinen oder AsyncTask).
         repository.resetAllCardsHeartStatusAsync {
             // Dieser Callback wird ausgeführt, nachdem alle Herzen zurückgesetzt wurden.
             if (cardNamesToMarkAsHeart.isNotEmpty()) {
@@ -807,7 +774,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
     /**
      * Holt die Liste der Kartennamen basierend auf der "heart"-Auswahl.
-     * Nutzt deine bestehende Logik aus getChooserCards().
+     * Nutzt die bestehende Logik aus getChooserCards().
      */
     private fun getCardNamesForHeartSelection(selectionName: String): List<String> {
         return when (selectionName.lowercase(Locale.getDefault())) {
@@ -912,9 +879,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
                 // 3c. "Extra Credits"-Karte aus der 'cards'-Tabelle löschen
                 repository.deleteCardByName(extraCreditsCardName)
-            } else {
-                // should never happen
-                Log.d("CivicViewModel", "Extra credits card '$extraCreditsCardName' not found in cards table.")
             }
 
             // 3d. "Extra Credits"-Kauf (falls vorhanden) aus 'purchases' löschen
@@ -1050,7 +1014,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             "Cultural Ascendancy"
         )
 
-        @JvmField
+        //        @JvmField
         val TIME_TABLE: Array<String> = arrayOf(
             "8000 BC", "7000 BC", "6000 BC", "4300 BC", "5000 BC",
             "3300 BC", "2700 BC", "2000 BC", "1800 BC", "1700 BC", "1500 BC", "1400 BC", "1300 BC",

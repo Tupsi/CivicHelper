@@ -34,7 +34,7 @@ class CivicRepository(application: Application) {
         repositoryExecutor.execute { civicDao.insertPurchase(Purchase(name)) }
     }
 
-    fun resetDB(context: Context) {
+    fun resetDB(context: Context, hearts: List<String>) {
         repositoryExecutor.execute {
             civicDao.deleteAllCards()
             civicDao.deleteAllEffects()
@@ -42,15 +42,14 @@ class CivicRepository(application: Application) {
             civicDao.deleteAllImmunities()
             // Stelle sicher, dass importCivicsFromXML eine synchrone Operation ist
             importCivicsFromXML(context)
+            if (hearts.isNotEmpty()) {
+                civicDao.setHeartsForCards(hearts)
+            }
         }
     }
 
     fun resetCurrentPrice() {
         repositoryExecutor.execute { civicDao.resetCurrentPrice() }
-    }
-
-    fun getAllAdvancesNotBoughtLiveData(sortingOrder: String): LiveData<List<Card>> {
-        return civicDao.getAllAdvancesNotBoughtLiveData(sortingOrder)
     }
 
     fun getAllCardsWithDetailsUnsorted(): LiveData<List<CardWithDetails>> {
