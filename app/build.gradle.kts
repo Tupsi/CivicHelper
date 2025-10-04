@@ -8,6 +8,7 @@ plugins {
     //  https://github.com/google/ksp/releases
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
     id("androidx.room") version "2.8.1"
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -18,8 +19,8 @@ android {
         minSdk = 28
         //noinspection OldTargetApi
         targetSdk = 35
-        versionCode = 62
-        versionName = "1.11.07"
+        versionCode = 63
+        versionName = "1.12.01"
     }
 
     buildTypes {
