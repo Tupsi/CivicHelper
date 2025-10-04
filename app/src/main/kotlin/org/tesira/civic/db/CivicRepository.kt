@@ -5,6 +5,8 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import org.tesira.civic.Calamity
 import org.tesira.civic.db.CivicHelperDatabase.Companion.getDatabase
 import org.tesira.civic.db.CivicHelperDatabase.Companion.importCivicsFromXML
@@ -15,6 +17,7 @@ import kotlin.math.max
 
 class CivicRepository(application: Application) {
     private var civicDao: CivicHelperDao
+    private val repositoryScope = CoroutineScope(Dispatchers.IO)
 
     private val repositoryExecutor: ExecutorService = Executors.newFixedThreadPool(
         NUMBER_OF_THREADS

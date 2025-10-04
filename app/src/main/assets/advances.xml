@@ -529,7 +529,7 @@
         <price>90</price>
         <credit group="GREEN">10</credit>
         <credit group="RED">5</credit>
-        <effect name="Corruption">-5</effect>
+        <effect name="Corruption">+5</effect>
         <info>You may choose to increase or decrease your tax rate by 1.</info>
     </advance>
     <advance>

@@ -1,13 +1,13 @@
-val roomVersion: String = "2.7.2"
-val lifecycleVersion: String = "2.9.2"
-val navigationVersion: String = "2.9.2"
+val roomVersion: String = "2.8.1"
+val lifecycleVersion: String = "2.9.4"
+val navigationVersion: String = "2.9.5"
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     //  https://github.com/google/ksp/releases
-    id("com.google.devtools.ksp") version "2.2.0-2.0.2"
-    id("androidx.room") version "2.7.2"
+    id("com.google.devtools.ksp") version "2.2.20-2.0.3"
+    id("androidx.room") version "2.8.1"
 }
 
 android {
@@ -18,8 +18,8 @@ android {
         minSdk = 28
         //noinspection OldTargetApi
         targetSdk = 35
-        versionCode = 60
-        versionName = "1.11.05"
+        versionCode = 61
+        versionName = "1.11.06"
     }
 
     buildTypes {
@@ -86,10 +86,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
 
     // https://maven.google.com/web/index.html#com.google.android.material:material
-    implementation("com.google.android.material:material:1.12.0")
+    implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.core:core-ktx:1.16.0")
-    implementation("androidx.activity:activity-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.activity:activity-ktx:1.11.0")
 
     implementation("it.xabaras.android:recyclerview-swipedecorator:1.4")
 }
