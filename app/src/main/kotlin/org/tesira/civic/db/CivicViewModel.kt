@@ -70,6 +70,8 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     val currentSortingOrder: LiveData<String> = _currentSortingOrder
     private val _searchQuery = MutableLiveData("")
     val searchQuery: LiveData<String> = _searchQuery
+    private val _recentlyPurchasedCards = MutableLiveData<List<String>>(emptyList())
+    val recentlyPurchasedCards: LiveData<List<String>> = _recentlyPurchasedCards
 
     val treasure: MutableLiveData<Int> = MutableLiveData<Int>(0)
     val remaining: MutableLiveData<Int> = MutableLiveData<Int>(0)
@@ -609,6 +611,20 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
      */
     fun triggerExtraCreditsDialog(credits: Int) {
         _showExtraCreditsDialogEvent.postValue(Event(credits))
+    }
+
+    fun setRecentlyPurchasedCards(cards: List<String>) {
+        _recentlyPurchasedCards.value = cards
+    }
+
+    fun addCardToRecentlyPurchased(cardName: String) {
+        val currentList = _recentlyPurchasedCards.value.orEmpty().toMutableList()
+        currentList.add(cardName)
+        _recentlyPurchasedCards.value = currentList
+    }
+
+    fun clearRecentlyPurchasedCards() {
+        _recentlyPurchasedCards.value = emptyList()
     }
 
     override fun onCleared() {

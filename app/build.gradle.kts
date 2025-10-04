@@ -5,9 +5,9 @@ val navigationVersion: String = "2.9.5"
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    //  https://github.com/google/ksp/releases
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
     id("androidx.room") version "2.8.1"
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -16,7 +16,6 @@ android {
     defaultConfig {
         applicationId = "org.tesira.civic"
         minSdk = 28
-        //noinspection OldTargetApi
         targetSdk = 35
         versionCode = 62
         versionName = "1.11.07"
@@ -31,9 +30,6 @@ android {
             )
         }
     }
-//    tasks.withType<JavaCompile>().configureEach {
-//        options.compilerArgs.add("-Xlint:deprecation")
-//    }
 
     buildFeatures {
         viewBinding = true
@@ -53,15 +49,9 @@ android {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-//            freeCompilerArgs.addAll(
-//                "-Xjvm-default=all",
-//                "-Xjsr305=strict"
-//            )
         }
     }
 }
-
-
 
 dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
@@ -74,7 +64,6 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
 
-    // mit plugin version oben gleichhalten!!!
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
@@ -85,7 +74,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
 
-    // https://maven.google.com/web/index.html#com.google.android.material:material
     implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.core:core-ktx:1.17.0")

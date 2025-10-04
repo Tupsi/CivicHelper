@@ -5,6 +5,10 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
+    <action
+        android:id="@+id/action_global_boughtCardsFragment"
+        app:destination="@id/boughtCardsFragment" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="org.tesira.civic.HomeFragment"
@@ -15,7 +19,24 @@
         android:id="@+id/buyingFragment"
         android:name="org.tesira.civic.BuyingFragment"
         android:label="@string/menu_item_buying"
-        tools:layout="@layout/fragment_buying" />
+        tools:layout="@layout/fragment_buying" >
+        <action
+            android:id="@+id/action_buyingFragment_to_boughtCardsFragment"
+            app:destination="@id/boughtCardsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/boughtCardsFragment"
+        android:name="org.tesira.civic.BoughtCardsFragment"
+        android:label="@string/bought_cards_title"
+        tools:layout="@layout/fragment_bought_cards" >
+        <argument
+            android:name="cardNames"
+            app:argType="string[]" />
+        <action
+            android:id="@+id/action_boughtCardsFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/inventoryFragment"

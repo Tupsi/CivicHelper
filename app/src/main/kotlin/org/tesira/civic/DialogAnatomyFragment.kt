@@ -55,6 +55,7 @@ class DialogAnatomyFragment : DialogFragment() {
             mCivicViewModel.onAnatomyCardSelected(selectedGreenCard)
             mCivicViewModel.insertPurchase(selectedGreenCard)
             mCivicViewModel.addBonus(selectedGreenCard)
+            mCivicViewModel.addCardToRecentlyPurchased(selectedGreenCard)
             mCivicViewModel.requestPriceRecalculation()
 
             val result = Bundle()

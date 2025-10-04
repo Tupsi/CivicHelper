@@ -58,12 +58,12 @@ class BuyingFragment : Fragment() {
         sortingOptionsValues = resources.getStringArray(R.array.sort_values)
         sortingOptionsNames = resources.getStringArray(R.array.sort_entries)
 
-        getParentFragmentManager().setFragmentResultListener(EXTRA_CREDITS_REQUEST_KEY, this) { requestKey, result ->
+        parentFragmentManager.setFragmentResultListener(EXTRA_CREDITS_REQUEST_KEY, this) { _, _ ->
             numberDialogs--
             returnToDashboard()
         }
 
-        getParentFragmentManager().setFragmentResultListener(ANATOMY_REQUEST_KEY, this) { requestKey, result ->
+        parentFragmentManager.setFragmentResultListener(ANATOMY_REQUEST_KEY, this) { _, result ->
             numberDialogs--
 
             val selectedAnatomyCard = result.getString("selected_card_name")
@@ -79,7 +79,7 @@ class BuyingFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentBuyingBinding.inflate(inflater, container, false)
-        val rootView: View = binding.getRoot()
+        val rootView: View = binding.root
         recyclerView = binding.purchasableCards
 //        binding.root.applyHorizontalSystemBarInsetsAsPadding()
 
@@ -87,14 +87,14 @@ class BuyingFragment : Fragment() {
 
         if (actualColumnCount <= 1) {
             layout = LinearLayoutManager(rootView.context)
-            recyclerView.setLayoutManager(layout)
+            recyclerView.layoutManager = layout
         } else {
             layout = GridLayoutManager(rootView.context, actualColumnCount)
-            recyclerView.setLayoutManager(layout)
+            recyclerView.layoutManager = layout
         }
 
         adapter = BuyingAdapter()
-        recyclerView.setAdapter(adapter)
+        recyclerView.adapter = adapter
         treasureInput = binding.treasure
         remainingText = binding.moneyleft
 
@@ -162,14 +162,20 @@ class BuyingFragment : Fragment() {
 
         // button which finalizes the buy process
         binding.btnBuy.setOnClickListener(View.OnClickListener btnBuyClickListener@{ v: View? ->
-            if (tracker.getSelection().isEmpty) {
+            if (tracker.selection.isEmpty) {
                 showToast(getString(R.string.no_cards_selected))
                 return@btnBuyClickListener
             }
+
+            civicViewModel.clearRecentlyPurchasedCards()
+
             val selectedCardNames: MutableList<String> = ArrayList()
-            for (name in tracker.getSelection()) {
+            for (name in tracker.selection) {
                 selectedCardNames.add(name)
             }
+
+            civicViewModel.setRecentlyPurchasedCards(selectedCardNames)
+
             for (name in selectedCardNames) {
                 civicViewModel.addBonus(name)
             }
@@ -190,10 +196,10 @@ class BuyingFragment : Fragment() {
         registerForContextMenu(binding.btnSort)
         civicViewModel.getShowAnatomyDialogEvent().observe(viewLifecycleOwner) { event ->
             val anatomyCardsToShow = event.getContentIfNotHandled()
-            if (anatomyCardsToShow != null && !anatomyCardsToShow.isEmpty()) {
+            if (!anatomyCardsToShow.isNullOrEmpty()) {
                 numberDialogs++
-                DialogAnatomyFragment.Companion.newInstance(anatomyCardsToShow)
-                    .show(getParentFragmentManager(), "Anatomy")
+                DialogAnatomyFragment.newInstance(anatomyCardsToShow)
+                    .show(parentFragmentManager, "Anatomy")
             }
         }
 
@@ -205,17 +211,16 @@ class BuyingFragment : Fragment() {
         }
 
         civicViewModel.showExtraCreditsDialogEvent.observe(viewLifecycleOwner) { event ->
-            val extraCredits = event!!.getContentIfNotHandled()
+            val extraCredits = event.getContentIfNotHandled()
             if (extraCredits != null && extraCredits > 0) {
                 numberDialogs++
-                DialogExtraCreditsFragment.Companion.newInstance(extraCredits)
-                    .show(getParentFragmentManager(), "ExtraCredits")
+                DialogExtraCreditsFragment.newInstance(extraCredits)
+                    .show(parentFragmentManager, "ExtraCredits")
             }
         }
 
         civicViewModel.navigateToDashboardEvent.observe(viewLifecycleOwner) { event ->
-            val shouldNavigate = event.getContentIfNotHandled()
-            if (shouldNavigate == true) {
+            if (event.getContentIfNotHandled() == true) {
                 returnToDashboard()
             }
         }
@@ -277,27 +282,21 @@ class BuyingFragment : Fragment() {
 
                 // When selection is restored, recalculate the total based on the restored selection.
                 civicViewModel.calculateTotal(tracker.selection)
-
-                var libraryIsNowSelected = false
-                if (!restoredSelection.isEmpty()) {
-                    libraryIsNowSelected = restoredSelection.contains("Library")
-                }
-                civicViewModel.librarySelected = libraryIsNowSelected
+                civicViewModel.librarySelected = restoredSelection.contains("Library")
             }
         })
 
         if (savedInstanceState == null) {
-            val selectionFromVm = civicViewModel.selectedCardKeysForState.value
-            if (selectionFromVm != null && !selectionFromVm.isEmpty()) {
-                if (tracker.selection.isEmpty && savedSelectionState == null) {
-                    tracker.setItemsSelected(selectionFromVm, true)
+            civicViewModel.selectedCardKeysForState.value?.let {
+                if (it.isNotEmpty() && tracker.selection.isEmpty && savedSelectionState == null) {
+                    tracker.setItemsSelected(it, true)
                 }
             }
         }
 
         civicViewModel.treasure.observe(viewLifecycleOwner) { treasure ->
             treasureInput!!.setText(treasure.toString())
-            if (treasure!! < civicViewModel.remaining.value!!) {
+            if (treasure < civicViewModel.remaining.value!!) {
                 civicViewModel.remaining.value = treasure
                 tracker.clearSelection()
             } else if (tracker.selection.size() > 0) {
@@ -388,7 +387,7 @@ class BuyingFragment : Fragment() {
      * are created fresh when coming back into view.
      */
     internal fun updateViews() {
-        val lm = recyclerView.layoutManager as LinearLayoutManager?
+        val lm = recyclerView.layoutManager as? LinearLayoutManager
         if (lm != null) {
             // Get adapter positions for first and last visible items on screen.
             val firstVisible = lm.findFirstVisibleItemPosition()
@@ -462,17 +461,22 @@ class BuyingFragment : Fragment() {
                 return@post
             }
             try {
-                val navController = findNavController()
-                navController.navigate(
-                    R.id.homeFragment,
-                    null,
-                    NavOptions.Builder()
-                        .setPopUpTo(navController.graph.startDestinationId, true)
-                        .build()
-                )
+                val cards = civicViewModel.recentlyPurchasedCards.value
+                if (!cards.isNullOrEmpty()) {
+                    val action = BuyingFragmentDirections.actionBuyingFragmentToBoughtCardsFragment(cards.toTypedArray())
+                    findNavController().navigate(action)
+                } else {
+                    val navController = findNavController()
+                    navController.navigate(
+                        R.id.homeFragment,
+                        null,
+                        NavOptions.Builder()
+                            .setPopUpTo(navController.graph.startDestinationId, true)
+                            .build()
+                    )
+                }
             } catch (e: IllegalStateException) {
                 Log.e("BuyingFragment", "view.post navigation failed (ISE)", e)
-                // Vorsicht mit Toast hier, Context könnte null sein, wenn !isAdded
             } catch (e: IllegalArgumentException) {
                 Log.e("BuyingFragment", "view.post navigation failed (IAE)", e)
             } catch (e: Exception) {
@@ -480,6 +484,7 @@ class BuyingFragment : Fragment() {
             }
         } ?: Log.w("BuyingFragment", "View was null in returnToDashboard, cannot post navigation.")
     }
+
 
     /**
      * Schaltet zur nächsten Sortierreihenfolge im Zyklus weiter.

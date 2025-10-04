@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = binding.toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
-        invalidateOptionsMenu()
 
         binding.root.applyHorizontalSystemBarInsetsAsPadding()
 
@@ -71,7 +70,8 @@ class MainActivity : AppCompatActivity() {
                     R.id.allCardsFragment,
                     R.id.tipsFragment,
                     R.id.settingsFragment,
-                    R.id.aboutFragment
+                    R.id.aboutFragment,
+                    R.id.boughtCardsFragment
                 )
             )
             setupActionBarWithNavController(this, navController, appBarConfiguration)
@@ -102,10 +102,26 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val lastPurchaseItem = menu.findItem(R.id.menu_last_purchase)
+        val recentlyPurchased = mCivicViewModel.recentlyPurchasedCards.value
+        lastPurchaseItem?.isVisible = !recentlyPurchased.isNullOrEmpty()
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_newGame) {
 //            showNewGameDialog()
             mCivicViewModel.triggerNewGameOptionsDialog()
+            return true
+        }
+
+        if (item.itemId == R.id.menu_last_purchase) {
+            val cards = mCivicViewModel.recentlyPurchasedCards.value
+            if (!cards.isNullOrEmpty() && navController.currentDestination?.id != R.id.boughtCardsFragment) {
+                val action = NavGraphDirections.actionGlobalBoughtCardsFragment(cards.toTypedArray())
+                navController.navigate(action)
+            }
             return true
         }
 
