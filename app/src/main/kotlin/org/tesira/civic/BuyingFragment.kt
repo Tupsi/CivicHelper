@@ -166,10 +166,16 @@ class BuyingFragment : Fragment() {
                 showToast(getString(R.string.no_cards_selected))
                 return@btnBuyClickListener
             }
+
+            civicViewModel.clearRecentlyPurchasedCards()
+
             val selectedCardNames: MutableList<String> = ArrayList()
             for (name in tracker.getSelection()) {
                 selectedCardNames.add(name)
             }
+
+            civicViewModel.setRecentlyPurchasedCards(selectedCardNames)
+
             for (name in selectedCardNames) {
                 civicViewModel.addBonus(name)
             }
@@ -462,14 +468,20 @@ class BuyingFragment : Fragment() {
                 return@post
             }
             try {
-                val navController = findNavController()
-                navController.navigate(
-                    R.id.homeFragment,
-                    null,
-                    NavOptions.Builder()
-                        .setPopUpTo(navController.graph.startDestinationId, true)
-                        .build()
-                )
+                val cards = civicViewModel.recentlyPurchasedCards.value
+                if (!cards.isNullOrEmpty()) {
+                    val action = BuyingFragmentDirections.actionBuyingFragmentToBoughtCardsFragment(cards.toTypedArray())
+                    findNavController().navigate(action)
+                } else {
+                    val navController = findNavController()
+                    navController.navigate(
+                        R.id.homeFragment,
+                        null,
+                        NavOptions.Builder()
+                            .setPopUpTo(navController.graph.startDestinationId, true)
+                            .build()
+                    )
+                }
             } catch (e: IllegalStateException) {
                 Log.e("BuyingFragment", "view.post navigation failed (ISE)", e)
                 // Vorsicht mit Toast hier, Context könnte null sein, wenn !isAdded

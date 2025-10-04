@@ -19,10 +19,9 @@ import androidx.core.content.edit
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.navigateUp
-import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
-import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import androidx.navigation.ui.NavigationUI
 import com.google.android.material.snackbar.Snackbar
 import org.tesira.civic.databinding.ActivityMainBinding
 import org.tesira.civic.db.CivicViewModel
@@ -71,10 +70,11 @@ class MainActivity : AppCompatActivity() {
                     R.id.allCardsFragment,
                     R.id.tipsFragment,
                     R.id.settingsFragment,
-                    R.id.aboutFragment
+                    R.id.aboutFragment,
+                    R.id.boughtCardsFragment
                 )
             )
-            setupActionBarWithNavController(this, navController, appBarConfiguration)
+            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         }
 
         mCivicViewModel.showNewGameOptionsDialogEvent.observe(this) { event ->
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     override fun onStop() {
@@ -102,16 +102,54 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val lastPurchaseItem = menu.findItem(R.id.menu_last_purchase)
+        val recentlyPurchased = mCivicViewModel.recentlyPurchasedCards.value
+        lastPurchaseItem?.isVisible = !recentlyPurchased.isNullOrEmpty()
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.menu_newGame) {
-//            showNewGameDialog()
-            mCivicViewModel.triggerNewGameOptionsDialog()
-            return true
+        // Special handling for non-navigation items
+        when (item.itemId) {
+            R.id.menu_newGame -> {
+                mCivicViewModel.triggerNewGameOptionsDialog()
+                return true
+            }
+
+            R.id.menu_last_purchase -> {
+                val cards = mCivicViewModel.recentlyPurchasedCards.value
+                if (!cards.isNullOrEmpty() && navController.currentDestination?.id != R.id.boughtCardsFragment) {
+                    val action = NavGraphDirections.actionGlobalBoughtCardsFragment(cards.toTypedArray())
+                    navController.navigate(action)
+                }
+                return true
+            }
         }
 
+        // Handle navigation for all other items
         if (::navController.isInitialized) {
+            // Wenn wir uns auf dem BoughtCardsFragment befinden, entfernen wir es zuerst vom Stack
+            if (navController.currentDestination?.id == R.id.boughtCardsFragment) {
+                navController.popBackStack()
+            }
+
+            // Prevent navigating to the same destination
+            if (item.itemId == navController.currentDestination?.id) {
+                return true
+            }
+
+            val options = navOptions {
+                launchSingleTop = true
+                restoreState = true
+                popUpTo(navController.graph.startDestinationId) {
+                    saveState = true
+                }
+            }
+
             try {
-                return onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
+                navController.navigate(item.itemId, null, options)
+                return true
             } catch (e: Exception) {
                 Log.e("MainActivity", "Navigation error", e)
                 Toast.makeText(this, "Navigation failed. Please try again.", Toast.LENGTH_SHORT).show()

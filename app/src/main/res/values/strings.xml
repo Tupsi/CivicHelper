@@ -41,9 +41,14 @@
     <string name="menu_item_home">Home</string>
     <string name="menu_item_purchases">Inventory</string>
     <string name="menu_item_all_cards">Library</string>
+    <string name="menu_item_last_purchase">Last Purchase</string>
 
     <!-- Buying Fragment-->
     <string name="remaining_treasure">remaining :</string>
+
+    <!-- Bought Cards Fragment -->
+    <string name="bought_cards_title">Cards you bought</string>
+    <string name="close">Close</string>
 
     <!-- Credits Dialog -->
     <string name="dialog_extra_credits">Distribute your extra credits</string>
