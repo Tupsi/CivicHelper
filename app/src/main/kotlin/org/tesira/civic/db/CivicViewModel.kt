@@ -234,6 +234,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         _showCredits.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_CREDITS, true)
         _showInfos.value = defaultPrefs.getBoolean(PREF_KEY_SHOW_INFOS, true)
         _customCardSelectionForHeart.value = defaultPrefs.getStringSet(PREF_KEY_CUSTOM_HEART_CARDS, emptySet()) ?: emptySet()
+        _recentlyPurchasedCards.value = defaultPrefs.getStringSet(PREF_KEY_RECENTLY_PURCHASED, emptySet())?.toList() ?: emptyList()
     }
 
     fun triggerNewGameOptionsDialog() {
@@ -395,6 +396,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     fun startNewGameProcess() {
         repository.deleteInventory()
         repository.resetCurrentPrice()
+        clearRecentlyPurchasedCards()
         val cardNamesToMarkAsHeart: List<String> = getCardNamesForHeartSelection(_userPreferenceForHeartCards.value!!)
         repository.resetDB(application.applicationContext, cardNamesToMarkAsHeart)
         treasure.value = 0
@@ -601,6 +603,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     fun saveData() {
         defaultPrefs.edit { putInt(PREF_KEY_CITIES, _cities.value ?: 0) }
         defaultPrefs.edit { putInt(PREF_KEY_TIME, _timeVp.value ?: 0) }
+        defaultPrefs.edit { putStringSet(PREF_KEY_RECENTLY_PURCHASED, _recentlyPurchasedCards.value?.toSet() ?: emptySet()) }
     }
 
     /**
@@ -1025,6 +1028,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         private const val PREF_KEY_SHOW_INFOS = "showInfos"
         internal const val PREF_KEY_CUSTOM_HEART_CARDS = "pref_key_select_custom_cards"
         const val PREF_KEY_PLAYER_COUNT: String = "pref_key_player_count"
+        const val PREF_KEY_RECENTLY_PURCHASED: String = "pref_key_recently_purchased"
         const val PLAYER_COUNT_3: String = "3"
         const val PLAYER_COUNT_4: String = "4"
         const val PLAYER_COUNT_5_PLUS: String = "5"
