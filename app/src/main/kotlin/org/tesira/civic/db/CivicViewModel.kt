@@ -378,6 +378,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             val effectsText = cardWithDetails.effects.joinToString(separator = " ") { it.name }
             val specialsText = cardWithDetails.specialAbilities.joinToString(separator = " ") { it.ability }
             val immunitiesText = cardWithDetails.immunities.joinToString(separator = " ") { it.immunity }
+            val familyText = cardWithDetails.card.bonusCard ?: ""
 
             card.name.lowercase().contains(lowerCaseQuery) ||
 //                    card.group1?.toString()?.lowercase()?.contains(lowerCaseQuery) == true ||
@@ -385,7 +386,8 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                     card.info?.lowercase()?.contains(lowerCaseQuery) == true ||
                     effectsText.lowercase().contains(lowerCaseQuery) ||
                     specialsText.lowercase().contains(lowerCaseQuery) ||
-                    immunitiesText.lowercase().contains(lowerCaseQuery)
+                    immunitiesText.lowercase().contains(lowerCaseQuery) ||
+                    familyText.lowercase().contains(lowerCaseQuery)
         }
     }
 
