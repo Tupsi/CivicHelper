@@ -264,6 +264,24 @@
         tools:ignore="SelectableText" />
 
     <TextView
+        android:id="@+id/currentPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_price"
+        android:gravity="center"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/md_theme_onPrimary"
+        android:textSize="@dimen/card_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/price"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="215"
+        tools:ignore="SelectableText" />
+
+    <TextView
         android:id="@+id/familybonus"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

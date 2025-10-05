@@ -27,7 +27,7 @@ class BuyingAdapter() : AllCardsAdapter() {
         val isSelected = tracker.isSelected(cardData.name)
         holder.itemView.isActivated = isSelected
         // Baseclass uses price, so we need to overwrite this here
-        holder.binding.price.text = "${cardData.currentPrice}"
+        //holder.binding.price.text = "${cardData.currentPrice}"
         // auto select all gets which have costs are reduced from bonus to zero
         if (!isSelected && cardData.currentPrice == 0) {
             tracker.select(cardData.name)

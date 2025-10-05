@@ -397,7 +397,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
      */
     fun startNewGameProcess() {
         repository.deleteInventory()
-        repository.resetCurrentPrice()
+//        repository.resetCurrentPrice()
         clearRecentlyPurchasedCards()
         val cardNamesToMarkAsHeart: List<String> = getCardNamesForHeartSelection(_userPreferenceForHeartCards.value!!)
         repository.resetDB(application.applicationContext, cardNamesToMarkAsHeart)

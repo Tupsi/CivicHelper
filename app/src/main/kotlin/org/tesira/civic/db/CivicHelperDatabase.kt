@@ -139,7 +139,7 @@ abstract class CivicHelperDatabase : RoomDatabase() {
                             }
                             val civic = Card(
                                 name, family, vp, price, color[0], color[1], credits[0], credits[1], credits[2], credits[3], credits[4], null,
-                                0, false, price, 0, false, info
+                                0, false, price, price, false, info
                             )
 
                             dao.insertCard(civic)
