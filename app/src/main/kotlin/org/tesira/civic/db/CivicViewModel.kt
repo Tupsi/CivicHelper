@@ -650,6 +650,11 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             "family" -> list.sortedBy { it.card.family }
             "name" -> list.sortedBy { it.card.name }
             "currentPrice" -> {
+                val comparator = compareBy<CardWithDetails> { it.card.currentPrice }.thenBy { it.card.name }
+                list.sortedWith(comparator)
+            }
+
+            "fullPrice" -> {
                 val comparator = compareBy<CardWithDetails> { it.card.price }.thenBy { it.card.name }
                 list.sortedWith(comparator)
             }
@@ -1104,5 +1109,3 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         EBA, MBA, LBA, EIA, LIA
     }
 }
-
-
