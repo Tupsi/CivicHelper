@@ -67,6 +67,8 @@ class HomeFragment : Fragment() {
         binding.radio8.setOnClickListener { onCitiesClicked(it) }
         binding.radio9.setOnClickListener { onCitiesClicked(it) }
 
+        binding.tvTime.setOnClickListener { onTimeClicked() }
+
 //        restoreCityButton(mCivicViewModel.getCities())
         binding.tvCivilization.text = getString(
             R.string.tv_ast,
@@ -158,7 +160,7 @@ class HomeFragment : Fragment() {
         civicViewModel.timeVp.observe(getViewLifecycleOwner()) { value: Int ->
             val index = value / 5
             if (CivicViewModel.Companion.TIME_TABLE.indices.contains(index)) {
-                binding.tvTime.text = CivicViewModel.Companion.TIME_TABLE[index]
+                binding.tvTime.text = getString(R.string.tv_time, CivicViewModel.Companion.TIME_TABLE[index])
             } else {
                 binding.tvTime.text = "-"
             }
@@ -233,6 +235,35 @@ class HomeFragment : Fragment() {
         }
     }
 
+    fun onTimeClicked() {
+        // Get current VP from ViewModel
+        val currentTimeVp = civicViewModel.timeVp.value ?: 0
+
+        // Calculate current index in TIME_TABLE
+        val currentIndex = currentTimeVp / 5
+
+        // Determine max valid index based on AST version
+        var timeTableLength = CivicViewModel.Companion.TIME_TABLE.size
+        if (civicViewModel.astVersion.value == CivicViewModel.AST_BASIC) {
+            timeTableLength-- // Adjust for Basic AST as in onCreateContextMenu
+        }
+
+        // Calculate next index with a hard stop
+        var nextIndex = currentIndex + 1
+        if (nextIndex >= timeTableLength) {
+            nextIndex = timeTableLength - 1 // Stop at the last valid index
+        }
+
+        // Calculate new VP value
+        val newTimeVp = nextIndex * 5
+
+        // Only update if the value has actually changed to prevent unnecessary triggers
+        if (newTimeVp != currentTimeVp) {
+            // Update ViewModel, which will trigger UI observer
+            civicViewModel.setTimeVp(newTimeVp)
+        }
+    }
+
     fun onCitiesClicked(view: View) {
         val checked = (view as RadioButton).isChecked
         if (!checked) return
@@ -251,12 +282,12 @@ class HomeFragment : Fragment() {
         super.onCreateContextMenu(menu, v, menuInfo)
         when (v.id) {
             R.id.tvTime -> {
-                var timeTableLength = CivicViewModel.TIME_TABLE.size
+                var timeTableLength = CivicViewModel.Companion.TIME_TABLE.size
                 if (civicViewModel.astVersion.value == CivicViewModel.AST_BASIC) {
                     timeTableLength--
                 }
                 for (i in 0 until timeTableLength) { // 'until' is exclusive for the upper bound
-                    menu.add(0, i * 5, i, CivicViewModel.TIME_TABLE[i])
+                    menu.add(0, i * 5, i, CivicViewModel.Companion.TIME_TABLE[i])
                 }
             }
 
@@ -281,7 +312,6 @@ class HomeFragment : Fragment() {
         if (item.groupId == 0) {
             // Time Menu
             civicViewModel.setTimeVp(item.itemId)
-            binding.tvTime.text = item.title
             return true
         } else if (item.groupId == 1) {
             // Civilization Menu

@@ -16,9 +16,10 @@ android {
     defaultConfig {
         applicationId = "org.tesira.civic"
         minSdk = 28
+        //noinspection OldTargetApi
         targetSdk = 35
-        versionCode = 64
-        versionName = "1.12.03"
+        versionCode = 65
+        versionName = "1.12.05"
     }
 
     buildTypes {
