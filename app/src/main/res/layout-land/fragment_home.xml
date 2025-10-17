@@ -245,7 +245,7 @@
             android:id="@+id/tvCivilization"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="A.S.T. rank order 00"
+            android:text="@string/tv_ast"
             android:textSize="14sp"
             android:textStyle="bold"
             android:layout_marginStart="32dp"

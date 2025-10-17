@@ -72,7 +72,8 @@
     <string name="prefs_chooser_title">What do you want?</string>
     <string name="spinner_select_civilization">Select Civilization</string>
     <string name="tv_vp">VP: %1$d</string>
-    <string name="tv_ast">A.S.T. order: %1$s</string>
+    <string name="tv_ast">A.S.T. Ranking: %1$s</string>
+    <string name="tv_time">Time: %1$s</string>
     <string name="reset_tv_civic">set civic in prefs!</string>
     <string name="no_war_game">\n\n\n
         General Hints:\n\n

@@ -1,12 +1,12 @@
-val roomVersion: String = "2.8.1"
+val roomVersion: String = "2.8.2"
 val lifecycleVersion: String = "2.9.4"
 val navigationVersion: String = "2.9.5"
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp") version "2.2.20-2.0.3"
-    id("androidx.room") version "2.8.1"
+    id("com.google.devtools.ksp") version "2.2.20-2.0.4"
+    id("androidx.room") version "2.8.2"
     id("androidx.navigation.safeargs.kotlin")
 }
 
@@ -16,9 +16,10 @@ android {
     defaultConfig {
         applicationId = "org.tesira.civic"
         minSdk = 28
+        //noinspection OldTargetApi
         targetSdk = 35
-        versionCode = 63
-        versionName = "1.12.02"
+        versionCode = 66
+        versionName = "1.12.06"
     }
 
     buildTypes {

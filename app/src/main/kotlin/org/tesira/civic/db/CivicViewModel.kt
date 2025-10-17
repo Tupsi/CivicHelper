@@ -378,6 +378,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             val effectsText = cardWithDetails.effects.joinToString(separator = " ") { it.name }
             val specialsText = cardWithDetails.specialAbilities.joinToString(separator = " ") { it.ability }
             val immunitiesText = cardWithDetails.immunities.joinToString(separator = " ") { it.immunity }
+            val familyText = cardWithDetails.card.bonusCard ?: ""
 
             card.name.lowercase().contains(lowerCaseQuery) ||
 //                    card.group1?.toString()?.lowercase()?.contains(lowerCaseQuery) == true ||
@@ -385,7 +386,8 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                     card.info?.lowercase()?.contains(lowerCaseQuery) == true ||
                     effectsText.lowercase().contains(lowerCaseQuery) ||
                     specialsText.lowercase().contains(lowerCaseQuery) ||
-                    immunitiesText.lowercase().contains(lowerCaseQuery)
+                    immunitiesText.lowercase().contains(lowerCaseQuery) ||
+                    familyText.lowercase().contains(lowerCaseQuery)
         }
     }
 
@@ -395,7 +397,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
      */
     fun startNewGameProcess() {
         repository.deleteInventory()
-        repository.resetCurrentPrice()
+//        repository.resetCurrentPrice()
         clearRecentlyPurchasedCards()
         val cardNamesToMarkAsHeart: List<String> = getCardNamesForHeartSelection(_userPreferenceForHeartCards.value!!)
         repository.resetDB(application.applicationContext, cardNamesToMarkAsHeart)
@@ -648,6 +650,11 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             "family" -> list.sortedBy { it.card.family }
             "name" -> list.sortedBy { it.card.name }
             "currentPrice" -> {
+                val comparator = compareBy<CardWithDetails> { it.card.currentPrice }.thenBy { it.card.name }
+                list.sortedWith(comparator)
+            }
+
+            "fullPrice" -> {
                 val comparator = compareBy<CardWithDetails> { it.card.price }.thenBy { it.card.name }
                 list.sortedWith(comparator)
             }
@@ -1011,7 +1018,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
         //        @JvmField
         val TIME_TABLE: Array<String> = arrayOf(
-            "8000 BC", "7000 BC", "6000 BC", "4300 BC", "5000 BC",
+            "8000 BC", "7000 BC", "6000 BC", "5000 BC", "4300 BC",
             "3300 BC", "2700 BC", "2000 BC", "1800 BC", "1700 BC", "1500 BC", "1400 BC", "1300 BC",
             "1200 BC", "800 BC", "0", "400 AD"
         )
@@ -1102,5 +1109,3 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         EBA, MBA, LBA, EIA, LIA
     }
 }
-
-

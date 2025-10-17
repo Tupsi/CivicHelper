@@ -82,7 +82,14 @@ open class AllCardsAdapter : ListAdapter<CardWithDetails, AllCardsAdapter.CardVi
             } else {
                 binding.familybonus.visibility = View.INVISIBLE
             }
-
+            if (card.currentPrice != card.price) {
+                binding.currentPrice.visibility = View.VISIBLE
+                binding.currentPrice.text = "${card.currentPrice}"
+                binding.price.alpha = 0.5f
+            } else {
+                binding.currentPrice.visibility = View.GONE
+                binding.price.alpha = 1.0f
+            }
 
             fun setupSingleBonusTextView(
                 textView: TextView,

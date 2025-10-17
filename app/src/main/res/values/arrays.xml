@@ -2,7 +2,8 @@
     <string-array name="sort_entries">
         <item>Family</item>
         <item>Names</item>
-        <item>Price</item>
+        <item>Price (f)</item>
+        <item>Price (c)</item>
         <item>Color</item>
         <item>VP</item>
         <item>Heart</item>
@@ -11,6 +12,7 @@
     <string-array name="sort_values">
         <item>family</item>
         <item>name</item>
+        <item>fullPrice</item>
         <item>currentPrice</item>
         <item>color</item>
         <item>vp</item>
