@@ -1018,7 +1018,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
         //        @JvmField
         val TIME_TABLE: Array<String> = arrayOf(
-            "8000 BC", "7000 BC", "6000 BC", "4300 BC", "5000 BC",
+            "8000 BC", "7000 BC", "6000 BC", "5000 BC", "4300 BC",
             "3300 BC", "2700 BC", "2000 BC", "1800 BC", "1700 BC", "1500 BC", "1400 BC", "1300 BC",
             "1200 BC", "800 BC", "0", "400 AD"
         )
