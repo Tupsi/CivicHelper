@@ -1,16 +1,15 @@
 val roomVersion: String = "2.8.4"
-val lifecycleVersion: String = "2.9.4"
+val lifecycleVersion: String = "2.11.0"
 val navigationVersion: String = "2.9.8"
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "2.3.6"
     id("androidx.room") version "2.8.4"
     id("androidx.navigation.safeargs.kotlin")
 }
 
-android {
+configure<com.android.build.api.dsl.ApplicationExtension> {
     compileSdk = 37
 
     defaultConfig {
