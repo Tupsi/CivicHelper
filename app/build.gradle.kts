@@ -11,15 +11,15 @@ plugins {
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "org.tesira.civic"
         minSdk = 28
         //noinspection OldTargetApi
-        targetSdk = 36
-        versionCode = 66
-        versionName = "1.12.06"
+        targetSdk = 37
+        versionCode = 67
+        versionName = "1.12.07"
     }
 
     buildTypes {
