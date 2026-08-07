@@ -5,7 +5,7 @@ val navigationVersion: String = "2.9.5"
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp") version "2.2.20-2.0.4"
+    id("com.google.devtools.ksp") version "2.3.6"
     id("androidx.room") version "2.8.2"
     id("androidx.navigation.safeargs.kotlin")
 }
