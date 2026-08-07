@@ -16,7 +16,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.edit
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
@@ -30,7 +29,6 @@ import org.tesira.civic.utils.applyHorizontalSystemBarInsetsAsPadding
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private var drawerLayout: DrawerLayout? = null
     private lateinit var navController: NavController
     private val mCivicViewModel: CivicViewModel by viewModels()
 
@@ -60,8 +58,6 @@ class MainActivity : AppCompatActivity() {
             )
         } else {
             navController = navHostFragment.navController
-            drawerLayout = binding.drawerLayout
-            drawerLayout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             appBarConfiguration = AppBarConfiguration(
                 setOf(
                     R.id.homeFragment,
@@ -162,12 +158,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayNewGameOptionsDialog() {
-        // Stelle sicher, dass der Drawer geschlossen ist, falls er offen war
-        // zur Zeit sinnfrei, weil wir keinen Drawer nutzen
-        //if (drawerLayout?.isDrawerOpen(binding.navView) == true) {
-        //    binding.navView.let { drawerLayout?.closeDrawer(it) }
-        //}
-
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_new_game_options, null)
 
         // UI-Elemente aus dem Dialog-Layout referenzieren
