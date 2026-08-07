@@ -1,12 +1,12 @@
-val roomVersion: String = "2.8.2"
+val roomVersion: String = "2.8.4"
 val lifecycleVersion: String = "2.9.4"
-val navigationVersion: String = "2.9.5"
+val navigationVersion: String = "2.9.8"
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "2.3.6"
-    id("androidx.room") version "2.8.2"
+    id("androidx.room") version "2.8.4"
     id("androidx.navigation.safeargs.kotlin")
 }
 
@@ -16,9 +16,8 @@ android {
     defaultConfig {
         applicationId = "org.tesira.civic"
         minSdk = 28
-        //noinspection OldTargetApi
         targetSdk = 37
-        versionCode = 67
+        versionCode = 68
         versionName = "1.12.07"
     }
 
@@ -76,7 +75,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
 
     implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.2")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.activity:activity-ktx:1.11.0")
 
