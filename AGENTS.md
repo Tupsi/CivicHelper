@@ -2,7 +2,6 @@
 - Die Hauptaktivität ist /app/src/main/kotlin/MainActivity.kt
 - Der Namespace der App ist org.tesira.civic
 - Die App ist ein Hilfsmittel für die Brettspiele "Mega Civilization", "Mega Empires - The West" und "Mega Empires - The East"
-- Die Anleitung für das Brettspiel findest du hier: https://tesira.org/MegaCivilization_Rulebook.pdf
 - Wir unterhalten uns in deutscher Sprache. Android Studio und die App selbst nutzt die englische Sprache.
 - Wenn ich dir Fehler aus Android Studio sende, dann sind die auch in englischer Sprache. Du antwortest mir trotzdem auf deutsch.
 - Die App besteht aus den Hauptmenupunkten Home, Buying, Inventory, Library, Tips und Settings.

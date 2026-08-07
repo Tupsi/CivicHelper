@@ -17,7 +17,7 @@ android {
         applicationId = "org.tesira.civic"
         minSdk = 28
         //noinspection OldTargetApi
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 66
         versionName = "1.12.06"
     }
