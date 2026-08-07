@@ -127,13 +127,13 @@ class BuyingFragment : Fragment() {
             }
         }
 
-        if (savedInstanceState != null) {
-            savedSelectionState = savedInstanceState
+        savedInstanceState?.let {
+            savedSelectionState = it
         }
 
         // close SoftKeyboard on Enter
-        treasureInput?.setOnEditorActionListener(TextView.OnEditorActionListener { v, keyCode, event ->
-            if (event == null || event.action == KeyEvent.ACTION_UP || keyCode == KeyEvent.KEYCODE_ENTER) { // Sicherstellen, dass es ein "UP"-Event ist oder nur Enter ohne Event
+        treasureInput?.setOnEditorActionListener(TextView.OnEditorActionListener { _, keyCode, event ->
+            if ((event == null || event.action == KeyEvent.ACTION_UP || keyCode == KeyEvent.KEYCODE_ENTER)) { // Sicherstellen, dass es ein "UP"-Event ist oder nur Enter ohne Event
                 civicViewModel.treasure.value = calculateInput(treasureInput!!.text.toString())
                 if (civicViewModel.remaining.value!! < 0) {
                     tracker.clearSelection()
@@ -351,7 +351,7 @@ class BuyingFragment : Fragment() {
             treasureInput!!.post {
                 val imm =
                     requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.showSoftInput(treasureInput, InputMethodManager.SHOW_IMPLICIT)
+                imm?.showSoftInput(treasureInput, 0)
             }
         }
     }
@@ -412,8 +412,10 @@ class BuyingFragment : Fragment() {
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
-        tracker.onSaveInstanceState(savedInstanceState)
-        if (civicViewModel.treasure.getValue() != null) {
+        if (::tracker.isInitialized) {
+            tracker.onSaveInstanceState(savedInstanceState)
+        }
+        if (civicViewModel.treasure.value != null) {
             civicViewModel.remaining.value = civicViewModel.treasure.value
         }
     }
@@ -471,7 +473,7 @@ class BuyingFragment : Fragment() {
                         R.id.homeFragment,
                         null,
                         NavOptions.Builder()
-                            .setPopUpTo(navController.graph.startDestinationId, true)
+                            .setPopUpTo(navController.graph.startDestinationId, inclusive = true)
                             .build()
                     )
                 }

@@ -109,7 +109,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                 // filter nicht genutzt im Buy Screen
                 //val query = currentQuery
                 val query = ""
-                if (unsortedList != null && sortOrder != null) {
+                if ((unsortedList != null && sortOrder != null)) {
                     // 1. Filtern basierend auf dem Suchbegriff
                     val filteredList = filterCardList(unsortedList, query)
 
@@ -216,11 +216,11 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
         val yellow: Int = defaultPrefs.getInt(CardColor.YELLOW.colorName, 0)
 
         val currentBonuses = cardBonus.value!!
-        currentBonuses.put(CardColor.BLUE, blue)
-        currentBonuses.put(CardColor.GREEN, green)
-        currentBonuses.put(CardColor.ORANGE, orange)
-        currentBonuses.put(CardColor.RED, red)
-        currentBonuses.put(CardColor.YELLOW, yellow)
+        currentBonuses[CardColor.BLUE] = blue
+        currentBonuses[CardColor.GREEN] = green
+        currentBonuses[CardColor.ORANGE] = orange
+        currentBonuses[CardColor.RED] = red
+        currentBonuses[CardColor.YELLOW] = yellow
         cardBonus.value = currentBonuses
 
         _userPreferenceForHeartCards.value = defaultPrefs.getString(PREF_KEY_HEART, "custom")
@@ -269,7 +269,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
             val currentImmunities = immunitiesRawLiveData.value
             combineAndSetData(
                 abilities ?: emptyList(),
-                currentImmunities ?: emptyList()
+                currentImmunities ?: emptyList(),
             )
         }
 
@@ -477,8 +477,8 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
      */
     fun addBonus(name: String) {
         val cardWithDetails = allPurchasableCardsWithDetails.value?.firstOrNull { it.card.name == name }
-        if (cardWithDetails != null) {
-            addBonus(cardWithDetails.card)
+        cardWithDetails?.let {
+            addBonus(it.card)
         }
     }
 
@@ -549,7 +549,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                     } else if (totalExtraCredits > 0) {
                         // Keine Anatomy-Karten, zeige direkt den ExtraCredits-Dialog
                         _showExtraCreditsDialogEvent.postValue(Event(totalExtraCredits))
-                        _navigateToDashboardEvent.postValue(Event(true))
+                        _navigateToDashboardEvent.postValue(Event(content = true))
                     } else {
                         // Weder Anatomy noch Extra Credits
                         _navigateToDashboardEvent.postValue(Event(true))
@@ -565,7 +565,8 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
                     // _showErrorToastEvent.postValue(new Event<>(errorMessage));
                     _isFinalizingPurchase.postValue(false)
                 }
-            })
+            },
+        )
     }
 
     fun onAnatomyCardSelected(selectedGreenCardName: String) {
@@ -633,7 +634,6 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     override fun onCleared() {
-        super.onCleared()
 //        allAdvancesNotBought.removeObserver(buyableCardsMapObserver)
         defaultPrefs.unregisterOnSharedPreferenceChangeListener(this)
     }
@@ -691,13 +691,13 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     fun setSelectedTipIndex(index: Int) {
-        if (index >= 0 && (index < _tipsArray.size)) {
+        if ((index >= 0 && index < _tipsArray.size)) {
             _selectedTipIndex.value = index
         }
     }
 
-    fun getTipForIndex(index: Int): String? {
-        if (index >= 0 && index < _tipsArray.size) {
+    fun getTipForIndex(index: Int): String {
+        if ((index >= 0 && index < _tipsArray.size)) {
             return _tipsArray[index]
         }
         Log.w(
@@ -839,6 +839,7 @@ class CivicViewModel(application: Application) : AndroidViewModel(application), 
 
     fun saveSelection(currentSelectableItems: List<SelectableCardItem>) {
         val selectedNames = currentSelectableItems
+            .asSequence()
             .filter { it.isSelected }
             .map { it.cardName }
             .toSet()

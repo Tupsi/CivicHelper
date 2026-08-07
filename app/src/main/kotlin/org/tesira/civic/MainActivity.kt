@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(getColor(R.color.md_theme_inversePrimary), getColor(R.color.md_theme_inversePrimary)),
-            navigationBarStyle = SystemBarStyle.auto(getColor(R.color.md_theme_inversePrimary), getColor(R.color.md_theme_inversePrimary))
+            navigationBarStyle = SystemBarStyle.auto(getColor(R.color.md_theme_inversePrimary), getColor(R.color.md_theme_inversePrimary)),
         )
         //WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
 
             R.id.menu_last_purchase -> {
                 val cards = mCivicViewModel.recentlyPurchasedCards.value
-                if (!cards.isNullOrEmpty() && navController.currentDestination?.id != R.id.boughtCardsFragment) {
+                if (!cards.isNullOrEmpty() && (navController.currentDestination?.id != R.id.boughtCardsFragment)) {
                     val action = NavGraphDirections.actionGlobalBoughtCardsFragment(cards.toTypedArray())
                     navController.navigate(action)
                 }
@@ -214,8 +214,8 @@ class MainActivity : AppCompatActivity() {
         val currentCivilizationValue = currentPrefs.getString(CivicViewModel.PREF_KEY_CIVILIZATION, defaultCivValue)
 
         var currentCivIndex = 0 // Default zur ersten Zivilisation
-        if (currentCivilizationValue != null) {
-            currentCivIndex = civValues.indexOf(currentCivilizationValue).takeIf { it != -1 } ?: 0
+        currentCivilizationValue?.let { value ->
+            currentCivIndex = civValues.indexOf(value).takeIf { it != -1 } ?: 0
         }
         spinnerCivilization.setSelection(currentCivIndex)
 

@@ -43,19 +43,19 @@ class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val rootView: View = binding.getRoot()
+        val rootView: View = binding.root
 
         // RecylerView Calamity Effects
         var mRecyclerView = rootView.findViewById<RecyclerView>(R.id.listCalamity)
-        mRecyclerView.setLayoutManager(LinearLayoutManager(rootView.context))
+        mRecyclerView.layoutManager = LinearLayoutManager(rootView.context)
         mHomeCalamityAdapter = HomeCalamityAdapter(this.requireContext())
-        mRecyclerView.setAdapter(mHomeCalamityAdapter)
+        mRecyclerView.adapter = mHomeCalamityAdapter
 
         // RecyclerView Special Abilities
         mRecyclerView = rootView.findViewById(R.id.listAbility)
-        mRecyclerView.setLayoutManager(LinearLayoutManager(rootView.context))
+        mRecyclerView.layoutManager = LinearLayoutManager(rootView.context)
         mHomeSpecialsAdapter = HomeSpecialsAdapter()
-        mRecyclerView.setAdapter(mHomeSpecialsAdapter)
+        mRecyclerView.adapter = mHomeSpecialsAdapter
         binding.radio0.setOnClickListener { onCitiesClicked(it) }
         binding.radio1.setOnClickListener { onCitiesClicked(it) }
         binding.radio2.setOnClickListener { onCitiesClicked(it) }
@@ -72,11 +72,11 @@ class HomeFragment : Fragment() {
 //        restoreCityButton(mCivicViewModel.getCities())
         binding.tvCivilization.text = getString(
             R.string.tv_ast,
-            civicViewModel.civNumber.getValue()
+            civicViewModel.civNumber.value,
         )
         registerForContextMenu(binding.tvCivilization)
 
-        civicViewModel.totalVp.observe(getViewLifecycleOwner()) { newTotalVp ->
+        civicViewModel.totalVp.observe(viewLifecycleOwner) { newTotalVp ->
             binding.tvVp.text = getString(R.string.tv_vp, newTotalVp)
         }
         registerForContextMenu(binding.tvTime)
@@ -88,7 +88,7 @@ class HomeFragment : Fragment() {
      * sets the city button to the current number of cities
      */
     internal fun restoreCityButton(cities: Int) {
-        if (cities >= 0 && cities < cityIds.size) {
+        if ((cities >= 0 && cities < cityIds.size)) {
             val button = binding.root.findViewById<RadioButton?>(cityIds[cities])
             if (button != null) {
                 button.isChecked = true
@@ -104,20 +104,21 @@ class HomeFragment : Fragment() {
             setupAstTooltips()
         }
         civicViewModel.calamityBonusListLiveData.observe(
-            getViewLifecycleOwner(),
+            viewLifecycleOwner,
             Observer { calamities: List<Calamity> ->
                 currentCalamities = calamities
                 mHomeCalamityAdapter.submitCalamityList(calamities)
-            })
+            },
+        )
 
         civicViewModel.getCombinedSpecialsAndImmunitiesLiveData()
-            .observe(getViewLifecycleOwner(), Observer { combinedList: List<String> ->
+            .observe(viewLifecycleOwner, Observer { combinedList: List<String> ->
                 currentSpecialsAndImmunities = combinedList
                 mHomeSpecialsAdapter.submitSpecialsList(combinedList)
             })
 
         civicViewModel.cardBonus.observe(
-            getViewLifecycleOwner(),
+            viewLifecycleOwner,
             Observer { cardBonusMap: HashMap<CardColor, Int> ->
 
                 binding.bonusBlue.text = cardBonusMap.getOrDefault(CardColor.BLUE, 0).toString()
@@ -132,14 +133,14 @@ class HomeFragment : Fragment() {
                 binding.bonusYellow.setBackgroundResource(R.color.religion)
             })
         // Observer für Cities
-        civicViewModel.cities.observe(getViewLifecycleOwner()) { citiesValue ->
+        civicViewModel.cities.observe(viewLifecycleOwner) { citiesValue ->
             citiesValue?.let { nonNullCities ->
                 currentCities = nonNullCities
                 restoreCityButton(nonNullCities)
                 checkASTInternal()
             }
         }
-        civicViewModel.cardsVpLiveData.observe(getViewLifecycleOwner()) { vpValue: Int? ->
+        civicViewModel.cardsVpLiveData.observe(viewLifecycleOwner) { vpValue: Int? ->
             vpValue?.let { nonNullVp ->
                 currentCardsVp = nonNullVp
                 if (civicViewModel.cities.value != null && currentAllPurchases.isNotEmpty()) {
@@ -148,7 +149,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        civicViewModel.inventoryAsCardLiveData.observe(getViewLifecycleOwner()) { purchases ->
+        civicViewModel.inventoryAsCardLiveData.observe(viewLifecycleOwner) { purchases ->
             currentAllPurchases = purchases
             // Wenn alle anderen benötigten Daten auch schon da sind, checkAST ausführen
             if (civicViewModel.cities.value != null && currentCardsVp != 0) {
@@ -157,10 +158,10 @@ class HomeFragment : Fragment() {
         }
 
         // Observer für Time
-        civicViewModel.timeVp.observe(getViewLifecycleOwner()) { value: Int ->
+        civicViewModel.timeVp.observe(viewLifecycleOwner) { value: Int ->
             val index = value / 5
-            if (CivicViewModel.Companion.TIME_TABLE.indices.contains(index)) {
-                binding.tvTime.text = getString(R.string.tv_time, CivicViewModel.Companion.TIME_TABLE[index])
+            if (CivicViewModel.TIME_TABLE.indices.contains(index)) {
+                binding.tvTime.text = getString(R.string.tv_time, CivicViewModel.TIME_TABLE[index])
             } else {
                 binding.tvTime.text = "-"
             }
@@ -243,7 +244,7 @@ class HomeFragment : Fragment() {
         val currentIndex = currentTimeVp / 5
 
         // Determine max valid index based on AST version
-        var timeTableLength = CivicViewModel.Companion.TIME_TABLE.size
+        var timeTableLength = CivicViewModel.TIME_TABLE.size
         if (civicViewModel.astVersion.value == CivicViewModel.AST_BASIC) {
             timeTableLength-- // Adjust for Basic AST as in onCreateContextMenu
         }
@@ -282,12 +283,12 @@ class HomeFragment : Fragment() {
         super.onCreateContextMenu(menu, v, menuInfo)
         when (v.id) {
             R.id.tvTime -> {
-                var timeTableLength = CivicViewModel.Companion.TIME_TABLE.size
+                var timeTableLength = CivicViewModel.TIME_TABLE.size
                 if (civicViewModel.astVersion.value == CivicViewModel.AST_BASIC) {
                     timeTableLength--
                 }
                 for (i in 0 until timeTableLength) { // 'until' is exclusive for the upper bound
-                    menu.add(0, i * 5, i, CivicViewModel.Companion.TIME_TABLE[i])
+                    menu.add(0, i * 5, i, CivicViewModel.TIME_TABLE[i])
                 }
             }
 

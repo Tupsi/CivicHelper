@@ -119,7 +119,7 @@ abstract class BaseCardListFragment : Fragment() {
                 binding.textViewPlaceholder.visibility = View.GONE
                 binding.recyclerViewAllCards.visibility = View.VISIBLE
                 allCardsAdapter.submitList(cards) {
-                    if (isAdded && view != null && _binding != null && binding.recyclerViewAllCards.isVisible && cards.isNotEmpty()) {
+                    if ((isAdded && view != null && _binding != null && binding.recyclerViewAllCards.isVisible && cards.isNotEmpty())) {
                         binding.recyclerViewAllCards.scrollToPosition(0)
                     }
                 }
@@ -128,13 +128,15 @@ abstract class BaseCardListFragment : Fragment() {
     }
 
     private fun setupSearchInput() {
-        binding.editTextSearchAllCards.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                civicViewModel.setSearchQuery(s.toString())
-            }
-        })
+        binding.editTextSearchAllCards.addTextChangedListener(
+            object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    civicViewModel.setSearchQuery(s.toString())
+                }
+            },
+        )
 
         binding.editTextSearchAllCards.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH ||

@@ -22,6 +22,8 @@ class BuyingAdapter() : AllCardsAdapter() {
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
+        if (!::tracker.isInitialized) return
+
         val item: CardWithDetails = getItem(position)
         val cardData = item.card
         val isSelected = tracker.isSelected(cardData.name)
