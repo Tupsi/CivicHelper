@@ -16,8 +16,8 @@ configure<com.android.build.api.dsl.ApplicationExtension> {
         applicationId = "org.tesira.civic"
         minSdk = 28
         targetSdk = 37
-        versionCode = 68
-        versionName = "1.12.07"
+        versionCode = 69
+        versionName = "1.12.09"
     }
 
     buildTypes {
@@ -35,10 +35,6 @@ configure<com.android.build.api.dsl.ApplicationExtension> {
     }
 
     namespace = "org.tesira.civic"
-
-    lint {
-        baseline = file("lint-baseline.xml")
-    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -58,7 +54,7 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.gridlayout:gridlayout:1.1.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.annotation:annotation:1.9.1")
+    implementation("androidx.annotation:annotation:1.10.0")
 
     implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
@@ -73,10 +69,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
 
-    implementation("com.google.android.material:material:1.13.0")
+    implementation("com.google.android.material:material:1.14.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.2")
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.activity:activity-ktx:1.11.0")
+    implementation("androidx.core:core-ktx:1.19.0")
+    implementation("androidx.activity:activity-ktx:1.13.0")
 
     implementation("it.xabaras.android:recyclerview-swipedecorator:1.4")
 }

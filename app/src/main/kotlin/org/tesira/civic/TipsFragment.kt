@@ -71,7 +71,7 @@ class TipsFragment : Fragment() {
                 }
 
                 val tipText = civicViewModel.getTipForIndex(index)
-                if (tipText != null && tipText.isNotEmpty()) {
+                if (tipText.isNotEmpty()) {
                     binding.tipsTextView.text = getString(
                         R.string.tips_text_combined,
                         tipText,
