@@ -18,6 +18,8 @@ configure<com.android.build.api.dsl.ApplicationExtension> {
         targetSdk = 37
         versionCode = 69
         versionName = "1.12.09"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -75,6 +77,12 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.13.0")
 
     implementation("it.xabaras.android:recyclerview-swipedecorator:1.4")
+
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.7.0")
+    androidTestImplementation("androidx.navigation:navigation-testing:$navigationVersion")
 }
 
 room {
