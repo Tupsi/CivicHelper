@@ -56,5 +56,7 @@
         <item name="android:paddingStart">4dp</item>
         <item name="android:paddingEnd">4dp</item>
     </style>
-
+    <style name="ToolbarTitleTheme" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>
