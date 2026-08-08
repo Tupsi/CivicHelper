@@ -78,6 +78,31 @@ abstract class BaseCardListFragment : Fragment() {
                 GridLayoutManager(requireContext(), actualColumnCount)
             }
             adapter = allCardsAdapter
+
+            // Scroll-Listener für das automatische Ein-/Ausblenden der Suche
+            addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    if (dy > 20 && binding.searchControlsContainer.visibility == View.VISIBLE) {
+                        // Nach unten scrollen -> Verstecken
+                        binding.searchControlsContainer.animate()
+                            .alpha(0f)
+                            .translationY(-binding.searchControlsContainer.height.toFloat())
+                            .setDuration(200)
+                            .withEndAction { binding.searchControlsContainer.visibility = View.GONE }
+                            .start()
+                    } else if (dy < -20 && binding.searchControlsContainer.visibility != View.VISIBLE) {
+                        // Nach oben scrollen -> Zeigen
+                        binding.searchControlsContainer.visibility = View.VISIBLE
+                        binding.searchControlsContainer.animate()
+                            .alpha(1f)
+                            .translationY(0f)
+                            .setDuration(200)
+                            .start()
+                    }
+                }
+            })
         }
     }
 
