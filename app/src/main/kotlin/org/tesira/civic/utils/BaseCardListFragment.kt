@@ -84,20 +84,18 @@ abstract class BaseCardListFragment : Fragment() {
                 override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
 
-                    if (dy > 20 && binding.searchControlsContainer.visibility == View.VISIBLE) {
-                        // Nach unten scrollen -> Verstecken
+                    if (dy > 20 && binding.searchControlsContainer.translationY == 0f) {
+                        // Nach unten scrollen -> Sanft nach oben rausschieben
                         binding.searchControlsContainer.animate()
-                            .alpha(0f)
                             .translationY(-binding.searchControlsContainer.height.toFloat())
-                            .setDuration(200)
-                            .withEndAction { binding.searchControlsContainer.visibility = View.GONE }
+                            .alpha(0f)
+                            .setDuration(300)
                             .start()
-                    } else if (dy < -20 && binding.searchControlsContainer.visibility != View.VISIBLE) {
-                        // Nach oben scrollen -> Zeigen
-                        binding.searchControlsContainer.visibility = View.VISIBLE
+                    } else if (dy < -20 && binding.searchControlsContainer.translationY < 0f) {
+                        // Nach oben scrollen -> Wieder reinfahren
                         binding.searchControlsContainer.animate()
-                            .alpha(1f)
                             .translationY(0f)
+                            .alpha(1f)
                             .setDuration(200)
                             .start()
                     }

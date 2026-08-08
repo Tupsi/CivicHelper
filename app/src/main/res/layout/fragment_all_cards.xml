@@ -6,7 +6,20 @@
     android:layout_height="match_parent"
     tools:context="org.tesira.civic.AllCardsFragment">
 
-    <!-- Container für Suche und Sortierung -->
+    <!-- Liste füllt den ganzen Platz aus -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewAllCards"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingTop="70dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_card_detail_row" />
+
+    <!-- Container liegt ÜBER der Liste (Z-Index höher) -->
     <LinearLayout
         android:id="@+id/searchControlsContainer"
         android:layout_width="match_parent"
@@ -15,6 +28,8 @@
         android:gravity="center_vertical"
         android:paddingTop="8dp"
         android:paddingBottom="4dp"
+        android:background="?attr/colorSurface"
+        android:elevation="4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -53,17 +68,6 @@
             tools:text="Name" />
 
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewAllCards"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/searchControlsContainer"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_card_detail_row" />
 
     <TextView
         android:id="@+id/textViewPlaceholder"
