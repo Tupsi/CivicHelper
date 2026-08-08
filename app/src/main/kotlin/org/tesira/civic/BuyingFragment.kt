@@ -95,6 +95,30 @@ class BuyingFragment : Fragment() {
 
         adapter = BuyingAdapter()
         recyclerView.adapter = adapter
+
+        // Scroll-Listener für das automatische Ein-/Ausblenden der Steuerung
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (dy > 20 && binding.topControlsLayout.translationY == 0f) {
+                    // Nach unten scrollen -> Verstecken
+                    binding.topControlsLayout.animate()
+                        .translationY(-binding.topControlsLayout.height.toFloat())
+                        .alpha(0f)
+                        .setDuration(300)
+                        .start()
+                } else if (dy < -20 && binding.topControlsLayout.translationY < 0f) {
+                    // Nach oben scrollen -> Zeigen
+                    binding.topControlsLayout.animate()
+                        .translationY(0f)
+                        .alpha(1f)
+                        .setDuration(200)
+                        .start()
+                }
+            }
+        })
+
         treasureInput = binding.treasure
         remainingText = binding.moneyleft
 
