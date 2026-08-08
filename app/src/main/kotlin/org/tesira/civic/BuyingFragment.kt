@@ -185,7 +185,7 @@ class BuyingFragment : Fragment() {
         }
 
         // button which finalizes the buy process
-        binding.btnBuy.setOnClickListener(View.OnClickListener btnBuyClickListener@{ v: View? ->
+        binding.btnBuy.setOnClickListener(View.OnClickListener btnBuyClickListener@{ _: View? ->
             if (tracker.selection.isEmpty) {
                 showToast(getString(R.string.no_cards_selected))
                 return@btnBuyClickListener
@@ -208,7 +208,7 @@ class BuyingFragment : Fragment() {
         })
 
         // button to clear the current selection of cards
-        binding.btnClear.setOnClickListener { v: View? ->
+        binding.btnClear.setOnClickListener { _: View? ->
             tracker.clearSelection()
             civicViewModel.clearCurrentSelectionState()
         }
