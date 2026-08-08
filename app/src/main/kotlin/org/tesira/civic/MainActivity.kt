@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.edit
 import androidx.navigation.NavController
+import com.google.android.material.appbar.AppBarLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
@@ -71,6 +72,20 @@ class MainActivity : AppCompatActivity() {
                 )
             )
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                val params = toolbar.layoutParams as AppBarLayout.LayoutParams
+                when (destination.id) {
+                    R.id.buyingFragment, R.id.inventoryFragment, R.id.allCardsFragment -> {
+                        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
+                                AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+                    }
+                    else -> {
+                        params.scrollFlags = 0
+                    }
+                }
+                toolbar.layoutParams = params
+            }
         }
 
         mCivicViewModel.showNewGameOptionsDialogEvent.observe(this) { event ->
