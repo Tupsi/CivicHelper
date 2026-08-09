@@ -60,7 +60,7 @@ fun View.applySystemBarInsetsAsPadding() {
  * Diese Funktion ist oft für Container gedacht, die sich über die volle Breite erstrecken sollen,
  * aber nicht unter die Statusleiste oder die Gesten-Navigationsleiste rutschen sollen.
  */
-fun View.applyHorizontalSystemBarInsetsAsPadding(applyBottomInset: Boolean = true) {
+fun View.applyHorizontalSystemBarInsetsAsPadding(applyBottomInset: Boolean = true, applyTopInset: Boolean = true) {
     val initialPaddingLeft = this.paddingLeft
     val initialPaddingTop = this.paddingTop
     val initialPaddingRight = this.paddingRight
@@ -71,12 +71,24 @@ fun View.applyHorizontalSystemBarInsetsAsPadding(applyBottomInset: Boolean = tru
 
         v.updatePadding(
             left = initialPaddingLeft + systemBarInsets.left,
-            top = initialPaddingTop + systemBarInsets.top,
+            top = if (applyTopInset) initialPaddingTop + systemBarInsets.top else initialPaddingTop,
             right = initialPaddingRight + systemBarInsets.right,
             bottom = if (applyBottomInset) initialPaddingBottom + systemBarInsets.bottom else initialPaddingBottom
         )
         windowInsets
-//        WindowInsetsCompat.CONSUMED
+    }
+}
+
+/**
+ * Wendet nur das obere Systemleisten-Inset als Padding an.
+ * Ideal für das AppBarLayout, damit die Toolbar hinter die Statusleiste fließt.
+ */
+fun View.applyTopSystemBarInsetAsPadding() {
+    val initialPaddingTop = this.paddingTop
+    ViewCompat.setOnApplyWindowInsetsListener(this) { v, windowInsets ->
+        val systemBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+        v.updatePadding(top = initialPaddingTop + systemBarInsets.top)
+        windowInsets
     }
 }
 

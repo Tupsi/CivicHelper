@@ -25,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.tesira.civic.databinding.ActivityMainBinding
 import org.tesira.civic.db.CivicViewModel
 import org.tesira.civic.utils.applyHorizontalSystemBarInsetsAsPadding
+import org.tesira.civic.utils.applyTopSystemBarInsetAsPadding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -44,7 +45,10 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(true)
         invalidateOptionsMenu()
 
-        binding.root.applyHorizontalSystemBarInsetsAsPadding()
+        // Wendet nur Links/Rechts Insets auf das Root-Layout an, KEIN Top-Padding mehr hier!
+        binding.root.applyHorizontalSystemBarInsetsAsPadding(applyTopInset = false)
+        // Die Toolbar kümmert sich nun selbst um den Platz oben und nimmt ihn beim Scrollen mit!
+        binding.toolbar.applyTopSystemBarInsetAsPadding()
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.myNavHostFragment) as? NavHostFragment
 
