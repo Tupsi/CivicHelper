@@ -16,15 +16,16 @@ configure<com.android.build.api.dsl.ApplicationExtension> {
         applicationId = "org.tesira.civic"
         minSdk = 33
         targetSdk = 37
-        versionCode = 72
-        versionName = "1.12.12"
+        versionCode = 73
+        versionName = "1.12.13"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

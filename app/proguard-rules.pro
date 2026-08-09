@@ -1,21 +1,27 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Project specific ProGuard rules
+# ---------------------------------------------------------------------------
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# 1. Erhalte Zeilennummern für aussagekräftige Crash-Reports in der Play Console
+# Dies ist entscheidend, damit die mapping.txt Datei Abstürze korrekt zuordnen kann.
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# 2. Schütze deine Datenbank-Modelle und DAOs
+# R8 soll die Feldnamen und Klassen in deinem DB-Paket nicht umbenennen,
+# um maximale Kompatibilität mit Room und Typ-Konvertern zu garantieren.
+-keep class org.tesira.civic.db.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# 3. Room Database spezifisch
+# Stellt sicher, dass die generierten Implementierungen deiner Datenbank gefunden werden.
+-keep class * extends androidx.room.RoomDatabase
+-keepnames class androidx.room.RoomDatabase
+
+# 4. Verhindere Warnungen von Drittanbieter-Bibliotheken
+# Manche Bibliotheken haben Abhängigkeiten, die zur Laufzeit nicht gebraucht werden.
+-dontwarn it.xabaras.android.**
+
+# 5. ViewModel Schutz
+# Stellt sicher, dass die Konstruktoren deiner ViewModels für die Factory erhalten bleiben.
+-keepclassmembers class * extends androidx.lifecycle.ViewModel {
+    public <init>(...);
+}
