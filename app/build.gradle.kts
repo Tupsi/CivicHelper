@@ -14,10 +14,10 @@ configure<com.android.build.api.dsl.ApplicationExtension> {
 
     defaultConfig {
         applicationId = "org.tesira.civic"
-        minSdk = 28
+        minSdk = 33
         targetSdk = 37
-        versionCode = 70
-        versionName = "1.12.10"
+        versionCode = 71
+        versionName = "1.12.11"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

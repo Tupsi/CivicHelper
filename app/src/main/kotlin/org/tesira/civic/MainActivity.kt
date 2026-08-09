@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter
 import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.Toast
-import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -17,11 +16,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.edit
 import androidx.navigation.NavController
-import com.google.android.material.appbar.AppBarLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import org.tesira.civic.databinding.ActivityMainBinding
 import org.tesira.civic.db.CivicViewModel
@@ -34,10 +33,7 @@ class MainActivity : AppCompatActivity() {
     private val mCivicViewModel: CivicViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(getColor(R.color.md_theme_inversePrimary), getColor(R.color.md_theme_inversePrimary)),
-            navigationBarStyle = SystemBarStyle.auto(getColor(R.color.md_theme_inversePrimary), getColor(R.color.md_theme_inversePrimary)),
-        )
+        enableEdgeToEdge()
         //WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
