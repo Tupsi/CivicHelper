@@ -16,15 +16,27 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="36dp"
+            android:minHeight="48dp"
             app:contentInsetStart="8dp"
             app:contentInsetStartWithNavigation="0dp"
             app:layout_scrollFlags="scroll|enterAlways"
             android:background="?attr/colorPrimaryContainer"
             app:titleTextColor="?attr/colorOnPrimaryContainer"
             app:navigationIconTint="?attr/colorOnPrimaryContainer"
-            app:titleTextAppearance="@style/ToolbarTitleTheme"
-            app:title="@string/app_name" />
+            app:title="">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_marginStart="8dp"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                style="@style/ToolbarTitleTheme"
+                tools:text="Home"
+                tools:ignore="SelectableText" />
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar: Toolbar = binding.toolbar
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         invalidateOptionsMenu()
 
         // Wendet nur Links/Rechts Insets auf das Root-Layout an, KEIN Top-Padding mehr hier!
@@ -74,12 +74,16 @@ class MainActivity : AppCompatActivity() {
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
 
             navController.addOnDestinationChangedListener { _, destination, _ ->
+                // Den Text in unserer eigenen TextView aktualisieren
+                binding.toolbarTitle.text = destination.label
+
                 val params = toolbar.layoutParams as AppBarLayout.LayoutParams
                 when (destination.id) {
                     R.id.buyingFragment, R.id.inventoryFragment, R.id.allCardsFragment -> {
                         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
                                 AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
                     }
+
                     else -> {
                         params.scrollFlags = 0
                     }
